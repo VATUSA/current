@@ -1,18 +1,32 @@
+os:
+  - linux
+
 language: php
-php:
-- '7.1'
-sudo: required
 env:
-- DOCKER_COMPOSE_VERSION=1.17.1
+  - DOCKER_COMPOSE_VERSION=1.17.1
+php:
+  - '7.1'
 services:
-- docker
+  - docker
+
 before_install:
-- curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname
-  -s`-`uname -m` > docker-compose
-- chmod +x docker-compose
-- sudo mv docker-compose /usr/local/bin
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname
+    -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+before_script:
+  - composer self-update
+  - composer install --no-interaction
+  - cp .env.travis .env
+  - nvm install 7.7.1
+  - npm install npm@latest -g
+  - npm install
+
 script:
-- docker-compose build
+  - npm run production
+  - docker-compose build
+
 after_success:
 - if [ "$TRAVIS_BRANCH" == "master" ]; then docker tag $DOCKER_ORG/www $DOCKER_ORG/www:latest;
   docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; docker push $DOCKER_ORG/www:latest;
