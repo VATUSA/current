@@ -1,0 +1,13 @@
+.env*
+/public/dsm/*
+.idea
+storage/*
+gitversion
+composer.lock
+config/*
+resources/views/emails/facility/*
+bootstrap/cache
+.remote-sync.json
+node_modules
+.config.sh
+vendor
