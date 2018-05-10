@@ -27,7 +27,7 @@ before_script:
 
 script:
   - npm run production
-  - docker-compose build
+  - docker-compose build -t $DOCKER_ORG/www .
 
 after_success:
 - if [ "$TRAVIS_BRANCH" == "master" ]; then docker tag $DOCKER_ORG/www $DOCKER_ORG/www:latest;
