@@ -18,8 +18,6 @@ before_install:
 before_script:
   - /bin/ls -a
   - mkdir bootstrap/cache
-  - composer self-update
-  - composer install --no-interaction
   - cp .env.travis .env
   - nvm install 8.11.1
   - npm install npm@latest -g
@@ -27,12 +25,12 @@ before_script:
 
 script:
   - npm run production
-  - docker-compose build -t $DOCKER_ORG/www .
+  - docker-compose build
 
 after_success:
-- if [ "$TRAVIS_BRANCH" == "master" ]; then docker tag $DOCKER_ORG/www $DOCKER_ORG/www:latest;
+- if [ "$TRAVIS_BRANCH" == "master" ]; then
   docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; docker push $DOCKER_ORG/www:latest;
   fi
-- if [ "$TRAVIS_BRANCH" == "develop" ]; then docker tag $DOCKER_ORG/www $DOCKER_ORG/www:devel;
+- if [ "$TRAVIS_BRANCH" == "develop" ]; then
   docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; docker push $DOCKER_ORG/www:devel;
   fi
