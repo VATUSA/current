@@ -17,6 +17,7 @@ before_install:
 
 before_script:
   - /bin/ls -a
+  - mkdir bootstrap/cache
   - composer self-update
   - composer install --no-interaction
   - cp .env.travis .env
