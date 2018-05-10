@@ -16,6 +16,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 before_script:
+  - /bin/ls -a
   - composer self-update
   - composer install --no-interaction
   - cp .env.travis .env
