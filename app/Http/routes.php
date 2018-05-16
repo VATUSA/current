@@ -284,16 +284,6 @@ Route::group(['domain' => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : ((en
     Route::get('tmu/{fac}/dark','TMUController@getMapDark');
     Route::get('tmu/{fac}/coords', 'TMUController@getCoords');
 
-    Route::post('/d', function () {
-        return shell_exec("/bin/sh /home/vatusa/apps/git/main.sh");
-    });
-
-    Route::get('/mgt/dsm/deploy', function () {
-        if (!\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
-
-        return shell_exec("/bin/sh /home/vatusa/apps/git/main.sh");
-    });
-
 //
 // VATUSA Mgt Mail Function
 // dev.vatusa.net/mgt/mail/{route}
@@ -317,12 +307,6 @@ Route::group(['domain' => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : ((en
     Route::get('/stats/details/{facility}', 'StatsController@getDetails');
     Route::get('/stats/export/details', 'StatsController@getExportDetails');
     Route::get('/stats/export/overview', 'StatsController@getExportOverview');
-
-    Route::get('/survey/test', function() {
-        return view('my.surveytest');
-    });
-
-    // Info
 });
 
 //
