@@ -5,7 +5,7 @@ COPY ./build.sh /entrypoint.d/50-build.sh
 WORKDIR /www
 COPY . /www
 COPY ./resources/docker /
-RUN rm -rf /www/resources/docker && mkdir /www/storage/framework/views
+RUN rm -rf /www/resources/docker
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --install-dir=/usr/local/bin && \
@@ -13,7 +13,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     chown -R application:application /www
 
 USER application
-RUN composer.phar install --no-dev --no-scripts
+RUN composer.phar install --no-dev --no-scripts && mkdir -p /www/storage/framework/views
 USER root
 RUN rm /usr/local/bin/composer.phar
 
