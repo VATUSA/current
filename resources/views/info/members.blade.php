@@ -86,7 +86,7 @@
                                     <td>VATUSA10</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US10")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US10")}}</td>
-                                    <td>N/A</td>
+                                    <td><a href="mailto:vatusa10@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
                                 </tbody>
                             </table>
