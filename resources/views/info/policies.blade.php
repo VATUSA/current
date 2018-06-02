@@ -20,7 +20,7 @@
                     <tbody>
                     <tr>
                         <td>DP001 &mdash; Division General Policy</td>
-                        <td>11/01/2015</td>
+                        <td>6/01/2018</td>
                         <td><a href="/docs/DP001.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
