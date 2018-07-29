@@ -22,7 +22,7 @@
                                 @else
                                     <div class="alert alert-success"><i class="fa fa-check"></i>
                                         <strong>Success!</strong>
-                                        {{ Session::get('aceSubmit') }} has been added to the ACE team.
+                                        The controller has been added to the ACE team.
                                     </div>
                                 @endif
                             @endif
