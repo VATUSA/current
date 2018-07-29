@@ -122,7 +122,7 @@ class MgtController extends Controller
         $promo->save();
 
         \App\Classes\CertHelper::changeRating($cid, $request->input('rating'), true);
-        
+
         echo "1";
         return;
     }
@@ -191,6 +191,14 @@ class MgtController extends Controller
         if (!RoleHelper::isVATUSAStaff()) abort(401);
         $cid = $request->input('cid');
 
+        if (!User::find($cid)) {
+            // No user exits
+            return redirect("/mgt/ace")->with('aceSubmit', 'The controller CID is invalid.');
+        }
+        if (Role::where('cid', $cid)->where('role','ACE')->first()) {
+            return redirect("/mgt/ace")->with('aceSubmit', 'The controller is already a member of the team.');
+        }
+
         if (Role::where('cid', $cid)->where('role', 'ACE')->count() == 0) {
             $role = new Role();
             $role->cid = $cid;
@@ -202,7 +210,7 @@ class MgtController extends Controller
 
         SMFHelper::setPermissions($cid);
 
-        return redirect("/mgt/ace");
+        return redirect("/mgt/ace")->with('aceSubmit', true);
     }
 
     /*
