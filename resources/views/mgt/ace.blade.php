@@ -11,8 +11,23 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <form class="form-inline" action="{{ secure_url('/mgt/ace') }}" style="margin-bottom:5px;">
-                            <label for="cid">Add Controller:</label> <input type="text" name="cid" class="form-control">
+                        <form class="form-inline" action="{{ secure_url('/mgt/ace') }}" style="margin-bottom:5px;"
+                              method="post">
+                            @if(Session::has('aceSubmit'))
+                                @if(Session::get('aceSubmit') !== true)
+                                    <div class="alert alert-danger"><i class="fa fa-warning"></i>
+                                        <strong>Error!</strong>
+                                        There was an error adding the controller to the ACE
+                                        team.<strong> {{ Session::get('aceSubmit') }}</strong></div>
+                                @else
+                                    <div class="alert alert-success"><i class="fa fa-check"></i>
+                                        <strong>Success!</strong>
+                                        {{ Session::get('aceSubmit') }} has been added to the ACE team.
+                                    </div>
+                                @endif
+                            @endif
+                            <label for="cid">Add Controller:</label> <input type="text" name="cid"
+                                                                            class="form-control">
                             <button type="submit" class="btn btn-info">Add</button>
                         </form>
                         <table class="table table-striped">
