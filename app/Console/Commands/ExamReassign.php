@@ -47,16 +47,20 @@ class ExamReassign extends Command
         if (ExamReassignment::whereDate('reassign_date', '<=', Carbon::now())->count() > 0) {
             foreach (ExamReassignment::whereDate('reassign_date', "<=", Carbon::now())->get() as $ex) {
                 $exam = Exam::find($ex->exam_id);
-                ExamHelper::assign($ex->cid, $ex->exam_id, $ex->instructor_id, $exam->retake_period, true);
+                if ($exam) {
+                    ExamHelper::assign($ex->cid, $ex->exam_id, $ex->instructor_id, $exam->retake_period, true);
+                }
                 $ex->delete();
             }
         }
         if (ExamAssignment::whereDate('expire_date', '>=', Carbon::now())->count() > 0) {
             foreach (ExamAssignment::whereDate('expire_date', '<=', Carbon::now())->get() as $ex) {
-                $log = new Actions();
-                $log->to = $ex->cid;
-                $log->log = "Exam (" . $ex->exam()->facility_id . ") " . $ex->exam()->name . " has expired and been unassigned.";
-                $log->save();
+                if ($ex->exam()) {
+                    $log = new Actions();
+                    $log->to = $ex->cid;
+                    $log->log = "Exam (" . $ex->exam()->facility_id . ") " . $ex->exam()->name . " has expired and been unassigned.";
+                    $log->save();
+                }
                 $ex->delete();
             }
         }
