@@ -24,11 +24,6 @@
                         <td><a href="/docs/DP001.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
-                        <td>DP002 &mdash; Transferring and Visiting Controllers Policy</td>
-                        <td>11/01/2015</td>
-                        <td><a href="/docs/DP002.pdf" target="_blank">view</a></td>
-                    </tr>
-                    <tr>
                         <td>DP003 &mdash; Event Submission Policy</td>
                         <td>03/10/2018</td>
                         <td><a href="/docs/DP003.pdf" target="_blank">view</a></td>
