@@ -47,6 +47,12 @@
                                     <td><a href="mailto:vatusa3@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
                                 <tr>
+                                    <td>VATUSA13</td>
+                                    <td>{{\App\Classes\RoleHelper::getNameFromRole("US13")}}</td>
+                                    <td>{{\App\Classes\RoleHelper::roleTitle("US13")}}</td>
+                                    <td><a href="mailto:vatusa13@vatusa.net"><i class="fa fa-envelope"></i></a></td>
+                                </tr>
+                                <tr>
                                     <td>VATUSA4</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US4")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US4")}}</td>
