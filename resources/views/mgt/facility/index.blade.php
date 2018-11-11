@@ -217,6 +217,7 @@
                         @endif
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <div role="tabpanel" class="tab-pane" id="emailtemplates">
+                                <div class="alert alert-info" style="margin-top: 5px;"><i class="fa fa-info-circle"></i> This functionality is in development and has no effect on the actual email sent. Contact Data Services to change the email template.</div>
                                 <select class="form-control" id="facilityEmailTemplate">
                                     <option value=0>Select Template</option>
                                     <option value="examassigned">Exam Assigned</option>
