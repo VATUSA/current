@@ -62,6 +62,8 @@ class ExamHelper
 
 
         $exam = Exam::find($exam);
+        $fac = $exam->facility_id;
+
         $cbt_required = 0;
         $cbt_facility = $cbt_block = "";
         if ($exam->cbt_required) {
@@ -76,6 +78,7 @@ class ExamHelper
             'instructor_name' => Helper::nameFromCID($instructor),
             'end_date' => $end_date . " " . $end_time,
             'student_name' => Helper::nameFromCID($cid),
+            'facility' => $fac,
             'cbt_required' => $cbt_required,
             'cbt_facility' => $cbt_facility,
             'cbt_block' => $cbt_block
@@ -88,7 +91,6 @@ class ExamHelper
             $to[] = $exam->facility_id . "-TA@vatusa.net";
         }
 
-        $fac = $exam->facility_id;
         if ($fac == "ZAE") { $fac = \App\User::find($cid)->facility; }
         EmailHelper::sendEmailFacilityTemplate($to, "Exam Assigned", $fac, "examassigned", $data);
 
