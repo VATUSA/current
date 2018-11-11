@@ -213,7 +213,7 @@
                                     <li><a href="/my/assignbasic">Request Basic ATC Exam</a></li>
                                 @endif
                                 <li role="separator" class="divider"></li>
-                                <li><a href="https://login.vatusa.net/?logout">Logout</a></li>
+                                <li><a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : "//login.vatusa.net/?logout" }}">Logout</a></li>
                             </ul>
                         </li>
                         @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isMentor())
@@ -253,7 +253,7 @@
 
 
                     @else
-                        <li><a href="{{ (env('APP_ENV', 'prod') == "dev" ? "http://api.vatusa.dev/v2/llll" : url('login'))}}"><i class="fa fa-user"></i> Login</a></li>
+                        <li><a href="#" id="login-link" data-action="{{ url('login') }}"><i class="fa fa-user"></i> Login</a></li>
                     @endif
                 </ul>
             </div>
@@ -317,6 +317,7 @@
 </footer>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/js/bootbox.min.js"></script>
 <script src="/js/jquery-ui.min.js"></script>
 <script src="/js/vatusa.js"></script>
