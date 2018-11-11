@@ -4,6 +4,8 @@ This email is to inform you that you have been assigned exam {{ $exam_name }} by
 until {{ $end_date }} US Central to complete the examination before it expires.
 <br><br>
 To take the exam, please visit the VATUSA Exam Center at <a href="https://www.vatusa.net/exam">https://www.vatusa.net/exam</a>.
+<br><br>
+Prior to taking the exam, be sure to read all materials assigned to you in your {{ $facility }} welcome email.
 @if($cbt_required)
     <br><br>
     Before attempting the exam, you must complete {{$cbt_facility}}'s {{$cbt_block}} Computer Based Training (CBT) course.  You
