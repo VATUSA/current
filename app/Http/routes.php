@@ -187,6 +187,7 @@ Route::group(['domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : 
 //
         Route::get('/my/exams', 'MyController@getExamIndex');
         Route::get('/my/profile', 'MyController@getProfile');
+        Route::post('/my/profile/toggleBroadcast', 'MyController@toggleBroadcastEmails');
         Route::get('/my/select', 'MyController@getSelect');
         Route::post('/my/select', 'MyController@postSelect');
         Route::get('/my/transfer', 'MyController@getTransfer');
