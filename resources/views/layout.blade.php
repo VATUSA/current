@@ -308,11 +308,11 @@
 <footer>
     <div class="container">
         <hr>
-        <p>Copyright &copy; 2016{{ (date("Y")>2016)?"-".date("Y"):"" }} VATUSA - United States Division, VATSIM. All
+        <p>Copyright &copy; 2016-{{ date("Y") }} VATUSA - United States Division, VATSIM. All
             rights reserved. Any and all content on this website are for use with the Virtual Air Traffic Simulation
             Network (VATSIM) and may not be used for real-world navigation or aviation purposes and doing so could be a
             violation of federal law.</p>
-        <p>{!! \App\Classes\Helper::version() !!} - <a href="/info/privacy">Privacy Policy</a></p>
+        <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i class="fa fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>
 
