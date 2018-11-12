@@ -5,7 +5,7 @@ use App\Facility;
 class Helper
 {
     public static function version() {
-        $version = "VATUSA-2.0.0-";
+        $version = "VATUSA-";
         if (file_exists(base_path("gitversion"))) {
             $version .= file_get_contents(base_path('gitversion'));
         } else {

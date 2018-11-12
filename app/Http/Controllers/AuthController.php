@@ -31,7 +31,7 @@ class AuthController extends Controller
             /** In Development Environment */
             \Auth::loginUsingId(env('DEV_CID_LOGIN', 0));
 
-            return redirect()->to('/');
+            return redirect()->intended('/');
         }
         if (!\Auth::check()) {
             //If agreed on privacy policy, redirect to profile (opt in setting)
