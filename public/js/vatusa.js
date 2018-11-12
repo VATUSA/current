@@ -137,11 +137,9 @@ jQuery(document).ready(function ($) {
               if ($('#privacy-agree').is(':checked')) {
                 Cookies.set('privacy-agree', true, {expires: 180})
                 window.location = redirect + "?agreed"
-                //Set session variable (privacy-agreed)
-                //Server: if ^ set, redirect to profile settings for opt in
               }
               else {
-                //jquery highlight checkbox
+                //
               }
             }
           }
