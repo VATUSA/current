@@ -42,6 +42,7 @@
             <div class="panel-body">
                 @if(session('fromAgreed'))
                     <div class="alert alert-info"><strong><i class="fa fa-info-circle"></i> Please review your email broadcast opt-in setting.</strong></div>
+                    @php session()->forget('fromAgreed') @endphp
                 @endif
                 <form class="form-horizontal">
                     <div class="form-group">

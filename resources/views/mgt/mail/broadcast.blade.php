@@ -68,7 +68,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Subject</label>
                     <div class="col-sm-10">
-                        <input class="form-control" name="subject">
+                        <input class="form-control" name="subject" placeholder="Enter subject...">
                     </div>
                 </div>
                 <div class="form-group">
