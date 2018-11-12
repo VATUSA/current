@@ -152,4 +152,22 @@ class MyController
     {
         return view('my.exams.index');
     }
+
+    public function toggleBroadcastEmails(Request $request) {
+        if(!$request->ajax()) abort(500);
+
+
+        $user = Auth::user();
+        $currentFlag = $user->flag_broadcastOptedIn;
+        $user->flag_broadcastOptedIn = !$currentFlag;
+        $user->saveOrFail();
+
+        $log = new Actions();
+        $log->from = 0;
+        $log->to = Auth::id();
+        $log->log = "Opted ". ($currentFlag ? "out of" : "in to") . " broadcast emails";
+        $log->save();
+
+        return "1";
+    }
 }
