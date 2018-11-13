@@ -2,7 +2,6 @@
 /public/dsm/*
 .idea
 storage/*
-gitversion
 composer.lock
 resources/views/emails/facility/*
 bootstrap/cache

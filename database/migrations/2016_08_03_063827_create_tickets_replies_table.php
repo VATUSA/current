@@ -12,13 +12,13 @@ class CreateTicketsRepliesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('tickets_replies', function(Blueprint $table) {
+		/*Schema::create('tickets_replies', function(Blueprint $table) {
 		    $table->increments('id');
             $table->integer('ticket_id');
             $table->integer('cid');
             $table->mediumText('body');
             $table->timestamps();
-        });
+        });*/
 	}
 
 	/**
