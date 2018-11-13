@@ -271,12 +271,12 @@
 <div class="container">
     @if(session('error'))
         <div class="alert alert-danger">
-            <strong>Error!</strong> {!! session('error') !!}
+            <strong><i class="fa fa-warning"></i> Error!</strong> {!! session('error') !!}
         </div>
     @endif
     @if(session('success'))
         <div class="alert alert-success">
-            <strong>Success!</strong> {!! session('success') !!}
+            <strong><i class="fa fa-check"></i> Success!</strong> {!! session('success') !!}
         </div>
     @endif
     @if (isset($errors) && count($errors) > 0)
