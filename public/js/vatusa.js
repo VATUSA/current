@@ -109,7 +109,7 @@ jQuery(document).ready(function ($) {
     VATUSA'S Privacy Policy has been updated to reflect GDPR laws.
     By continuing to log in, and by using this service, you agree that you have read the 
     <a href="https://vatusa.net/info/privacy" target="_blank">Privacy Policy</a> 
-    and understand the methods and usage of data collection, including cookies.
+    and understand the methods and usage of data collection contained therein.
     <br><br>
     <div class="checkbox">
     <label>
@@ -135,7 +135,8 @@ jQuery(document).ready(function ($) {
             className: 'btn-success continue-login',
             callback : function () {
               if ($('#privacy-agree').is(':checked')) {
-                Cookies.set('privacy-agree', true, {expires: 180})
+                let parts = document.domain.split('.');
+                Cookies.set('privacy-agree', true, {expires: 180, domain: '.vatusa.' + parts[parts.length - 1]})
                 window.location = redirect + "?agreed"
               }
               else {
