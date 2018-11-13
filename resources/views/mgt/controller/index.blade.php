@@ -1,5 +1,65 @@
 @extends('layout')
 @section('title', 'Controller Management')
+
+@section('scripts')
+    <script>
+      $('.delete-log').click(function (e) {
+        e.preventDefault()
+
+        let a       = $(this),
+            spinner = a.next('i'),
+            action  = a.data('action'),
+            id      = a.data('id'),
+            tr      = $('tr#log-' + id),
+            content = tr.find('.log-content').html()
+        $('#delete-log-error').hide()
+        $('#delete-log-success').hide()
+        bootbox.confirm({
+          message : '<strong>Are you sure you want to delete the log entry?</strong><hr style="margin-top:10px;margin-bottom:10px;">' + content,
+          buttons : {
+            confirm: {
+              label    : '<i class="fa fa-remove"></i> Yes, delete',
+              className: 'btn-danger'
+            },
+            cancel : {
+              label    : 'No, go back',
+              className: 'btn-default'
+            }
+          },
+          callback: function (result) {
+            if (result) {
+              spinner.show()
+              $.ajax({
+                url : action,
+                type: 'DELETE'
+              }).success(function (result) {
+                spinner.hide()
+                if (result === '1') {
+                  $('#delete-log-success').fadeIn()
+                  setTimeout(function () {$('#delete-log-success').fadeOut()}, 3000)
+                  tr.remove()
+                }
+                else {
+                  $('#delete-log-error').fadeIn()
+                  setTimeout(function () {$('#delete-log-error').fadeOut()}, 3000)
+                }
+              }).error(function (result) {
+                spinner.hide()
+                $('#delete-log-error').fadeIn()
+                setTimeout(function () {$('#delete-log-error').fadeOut()}, 3000)
+              })
+            }
+          }
+        })
+
+      })
+
+      $('.sub-action-btn').click(function () {
+        $(this).attr('disabled', true).html('<i class="spinner-icon fa fa-spinner fa-spin"></i>')
+      })
+    </script>
+@endsection
+
 @section('content')
     <div class="container">
         <div class="panel panel-default">
@@ -11,7 +71,7 @@
                             <div class="col-md-4 text-right form-group">
                                 <input type="text" id="cidsearch" class="form-control" placeholder="CID">
                                 <button type="button" class="btn btn-primary" id="cidsearchbtn"><i
-                                            class="fa fa-search"></i></button>
+                                        class="fa fa-search"></i></button>
                             </div>
                         </form>
                     </div>
@@ -22,154 +82,185 @@
                     <li role="presentation" class="active"><a href="#csp" aria-controls="csp" role="tab"
                                                               data-toggle="tab">Summary</a></li>
                     @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
-                    <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab" data-toggle="tab">Ratings
-                            &amp; Transfers</a></li>
-                    <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
-                                               data-toggle="tab">Exams</a></li>
+                        <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab" data-toggle="tab">Ratings
+                                &amp; Transfers</a></li>
+                        <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
+                                                   data-toggle="tab">Exams</a></li>
                     @endif
                     <li role="presentation"><a href="#training" data-controls="training" role="tab"
                                                data-toggle="tab">Training</a></li>
                     <li role="presentation"><a href="#cbt" data-controls="cbt" role="tab"
                                                data-toggle="tab">CBT Progress</a></li>
                     @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
-                    <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
-                            Log</a></li>
-                    <li role="presentation"><a href="#tickets" aria-controls="tickets" role="tab" data-toggle="tab">Support
-                            Tickets</a></li>
-                    <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
-                                               data-toggle="tab">Roles</a></li>
+                        <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
+                                Log</a></li>
+                        <li role="presentation"><a href="#tickets" aria-controls="tickets" role="tab" data-toggle="tab">Support
+                                Tickets</a></li>
+                        <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
+                                                   data-toggle="tab">Roles</a></li>
                     @endif
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="csp"><br>
-                        <ol style="font-size: 110%;list-style-type: none;">
-                            <li><strong>{{$u->fname}} {{$u->lname}}</strong></li>
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff() ||
-                                \App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                <li>{{$u->email}} &nbsp; <a href="mailto:{{$u->email}}"><i
-                                                class="fa fa-envelope text-primary" style="font-size:80%"></i></a></li>
-                            @else
-                                <li>[Email Private] <a href="/mgt/mail/{{$u->cid}}"><i
-                                                class="fa fa-envelope text-primary"></i></a></li>
-                            @endif
-                            <li>{{$u->urating->short}} - {{$u->urating->long}}</li>
-                            <li>{{$u->facility}}
-                                - {{\App\Classes\Helper::facShtLng($u->facility)}}</li>
-                            <li>Member of {{$u->facility}} since {{ $u->facility_join }}</li>
-                            <li>Mentor?
-                                @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $u->facility))
-                                    <a href="/mgt/controller/{{$u->cid}}/mentor">{{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}</a>
-                                @else
-                                    {{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}
-                                @endif
-                            </li>
-                            <li>Last Activity Forum {{$u->lastActivityForum()}} days ago</li>
-                            <li>Last Activity Website {{$u->lastActivityWebsite()}} days ago</li>
-                            <li>Needs Basic ATC Exam?
-                                @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                    <a href="/mgt/controller/{{$u->cid}}/togglebasic">
-                                        @endif
-                                        @if ($u->flag_needbasic)
-                                            Yes
+                        @php $canViewChecks = \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff() @endphp
+                        @if($canViewChecks)
+                            <div class="row">
+                                <div class="col-md-4">@endif
+                                    <ol style="font-size: 110%;list-style-type: none;">
+                                        <li><strong>{{$u->fname}} {{$u->lname}}</strong></li>
+                                        @if(\App\Classes\RoleHelper::isVATUSAStaff() ||
+                                            \App\Classes\RoleHelper::isFacilitySeniorStaff())
+                                            <li>{{$u->email}} &nbsp; <a href="mailto:{{$u->email}}"><i
+                                                        class="fa fa-envelope text-primary"
+                                                        style="font-size:80%"></i></a>
+                                            </li>
                                         @else
-                                            No
+                                            <li>[Email Private] <a href="/mgt/mail/{{$u->cid}}"><i
+                                                        class="fa fa-envelope text-primary"></i></a></li>
                                         @endif
-                                        @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                    </a>
-                                @endif
-                            </li>
-                            @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
-                                $u->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $u->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
-                                <li>Rating Change <select id="ratingchange">
-                                        <option value="{{\App\Classes\Helper::ratingIntFromShort("C1")}}">C1 - Enroute
-                                            Controller
-                                        </option>
-                                        <option value="{{\App\Classes\Helper::ratingIntFromShort("C3")}}">C3 - Senior
-                                            Controller
-                                        </option>
-                                        <option value="{{\App\Classes\Helper::ratingIntFromShort("I1")}}">I1 -
-                                            Instructor
-                                        </option>
-                                        <option value="{{\App\Classes\Helper::ratingIntFromShort("I3")}}">I3 - Senior
-                                            Instructor
-                                        </option>
-                                    </select>
-                                    <button class="btn btn-info" id="ratingchangebtn">Save</button>
-                                    <span class="" id="ratingchangespan"></span></li>
-                                <script type="text/javascript">
-                                    $('#ratingchangebtn').click(function () {
-                                        $('#ratingchangespan').html("Saving...");
-                                        $.ajax({
-                                            url: '/mgt/controller/{{$u->cid}}/rating',
-                                            type: "POST",
-                                            data: {rating: $('#ratingchange').val()}
-                                        }).success(function () {
-                                            $('#ratingchangespan').html("Saved");
-                                            setTimeout(function () {
-                                                $('#ratingchangespan').html('')
-                                            }, 3000);
-                                        })
-                                            .error(function () {
-                                                $('#ratingchangespan').html("Error");
-                                                setTimeout(function () {
+                                        <li>
+                                            @if($u->flag_broadcastOptedIn)
+                                                <p class="text-success"><i class="fa fa-check"></i> Receiving Broadcast
+                                                    Emails</p>
+                                            @else
+                                                <p class="text-danger"><i class="fa fa-remove"></i> Not Receiving
+                                                    Broadcast
+                                                    Emails
+                                                </p>
+                                            @endif
+
+                                        </li>
+                                        <li>{{$u->urating->short}} - {{$u->urating->long}}</li>
+                                        <li>{{$u->facility}}
+                                            - {{\App\Classes\Helper::facShtLng($u->facility)}}</li>
+                                        <li>Member of {{$u->facility}} since {{ $u->facility_join }}</li>
+                                        <li>Mentor?
+                                            @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $u->facility))
+                                                <a href="/mgt/controller/{{$u->cid}}/mentor">{{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}</a>
+                                            @else
+                                                {{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}
+                                            @endif
+                                        </li>
+                                        <br>
+                                        <li>Last Activity Forum: {{$u->lastActivityForum()}} days ago</li>
+                                        <li>Last Activity Website: {{$u->lastActivityWebsite()}} days ago</li>
+                                        <br>
+                                        <li>Needs Basic ATC Exam?
+                                            @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                                <a href="/mgt/controller/{{$u->cid}}/togglebasic">
+                                                    @endif
+                                                    @if ($u->flag_needbasic)
+                                                        Yes
+                                                    @else
+                                                        No
+                                                    @endif
+                                                    @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                                </a>
+                                            @endif
+                                        </li>
+                                        <br>
+                                        @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
+                                            $u->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $u->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                            <li>Rating Change <select id="ratingchange">
+                                                    <option value="{{\App\Classes\Helper::ratingIntFromShort("C1")}}">C1
+                                                        -
+                                                        Enroute
+                                                        Controller
+                                                    </option>
+                                                    <option value="{{\App\Classes\Helper::ratingIntFromShort("C3")}}">C3
+                                                        -
+                                                        Senior
+                                                        Controller
+                                                    </option>
+                                                    <option value="{{\App\Classes\Helper::ratingIntFromShort("I1")}}">I1
+                                                        -
+                                                        Instructor
+                                                    </option>
+                                                    <option value="{{\App\Classes\Helper::ratingIntFromShort("I3")}}">I3
+                                                        -
+                                                        Senior
+                                                        Instructor
+                                                    </option>
+                                                </select>
+                                                <button class="btn btn-info" id="ratingchangebtn">Save</button>
+                                                <span class="" id="ratingchangespan"></span></li>
+                                            <script type="text/javascript">
+                                              $('#ratingchangebtn').click(function () {
+                                                $('#ratingchangespan').html('Saving...')
+                                                $.ajax({
+                                                  url : '/mgt/controller/{{$u->cid}}/rating',
+                                                  type: 'POST',
+                                                  data: {rating: $('#ratingchange').val()}
+                                                }).success(function () {
+                                                  $('#ratingchangespan').html('Saved')
+                                                  setTimeout(function () {
                                                     $('#ratingchangespan').html('')
-                                                }, 3000);
-                                            });
-                                    });
-                                </script>
-                            @endif
-                        </ol>
-                        @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
-                            <table class="table table-responsive table-striped">
-                                <thead>
-                                <tr>
-                                    <th style="width:100%;">Transfer eligibility checks</th>
-                                    <th>Pass/Fail</th>
-                                </tr>
-                                </thead>
-                                <tr>
-                                    <td>Is in VATUSA division?</td>
-                                    <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
-                                </tr>
-                                <tr>
-                                    <td>Need the Basic ATC Exam?</td>
-                                    <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes, <a href="/my/assignbasic">Request Exam</a></span>' !!}</td>
-                                </tr>
-                                <tr>
-                                    <td>90 days since last transfer?</td>
-                                    <td>{!! ($checks['90days'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!} {!! (isset($checks['days']))?"(".$checks['days']." days)":"" !!}</td>
-                                </tr>
-                                <tr>
-                                    <td>If first facility, within 30 days of joining?</td>
-                                    @if($checks['is_first'] == 0)
-                                        <td><span class="text-success">N/A</span></td>
-                                    @elseif($checks['initial'] == 1)
-                                        <td><i class="fa fa-check text-success"></i></td>
-                                    @else
-                                        <td><i class="fa fa-times text-danger"></i></td>
-                                    @endif
-                                </tr>
-                                <tr>
-                                    <td>Has it been at least 90 days since promotion to S1, S2 or S3?</td>
-                                    <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
-                                </tr>
-                                <tr>
-                                    <td>Does not hold a staff position at a facility?</td>
-                                    <td>{!! ($checks['staff'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
-                                </tr>
-                                <tr>
-                                    <td>Does not hold an I1 or I3 rating?</td>
-                                    <td>{!! ($checks['instructor'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
-                                </tr>
-                                <tr>
-                                    <td>Have pending transfers?</td>
-                                    <td>{!! ($checks['pending'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
-                                </tr>
-                                <tr>
-                                    <td>Are they eligible?</td>
-                                    <td>{!! ($eligible)?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
-                                </tr>
-                            </table>
+                                                  }, 3000)
+                                                })
+                                                  .error(function () {
+                                                    $('#ratingchangespan').html('Error')
+                                                    setTimeout(function () {
+                                                      $('#ratingchangespan').html('')
+                                                    }, 3000)
+                                                  })
+                                              })
+                                            </script>
+                                        @endif
+                                    </ol>
+                                    @if($canViewChecks)</div>
+                                <div class="col-md-8" style="border-left: 1px solid #ccc6;">
+                                    <table class="table table-responsive table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th style="width:100%;">Transfer eligibility checks</th>
+                                            <th>Pass/Fail</th>
+                                        </tr>
+                                        </thead>
+                                        <tr>
+                                            <td>Is in VATUSA division?</td>
+                                            <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Need the Basic ATC Exam?</td>
+                                            <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes, <a href="/my/assignbasic">Request Exam</a></span>' !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>90 days since last transfer?</td>
+                                            <td>{!! ($checks['90days'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!} {!! (isset($checks['days']))?"(".$checks['days']." days)":"" !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>If first facility, within 30 days of joining?</td>
+                                            @if($checks['is_first'] == 0)
+                                                <td><span class="text-success">N/A</span></td>
+                                            @elseif($checks['initial'] == 1)
+                                                <td><i class="fa fa-check text-success"></i></td>
+                                            @else
+                                                <td><i class="fa fa-times text-danger"></i></td>
+                                            @endif
+                                        </tr>
+                                        <tr>
+                                            <td>Has it been at least 90 days since promotion to S1, S2 or S3?</td>
+                                            <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Does not hold a staff position at a facility?</td>
+                                            <td>{!! ($checks['staff'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Does not hold an I1 or I3 rating?</td>
+                                            <td>{!! ($checks['instructor'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Have pending transfers?</td>
+                                            <td>{!! ($checks['pending'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Are they eligible?</td>
+                                            <td>{!! ($eligible)?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
                         @endif
                     </div>
                     <div class="tab-pane" role="tabpanel" id="ratings">
@@ -191,7 +282,7 @@
                                             </td>
                                             <td class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
                                                 <i
-                                                        class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
+                                                    class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
                                             </td>
                                             <td>
                                                 <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->to) }}</strong>
@@ -225,8 +316,8 @@
                                     @if(\App\Classes\RoleHelper::isVATUSAStaff())
                                         <tr>
                                             <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
-                                                            id="waivertogglei"
-                                                            class="fa {{(($u->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
+                                                        id="waivertogglei"
+                                                        class="fa {{(($u->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
                                                 <a href="/mgt/err?cid={{$u->cid}}">Submit TR</a>
                                             </td>
                                         </tr>
@@ -248,7 +339,7 @@
                                         <tr style="text-align: center">
                                             <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
                                             <td style="width: 70%; text-align: left"><a
-                                                        href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a></td>
+                                                    href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a></td>
                                             <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
                                                 %
                                             </td>
@@ -262,39 +353,40 @@
                     <div class="tab-pane" role="tabpanel" id="cbt">
                         <h3>CBT Results</h3>
                         <div class="panel-group" id="accordion">
-                        @foreach(\App\TrainingBlock::where('visible',1)->orderBy('facility')->orderBy('order')->get() as $block)
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <a href="#collapse{{$block->id}}" data-parent="#accordion" data-toggle="collapse">({{$block->facility}}) {{$block->name}}</a>
-                                </h3>
-                            </div>
-                            <div id="collapse{{$block->id}}" class="panel-collapse collapse">
-                                <table class="table table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: auto;">Chapter</th>
-                                            <th style="width: 100px;">Compl</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($block->chapters as $chapter)
+                            @foreach(\App\TrainingBlock::where('visible',1)->orderBy('facility')->orderBy('order')->get() as $block)
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <a href="#collapse{{$block->id}}" data-parent="#accordion"
+                                               data-toggle="collapse">({{$block->facility}}) {{$block->name}}</a>
+                                        </h3>
+                                    </div>
+                                    <div id="collapse{{$block->id}}" class="panel-collapse collapse">
+                                        <table class="table table-responsive">
+                                            <thead>
                                             <tr>
-                                                <td>{{$chapter->name}}</td>
-                                                <td>
-                                                    @if(\App\Classes\CBTHelper::isComplete($chapter->id, $u->cid))
-                                                        <i class="text-success fa fa-check"></i>
-                                                    @else
-                                                        <i class="text-danger fa fa-times"></i>
-                                                    @endif
-                                                </td>
+                                                <th style="width: auto;">Chapter</th>
+                                                <th style="width: 100px;">Compl</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        @endforeach
+                                            </thead>
+                                            <tbody>
+                                            @foreach($block->chapters as $chapter)
+                                                <tr>
+                                                    <td>{{$chapter->name}}</td>
+                                                    <td>
+                                                        @if(\App\Classes\CBTHelper::isComplete($chapter->id, $u->cid))
+                                                            <i class="text-success fa fa-check"></i>
+                                                        @else
+                                                            <i class="text-danger fa fa-times"></i>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                     <div class="tab-pane" role="tabpanel" id="actions">
@@ -305,6 +397,15 @@
                                 </h3>
                             </div>
                             <div class="panel-body">
+                                @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                    <div class="alert alert-success" id="delete-log-success" style="display:none;">
+                                        <strong><i class='fa fa-check'></i> Success! </strong> The log entry has been
+                                        deleted.
+                                    </div>
+                                    <div class="alert alert-danger" id="delete-log-error" style="display:none;"><strong><i
+                                                class='fa fa-check'></i> Error! </strong> Could not delete log entry.
+                                    </div>
+                                @endif
                                 <form class="form-horizontal" action="{{secure_url("/mgt/action/add")}}" method="POST">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="to" value="{{ $u->cid }}">
@@ -317,17 +418,34 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
-                                            <input type="submit" class="btn btn-success" value="Submit"/>
+                                            <button type="submit" class="btn btn-success sub-action-btn" value="submit">
+                                                <i class="fa fa-check"></i> Submit
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
                                 <hr>
                                 <table class="table table-striped">
                                     @foreach(\App\Actions::where('to', $u->cid)->orderby('id', 'desc')->get() as $a)
-                                        <tr>
+                                        <tr id="log-{{ $a->id }}">
                                             <td style="width:10%"><strong>{{substr($a->created_at, 0,10)}}</strong>
                                             </td>
-                                            <td>{{$a->log}}</td>
+                                            <td class="log-content">{{$a->log}}
+                                                @php $name = \App\Classes\Helper::nameFromCID($a->from) @endphp
+                                                @if($a->from && !str_contains($a->log, "by $name"))
+                                                    <p class="help-block">Added
+                                                        by {{ $name }}</p>
+                                                @endif</td>
+                                            @if(App\Classes\RoleHelper::isVATUSAStaff() && $a->from &&
+                                            !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
+                                                <td><a data-id="{{ $a->id }}"
+                                                       href="#"
+                                                       data-action="{{ url('mgt/deleteActionLog/'.$a->id) }}"
+                                                       class="text-danger delete-log"><i class="fa fa-remove"></i></a>
+                                                    <i class="spinner-icon fa fa-spinner fa-spin"
+                                                       style="display:none;"></i>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </table>
@@ -342,52 +460,53 @@
     </div>
 
     <script>
-        function viewXfer(id) {
-            $.get("{{secure_url('mgt/ajax/transfer/reason')}}", {id: id}, function (data) {
-                bootbox.alert(data);
-            });
+      function viewXfer (id) {
+        $.get("{{secure_url('mgt/ajax/transfer/reason')}}", {id: id}, function (data) {
+          bootbox.alert(data)
+        })
+      }
+
+      $('#waiverToggle').click(function () {
+        $.ajax({
+          url : '/mgt/controller/{{$u->cid}}/transferwaiver',
+          type: 'GET'
+        }).success(function (data) {
+          if (data == '1') {
+            $('#waivertogglei').attr('class', 'fa fa-toggle-on text-success')
+          } else {
+            $('#waivertogglei').attr('class', 'fa fa-toggle-off text-danger')
+          }
+        })
+      })
+      $('#cidsearchbtn').click(function () {
+        var cid = $('#cidsearch').val()
+        cid = cid.replace(/\s+/g, '')
+        $('#cidsearch').val(cid)
+
+        if (isNaN($('#cidsearch').val())) {
+          bootbox.alert('CID must be numbers only')
+          return
         }
-        $('#waiverToggle').click(function () {
-            $.ajax({
-                url: '/mgt/controller/{{$u->cid}}/transferwaiver',
-                type: 'GET'
-            }).success(function (data) {
-                if (data == "1") {
-                    $('#waivertogglei').attr("class", "fa fa-toggle-on text-success");
-                } else {
-                    $('#waivertogglei').attr('class', 'fa fa-toggle-off text-danger');
-                }
-            });
-        });
-        $('#cidsearchbtn').click(function () {
-            var cid = $('#cidsearch').val();
-            cid = cid.replace(/\s+/g, '');
-            $('#cidsearch').val(cid);
+        window.location = '/mgt/controller/' + cid
+      })
+      $('#cidsearch').keyup(function (e) {
+        if (e.keyCode == 13) {
+          $('#cidsearchbtn').click()
+          return false
+        }
+      })
 
-            if (isNaN($('#cidsearch').val())) {
-                bootbox.alert("CID must be numbers only");
-                return;
-            }
-            window.location = "/mgt/controller/" + cid;
-        });
-        $('#cidsearch').keyup(function (e) {
-            if (e.keyCode == 13) {
-                $('#cidsearchbtn').click()
-                return false;
-            }
-        });
-
-        $(document).on('click','.panel-heading span.clickable', function(e) {
-            if (!$(this).hasClass('panel-collapsed')) {
-                $(this).parents('.panel').find('.panel-body').slideUp();
-                $(this).addClass('panel-collapsed');
-                $(this).find('i').removeClass('glyphicon-chevon-up').addClass('glyphicon-chevron-down');
-            } else {
-                $(this).parents('.panel').find('.panel-body').slideDown();
-                $(this).removeClass('panel-collapsed');
-                $(this).find('i').addClass('glyphicon-chevon-down').addClass('glyphicon-chevron-up');
-            }
-        });
+      $(document).on('click', '.panel-heading span.clickable', function (e) {
+        if (!$(this).hasClass('panel-collapsed')) {
+          $(this).parents('.panel').find('.panel-body').slideUp()
+          $(this).addClass('panel-collapsed')
+          $(this).find('i').removeClass('glyphicon-chevon-up').addClass('glyphicon-chevron-down')
+        } else {
+          $(this).parents('.panel').find('.panel-body').slideDown()
+          $(this).removeClass('panel-collapsed')
+          $(this).find('i').addClass('glyphicon-chevon-down').addClass('glyphicon-chevron-up')
+        }
+      })
     </script>
 
 
