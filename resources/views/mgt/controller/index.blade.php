@@ -11,7 +11,7 @@
                             <div class="col-md-4 text-right form-group">
                                 <input type="text" id="cidsearch" class="form-control" placeholder="CID">
                                 <button type="button" class="btn btn-primary" id="cidsearchbtn"><i
-                                            class="fa fa-search"></i></button>
+                                        class="fa fa-search"></i></button>
                             </div>
                         </form>
                     </div>
@@ -22,22 +22,22 @@
                     <li role="presentation" class="active"><a href="#csp" aria-controls="csp" role="tab"
                                                               data-toggle="tab">Summary</a></li>
                     @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
-                    <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab" data-toggle="tab">Ratings
-                            &amp; Transfers</a></li>
-                    <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
-                                               data-toggle="tab">Exams</a></li>
+                        <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab" data-toggle="tab">Ratings
+                                &amp; Transfers</a></li>
+                        <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
+                                                   data-toggle="tab">Exams</a></li>
                     @endif
                     <li role="presentation"><a href="#training" data-controls="training" role="tab"
                                                data-toggle="tab">Training</a></li>
                     <li role="presentation"><a href="#cbt" data-controls="cbt" role="tab"
                                                data-toggle="tab">CBT Progress</a></li>
                     @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
-                    <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
-                            Log</a></li>
-                    <li role="presentation"><a href="#tickets" aria-controls="tickets" role="tab" data-toggle="tab">Support
-                            Tickets</a></li>
-                    <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
-                                               data-toggle="tab">Roles</a></li>
+                        <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
+                                Log</a></li>
+                        <li role="presentation"><a href="#tickets" aria-controls="tickets" role="tab" data-toggle="tab">Support
+                                Tickets</a></li>
+                        <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
+                                                   data-toggle="tab">Roles</a></li>
                     @endif
                 </ul>
                 <div class="tab-content">
@@ -47,11 +47,19 @@
                             @if(\App\Classes\RoleHelper::isVATUSAStaff() ||
                                 \App\Classes\RoleHelper::isFacilitySeniorStaff())
                                 <li>{{$u->email}} &nbsp; <a href="mailto:{{$u->email}}"><i
-                                                class="fa fa-envelope text-primary" style="font-size:80%"></i></a></li>
+                                            class="fa fa-envelope text-primary" style="font-size:80%"></i></a></li>
                             @else
                                 <li>[Email Private] <a href="/mgt/mail/{{$u->cid}}"><i
-                                                class="fa fa-envelope text-primary"></i></a></li>
+                                            class="fa fa-envelope text-primary"></i></a></li>
                             @endif
+                            <li>
+                                @if($u->flag_broadcastOptedIn)
+                                    <p class="text-success"><i class="fa fa-check"></i> Receiving Broadcast Emails</p>
+                                @else
+                                    <p class="text-danger"><i class="fa fa-remove"></i> Not Receiving Broadcast Emails</p>
+                                @endif
+
+                            </li>
                             <li>{{$u->urating->short}} - {{$u->urating->long}}</li>
                             <li>{{$u->facility}}
                                 - {{\App\Classes\Helper::facShtLng($u->facility)}}</li>
@@ -63,8 +71,10 @@
                                     {{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}
                                 @endif
                             </li>
-                            <li>Last Activity Forum {{$u->lastActivityForum()}} days ago</li>
-                            <li>Last Activity Website {{$u->lastActivityWebsite()}} days ago</li>
+                            <br>
+                            <li>Last Activity Forum: {{$u->lastActivityForum()}} days ago</li>
+                            <li>Last Activity Website: {{$u->lastActivityWebsite()}} days ago</li>
+                            <br>
                             <li>Needs Basic ATC Exam?
                                 @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                     <a href="/mgt/controller/{{$u->cid}}/togglebasic">
@@ -78,6 +88,7 @@
                                     </a>
                                 @endif
                             </li>
+                            <br>
                             @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
                                 $u->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $u->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
                                 <li>Rating Change <select id="ratingchange">
@@ -97,25 +108,25 @@
                                     <button class="btn btn-info" id="ratingchangebtn">Save</button>
                                     <span class="" id="ratingchangespan"></span></li>
                                 <script type="text/javascript">
-                                    $('#ratingchangebtn').click(function () {
-                                        $('#ratingchangespan').html("Saving...");
-                                        $.ajax({
-                                            url: '/mgt/controller/{{$u->cid}}/rating',
-                                            type: "POST",
-                                            data: {rating: $('#ratingchange').val()}
-                                        }).success(function () {
-                                            $('#ratingchangespan').html("Saved");
-                                            setTimeout(function () {
-                                                $('#ratingchangespan').html('')
-                                            }, 3000);
-                                        })
-                                            .error(function () {
-                                                $('#ratingchangespan').html("Error");
-                                                setTimeout(function () {
-                                                    $('#ratingchangespan').html('')
-                                                }, 3000);
-                                            });
-                                    });
+                                  $('#ratingchangebtn').click(function () {
+                                    $('#ratingchangespan').html('Saving...')
+                                    $.ajax({
+                                      url : '/mgt/controller/{{$u->cid}}/rating',
+                                      type: 'POST',
+                                      data: {rating: $('#ratingchange').val()}
+                                    }).success(function () {
+                                      $('#ratingchangespan').html('Saved')
+                                      setTimeout(function () {
+                                        $('#ratingchangespan').html('')
+                                      }, 3000)
+                                    })
+                                      .error(function () {
+                                        $('#ratingchangespan').html('Error')
+                                        setTimeout(function () {
+                                          $('#ratingchangespan').html('')
+                                        }, 3000)
+                                      })
+                                  })
                                 </script>
                             @endif
                         </ol>
@@ -191,7 +202,7 @@
                                             </td>
                                             <td class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
                                                 <i
-                                                        class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
+                                                    class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
                                             </td>
                                             <td>
                                                 <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->to) }}</strong>
@@ -225,8 +236,8 @@
                                     @if(\App\Classes\RoleHelper::isVATUSAStaff())
                                         <tr>
                                             <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
-                                                            id="waivertogglei"
-                                                            class="fa {{(($u->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
+                                                        id="waivertogglei"
+                                                        class="fa {{(($u->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
                                                 <a href="/mgt/err?cid={{$u->cid}}">Submit TR</a>
                                             </td>
                                         </tr>
@@ -248,7 +259,7 @@
                                         <tr style="text-align: center">
                                             <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
                                             <td style="width: 70%; text-align: left"><a
-                                                        href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a></td>
+                                                    href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a></td>
                                             <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
                                                 %
                                             </td>
@@ -262,39 +273,40 @@
                     <div class="tab-pane" role="tabpanel" id="cbt">
                         <h3>CBT Results</h3>
                         <div class="panel-group" id="accordion">
-                        @foreach(\App\TrainingBlock::where('visible',1)->orderBy('facility')->orderBy('order')->get() as $block)
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    <a href="#collapse{{$block->id}}" data-parent="#accordion" data-toggle="collapse">({{$block->facility}}) {{$block->name}}</a>
-                                </h3>
-                            </div>
-                            <div id="collapse{{$block->id}}" class="panel-collapse collapse">
-                                <table class="table table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: auto;">Chapter</th>
-                                            <th style="width: 100px;">Compl</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($block->chapters as $chapter)
+                            @foreach(\App\TrainingBlock::where('visible',1)->orderBy('facility')->orderBy('order')->get() as $block)
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <a href="#collapse{{$block->id}}" data-parent="#accordion"
+                                               data-toggle="collapse">({{$block->facility}}) {{$block->name}}</a>
+                                        </h3>
+                                    </div>
+                                    <div id="collapse{{$block->id}}" class="panel-collapse collapse">
+                                        <table class="table table-responsive">
+                                            <thead>
                                             <tr>
-                                                <td>{{$chapter->name}}</td>
-                                                <td>
-                                                    @if(\App\Classes\CBTHelper::isComplete($chapter->id, $u->cid))
-                                                        <i class="text-success fa fa-check"></i>
-                                                    @else
-                                                        <i class="text-danger fa fa-times"></i>
-                                                    @endif
-                                                </td>
+                                                <th style="width: auto;">Chapter</th>
+                                                <th style="width: 100px;">Compl</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        @endforeach
+                                            </thead>
+                                            <tbody>
+                                            @foreach($block->chapters as $chapter)
+                                                <tr>
+                                                    <td>{{$chapter->name}}</td>
+                                                    <td>
+                                                        @if(\App\Classes\CBTHelper::isComplete($chapter->id, $u->cid))
+                                                            <i class="text-success fa fa-check"></i>
+                                                        @else
+                                                            <i class="text-danger fa fa-times"></i>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                     <div class="tab-pane" role="tabpanel" id="actions">
@@ -342,52 +354,53 @@
     </div>
 
     <script>
-        function viewXfer(id) {
-            $.get("{{secure_url('mgt/ajax/transfer/reason')}}", {id: id}, function (data) {
-                bootbox.alert(data);
-            });
+      function viewXfer (id) {
+        $.get("{{secure_url('mgt/ajax/transfer/reason')}}", {id: id}, function (data) {
+          bootbox.alert(data)
+        })
+      }
+
+      $('#waiverToggle').click(function () {
+        $.ajax({
+          url : '/mgt/controller/{{$u->cid}}/transferwaiver',
+          type: 'GET'
+        }).success(function (data) {
+          if (data == '1') {
+            $('#waivertogglei').attr('class', 'fa fa-toggle-on text-success')
+          } else {
+            $('#waivertogglei').attr('class', 'fa fa-toggle-off text-danger')
+          }
+        })
+      })
+      $('#cidsearchbtn').click(function () {
+        var cid = $('#cidsearch').val()
+        cid = cid.replace(/\s+/g, '')
+        $('#cidsearch').val(cid)
+
+        if (isNaN($('#cidsearch').val())) {
+          bootbox.alert('CID must be numbers only')
+          return
         }
-        $('#waiverToggle').click(function () {
-            $.ajax({
-                url: '/mgt/controller/{{$u->cid}}/transferwaiver',
-                type: 'GET'
-            }).success(function (data) {
-                if (data == "1") {
-                    $('#waivertogglei').attr("class", "fa fa-toggle-on text-success");
-                } else {
-                    $('#waivertogglei').attr('class', 'fa fa-toggle-off text-danger');
-                }
-            });
-        });
-        $('#cidsearchbtn').click(function () {
-            var cid = $('#cidsearch').val();
-            cid = cid.replace(/\s+/g, '');
-            $('#cidsearch').val(cid);
+        window.location = '/mgt/controller/' + cid
+      })
+      $('#cidsearch').keyup(function (e) {
+        if (e.keyCode == 13) {
+          $('#cidsearchbtn').click()
+          return false
+        }
+      })
 
-            if (isNaN($('#cidsearch').val())) {
-                bootbox.alert("CID must be numbers only");
-                return;
-            }
-            window.location = "/mgt/controller/" + cid;
-        });
-        $('#cidsearch').keyup(function (e) {
-            if (e.keyCode == 13) {
-                $('#cidsearchbtn').click()
-                return false;
-            }
-        });
-
-        $(document).on('click','.panel-heading span.clickable', function(e) {
-            if (!$(this).hasClass('panel-collapsed')) {
-                $(this).parents('.panel').find('.panel-body').slideUp();
-                $(this).addClass('panel-collapsed');
-                $(this).find('i').removeClass('glyphicon-chevon-up').addClass('glyphicon-chevron-down');
-            } else {
-                $(this).parents('.panel').find('.panel-body').slideDown();
-                $(this).removeClass('panel-collapsed');
-                $(this).find('i').addClass('glyphicon-chevon-down').addClass('glyphicon-chevron-up');
-            }
-        });
+      $(document).on('click', '.panel-heading span.clickable', function (e) {
+        if (!$(this).hasClass('panel-collapsed')) {
+          $(this).parents('.panel').find('.panel-body').slideUp()
+          $(this).addClass('panel-collapsed')
+          $(this).find('i').removeClass('glyphicon-chevon-up').addClass('glyphicon-chevron-down')
+        } else {
+          $(this).parents('.panel').find('.panel-body').slideDown()
+          $(this).removeClass('panel-collapsed')
+          $(this).find('i').addClass('glyphicon-chevon-down').addClass('glyphicon-chevron-up')
+        }
+      })
     </script>
 
 

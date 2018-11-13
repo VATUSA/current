@@ -42,9 +42,7 @@ class Authenticate {
 			{
 				return redirect()->guest('login');
 			}
-		} else {
-
-        }
+		}
 
 		return $next($request);
 	}
