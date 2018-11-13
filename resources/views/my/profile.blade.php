@@ -11,7 +11,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ url("/my/profile/toggleBroadcast") }}"
+          url : "{{ secure_url("/my/profile/toggleBroadcast") }}"
         }).success(function (result) {
           spinner.hide()
           if (result === '1') {
