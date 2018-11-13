@@ -435,17 +435,19 @@
                                                 @if($a->from && !str_contains($a->log, "by $name"))
                                                     <p class="help-block">Added
                                                         by {{ $name }}</p>
-                                                @endif</td>
+                                                @endif</td><td>
                                             @if(App\Classes\RoleHelper::isVATUSAStaff() && $a->from &&
                                             !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
-                                                <td><a data-id="{{ $a->id }}"
+                                                <a data-id="{{ $a->id }}"
                                                        href="#"
-                                                       data-action="{{ url('mgt/deleteActionLog/'.$a->id) }}"
+                                                       data-action="{{ secure_url('mgt/deleteActionLog/'.$a->id) }}"
                                                        class="text-danger delete-log"><i class="fa fa-remove"></i></a>
                                                     <i class="spinner-icon fa fa-spinner fa-spin"
                                                        style="display:none;"></i>
-                                                </td>
+                                                
+                                            @else &nbsp;
                                             @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </table>
