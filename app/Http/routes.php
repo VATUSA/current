@@ -262,6 +262,8 @@ Route::group(['domain' => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : ((en
     Route::post('/mgt/checklists/{id}', 'MgtController@postChecklist')->where('id', '[0-9]+');
     Route::delete('/mgt/checklists/{id}', 'MgtController@deleteChecklist')->where('id', '[0-9]+');
 
+    Route::delete('/mgt/deleteActionLog/{log}', 'MgtController@deleteActionLog')->where('id', '[0-9]+');
+
     Route::get('/mgt/tmu', 'TMUController@getMgtIndex');
     Route::get('/mgt/tmu/{fac}', 'TMUController@getMgtIndex');
     Route::get('/mgt/tmu/{fac}/colors', 'TMUController@getMgtColors');

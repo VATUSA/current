@@ -213,7 +213,7 @@
                                     <li><a href="/my/assignbasic">Request Basic ATC Exam</a></li>
                                 @endif
                                 <li role="separator" class="divider"></li>
-                                <li><a href="https://login.vatusa.net/?logout">Logout</a></li>
+                                <li><a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : "//login.vatusa.net/?logout" }}">Logout</a></li>
                             </ul>
                         </li>
                         @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isMentor())
@@ -253,7 +253,7 @@
 
 
                     @else
-                        <li><a href="{{ (env('APP_ENV', 'prod') == "dev" ? "http://api.vatusa.dev/v2/llll" : url('login'))}}"><i class="fa fa-user"></i> Login</a></li>
+                        <li><a href="#" id="login-link" data-action="{{ url('login') }}"><i class="fa fa-user"></i> Login</a></li>
                     @endif
                 </ul>
             </div>
@@ -271,12 +271,12 @@
 <div class="container">
     @if(session('error'))
         <div class="alert alert-danger">
-            <strong>Error</strong> {!! session('error') !!}
+            <strong><i class="fa fa-warning"></i> Error!</strong> {!! session('error') !!}
         </div>
     @endif
     @if(session('success'))
         <div class="alert alert-success">
-            <strong>Success</strong> {!! session('success') !!}
+            <strong><i class="fa fa-check"></i> Success!</strong> {!! session('success') !!}
         </div>
     @endif
     @if (isset($errors) && count($errors) > 0)
@@ -308,15 +308,16 @@
 <footer>
     <div class="container">
         <hr>
-        <p>Copyright &copy; 2016{{ (date("Y")>2016)?"-".date("Y"):"" }} VATUSA - United States Division, VATSIM. All
+        <p>Copyright &copy; 2016-{{ date("Y") }} VATUSA - United States Division, VATSIM. All
             rights reserved. Any and all content on this website are for use with the Virtual Air Traffic Simulation
             Network (VATSIM) and may not be used for real-world navigation or aviation purposes and doing so could be a
             violation of federal law.</p>
-        <p>{!! \App\Classes\Helper::version() !!} - <a href="/info/privacy">Privacy Policy</a></p>
+        <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i class="fa fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/js/bootbox.min.js"></script>
 <script src="/js/jquery-ui.min.js"></script>
 <script src="/js/vatusa.js"></script>
