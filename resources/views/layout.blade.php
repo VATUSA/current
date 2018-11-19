@@ -169,6 +169,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-expanded="false">Support <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
+                                <li><a href="https://status.vatusa.net">System Status</a></li>
                                 <li><a href="/help/kb">Knowledgebase/FAQ</a></li>
                                 <li><a href="/help/ticket/new">Open New Ticket</a></li>
                                 <li><a href="/help/ticket/mine">My Tickets</a></li>
