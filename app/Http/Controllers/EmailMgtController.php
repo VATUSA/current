@@ -91,7 +91,7 @@ class EmailMgtController extends Controller
         $single = $request->single;
 
         if((empty($rcpts) && empty($single)) || empty($subj) || empty($msg))
-            return back()->with('error', 'All fields are required.');
+            return back()->with('broadcastError', 'All fields are required.');
 
         // Send to single person.
         if (empty($rcpts) && !empty($single)) {
@@ -164,7 +164,7 @@ class EmailMgtController extends Controller
                     if(EmailHelper::isOptedIn($f->cid)) $emails[] = Helper::emailFromCID($f->cid);
                 }
             } else {
-                foreach (User::where('facility', $rcpts)->where('flag_broadcastOptedIn')->get() as $u) {
+                foreach (User::where('facility', $rcpts)->where('flag_broadcastOptedIn', true)->get() as $u) {
                     $emails[] = $u->email;
                 }
             }

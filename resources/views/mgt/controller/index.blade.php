@@ -54,8 +54,10 @@
 
       })
 
-      $('.sub-action-btn').click(function () {
+      $('.sub-action-btn').click(function (e) {
+        e.preventDefault();
         $(this).attr('disabled', true).html('<i class="spinner-icon fa fa-spinner fa-spin"></i>')
+        $(this.form).submit();
       })
     </script>
 @endsection
