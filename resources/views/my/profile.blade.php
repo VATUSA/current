@@ -73,7 +73,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Recieve Broadcast Emails</label>
+                        <label class="col-sm-2 control-label">Receive Broadcast Emails</label>
                         <div class="col-sm-10">
                             <span id="toggleOptin" style="font-size:1.8em;">
                                 <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_broadcastOptedIn ? "on text-success" : "off text-danger"}} "></i>
