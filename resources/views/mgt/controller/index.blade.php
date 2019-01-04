@@ -63,7 +63,7 @@
         let icon        = $(this).find('i.toggle-icon'),
             currentlyOn = icon.hasClass('fa-toggle-on'),
             spinner     = $(this).find('i.spinner-icon'),
-            panel = $('#user-info-panel');
+            panel       = $('#user-info-panel')
 
         spinner.show()
         $.ajax({
@@ -88,19 +88,46 @@
           })
       })
 
-        $('#ratingchange').on('change', function() {
-          let hasFlag = $('#toggleStaffPrevent').find('i.toggle-icon').hasClass('fa-toggle-on')
-          if(this.value >= parseInt("{{\App\Classes\Helper::ratingIntFromShort("I1")}}") && hasFlag)
-            $('#ratingchange-warning').show();
-          else $('#ratingchange-warning').hide();
+      $('#toggleInsRole').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on'),
+            spinner     = $(this).find('i.spinner-icon')
+
+        spinner.show()
+        $.ajax({
+          type: 'POST',
+          url : "{{ secure_url("/mgt/controller/toggleInsRole") }}",
+          data: {cid: "{{ $u->cid }}"}
+        }).success(function (result) {
+          spinner.hide()
+          if (result === '1') {
+            //Success
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'danger' : 'success'))
+          } else {
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          }
         })
+          .error(function (result) {
+            spinner.hide()
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          })
+      })
+
+      $('#ratingchange').on('change', function () {
+        let hasFlag = $('#toggleStaffPrevent').find('i.toggle-icon').hasClass('fa-toggle-on')
+        if (this.value >= parseInt("{{\App\Classes\Helper::ratingIntFromShort("I1")}}") && hasFlag)
+          $('#ratingchange-warning').show()
+        else $('#ratingchange-warning').hide()
+      })
     </script>
 @endsection
 
 @section('content')
     <div class="container">
         <div
-            class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $u->flag_preventStaffAssign) ? "warning" : "default"}}" id="user-info-panel">
+            class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $u->flag_preventStaffAssign) ? "warning" : "default"}}"
+            id="user-info-panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <div class="row">
@@ -223,7 +250,11 @@
                                                         Instructor
                                                     </option>
                                                 </select>
-                                                <div class="alert alert-danger" id="ratingchange-warning" style="display:none;"><strong><i class="fa fa-warning"></i> Warning!</strong> This controller currently has the Prevent Staff Role Assignment flag.</div>
+                                                <div class="alert alert-danger" id="ratingchange-warning"
+                                                     style="display:none;"><strong><i class="fa fa-warning"></i>
+                                                        Warning!</strong> This controller currently has the Prevent
+                                                    Staff Role Assignment flag.
+                                                </div>
                                                 <button class="btn btn-info" id="ratingchangebtn">Save</button>
                                                 <span class="" id="ratingchangespan"></span></li>
                                             <script type="text/javascript">
@@ -527,6 +558,19 @@
                                             her a role.</p>
                                     </div>
                                 </div>
+                                @if($u->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Instructor</label>
+                                        <div class="col-sm-10">
+                            <span id="toggleInsRole" style="font-size:1.8em;">
+                                <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::isInstructor($u->cid, $u->facility) ? "on text-success" : "off text-danger"}} "></i>
+                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                            </span>
+                                            <p class="help-block">This will grant the supervisor Instructor
+                                                privileges.</p>
+                                        </div>
+                                    </div>
+                                @endif
                             @else
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
@@ -544,6 +588,21 @@
                                             her a role.</p>
                                     </div>
                                 </div>
+                                @if($u->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Instructor</label>
+                                        <div class="col-sm-10">
+                                            <p class="form-control-static" style="cursor:default;">
+                                                @if(\App\Classes\RoleHelper::isInstructor($u->cid)) <strong
+                                                    style="color:green">Yes</strong>
+                                                @else <strong style="color:#e72828">No</strong>
+                                                @endif
+                                            </p>
+                                            <p class="help-block">This will grant the supervisor Instructor
+                                                privileges.</p>
+                                        </div>
+                                    </div>
+                                @endif
                             @endif
                         </div>
                     @endif
