@@ -762,4 +762,30 @@ class MgtController extends Controller
 
         return "1";
     }
+
+    public function toggleInsRole(Request $request) {
+        $cid = $request->cid;
+
+        if (!RoleHelper::isVATUSAStaff()) {
+            abort(403);
+        }
+
+        $user = User::findOrFail($cid);
+        $facility = $user->facility;
+        $currentIns = Role::where("facility", $facility)->where("cid", $cid)->where("role", "INS");
+        if($currentIns->count()) {
+            //Delete role
+            $currentIns->first()->delete();
+        }
+        else {
+            //Create role
+            $role = new Role();
+            $role->cid = $cid;
+            $role->facility = $facility;
+            $role->role = "INS";
+            $role->save();
+        }
+
+        return "1";
+    }
 }
