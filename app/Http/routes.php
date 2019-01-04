@@ -280,6 +280,7 @@ Route::group(['domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : 
     Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
     Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
     Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
+    Route::post('/mgt/controller/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
     Route::get('/mgt/err', 'MgtController@getERR');
     Route::post('/mgt/err', 'MgtController@postERR');
     Route::get('/mgt/solo', 'MgtController@getSolo');
