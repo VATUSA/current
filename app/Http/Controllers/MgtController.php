@@ -724,6 +724,7 @@ class MgtController extends Controller
 
     /**
      * Delete user's log entry
+     *
      * @param int $log
      *
      * @return string
@@ -736,10 +737,28 @@ class MgtController extends Controller
         $log = Actions::findOrFail($log);
 
         if (!$log->from || str_contains($log->log,
-                'by ' . Helper::nameFromCID($log->from)))
+                'by ' . Helper::nameFromCID($log->from))) {
+            //By System, not deletable
             abort(422);
+        }
 
         $log->delete();
+
+        return "1";
+    }
+
+    public function toggleStaffPrevent(Request $request)
+    {
+        $cid = $request->cid;
+
+        if (!RoleHelper::isVATUSAStaff()) {
+            abort(403);
+        }
+
+        $user = User::findOrFail($cid);
+        $currentFlag = $user->flag_preventStaffAssign;
+        $user->flag_preventStaffAssign = !$currentFlag;
+        $user->save();
 
         return "1";
     }

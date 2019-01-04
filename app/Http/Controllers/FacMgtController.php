@@ -185,6 +185,7 @@ class FacMgtController extends Controller
         $un = $u->fname . ' ' . $u->lname;
 
         if ($u->facility == "ZZN") return "User is not part of VATUSA and is not eligible for staff positions";
+        if($u->flag_preventStaffAssign) return "This user is current not eligible for a staff position. Please contact VATUSA Staff for more information.";
 
         $fu = Facility::where('id', $facility)->first();
         $fu->$spos = $cid;
