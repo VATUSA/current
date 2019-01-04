@@ -6,7 +6,6 @@ use App\Checklists;
 use App\Classes\Helper;
 use App\Classes\PromoHelper;
 use App\Classes\SMFHelper;
-use App\ExamResults;
 use App\Promotions;
 use App\Role;
 use App\SoloCert;
@@ -33,7 +32,7 @@ class MgtController extends Controller
 
     public function getController($cid = null)
     {
-        if (!\App\Classes\RoleHelper::isMentor() && !\App\Classes\RoleHelper::isInstructor() && !\App\Classes\RoleHelper::isFacilityStaff() && !\App\Classes\RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilityStaff() && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
 
@@ -58,7 +57,7 @@ class MgtController extends Controller
 
     public function getControllerMentor($cid)
     {
-        if (!\App\Classes\RoleHelper::isVATUSAStaff() && !\App\Classes\RoleHelper::isFacilitySeniorStaff()) {
+        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff()) {
             return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
         }
 
@@ -97,7 +96,7 @@ class MgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!\App\Classes\RoleHelper::isInstructor() && !\App\Classes\RoleHelper::isFacilityStaff() && !\App\Classes\RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilityStaff() && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
 
@@ -119,7 +118,7 @@ class MgtController extends Controller
         if (!$request->ajax()) {
             abort(401);
         }
-        if (!\App\Classes\RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::isVATUSAStaff()) {
             abort(500);
         }
 
@@ -127,7 +126,7 @@ class MgtController extends Controller
         if (!$user) {
             abort(404);
         }
-        if ($user->rating < \App\Classes\Helper::ratingIntFromShort("C1") || $user->rating > \App\Classes\Helper::ratingIntFromShort("I3")) {
+        if ($user->rating < Helper::ratingIntFromShort("C1") || $user->rating > Helper::ratingIntFromShort("I3")) {
             abort(401);
         }
 
@@ -145,8 +144,9 @@ class MgtController extends Controller
         $promo->position = "n/a";
         $promo->save();
 
-        if(env('APP_ENV', 'dev') !== "dev")
+        if (env('APP_ENV', 'dev') != "dev") {
             \App\Classes\CertHelper::changeRating($cid, $request->input('rating'), true);
+        }
 
         echo "1";
 
@@ -158,7 +158,7 @@ class MgtController extends Controller
         if (!$request->ajax()) {
             abort(401);
         }
-        if (!\App\Classes\RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::isVATUSAStaff()) {
             abort(500);
         }
 
@@ -764,7 +764,8 @@ class MgtController extends Controller
         return "1";
     }
 
-    public function toggleInsRole(Request $request) {
+    public function toggleInsRole(Request $request)
+    {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -774,11 +775,10 @@ class MgtController extends Controller
         $user = User::findOrFail($cid);
         $facility = $user->facility;
         $currentIns = Role::where("facility", $facility)->where("cid", $cid)->where("role", "INS");
-        if($currentIns->count()) {
+        if ($currentIns->count()) {
             //Delete role
             $currentIns->first()->delete();
-        }
-        else {
+        } else {
             //Create role
             $role = new Role();
             $role->cid = $cid;

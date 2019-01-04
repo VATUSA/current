@@ -25,7 +25,7 @@ class FacMgtController extends Controller
 
 
     public function getIndex($fac = null) {
-        if (!RoleHelper::isMentor() && !\App\Classes\RoleHelper::isInstructor() && !\App\Classes\RoleHelper::isFacilityStaff() && !\App\Classes\RoleHelper::isVATUSAStaff())
+        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilityStaff() && !RoleHelper::isVATUSAStaff())
             abort(401);
 
         if ($fac === null) {
@@ -38,7 +38,7 @@ class FacMgtController extends Controller
         if ($fac == "Winterfell") return view('eastereggs.winterfell');
 
         // Mentor-only users can only view their facility
-        if (RoleHelper::isMentor() && !(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
+        if (RoleHelper::isMentor() && !(RoleHelper::isFacilityStaff() || RoleHelper::isInstructor()))
             $fac = \Auth::user()->facility;
 
         $facility = Facility::find($fac);
@@ -195,7 +195,7 @@ class FacMgtController extends Controller
             $uc = User::where('cid', $cid)->first();
             $uc->addToFacility($facility);
 
-            $tr = new \App\Transfers;
+            $tr = new Transfers;
             $tr->cid = $cid;
             $tr->reason = "Auto Transfer: Controller set as staff.";
             $tr->to = $facility;
@@ -329,9 +329,9 @@ class FacMgtController extends Controller
         //if (!RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "ATM") && !RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
 
         if (isset($_REQUEST['id'])) {
-            $t = \App\Transfers::where('id', $_REQUEST['id'])->count();
+            $t = Transfers::where('id', $_REQUEST['id'])->count();
             if ($t) {
-                $t = \App\Transfers::where('id', $_REQUEST['id'])->first();
+                $t = Transfers::where('id', $_REQUEST['id'])->first();
                 return $t->reason;
             }
         }
