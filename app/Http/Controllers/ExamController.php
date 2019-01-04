@@ -32,9 +32,9 @@ class ExamController
         if (!$result) abort(404);
 
         if (
-            !(\App\Classes\RoleHelper::isInstructor() ||
-                \App\Classes\RoleHelper::isFacilitySeniorStaff() ||
-                \App\Classes\RoleHelper::isVATUSAStaff())
+            !(RoleHelper::isInstructor() ||
+                RoleHelper::isFacilitySeniorStaff() ||
+                RoleHelper::isVATUSAStaff())
             && $result->cid != \Auth::user()->cid
         ) abort(401);
 
