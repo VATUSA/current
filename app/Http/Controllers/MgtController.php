@@ -145,7 +145,8 @@ class MgtController extends Controller
         $promo->position = "n/a";
         $promo->save();
 
-        \App\Classes\CertHelper::changeRating($cid, $request->input('rating'), true);
+        if(env('APP_ENV', 'dev') !== "dev")
+            \App\Classes\CertHelper::changeRating($cid, $request->input('rating'), true);
 
         echo "1";
 
