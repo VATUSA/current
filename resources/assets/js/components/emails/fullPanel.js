@@ -6,6 +6,7 @@ const fullPanel = (data) => (
     </div>
     <div class="form-group">
       <label for="pass_${data.email.replace(/[@\\.]/g, '')}">Password:</label>
+      <p class="help-block">Must be at least 6 characters</p>
       <input type="password" class="form-control" id="password_${data.email.replace(/[@\-.]/g, '')}">
     </div>
     <div class="form-group">

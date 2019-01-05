@@ -38,8 +38,7 @@
                   $('#delete-log-success').fadeIn()
                   setTimeout(function () {$('#delete-log-success').fadeOut()}, 3000)
                   tr.remove()
-                }
-                else {
+                } else {
                   $('#delete-log-error').fadeIn()
                   setTimeout(function () {$('#delete-log-error').fadeOut()}, 3000)
                 }
@@ -55,16 +54,80 @@
       })
 
       $('.sub-action-btn').click(function (e) {
-        e.preventDefault();
+        e.preventDefault()
         $(this).attr('disabled', true).html('<i class="spinner-icon fa fa-spinner fa-spin"></i>')
-        $(this.form).submit();
+        $(this.form).submit()
+      })
+
+      $('#toggleStaffPrevent').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on'),
+            spinner     = $(this).find('i.spinner-icon'),
+            panel       = $('#user-info-panel')
+
+        spinner.show()
+        $.ajax({
+          type: 'POST',
+          url : "{{ secure_url("/mgt/controller/toggleStaffPrevent") }}",
+          data: {cid: "{{ $u->cid }}"}
+        }).success(function (result) {
+          spinner.hide()
+          if (result === '1') {
+            //Success
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'info' : 'danger'))
+            panel.removeClass(currentlyOn ? 'panel-warning' : 'panel-default')
+            panel.addClass(currentlyOn ? 'panel-default' : 'panel-warning')
+          } else {
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          }
+        })
+          .error(function (result) {
+            spinner.hide()
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          })
+      })
+
+      $('#toggleInsRole').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on'),
+            spinner     = $(this).find('i.spinner-icon')
+
+        spinner.show()
+        $.ajax({
+          type: 'POST',
+          url : "{{ secure_url("/mgt/controller/toggleInsRole") }}",
+          data: {cid: "{{ $u->cid }}"}
+        }).success(function (result) {
+          spinner.hide()
+          if (result === '1') {
+            //Success
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'danger' : 'success'))
+          } else {
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          }
+        })
+          .error(function (result) {
+            spinner.hide()
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          })
+      })
+
+      $('#ratingchange').on('change', function () {
+        let hasFlag = $('#toggleStaffPrevent').find('i.toggle-icon').hasClass('fa-toggle-on')
+        if (this.value >= parseInt("{{\App\Classes\Helper::ratingIntFromShort("I1")}}") && hasFlag)
+          $('#ratingchange-warning').show()
+        else $('#ratingchange-warning').hide()
       })
     </script>
 @endsection
 
 @section('content')
     <div class="container">
-        <div class="panel panel-default">
+        <div
+            class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $u->flag_preventStaffAssign) ? "warning" : "default"}}"
+            id="user-info-panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <div class="row">
@@ -98,6 +161,8 @@
                                 Log</a></li>
                         <li role="presentation"><a href="#tickets" aria-controls="tickets" role="tab" data-toggle="tab">Support
                                 Tickets</a></li>
+                    @endif
+                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
                         <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
                                                    data-toggle="tab">Roles</a></li>
                     @endif
@@ -163,7 +228,8 @@
                                         <br>
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
                                             $u->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $u->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
-                                            <li>Rating Change <select id="ratingchange">
+                                            <li>Rating Change
+                                                <select id="ratingchange">
                                                     <option value="{{\App\Classes\Helper::ratingIntFromShort("C1")}}">C1
                                                         -
                                                         Enroute
@@ -184,6 +250,11 @@
                                                         Instructor
                                                     </option>
                                                 </select>
+                                                <div class="alert alert-danger" id="ratingchange-warning"
+                                                     style="display:none;"><strong><i class="fa fa-warning"></i>
+                                                        Warning!</strong> This controller currently has the Prevent
+                                                    Staff Role Assignment flag.
+                                                </div>
                                                 <button class="btn btn-info" id="ratingchangebtn">Save</button>
                                                 <span class="" id="ratingchangespan"></span></li>
                                             <script type="text/javascript">
@@ -265,92 +336,95 @@
                             </div>
                         @endif
                     </div>
-                    <div class="tab-pane" role="tabpanel" id="ratings">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <table class="table table-striped panel panel-default">
-                                    <thead>
-                                    <tr style="background:#F5F5F5" class="panel-heading">
-                                        <td colspan="4" style="text-align:center"><h3 class="panel-title">Rating
-                                                History</h3>
-                                        </td>
-                                    </tr>
-                                    </thead>
-                                    @foreach (\App\Promotions::where('cid', $u->cid)->orderby('created_at', 'desc')->get() as $promo)
-                                        <tr style="text-align: center">
-                                            <td style="width:20%">{!! $promo->created_at->format('m/d/Y') !!}</td>
-                                            <td>
-                                                <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->from) }}</strong>
-                                            </td>
-                                            <td class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
-                                                <i
-                                                    class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
-                                            </td>
-                                            <td>
-                                                <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->to) }}</strong>
+                    @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
+                        <div class="tab-pane" role="tabpanel" id="ratings">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-striped panel panel-default">
+                                        <thead>
+                                        <tr style="background:#F5F5F5" class="panel-heading">
+                                            <td colspan="4" style="text-align:center"><h3 class="panel-title">Rating
+                                                    History</h3>
                                             </td>
                                         </tr>
-                                    @endforeach
-                                </table>
-                            </div>
-                            <div class="col-md-6">
-                                <table class="table table-striped panel panel-default">
-                                    <thead>
-                                    <tr style="background:#F5F5F5" class="panel-heading">
-                                        <td colspan="5" style="text-align:center"><h3 class="panel-title">Transfer
-                                                History</h3>
-                                        </td>
-                                    </tr>
-                                    </thead>
-                                    @foreach(\App\Transfers::where('cid', $u->cid)->orderby('id', 'desc')->get() as $t)
-                                        <tr style="text-align: center">
-                                            <td>{{substr($t->updated_at, 0,10)}}</td>
-                                            <td><strong>{{$t->from}}</strong></td>
-                                            <td class="text-{{($t->status == 2 ? 'danger' : ($t->status == 1 ? 'success' : 'warning'))}}">
-                                                <i class="fa fa-arrow-right" data-toggle="tooltip"
-                                                   data-original-title="{{($t->status == 2 ? 'Declined - '.$t->actiontext.' by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : ($t->status == 1 ? 'Approved by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : 'Pending'))}}"
-                                                   style="cursor: pointer"></i></td>
-                                            <td><strong>{{$t->to}}</strong></td>
-                                            <td><a href="#" onClick="viewXfer({{$t->id}})"><i class="fa fa-search"></i></a>
+                                        </thead>
+                                        @foreach (\App\Promotions::where('cid', $u->cid)->orderby('created_at', 'desc')->get() as $promo)
+                                            <tr style="text-align: center">
+                                                <td style="width:20%">{!! $promo->created_at->format('m/d/Y') !!}</td>
+                                                <td>
+                                                    <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->from) }}</strong>
+                                                </td>
+                                                <td class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
+                                                    <i
+                                                        class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
+                                                </td>
+                                                <td>
+                                                    <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->to) }}</strong>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-striped panel panel-default">
+                                        <thead>
+                                        <tr style="background:#F5F5F5" class="panel-heading">
+                                            <td colspan="5" style="text-align:center"><h3 class="panel-title">Transfer
+                                                    History</h3>
                                             </td>
                                         </tr>
-                                    @endforeach
-                                    @if(\App\Classes\RoleHelper::isVATUSAStaff())
-                                        <tr>
-                                            <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
-                                                        id="waivertogglei"
-                                                        class="fa {{(($u->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
-                                                <a href="/mgt/err?cid={{$u->cid}}">Submit TR</a>
-                                            </td>
-                                        </tr>
-                                    @endif
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="exams">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    Exam History
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <table class="table table-striped">
-                                    @foreach(\App\ExamResults::where('cid',$u->cid)->orderBy('date', 'DESC')->get() as $res)
-                                        <tr style="text-align: center">
-                                            <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
-                                            <td style="width: 70%; text-align: left"><a
-                                                    href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a></td>
-                                            <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
-                                                %
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </table>
+                                        </thead>
+                                        @foreach(\App\Transfers::where('cid', $u->cid)->orderby('id', 'desc')->get() as $t)
+                                            <tr style="text-align: center">
+                                                <td>{{substr($t->updated_at, 0,10)}}</td>
+                                                <td><strong>{{$t->from}}</strong></td>
+                                                <td class="text-{{($t->status == 2 ? 'danger' : ($t->status == 1 ? 'success' : 'warning'))}}">
+                                                    <i class="fa fa-arrow-right" data-toggle="tooltip"
+                                                       data-original-title="{{($t->status == 2 ? 'Declined - '.$t->actiontext.' by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : ($t->status == 1 ? 'Approved by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : 'Pending'))}}"
+                                                       style="cursor: pointer"></i></td>
+                                                <td><strong>{{$t->to}}</strong></td>
+                                                <td><a href="#" onClick="viewXfer({{$t->id}})"><i
+                                                            class="fa fa-search"></i></a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                            <tr>
+                                                <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
+                                                            id="waivertogglei"
+                                                            class="fa {{(($u->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
+                                                    <a href="/mgt/err?cid={{$u->cid}}">Submit TR</a>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="tab-pane" role="tabpanel" id="exams">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        Exam History
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table table-striped">
+                                        @foreach(\App\ExamResults::where('cid',$u->cid)->orderBy('date', 'DESC')->get() as $res)
+                                            <tr style="text-align: center">
+                                                <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
+                                                <td style="width: 70%; text-align: left"><a
+                                                        href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a></td>
+                                                <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
+                                                    %
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     <div class="tab-pane" role="tabpanel" id="training">Coming soon</div>
                     <div class="tab-pane" role="tabpanel" id="cbt">
                         <h3>CBT Results</h3>
@@ -391,73 +465,147 @@
                             @endforeach
                         </div>
                     </div>
-                    <div class="tab-pane" role="tabpanel" id="actions">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    Action Log
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                @if(\App\Classes\RoleHelper::isVATUSAStaff())
-                                    <div class="alert alert-success" id="delete-log-success" style="display:none;">
-                                        <strong><i class='fa fa-check'></i> Success! </strong> The log entry has been
-                                        deleted.
-                                    </div>
-                                    <div class="alert alert-danger" id="delete-log-error" style="display:none;"><strong><i
-                                                class='fa fa-check'></i> Error! </strong> Could not delete log entry.
-                                    </div>
-                                @endif
-                                <form class="form-horizontal" action="{{secure_url("/mgt/action/add")}}" method="POST">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                    <input type="hidden" name="to" value="{{ $u->cid }}">
-                                    <input type="hidden" name="from" value="{{ Auth::user()->cid }}">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">Add a Log Entry</label>
-                                        <div class="col-sm-10"><textarea class="form-control" rows="2" name="log"
-                                                                         placeholder="Entry"></textarea>
+                    @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
+                        <div class="tab-pane" role="tabpanel" id="actions">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        Action Log
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                        <div class="alert alert-success" id="delete-log-success" style="display:none;">
+                                            <strong><i class='fa fa-check'></i> Success! </strong> The log entry has
+                                            been
+                                            deleted.
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-success sub-action-btn" value="submit">
-                                                <i class="fa fa-check"></i> Submit
-                                            </button>
+                                        <div class="alert alert-danger" id="delete-log-error" style="display:none;">
+                                            <strong><i
+                                                    class='fa fa-check'></i> Error! </strong> Could not delete log
+                                            entry.
                                         </div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <table class="table table-striped">
-                                    @foreach(\App\Actions::where('to', $u->cid)->orderby('id', 'desc')->get() as $a)
-                                        <tr id="log-{{ $a->id }}">
-                                            <td style="width:10%"><strong>{{substr($a->created_at, 0,10)}}</strong>
-                                            </td>
-                                            <td class="log-content">{{$a->log}}
-                                                @php $name = \App\Classes\Helper::nameFromCID($a->from) @endphp
-                                                @if($a->from && !str_contains($a->log, "by $name"))
-                                                    <p class="help-block">Added
-                                                        by {{ $name }}</p>
-                                                @endif</td><td>
-                                            @if(App\Classes\RoleHelper::isVATUSAStaff() && $a->from &&
-                                            !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
-                                                <a data-id="{{ $a->id }}"
-                                                       href="#"
-                                                       data-action="{{ secure_url('mgt/deleteActionLog/'.$a->id) }}"
-                                                       class="text-danger delete-log"><i class="fa fa-remove"></i></a>
-                                                    <i class="spinner-icon fa fa-spinner fa-spin"
-                                                       style="display:none;"></i>
-                                                
-                                            @else &nbsp;
-                                            @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </table>
+                                    @endif
+                                    <form class="form-horizontal" action="{{secure_url("/mgt/action/add")}}"
+                                          method="POST">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="to" value="{{ $u->cid }}">
+                                        <input type="hidden" name="from" value="{{ Auth::user()->cid }}">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Add a Log Entry</label>
+                                            <div class="col-sm-10"><textarea class="form-control" rows="2" name="log"
+                                                                             placeholder="Entry"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <button type="submit" class="btn btn-success sub-action-btn"
+                                                        value="submit">
+                                                    <i class="fa fa-check"></i> Submit
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <hr>
+                                    <table class="table table-striped">
+                                        @foreach(\App\Actions::where('to', $u->cid)->orderby('id', 'desc')->get() as $a)
+                                            <tr id="log-{{ $a->id }}">
+                                                <td style="width:10%"><strong>{{substr($a->created_at, 0,10)}}</strong>
+                                                </td>
+                                                <td class="log-content">{{$a->log}}
+                                                    @php $name = \App\Classes\Helper::nameFromCID($a->from) @endphp
+                                                    @if($a->from && !str_contains($a->log, "by $name"))
+                                                        <p class="help-block">Added
+                                                            by {{ $name }}</p>
+                                                    @endif</td>
+                                                <td>
+                                                    @if(App\Classes\RoleHelper::isVATUSAStaff() && $a->from &&
+                                                    !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
+                                                        <a data-id="{{ $a->id }}"
+                                                           href="#"
+                                                           data-action="{{ secure_url('mgt/deleteActionLog/'.$a->id) }}"
+                                                           class="text-danger delete-log"><i
+                                                                class="fa fa-remove"></i></a>
+                                                        <i class="spinner-icon fa fa-spinner fa-spin"
+                                                           style="display:none;"></i>
+
+                                                    @else &nbsp;
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="tab-pane" role="tabpanel" id="tickets">Coming soon</div>
-                    <div class="tab-pane" role="tabpanel" id="roles">Coming soon</div>
+                        <div class="tab-pane" role="tabpanel" id="tickets">Coming soon</div>
+                    @endif
+                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
+                        <div class="tab-pane" role="tabpanel" id="roles">
+                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
+                                    <div class="col-sm-10">
+                            <span id="toggleStaffPrevent" style="font-size:1.8em;">
+                                <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_preventStaffAssign ? "on text-danger" : "off text-info"}} "></i>
+                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                            </span>
+                                        <p class="help-block">This will prevent the controller from being assigned a
+                                            staff
+                                            role by facility staff. <br> Only a VATUSA Staff Member will be able to
+                                            assign
+                                            him or
+                                            her a role.</p>
+                                    </div>
+                                </div>
+                                @if($u->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Instructor</label>
+                                        <div class="col-sm-10">
+                            <span id="toggleInsRole" style="font-size:1.8em;">
+                                <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::isInstructor($u->cid, $u->facility) ? "on text-success" : "off text-danger"}} "></i>
+                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                            </span>
+                                            <p class="help-block">This will grant the supervisor Instructor
+                                                privileges.</p>
+                                        </div>
+                                    </div>
+                                @endif
+                            @else
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-static" style="cursor:default;">
+                                            @if($u->flag_preventStaffAssign) <strong style="color:#e72828">Yes</strong>
+                                            @else <strong style="color:green">No</strong>
+                                            @endif
+                                        </p>
+                                        <p class="help-block">This will prevent the controller from being assigned a
+                                            staff
+                                            role by facility staff. <br>Only a VATUSA Staff Member will be able to
+                                            assign
+                                            him or
+                                            her a role.</p>
+                                    </div>
+                                </div>
+                                @if($u->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Instructor</label>
+                                        <div class="col-sm-10">
+                                            <p class="form-control-static" style="cursor:default;">
+                                                @if(\App\Classes\RoleHelper::isInstructor($u->cid, $u->facility)) <strong
+                                                    style="color:green">Yes</strong>
+                                                @else <strong style="color:#e72828">No</strong>
+                                                @endif
+                                            </p>
+                                            <p class="help-block">This will grant the supervisor Instructor
+                                                privileges.</p>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
