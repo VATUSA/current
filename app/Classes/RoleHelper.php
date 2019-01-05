@@ -340,8 +340,8 @@ class RoleHelper
         // Check home controller, if no always assume no
         if (!Auth::user()->flag_homecontroller) return false;
 
-        // First check home facility and rating
-        if (Auth::user()->facility == $facility && (Auth::user()->rating >= Helper::ratingIntFromShort("I1")))
+        // First check home facility and rating (excluding SUP)
+        if (Auth::user()->facility == $facility && Auth::user()->rating >= Helper::ratingIntFromShort("I1") && Auth::user()->rating < Helper::ratingIntFromShort("SUP"))
             return true;
 
         // Check for an instructor role
