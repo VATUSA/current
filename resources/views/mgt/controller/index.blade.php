@@ -105,12 +105,12 @@
             icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
               ' text-' + (currentlyOn ? 'danger' : 'success'))
           } else {
-            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle instructor role.')
           }
         })
           .error(function (result) {
             spinner.hide()
-            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle instructor role.')
           })
       })
 
@@ -546,26 +546,23 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
                                     <div class="col-sm-10">
-                            <span id="toggleStaffPrevent" style="font-size:1.8em;">
-                                <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_preventStaffAssign ? "on text-danger" : "off text-info"}} "></i>
-                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
-                            </span>
+                                    <span id="toggleStaffPrevent" style="font-size:1.8em;">
+                                        <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_preventStaffAssign ? "on text-danger" : "off text-info"}} "></i>
+                                        <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                                    </span>
                                         <p class="help-block">This will prevent the controller from being assigned a
-                                            staff
-                                            role by facility staff. <br> Only a VATUSA Staff Member will be able to
-                                            assign
-                                            him or
-                                            her a role.</p>
+                                            staff role by facility staff. <br> Only a VATUSA Staff Member will be able to
+                                            assign him or her a role.</p>
                                     </div>
                                 </div>
                                 @if($u->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Instructor</label>
                                         <div class="col-sm-10">
-                            <span id="toggleInsRole" style="font-size:1.8em;">
-                                <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::isInstructor($u->cid, $u->facility) ? "on text-success" : "off text-danger"}} "></i>
-                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
-                            </span>
+                                        <span id="toggleInsRole" style="font-size:1.8em;">
+                                            <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::isInstructor($u->cid, $u->facility) ? "on text-success" : "off text-danger"}} "></i>
+                                            <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                                        </span>
                                             <p class="help-block">This will grant the supervisor Instructor
                                                 privileges.</p>
                                         </div>
@@ -581,11 +578,8 @@
                                             @endif
                                         </p>
                                         <p class="help-block">This will prevent the controller from being assigned a
-                                            staff
-                                            role by facility staff. <br>Only a VATUSA Staff Member will be able to
-                                            assign
-                                            him or
-                                            her a role.</p>
+                                            staff role by facility staff. <br>Only a VATUSA Staff Member will be able to
+                                            assign him or her a role.</p>
                                     </div>
                                 </div>
                                 @if($u->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
@@ -593,8 +587,9 @@
                                         <label class="col-sm-2 control-label">Instructor</label>
                                         <div class="col-sm-10">
                                             <p class="form-control-static" style="cursor:default;">
-                                                @if(\App\Classes\RoleHelper::isInstructor($u->cid, $u->facility)) <strong
-                                                    style="color:green">Yes</strong>
+                                                @if(\App\Role::where("facility", $u->facility)
+                                                    ->where("cid", $u->cid)->where("role", "INS")->count())
+                                                    <strong style="color:green">Yes</strong>
                                                 @else <strong style="color:#e72828">No</strong>
                                                 @endif
                                             </p>
