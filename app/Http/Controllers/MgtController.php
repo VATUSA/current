@@ -778,6 +778,10 @@ class MgtController extends Controller
         if ($currentIns->count()) {
             //Delete role
             $currentIns->first()->delete();
+            $log = new Actions();
+            $log->to = $cid;
+            $log->log = "Instructor role for " . $user->facility . " revoked by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ").";
+            $log->save();
         } else {
             //Create role
             $role = new Role();
@@ -785,6 +789,11 @@ class MgtController extends Controller
             $role->facility = $facility;
             $role->role = "INS";
             $role->save();
+
+            $log = new Actions();
+            $log->to = $cid;
+            $log->log = "Instructor role for " . $user->facility . " added by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ").";
+            $log->save();
         }
 
         return "1";
