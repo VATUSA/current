@@ -138,10 +138,6 @@
                                 <input type="text" readonly id="textulsv2jwk" class="form-control" value="{{$facility->uls_jwk}}"><br>
                                 <button class="btn btn-primary" onClick="ulsv2JWK()">Generate New</button>
                                 <br><br>
-                                <b>ULSv1 Key:</b> <u>DEPRECATED (Removal 5/31/18)</u><br>
-                                <input class="form-control" type="text" id="key" value="{{$facility->uls_secret}}"><br>
-                                <button class="btn btn-primary" onClick="ulsGen()">Generate New</button>
-                                <br><br>
                                 <b>Return URL:</b><br><input class="form-control" type="text" id="ret" value="{{$facility->uls_return}}"><br>
                                 <button class="btn btn-primary" onClick="ulsUpdate()">Update</button>
                                 <br><br>
