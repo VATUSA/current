@@ -14,7 +14,7 @@ class AddUserBroadcastOptinTag extends Migration
     public function up()
     {
         Schema::table('controllers', function (Blueprint $table) {
-           $table->boolean('flag_broadcastOptedIn')->default(0);
+            $table->boolean('flag_broadcastOptedIn')->default(0);
         });
     }
 
@@ -25,6 +25,8 @@ class AddUserBroadcastOptinTag extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('controllers', function (Blueprint $table) {
+            //$table->dropColumn('flag_broadcastOptedIn');
+        });
     }
 }
