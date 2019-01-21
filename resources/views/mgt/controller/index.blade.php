@@ -547,7 +547,7 @@
                                     <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
                                     <div class="col-sm-10">
                                     <span id="toggleStaffPrevent" style="font-size:1.8em;">
-                                        <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_preventStaffAssign ? "on text-danger" : "off text-info"}} "></i>
+                                        <i class="toggle-icon fa fa-toggle-{{ $u->flag_preventStaffAssign ? "on text-danger" : "off text-info"}} "></i>
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
                                         <p class="help-block">This will prevent the controller from being assigned a
