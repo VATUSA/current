@@ -1,4 +1,5 @@
 @extends('layout')
+@section('title', 'Closed Tickets')
 
 @section('content')
     <div class="container">
