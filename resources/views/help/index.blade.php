@@ -1,5 +1,6 @@
 {{-- User: view tickets --}}
 @extends('layout')
+@section('title', 'Support Center')
 
 @section('helpcontent')
     <div class="container">

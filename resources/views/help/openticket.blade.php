@@ -1,5 +1,6 @@
 {{-- User: view tickets --}}
 @extends('layout')
+@section('title', 'New Ticket')
 
 @section('content')
     <div class="container">
