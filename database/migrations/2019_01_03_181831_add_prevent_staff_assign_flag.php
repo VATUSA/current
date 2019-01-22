@@ -26,7 +26,7 @@ class AddPreventStaffAssignFlag extends Migration
     public function down()
     {
         Schema::table('controllers', function (Blueprint $table) {
-            //
+            //$table->dropColumn('flag_preventStaffAssign');
         });
     }
 }
