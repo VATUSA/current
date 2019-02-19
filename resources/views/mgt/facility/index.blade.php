@@ -162,7 +162,8 @@
                                                 <td class="rp-order">{{ $p->order }}</td>
                                                 <td class="rp-url">{{ $p->url }}</td>
                                                 <td class="rp-actions">
-                                                    <button class="btn btn-info" onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
+                                                    <button class="btn btn-info"
+                                                            onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
                                                         <i class="fa fa-pencil"></i></button>
                                                     <button class="btn btn-danger"
                                                             onclick="removeUlsReturn({{$p->order}})">
@@ -186,8 +187,11 @@
                                                           value="{{$facility->apikey}}"><br>
                                 <button class="btn btn-primary" onClick="apiGen()">Generate New</button>
                                 <br><br>
-                                <b>Sandbox API Key:</b><br><input class="form-control" type="text" id="apisbkey"
-                                                                  value="{{$facility->api_sandbox_key}}"><br>
+                                <b>Sandbox API Key:</b><br>
+                                <p class="help-block"><strong>Reminder: </strong> API testing is currently a work in
+                                    progress. <br>For now, using this key will have <strong>no effect</strong> (changes are persisted).
+                                </p><input class="form-control" type="text" id="apisbkey"
+                                           value="{{$facility->api_sandbox_key}}"><br>
                                 <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
                                 <br><br>
                                 @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
@@ -549,15 +553,15 @@
           },
           callback: result => {
             if (result) {
-              waitingDialog.show();
+              waitingDialog.show()
               $.ajax({
                 url   : $.apiUrl() + '/v2/facility/{{$fac}}/ulsReturns/' + id,
                 method: 'DELETE'
               }).done(() => {
-                waitingDialog.hide();
+                waitingDialog.hide()
                 location.reload()
               }).error(data => {
-                waitingDialog.hide();
+                waitingDialog.hide()
                 bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong></div>')
               })
             }
@@ -571,20 +575,20 @@
           value   : url,
           callback: newUrl => {
             if (!newUrl) return null
-            waitingDialog.show();
+            waitingDialog.show()
             $.ajax({
               url   : $.apiUrl() + '/v2/facility/{{$fac}}/ulsReturns/' + id,
               method: 'PUT',
               data  : {url: url}
             }).done(() => {
-              waitingDialog.hide();
+              waitingDialog.hide()
               $('#path-' + id).find('.rp-url').text(newUrl)
             }).error(data => {
-              waitingDialog.hide();
+              waitingDialog.hide()
               bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong></div>')
             })
           }
-        });
+        })
       }
 
       function addUlsReturn () {
@@ -592,13 +596,13 @@
             order     = lastOrder ? lastOrder + 1 : 1
         bootbox.prompt('New return URL #' + order, url => {
           if (!url) return null
-          waitingDialog.show();
+          waitingDialog.show()
           $.ajax({
             url   : $.apiUrl() + '/v2/facility/{{$fac}}/ulsReturns',
             method: 'POST',
             data  : {url: url, order: order}
           }).done(() => {
-            waitingDialog.hide();
+            waitingDialog.hide()
             let element = '<tr id="path-"' + order + '</td>' +
               '<td class="rp-order">' + order + '</td>' +
               '<td class="rp-url">' + url + '</td>' +
@@ -608,7 +612,7 @@
               '</td>'
             $(element).appendTo('#ulsreturn-table > tbody')
           }).error(data => {
-            waitingDialog.hide();
+            waitingDialog.hide()
             bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong></div>')
           })
         })
