@@ -31,11 +31,11 @@
                     <tr>
                         <td>Chain of Command Flow Chart</td>
                         <td>02/17/2018</td>
-                        <td><a href="/docs/orgchart.pdf" target="_blank">view</td>
+                        <td><a href="/docs/orgchart.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
                         <td>3120.311 &mdash; Procedures for Selection, Submission, and Appointment of Instructors</td>
-                        <td>02/01/2017</td>
+                        <td>03/22/2019</td>
                         <td><a href="/docs/3120.311.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
