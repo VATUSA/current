@@ -59,7 +59,7 @@ class TattlerStaffVisit extends Command {
                         EmailHelper::sendEmail(
                             [
                                 "vatusa" . $fac->region . "@vatusa.net",
-                                "vatusa6@vatusa.net"
+                           //     "vatusa6@vatusa.net"
                             ],
                             "Tattler Staff Activity: " . $fac->id . " ATM is likely inactive",
                             "emails.tattlers.staffactivity",
@@ -84,7 +84,7 @@ class TattlerStaffVisit extends Command {
                             [
                                 $fac->id . "-atm@vatusa.net",
                                 "vatusa" . $fac->region . "@vatusa.net",
-                                "vatusa6@vatusa.net"
+                            //    "vatusa6@vatusa.net"
                             ],
                             "Tattler Staff Activity: " . $fac->id . " DATM is likely inactive",
                             "emails.tattlers.staffactivity",
@@ -109,7 +109,7 @@ class TattlerStaffVisit extends Command {
                             [
                                 $fac->id . "-atm@vatusa.net",
                                 "vatusa3@vatusa.net",
-                                "vatusa6@vatusa.net"
+                           //     "vatusa6@vatusa.net"
                             ],
                             "Tattler Staff Activity: " . $fac->id . " TA is likely inactive",
                             "emails.tattlers.staffactivity",
@@ -134,7 +134,7 @@ class TattlerStaffVisit extends Command {
                             [
                                 $fac->id . "-atm@vatusa.net",
                                 $fac->id . "-datm@vatusa.net",
-                                "vatusa6@vatusa.net"
+                           //     "vatusa6@vatusa.net"
                             ],
                             "Tattler Staff Activity: " . $fac->id . " EC is likely inactive",
                             "emails.tattlers.staffactivity",
@@ -159,7 +159,7 @@ class TattlerStaffVisit extends Command {
                             [
                                 $fac->id . "-atm@vatusa.net",
                                 $fac->id . "-datm@vatusa.net",
-                                "vatusa6@vatusa.net"
+                            //    "vatusa6@vatusa.net"
                             ],
                             "Tattler Staff Activity: " . $fac->id . " FE is likely inactive",
                             "emails.tattlers.staffactivity",
@@ -184,7 +184,7 @@ class TattlerStaffVisit extends Command {
                             [
                                 $fac->id . "-atm@vatusa.net",
                                 $fac->id . "-datm@vatusa.net",
-                                "vatusa6@vatusa.net"
+                             //   "vatusa6@vatusa.net"
                             ],
                             "Tattler Staff Activity: " . $fac->id . " WM is likely inactive",
                             "emails.tattlers.staffactivity",
@@ -211,7 +211,7 @@ class TattlerStaffVisit extends Command {
                     [
                         $user->facility . "-ta@vatusa.net",
                         "vatusa3@vatusa.net",
-                        "vatusa6@vatusa.net"
+                      //  "vatusa6@vatusa.net"
                     ],
                     "Tattler Staff Activity: " . $user->facility . " INS " . $user->fullname() . " is likely inactive",
                     "emails.tattlers.staffactivity",
@@ -227,7 +227,7 @@ class TattlerStaffVisit extends Command {
         EmailHelper::sendEmail([
             "vatusa1@vatusa.net",
             "vatusa2@vatusa.net",
-            "vatusa6@vatusa.net",
+         //   "vatusa6@vatusa.net",
         ], "Tattler Staff Visit Report", "emails.logsend", ['log' => $report]);
         SMFHelper::createPost(7262, 82, "Tattler Staff Activity Report " . date('M j, Y'), implode("\n", $report));
 	}
