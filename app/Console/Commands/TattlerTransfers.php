@@ -46,7 +46,7 @@ class TattlerTransfers extends Command
                         "vatusa" . $to->region . "@vatusa.net",
                         "vatusa1@vatusa.net",
                         "vatusa2@vatusa.net",
-                        "vatusa6@vatusa.net"
+                   //     "vatusa6@vatusa.net"
                     ],
                     "Tattler: Transfer Pending",
                     "emails.tattlers.transferpending",
