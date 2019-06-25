@@ -18,7 +18,8 @@
 		"mockery/mockery": "0.9.*",
 		"fzaninotto/faker": "~1.4",
 		"symfony/dom-crawler": "~3.1",
-		"symfony/css-selector": "~3.1"
+		"symfony/css-selector": "~3.1",
+		"barryvdh/laravel-ide-helper": "^2.6"
 	},
 	"autoload": {
 		"classmap": [
