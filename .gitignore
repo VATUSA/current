@@ -9,3 +9,5 @@ bootstrap/cache
 node_modules
 .config.sh
 vendor
+_ide_helper.php
+.phpstorm.meta.php
