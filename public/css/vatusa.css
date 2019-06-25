@@ -996,3 +996,7 @@ a.sortactive {
     border-color: #ddd #ddd #ddd transparent;
     *border-left-color: #ffffff;
 }
+
+tr.no-hover:hover {
+    background: none !important;
+}
