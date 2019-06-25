@@ -188,9 +188,8 @@
                                 <button class="btn btn-primary" onClick="apiGen()">Generate New</button>
                                 <br><br>
                                 <b>Sandbox API Key:</b><br>
-                                <p class="help-block"><strong>Reminder: </strong> API testing is currently a work in
-                                    progress. <br>For now, using this key will have <strong>no effect</strong> (changes are persisted).
-                                </p><input class="form-control" type="text" id="apisbkey"
+                                <p class="help-block">Use this key to prevent the live database from being changed.</p>
+                                <input class="form-control" type="text" id="apisbkey"
                                            value="{{$facility->api_sandbox_key}}"><br>
                                 <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
                                 <br><br>
