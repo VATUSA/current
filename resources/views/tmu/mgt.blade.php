@@ -47,7 +47,9 @@
                                                     <a href="https://jsonlint.com/">JSONLint</a> to ensure it is valid JSON.  <b>The values must be float or decimal format, and cannot be quoted.</b>
                                                     Formatting is optional, but proper care to ensure closures of brackets [] and commas after all but the last array are required.
                                                     <b>The last point must be the same as the first point to close the polygon.</b></p>
-                                                <textarea class="form-control" rows="10" id="coordbox_{{$facility->id}}">{{$facility->coords}}</textarea><br>
+                                                <form id="boundaryForm" method="post" action="/mgt/tmu/{{$facility->id}}/coords">
+                                                    <textarea class="form-control" name="coords" rows="10" id="coordbox_{{$facility->id}}">{{$facility->coords}}</textarea><br>
+                                                </form>
                                                 <button class="btn btn-primary btnSave" data-facility="{{$facility->id}}">Save</button>
                                             </td>
                                         </tr>
@@ -102,17 +104,18 @@
                     return false;
                 }
                 waitingDialog.show("Saving...")
-                $.ajax({
+                /*$.ajax({
                     url: '/mgt/tmu/' + $(this).data("facility") + '/coords',
                     method: "post",
-                    data: { coords: $('#coordbox_' + fac).val() }
+                    data: { coords: $('#coordbox_' + fac).val(), token: "" }
                 }).always(function() {
                     waitingDialog.hide();
                 }).success(function() {
                     bootbox.alert("Coordinates for " + fac + " saved.");
                 }).fail(function() {
                     bootbox.alert("There was an error saving coordinates.  Please try again later.");
-                });
+                });*/
+              $('#boundaryForm').submit();
             });
         });
     </script>
