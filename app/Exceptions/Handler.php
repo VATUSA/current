@@ -61,7 +61,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof MethodNotAllowedHttpException) {
-            return redirect('/405');
+            return redirect('/500');
         }
 
         if ($this->isHttpException($e)) {
