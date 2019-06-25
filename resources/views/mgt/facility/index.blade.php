@@ -136,9 +136,11 @@
                         </div>
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <div role="tabpanel" class="tab-pane" id="uls">
+                                <br>
                                 <b>Website URL:</b>
                                 <input type="text" id="facurl" class="form-control" value="{{$facility->url}}"/>
                                 <button class="btn btn-primary" onClick="updateUrl()">Update</button>
+                                <hr>
                                 <h1>ULS</h1>
                                 <b>ULSv2 JSON Web Key (JWK):</b> (<a
                                     href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
@@ -176,35 +178,56 @@
                                     <button class="btn btn-success" onclick="addUlsReturn()">Add Return URL</button>
                                 </div>
                                 <br><br>
-                                <h1>API (v1/v2)</h1>
-                                <b>APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) --
-                                symmetric key<br>
-                                <input class="form-control" type="text" id="textapiv2jwk"
-                                       value="{{$facility->apiv2_jwk}}" readonly><br>
-                                <button class="btn btn-primary" onClick="apiv2JWK()">Generate New</button>
-                                <br><br>
-                                <b>API Key:</b><br><input class="form-control" type="text" id="apikey"
-                                                          value="{{$facility->apikey}}"><br>
-                                <button class="btn btn-primary" onClick="apiGen()">Generate New</button>
-                                <br><br>
-                                <b>Sandbox API Key:</b><br>
-                                <p class="help-block">Use this key to prevent the live database from being changed.</p>
-                                <input class="form-control" type="text" id="apisbkey"
-                                           value="{{$facility->api_sandbox_key}}"><br>
-                                <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
-                                <br><br>
-                                @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
-                                    <b>IP (v1 only):</b><br><input class="form-control" type="text" id="apiip"
-                                                                   value="{{$facility->ip}}"><br>
-                                    <button class="btn btn-primary" onClick="ipUpdate()">Update</button>
+                                <h1>APIv2</h1>
+                                <fieldset>
+                                    <legend>Live</legend>
+                                    <b>APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page
+                                    38) --
+                                    symmetric key<br>
+                                    <input class="form-control" type="text" id="textapiv2jwk"
+                                           value="{{$facility->apiv2_jwk}}" readonly><br>
+                                    <button class="btn btn-primary" onClick="apiv2JWK()">Generate New</button>
                                     <br><br>
-                                    <b>Sandbox IP (v1 only):</b><br><input class="form-control" type="text" id="apisbip"
-                                                                           value="{{$facility->api_sandbox_ip}}"><br>
-                                    <button class="btn btn-primary" onClick="ipSBUpdate()">Update</button>
-                                @else
-                                    <b>IP (v1 only):</b> {{$facility->ip}}<br>
-                                    <b>Sandbox IP (v1 only):</b> {{$facility->api_sandbox_ip}}
-                                @endif
+                                    <b>API Key:</b><br><input class="form-control" type="text" id="apikey"
+                                                              value="{{$facility->apikey}}"><br>
+                                    <button class="btn btn-primary" onClick="apiGen()">Generate New</button>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <legend>Development</legend>
+                                    <b>Sandbox API Key:</b><br>
+                                    <p class="help-block">Use this key to prevent the live database from being
+                                        changed.</p>
+                                    <input class="form-control" type="text" id="apisbkey"
+                                           value="{{$facility->api_sandbox_key}}"><br>
+                                    <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
+                                </fieldset>
+                                <hr>
+                                <h1>APIv1 (Deprecated)</h1>
+                                <fieldset>
+                                    <legend>Live</legend>
+                                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
+                                        <b>IP (v1 only):</b><br><input class="form-control" type="text" id="apiip"
+                                                                       value="{{$facility->ip}}">
+                                        <br>
+                                        <button class="btn btn-primary" onClick="ipUpdate()">Update</button>
+                                    @else
+                                        <b>IP (v1 only):</b> {{$facility->ip}}<br>
+                                    @endif
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <legend>Development</legend>
+                                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
+                                        <b>Sandbox IP (v1 only):</b><br><input class="form-control" type="text"
+                                                                               id="apisbip"
+                                                                               value="{{$facility->api_sandbox_ip}}">
+                                        <br>
+                                        <button class="btn btn-primary" onClick="ipSBUpdate()">Update</button>
+                                    @else
+                                        <b>Sandbox IP (v1 only):</b> {{$facility->api_sandbox_ip}}
+                                    @endif
+                                </fieldset>
                             </div>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
@@ -515,17 +538,17 @@
         })
       }
 
-      function ulsv2JWK () {
+      function ulsv2JWK (isdev = false) {
         $.ajax(
-          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {uls2jwk: ''}}
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {uls2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
           if (result) $('#textulsv2jwk').val(JSON.stringify(result))
         })
       }
 
-      function apiv2JWK () {
+      function apiv2JWK (isdev = false) {
         $.ajax(
-          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiv2jwk: ''}}
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiv2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
           if (result) $('#textapiv2jwk').val(JSON.stringify(result))
         })
