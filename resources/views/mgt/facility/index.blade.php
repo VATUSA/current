@@ -140,43 +140,59 @@
                                 <b>Website URL:</b>
                                 <input type="text" id="facurl" class="form-control" value="{{$facility->url}}"/>
                                 <button class="btn btn-primary" onClick="updateUrl()">Update</button>
+                                <br><br>
+                                <b>Development Website URL:</b>
+                                <input type="text" id="facurldev" class="form-control" value="{{$facility->url_dev}}"/>
+                                <button class="btn btn-primary" onClick="updateDevUrl()">Update</button>
                                 <hr>
                                 <h1>ULS</h1>
-                                <b>ULSv2 JSON Web Key (JWK):</b> (<a
-                                    href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
-                                <input type="text" readonly id="textulsv2jwk" class="form-control"
-                                       value="{{$facility->uls_jwk}}"><br>
-                                <button class="btn btn-primary" onClick="ulsv2JWK()">Generate New</button>
-                                <br><br>
-                                <b>Return URLs:</b>
-                                <div id="return-URLs">
-                                    <table class="table table-striped" id="ulsreturn-table">
-                                        <thead>
-                                        <tr>
-                                            <th style="color:#7a7a7a; width:40px;">ID</th>
-                                            <th style="color:#7a7a7a; width:500px;">URL</th>
-                                            <th style="color:#7a7a7a;">Actions</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach(\App\Classes\ULSHelper::getReturnPaths($facility->id) as $p)
-                                            <tr id="path-{{$p->order}}">
-                                                <td class="rp-order">{{ $p->order }}</td>
-                                                <td class="rp-url">{{ $p->url }}</td>
-                                                <td class="rp-actions">
-                                                    <button class="btn btn-info"
-                                                            onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
-                                                        <i class="fa fa-pencil"></i></button>
-                                                    <button class="btn btn-danger"
-                                                            onclick="removeUlsReturn({{$p->order}})">
-                                                        <i class="fa fa-remove"></i></button>
-                                                </td>
+                                <fieldset>
+                                    <legend>Live</legend>
+                                    <b>ULSv2 JSON Web Key (JWK):</b> (<a
+                                        href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
+                                    <input type="text" readonly id="textulsv2jwk" class="form-control"
+                                           value="{{$facility->uls_jwk}}"><br>
+                                    <button class="btn btn-primary" onClick="ulsv2JWK()">Generate New</button>
+                                    <br><br>
+                                    <b>Return URLs:</b>
+                                    <div id="return-URLs">
+                                        <table class="table table-striped" id="ulsreturn-table">
+                                            <thead>
+                                            <tr>
+                                                <th style="color:#7a7a7a; width:40px;">ID</th>
+                                                <th style="color:#7a7a7a; width:500px;">URL</th>
+                                                <th style="color:#7a7a7a;">Actions</th>
                                             </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                    <button class="btn btn-success" onclick="addUlsReturn()">Add Return URL</button>
-                                </div>
+                                            </thead>
+                                            <tbody>
+                                            @foreach(\App\Classes\ULSHelper::getReturnPaths($facility->id) as $p)
+                                                <tr id="path-{{$p->order}}">
+                                                    <td class="rp-order">{{ $p->order }}</td>
+                                                    <td class="rp-url">{{ $p->url }}</td>
+                                                    <td class="rp-actions">
+                                                        <button class="btn btn-info"
+                                                                onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
+                                                            <i class="fa fa-pencil"></i></button>
+                                                        <button class="btn btn-danger"
+                                                                onclick="removeUlsReturn({{$p->order}})">
+                                                            <i class="fa fa-remove"></i></button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                        <button class="btn btn-success" onclick="addUlsReturn()">Add Return URL</button>
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <legend>Development</legend>
+                                    <b>Sandbox ULSv2 JSON Web Key (JWK):</b> (<a
+                                        href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
+                                    <input type="text" readonly id="textulsv2jwkdev" class="form-control"
+                                           value="{{$facility->uls_jwk_dev}}"><br>
+                                    <button class="btn btn-primary" onClick="ulsv2JWK(true)">Generate New</button>
+                                </fieldset>
                                 <br><br>
                                 <h1>APIv2</h1>
                                 <fieldset>
@@ -195,6 +211,14 @@
                                 <br>
                                 <fieldset>
                                     <legend>Development</legend>
+                                    <b>Sandbox APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC 7515</a> page
+                                    38) --
+                                    symmetric key<br>
+                                    <p class="help-block">Development Website URL must be set correctly in order for returned data to be formatted according to RFC 7515.</p>
+                                    <input class="form-control" type="text" id="textapiv2jwkdev"
+                                           value="{{$facility->apiv2_jwk_dev}}" readonly><br>
+                                    <button class="btn btn-primary" onClick="apiv2JWK(true)">Generate New</button>
+                                    <br><br>
                                     <b>Sandbox API Key:</b><br>
                                     <p class="help-block">Use this key to prevent the live database from being
                                         changed.</p>
@@ -537,12 +561,24 @@
           bootbox.alert('URL save failed.')
         })
       }
+      function updateDevUrl () {
+        $.ajax(
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {url_dev: $('#facurldev').val()}}
+        ).done(function (result) {
+          bootbox.alert('Dev URL saved successfully')
+        }).fail(function (result) {
+          bootbox.alert('Dev URL save failed.')
+        })
+      }
 
       function ulsv2JWK (isdev = false) {
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {uls2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
-          if (result) $('#textulsv2jwk').val(JSON.stringify(result))
+          if (result) {
+            if (!isdev) $('#textulsv2jwk').val(JSON.stringify(result))
+            else $('#textulsv2jwkdev').val(JSON.stringify(result))
+          }
         })
       }
 
@@ -550,7 +586,10 @@
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiv2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
-          if (result) $('#textapiv2jwk').val(JSON.stringify(result))
+          if (result) {
+            if (!isdev) $('#textapiv2jwk').val(JSON.stringify(result))
+            else $('#textapiv2jwkdev').val(JSON.stringify(result))
+          }
         })
       }
 
