@@ -105,9 +105,22 @@
                                     <div class="col-sm-6">
                                         <select class="form-control" id="facility">
                                             <option value="0">Select a Facility</option>
-                                            @foreach (\App\Facility::where('active',1)->orderBy('name')->get() as $facility)
-                                            <option value="{{$facility->id}}">{{$facility->name}}</option>
-                                            @endforeach
+                                            <optgroup label="Western Region">
+                                                @foreach (\App\Facility::where(['active' => 1, 'region' => 7])->orderBy('name')->get() as $facility)
+                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
+                                                @endforeach
+                                            </optgroup>
+                                            <optgroup label="Southern Region">
+                                                @foreach (\App\Facility::where(['active' => 1, 'region' => 8])->orderBy('name')->get() as $facility)
+                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
+                                                @endforeach
+                                            </optgroup>
+                                            <optgroup label="Northeastern Region">
+                                                @foreach (\App\Facility::where(['active' => 1, 'region' => 9])->orderBy('name')->get() as $facility)
+                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
+                                                @endforeach
+                                            </optgroup>
+
                                         </select>
                                     </div>
                                 </div>
