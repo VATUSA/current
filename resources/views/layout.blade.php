@@ -79,7 +79,18 @@
                             Facilities
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            @foreach(\App\Facility::where('active', 1)->orderby('name', 'ASC')->get() as $f)
+                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5></li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
+                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
+                            @endforeach
+                            <li class="nav-divider"></li>
+                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southern Region</h5></li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
+                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
+                            @endforeach
+                            <li class="nav-divider"></li>
+                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern Region</h5></li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 9])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                         </ul>
