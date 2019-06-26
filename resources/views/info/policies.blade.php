@@ -63,7 +63,7 @@
                         <td><a href="/docs/3120.4a.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
-                        <td>3120.25A &mdash; Delivery and Ground Cetification Statement</td>
+                        <td>3120.25A &mdash; Delivery and Ground Certification Statement</td>
                         <td>07/01/2019</td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff()))
                             <td><a href="/docs/3120.25A.pdf" target="_blank">view</a></td>
