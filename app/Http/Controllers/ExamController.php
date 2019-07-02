@@ -1,23 +1,24 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\ExamResults;
 use App\ExamResultsData;
 use Illuminate\Http\Request;
-use \App\Classes\RoleHelper;
-use \App\Classes\EmailHelper;
-use \App\Classes\ExamHelper;
-use \App\Classes\Helper;
-use \App\Actions;
-use \App\Exam;
-use \App\ExamQuestions;
+use App\Classes\RoleHelper;
+use App\Classes\EmailHelper;
+use App\Classes\ExamHelper;
+use App\Classes\Helper;
+use App\Actions;
+use App\Exam;
+use App\ExamQuestions;
 use App\ExamAssignment;
 use App\ExamReassignment;
 use App\Facility;
 use App\User;
-use \Auth;
+use Auth;
 use App\TrainingBlock;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Session;
 
@@ -26,7 +27,7 @@ class ExamController
 {
     public function getResult($id)
     {
-        if (!\Auth::check()) abort(401);
+        if (!Auth::check()) abort(401);
 
         $result = ExamResults::find($id);
         if (!$result) abort(404);
@@ -35,7 +36,7 @@ class ExamController
             !(RoleHelper::isInstructor() ||
                 RoleHelper::isFacilitySeniorStaff() ||
                 RoleHelper::isVATUSAStaff())
-            && $result->cid != \Auth::user()->cid
+            && $result->cid != Auth::user()->cuseid
         ) abort(401);
 
 
@@ -53,7 +54,7 @@ class ExamController
         /*if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff())
             abort(401);*/
 
-        if (!\Auth::check()) return redirect('/')->with("error","You must be logged in for that.");
+        if (!Auth::check()) return redirect('/')->with("error", "You must be logged in for that.");
 
         return View('exams.index');
     }
@@ -63,7 +64,7 @@ class ExamController
         if (!Auth::check()) abort(401);
 
         $exam = Exam::find($id);
-        if (!$this->accessCheckExam(\Auth::user()->cid, $exam->facility_id)) abort(401);
+        if (!$this->accessCheckExam(Auth::user()->cid, $exam->facility_id)) abort(401);
 
         $questions = $exam->questions()->get();
         $csv = "id,exam_id,question,type,answer,alt1,alt2,alt3,\n";
@@ -72,7 +73,7 @@ class ExamController
             $data = [
                 'id' => $q->id,
                 'exam_id' => $q->exam_id,
-                'question' =>  '"' . preg_replace("/[\n\r]/","",str_replace('"', '""',$q->question)) . '"',
+                'question' => '"' . preg_replace("/[\n\r]/", "", str_replace('"', '""', $q->question)) . '"',
                 'type' => (($q->type) ? "TF" : "MC"),
                 'answer' => '"' . $q->answer . '"',
                 'alt1' => '"' . $q->alt1 . '"',
@@ -82,7 +83,7 @@ class ExamController
             $csv .= implode(",", $data) . ",\n";
         }
 
-        return (new Response($csv, 200))->header('Content-Type','text/csv')->header('Content-Disposition', 'attachment; filename="' . $id . '.csv"');
+        return (new Response($csv, 200))->header('Content-Type', 'text/csv')->header('Content-Disposition', 'attachment; filename="' . $id . '.csv"');
     }
 
     /** Take Exam area **/
@@ -152,8 +153,7 @@ class ExamController
         return View('exams.take', ['json' => $json]);
     }
 
-    public
-    function putTakeExam(Request $request, $id)
+    public function putTakeExam(Request $request, $id)
     {
         if (!Auth::check() || !$request->ajax() || $id == 0)
             abort(401, "You are not logged in or your session has timed out");
@@ -257,7 +257,9 @@ class ExamController
         if ($score >= $exam->passing_score) {
             $assign->delete();
             $fac = $exam->facility_id;
-            if ($fac == "ZAE") { $fac = Auth::user()->facility; }
+            if ($fac == "ZAE") {
+                $fac = Auth::user()->facility;
+            }
             EmailHelper::sendEmailFacilityTemplate($to, "Exam Passed", $fac, "exampassed", $data);
             if ($exam->id == config("exams.BASIC")) {
                 Auth::user()->flag_needbasic = 0;
@@ -275,7 +277,9 @@ class ExamController
             }
             $assign->delete();
             $fac = $exam->facility_id;
-            if ($fac == "ZAE") { $fac = Auth::user()->facility; }
+            if ($fac == "ZAE") {
+                $fac = Auth::user()->facility;
+            }
             EmailHelper::sendEmailFacilityTemplate($to, "Exam Not Passed", $fac, "examfailed", $data);
             return view("exams.partialfailed", ["reassign" => $exam->retake_period]);
         }
@@ -283,8 +287,7 @@ class ExamController
 
     /** Assignment Functions **/
 
-    public
-    function getAssign()
+    public function getAssign()
     {
         $this->canAssignExam();
 
@@ -299,8 +302,7 @@ class ExamController
         return View('exams.assign', ['exams' => $exams, 'expireoptions' => ExamHelper::expireOptions()]);
     }
 
-    public
-    function postAssign()
+    public function postAssign()
     {
         $exam = Exam::find($_POST['exam']);
         if ($exam == null) abort(404);
@@ -334,7 +336,7 @@ class ExamController
         $this->canAssignExam();
 
         if ($fac == null && !RoleHelper::isVATUSAStaff() && !RoleHelper::isAcademyStaff())
-            $fac = \Auth::user()->facility;
+            $fac = Auth::user()->facility;
 
         if ($fac == null) {
             $facilities = Facility::where("active", 1)->orderBy('id')->get();
@@ -401,14 +403,14 @@ class ExamController
     public function getDeleteExam($id)
     {
         $exam = Exam::find($id);
-        $this->accessCheckExam(\Auth::user()->cid, $exam->facility_id);
+        $this->accessCheckExam(Auth::user()->cid, $exam->facility_id);
 
         $fac = $exam->facility_id;
         $name = $exam->name;
 
-        \DB::raw('DELETE FROM exam_questions WHERE exam_id=' . $exam->id);
-        \DB::raw('DELETE FROM exam_assignments WHERE exam_id=' . $exam->id);
-        \DB::raw('DELETE FROM exam_reassignments WHERE exam_id=' . $exam->id);
+        DB::raw('DELETE FROM exam_questions WHERE exam_id=' . $exam->id);
+        DB::raw('DELETE FROM exam_assignments WHERE exam_id=' . $exam->id);
+        DB::raw('DELETE FROM exam_reassignments WHERE exam_id=' . $exam->id);
         $exam->delete();
 
         return redirect('/exam/edit')->with("success", "Exam '$name' successfully deleted");
@@ -517,7 +519,7 @@ class ExamController
     function getCreate()
     {
         $exam = new Exam();
-        $exam->facility_id = (Auth::user()->facility == "ZHQ")?"ZAE":Auth::user()->facility;
+        $exam->facility_id = (Auth::user()->facility == "ZHQ") ? "ZAE" : Auth::user()->facility;
         $exam->is_active = 0;
         $exam->number = 0;
         $exam->cbt_required = null;
@@ -556,7 +558,7 @@ class ExamController
             if (RoleHelper::isInstructor($cid) || RoleHelper::isFacilitySeniorStaff())
                 return true;
             else {
-                \Log::warning(\Auth::user()->cid . " attempted to assign exam, not instructor");
+                Log::warning(Auth::user()->cid . " attempted to assign exam, not instructor");
                 abort(404);
             }
         }
@@ -567,7 +569,7 @@ class ExamController
         )
             return true;
 
-        \Log::warning(\Auth::user()->cid . " attempted to assign exam " . $exam->id . " (401)");
+        Log::warning(Auth::user()->cid . " attempted to assign exam " . $exam->id . " (401)");
         abort(401);
     }
 

@@ -3,17 +3,18 @@ namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class AJAXController
     extends Controller
 {
-    
+
     public function getNews()
     {
         //SELECT `smf_topics`.`id_topic`,FROM_UNIXTIME(`smf_messages`.`poster_time`, \"%b %e\") AS `poster_time`,`smf_messages`.`subject`
         //FROM `smf_messages`,`smf_topics` WHERE `smf_topics`.`id_board`='2' AND `smf_topics`.`id_first_msg`=`smf_messages`.`id_msg`
         //ORDER BY `smf_messages`.`poster_time` DESC LIMIT 10
-        $results = \DB::connection('forum')->select("SELECT `smf_topics`.`id_topic`,FROM_UNIXTIME(`smf_messages`.`poster_time`,\"%c/%e/%Y\") AS `poster_time`,`smf_messages`.`subject` FROM `smf_messages`,`smf_topics` WHERE `smf_topics`.`id_board`=47 AND `smf_topics`.`id_first_msg`=`smf_messages`.`id_msg` ORDER BY `smf_messages`.`poster_time` DESC LIMIT 10");
+        $results = DB::connection('forum')->select("SELECT `smf_topics`.`id_topic`,FROM_UNIXTIME(`smf_messages`.`poster_time`,\"%c/%e/%Y\") AS `poster_time`,`smf_messages`.`subject` FROM `smf_messages`,`smf_topics` WHERE `smf_topics`.`id_board`=47 AND `smf_topics`.`id_first_msg`=`smf_messages`.`id_msg` ORDER BY `smf_messages`.`poster_time` DESC LIMIT 10");
         $news = [];
         foreach ($results as $result) {
             $item = [
@@ -31,7 +32,7 @@ class AJAXController
 
     public function getEvents()
     {
-        $results = \DB::connection('forum')->select("SELECT *,DATE_FORMAT(`start_date`, \"%c/%e/%Y\") AS `eventdate` FROM smf_calendar WHERE `start_date` > DATE_SUB(NOW(), INTERVAL 1 DAY) ORDER BY `start_date` ASC LIMIT 10");
+        $results = DB::connection('forum')->select("SELECT *,DATE_FORMAT(`start_date`, \"%c/%e/%Y\") AS `eventdate` FROM smf_calendar WHERE `start_date` > DATE_SUB(NOW(), INTERVAL 1 DAY) ORDER BY `start_date` ASC LIMIT 10");
         $events = [];
         foreach ($results as $result) {
             $item = [
