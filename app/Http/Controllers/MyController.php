@@ -22,7 +22,7 @@ class MyController
     public function getProfile()
     {
         $checks = [];
-        $eligible = \Auth::user()->transferEligible($checks);
+        $eligible = Auth::user()->transferEligible($checks);
         return view('my.profile', ['checks' => $checks, 'eligible' => $eligible]);
     }
 
@@ -48,7 +48,7 @@ class MyController
 
         if (Auth::user()->facility()->active)
             return redirect('/my/profile')->with('error', "You are already a member of a facility.");
-        
+
         return redirect('/info/join')->with('error', "You are not eligible to select a facility yet.");
     }
 
