@@ -26,7 +26,7 @@ class StatsController
             $response .= Transfers::where('to', $facility->id)->where('status', 0)->count() . ",";
             $response .= User::where('facility', $facility->id)->count() . ",\n";
         }
-        return \Response::make($response, 200, ['Content-Type' => 'text/plain']);
+        return Response::make($response, 200, ['Content-Type' => 'text/plain']);
         //return response()->header('Content-Type', 'text/plain');
     }
 
@@ -48,7 +48,7 @@ class StatsController
             $response .= User::where('facility',$fac->id)->where('rating', Helper::ratingIntFromShort("ADM"))->count() . ",";
             $response .= User::where('facility',$fac->id)->count() . ",\n";
         }
-        return \Response::make($response, 200, ['Content-Type' => 'text/plain']);
+        return Response::make($response, 200, ['Content-Type' => 'text/plain']);
     }
 
     public function getDetails(Request $request, $facility)

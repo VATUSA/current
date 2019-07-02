@@ -16,6 +16,8 @@ use App\User;
 use App\Facility;
 use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
+use App\Classes\CertHelper;
+use Auth;
 
 class MgtController extends Controller
 {
@@ -75,7 +77,7 @@ class MgtController extends Controller
             $role->save();
             $log = new Actions();
             $log->to = $user->cid;
-            $log->log = "Mentor role for " . $user->facility . " added by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ").";
+            $log->log = "Mentor role for " . $user->facility . " added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
             $log->save();
 
             return redirect("/mgt/controller/$cid")->with("success", "Successfully set as mentor");
@@ -83,7 +85,7 @@ class MgtController extends Controller
             $role->delete();
             $log = new Actions();
             $log->to = $user->cid;
-            $log->log = "Mentor role for " . $user->facility . " deleted by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ").";
+            $log->log = "Mentor role for " . $user->facility . " deleted by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
             $log->save();
 
             return redirect("/mgt/controller/$cid")->with("success", "Successfully removed mentor role");
@@ -136,16 +138,16 @@ class MgtController extends Controller
 
         $promo = new Promotions();
         $promo->cid = $cid;
-        $promo->grantor = \Auth::user()->cid;
+        $promo->grantor = Auth::user()->cid;
         $promo->to = $request->input('rating');
         $promo->from = $user->rating;
         $promo->exam = "0000-00-00 00:00:00";
-        $promo->examiner = \Auth::user()->cid;
+        $promo->examiner = Auth::user()->cid;
         $promo->position = "n/a";
         $promo->save();
 
         if (env('APP_ENV', 'dev') != "dev") {
-            \App\Classes\CertHelper::changeRating($cid, $request->input('rating'), true);
+            CertHelper::changeRating($cid, $request->input('rating'), true);
         }
 
         echo "1";
@@ -177,7 +179,7 @@ class MgtController extends Controller
 
         $action = new Actions();
         $action->to = $user->cid;
-        $action->log = "Transfer Waiver " . (($user->flag_xferOverride == 1) ? "enabled" : "disabled") . " by " . \Auth::user()->fullname() . " " . \Auth::user()->cid;
+        $action->log = "Transfer Waiver " . (($user->flag_xferOverride == 1) ? "enabled" : "disabled") . " by " . Auth::user()->fullname() . " " . Auth::user()->cid;
         //$action->created_at = \DB::raw("NOW()");
         $action->save();
 
@@ -282,7 +284,7 @@ class MgtController extends Controller
         foreach ($roles as $r) {
             $log = new Actions();
             $log->to = $r->cid;
-            $log->log = "Removed from role '" . RoleHelper::roleTitle($role) . "' by " . \Auth::user()->fullname();
+            $log->log = "Removed from role '" . RoleHelper::roleTitle($role) . "' by " . Auth::user()->fullname();
             $log->save();
             $r->delete();
             SMFHelper::setPermissions($log->to);
@@ -312,7 +314,7 @@ class MgtController extends Controller
 
         $log = new Actions();
         $log->to = $cid;
-        $log->log = "Assigned to role '" . RoleHelper::roleTitle($role) . "' by " . \Auth::user()->fullname();
+        $log->log = "Assigned to role '" . RoleHelper::roleTitle($role) . "' by " . Auth::user()->fullname();
         $log->save();
 
         if (config('staff.hq.moveToHQ') && $role != "US11") {
@@ -327,7 +329,7 @@ class MgtController extends Controller
             $tr->actionby = 0;
             $tr->save();
 
-            $log = new \App\Actions;
+            $log = new Actions;
             $log->to = $u->cid;
             $log->from = 0;
             $log->log = "Auto Transfer to " . $tr->to . ", controller set as staff.";
@@ -349,12 +351,12 @@ class MgtController extends Controller
             'log'  => 'required|min:1',
         ]);
 
-        $le = new \App\Actions;
+        $le = new Actions;
         $le->to = $_POST['to'];
         $le->from = $_POST['from'];
         $le->log = $_POST['log'];
         $le->save();
-        $le = \App\Actions::where('id', $le->id)->first();
+        $le = Actions::where('id', $le->id)->first();
 
         return redirect('/mgt/controller/' . $le->to)->with('success', 'Your log entry has been added.');
     }
@@ -403,7 +405,7 @@ class MgtController extends Controller
         $log = new Actions;
         $log->from = 0;
         $log->to = $cid;
-        $log->log = "[Submitted by " . \Auth::user()->fullname() . "] Requested transfer from " . $tr->from . " to " . $tr->to . ": " . $tr->reason;
+        $log->log = "[Submitted by " . Auth::user()->fullname() . "] Requested transfer from " . $tr->from . " to " . $tr->to . ": " . $tr->reason;
         $log->save();
 
         EmailHelper::sendEmail([
@@ -435,8 +437,8 @@ class MgtController extends Controller
         if (!$user) {
             return redirect('/mgt/solo')->with('error', "Invalid CID");
         }
-        if (!RoleHelper::isInstructor(\Auth::user()->cid,
-                $user->facility) && !RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid,
+        if (!RoleHelper::isInstructor(Auth::user()->cid,
+                $user->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
                 $user->facility) && !RoleHelper::isVATUSAStaff()) {
             return redirect('/mgt/solo')->with('error',
                 'You do not have permission to assign this solo certification.');
@@ -479,8 +481,8 @@ class MgtController extends Controller
         if (!$user) {
             abort(500);
         }
-        if (!RoleHelper::isInstructor(\Auth::user()->cid,
-                $user->facility) && !RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid,
+        if (!RoleHelper::isInstructor(Auth::user()->cid,
+                $user->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
                 $user->facility) && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -495,8 +497,8 @@ class MgtController extends Controller
             return redirect('mgt/facility#mem')->with('error', 'User not found.');
         }
 
-        if (!RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid,
-                $user->facility) && !RoleHelper::isInstructor(\Auth::user()->cid,
+        if (!RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
+                $user->facility) && !RoleHelper::isInstructor(Auth::user()->cid,
                 $user->facility) && !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -515,8 +517,8 @@ class MgtController extends Controller
             return redirect('mgt/facility#mem')->with('error', 'User not found');
         }
 
-        if (!RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid,
-                $user->facility) && !RoleHelper::isInstructor(\Auth::user()->cid,
+        if (!RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
+                $user->facility) && !RoleHelper::isInstructor(Auth::user()->cid,
                 $user->facility) && !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -532,7 +534,7 @@ class MgtController extends Controller
             return redirect('mgt/controller/' . $cid . '/promote')->with('error', 'All fields required.');
         }
 
-        $return = PromoHelper::handle($cid, \Auth::user()->cid, $user->rating + 1,
+        $return = PromoHelper::handle($cid, Auth::user()->cid, $user->rating + 1,
             ['exam' => $exam, 'examiner' => $examiner, 'position' => $position]);
         if ($return) {
             return redirect('mgt/facility#mem')->with('success', 'User successfully promoted');
@@ -780,7 +782,7 @@ class MgtController extends Controller
             $currentIns->first()->delete();
             $log = new Actions();
             $log->to = $cid;
-            $log->log = "Instructor role for " . $user->facility . " revoked by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ").";
+            $log->log = "Instructor role for " . $user->facility . " revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
             $log->save();
         } else {
             //Create role
@@ -792,7 +794,7 @@ class MgtController extends Controller
 
             $log = new Actions();
             $log->to = $cid;
-            $log->log = "Instructor role for " . $user->facility . " added by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ").";
+            $log->log = "Instructor role for " . $user->facility . " added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
             $log->save();
         }
 
