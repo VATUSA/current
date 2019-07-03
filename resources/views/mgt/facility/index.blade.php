@@ -189,6 +189,9 @@
                                     <legend>Development</legend>
                                     <b>Sandbox ULSv2 JSON Web Key (JWK):</b> (<a
                                         href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
+                                    <p class="help-block">When the <strong>?test</strong> query string parameter is set,
+                                        ULS will not redirect to VATSIM login. Instead, it will authenticate a test user
+                                        with CID 999 and random rating and email. Additionally, the signature will be created according to the Sandbox JWK below.</p>
                                     <input type="text" readonly id="textulsv2jwkdev" class="form-control"
                                            value="{{$facility->uls_jwk_dev}}"><br>
                                     <button class="btn btn-primary" onClick="ulsv2JWK(true)">Generate New</button>
@@ -211,10 +214,12 @@
                                 <br>
                                 <fieldset>
                                     <legend>Development</legend>
-                                    <b>Sandbox APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC 7515</a> page
+                                    <b>Sandbox APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC
+                                        7515</a> page
                                     38) --
                                     symmetric key<br>
-                                    <p class="help-block">Development Website URL must be set correctly in order for returned data to be formatted according to RFC 7515.</p>
+                                    <p class="help-block">Development Website URL must be set correctly in order for
+                                        returned data to be formatted according to RFC 7515.</p>
                                     <input class="form-control" type="text" id="textapiv2jwkdev"
                                            value="{{$facility->apiv2_jwk_dev}}" readonly><br>
                                     <button class="btn btn-primary" onClick="apiv2JWK(true)">Generate New</button>
@@ -561,6 +566,7 @@
           bootbox.alert('URL save failed.')
         })
       }
+
       function updateDevUrl () {
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {url_dev: $('#facurldev').val()}}
