@@ -151,7 +151,7 @@
                                     <b>ULSv2 JSON Web Key (JWK):</b> (<a
                                         href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
                                     <input type="text" readonly id="textulsv2jwk" class="form-control"
-                                           value="{{$facility->uls_jwk}}"><br>
+                                           value="{{$facility->uls_jwk}}" autocomplete="off"><br>
                                     <button class="btn btn-primary" onClick="ulsv2JWK()">Generate New</button>
                                     <br><br>
                                     <b>Return URLs:</b>
@@ -193,8 +193,9 @@
                                         ULS will not redirect to VATSIM login. Instead, it will authenticate a test user
                                         with CID 999 and random rating and email. Additionally, the signature will be created according to the Sandbox JWK below.</p>
                                     <input type="text" readonly id="textulsv2jwkdev" class="form-control"
-                                           value="{{$facility->uls_jwk_dev}}"><br>
+                                           value="{{$facility->uls_jwk_dev}}" autocomplete="off"><br>
                                     <button class="btn btn-primary" onClick="ulsv2JWK(true)">Generate New</button>
+                                    <button class="btn btn-warning" onClick="clearDevULSv2JWK()">Clear</button>
                                 </fieldset>
                                 <br><br>
                                 <h1>APIv2</h1>
@@ -204,11 +205,11 @@
                                     38) --
                                     symmetric key<br>
                                     <input class="form-control" type="text" id="textapiv2jwk"
-                                           value="{{$facility->apiv2_jwk}}" readonly><br>
+                                           value="{{$facility->apiv2_jwk}}" readonly autocomplete="off"><br>
                                     <button class="btn btn-primary" onClick="apiv2JWK()">Generate New</button>
                                     <br><br>
                                     <b>API Key:</b><br><input class="form-control" type="text" id="apikey"
-                                                              value="{{$facility->apikey}}"><br>
+                                                              value="{{$facility->apikey}}" autocomplete="off"><br>
                                     <button class="btn btn-primary" onClick="apiGen()">Generate New</button>
                                 </fieldset>
                                 <br>
@@ -221,14 +222,15 @@
                                     <p class="help-block">Development Website URL must be set correctly in order for
                                         returned data to be formatted according to RFC 7515.</p>
                                     <input class="form-control" type="text" id="textapiv2jwkdev"
-                                           value="{{$facility->apiv2_jwk_dev}}" readonly><br>
+                                           value="{{$facility->apiv2_jwk_dev}}" readonly autocomplete="off"><br>
                                     <button class="btn btn-primary" onClick="apiv2JWK(true)">Generate New</button>
+                                    <button class="btn btn-warning" onClick="clearDevAPIv2JWK()">Clear</button>
                                     <br><br>
                                     <b>Sandbox API Key:</b><br>
                                     <p class="help-block">Use this key to prevent the live database from being
                                         changed.</p>
                                     <input class="form-control" type="text" id="apisbkey"
-                                           value="{{$facility->api_sandbox_key}}"><br>
+                                           value="{{$facility->api_sandbox_key}}" autocomplete="off"><br>
                                     <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
                                 </fieldset>
                                 <hr>
@@ -237,7 +239,7 @@
                                     <legend>Live</legend>
                                     @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                                         <b>IP (v1 only):</b><br><input class="form-control" type="text" id="apiip"
-                                                                       value="{{$facility->ip}}">
+                                                                       value="{{$facility->ip}}" autocomplete="off">
                                         <br>
                                         <button class="btn btn-primary" onClick="ipUpdate()">Update</button>
                                     @else
@@ -250,6 +252,7 @@
                                     @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                                         <b>Sandbox IP (v1 only):</b><br><input class="form-control" type="text"
                                                                                id="apisbip"
+                                                                               autocomplete="off"
                                                                                value="{{$facility->api_sandbox_ip}}">
                                         <br>
                                         <button class="btn btn-primary" onClick="ipSBUpdate()">Update</button>
@@ -579,7 +582,7 @@
 
       function ulsv2JWK (isdev = false) {
         $.ajax(
-          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {uls2jwk: '', jwkdev: isdev}}
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
           if (result) {
             if (!isdev) $('#textulsv2jwk').val(JSON.stringify(result))
@@ -588,13 +591,33 @@
         })
       }
 
+      function clearDevULSv2JWK() {
+        $.ajax(
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: 'X', jwkdev: true}}
+        ).done(function (result) {
+          if (result === "") {
+            $('#textulsv2jwkdev').val("")
+          }
+        })
+      }
+
       function apiv2JWK (isdev = false) {
         $.ajax(
-          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiv2jwk: '', jwkdev: isdev}}
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
           if (result) {
             if (!isdev) $('#textapiv2jwk').val(JSON.stringify(result))
             else $('#textapiv2jwkdev').val(JSON.stringify(result))
+          }
+        })
+      }
+
+      function clearDevAPIv2JWK() {
+        $.ajax(
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: 'X', jwkdev: true}}
+        ).done(function (result) {
+          if (result === "") {
+            $('#textapiv2jwkdev').val("")
           }
         })
       }
