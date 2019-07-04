@@ -141,7 +141,8 @@
                                 <input type="text" id="facurl" class="form-control" value="{{$facility->url}}"/>
                                 <button class="btn btn-primary" onClick="updateUrl()">Update</button>
                                 <br><br>
-                                <b>Development Website URL:</b>
+                                <b>Development Website URL(s):</b>
+                                <p class="help-block">Multiple Dev URLs can be specified, seperated by a <strong>comma</strong>.</p>
                                 <input type="text" id="facurldev" class="form-control" value="{{$facility->url_dev}}"/>
                                 <button class="btn btn-primary" onClick="updateDevUrl()">Update</button>
                                 <hr>
