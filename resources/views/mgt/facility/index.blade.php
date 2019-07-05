@@ -138,12 +138,15 @@
                             <div role="tabpanel" class="tab-pane" id="uls">
                                 <br>
                                 <b>Website URL:</b>
-                                <input type="text" id="facurl" class="form-control" value="{{$facility->url}}"/>
+                                <input type="text" id="facurl" class="form-control" value="{{$facility->url}}"
+                                       autocomplete="off"/>
                                 <button class="btn btn-primary" onClick="updateUrl()">Update</button>
                                 <br><br>
                                 <b>Development Website URL(s):</b>
-                                <p class="help-block">Multiple Dev URLs can be specified, seperated by a <strong>comma</strong>.</p>
-                                <input type="text" id="facurldev" class="form-control" value="{{$facility->url_dev}}"/>
+                                <p class="help-block">Multiple Dev URLs can be specified, seperated by a
+                                    <strong>comma</strong>.</p>
+                                <input type="text" id="facurldev" class="form-control" value="{{$facility->url_dev}}"
+                                       autocomplete="off"/>
                                 <button class="btn btn-primary" onClick="updateDevUrl()">Update</button>
                                 <hr>
                                 <h1>ULS</h1>
@@ -192,7 +195,8 @@
                                         href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
                                     <p class="help-block">When the <strong>?test</strong> query string parameter is set,
                                         ULS will not redirect to VATSIM login. Instead, it will authenticate a test user
-                                        with CID 999 and random rating and email. Additionally, the signature will be created according to the Sandbox JWK below.</p>
+                                        with CID 999 and random rating and email. Additionally, the signature will be
+                                        created according to the Sandbox JWK below.</p>
                                     <input type="text" readonly id="textulsv2jwkdev" class="form-control"
                                            value="{{$facility->uls_jwk_dev}}" autocomplete="off"><br>
                                     <button class="btn btn-primary" onClick="ulsv2JWK(true)">Generate New</button>
@@ -567,7 +571,7 @@
         ).done(function (result) {
           bootbox.alert('URL saved successfully')
         }).fail(function (result) {
-          bootbox.alert('URL save failed.')
+          bootbox.alert('URL save failed. ' + result.responseJSON.msg + ".")
         })
       }
 
@@ -575,9 +579,9 @@
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {url_dev: $('#facurldev').val()}}
         ).done(function (result) {
-          bootbox.alert('Dev URL saved successfully')
+          bootbox.alert('Dev URL saved successfully.')
         }).fail(function (result) {
-          bootbox.alert('Dev URL save failed.')
+          bootbox.alert('Dev URL save failed. ' + result.responseJSON.msg + ".")
         })
       }
 
@@ -592,12 +596,12 @@
         })
       }
 
-      function clearDevULSv2JWK() {
+      function clearDevULSv2JWK () {
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: 'X', jwkdev: true}}
         ).done(function (result) {
-          if (result === "") {
-            $('#textulsv2jwkdev').val("")
+          if (result === '') {
+            $('#textulsv2jwkdev').val('')
           }
         })
       }
@@ -613,12 +617,12 @@
         })
       }
 
-      function clearDevAPIv2JWK() {
+      function clearDevAPIv2JWK () {
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: 'X', jwkdev: true}}
         ).done(function (result) {
-          if (result === "") {
-            $('#textapiv2jwkdev').val("")
+          if (result === '') {
+            $('#textapiv2jwkdev').val('')
           }
         })
       }
