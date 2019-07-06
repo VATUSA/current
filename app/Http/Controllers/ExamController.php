@@ -36,7 +36,7 @@ class ExamController
             !(RoleHelper::isInstructor() ||
                 RoleHelper::isFacilitySeniorStaff() ||
                 RoleHelper::isVATUSAStaff())
-            && $result->cid != Auth::user()->cuseid
+            && $result->cid != Auth::user()->cid
         ) abort(401);
 
 
