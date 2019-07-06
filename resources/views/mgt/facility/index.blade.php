@@ -136,75 +136,135 @@
                         </div>
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <div role="tabpanel" class="tab-pane" id="uls">
+                                <br>
                                 <b>Website URL:</b>
-                                <input type="text" id="facurl" class="form-control" value="{{$facility->url}}"/>
+                                <input type="text" id="facurl" class="form-control" value="{{$facility->url}}"
+                                       autocomplete="off"/>
                                 <button class="btn btn-primary" onClick="updateUrl()">Update</button>
+                                <br><br>
+                                <b>Development Website URL(s):</b>
+                                <p class="help-block">Multiple Dev URLs can be specified, seperated by a
+                                    <strong>comma</strong>.</p>
+                                <input type="text" id="facurldev" class="form-control" value="{{$facility->url_dev}}"
+                                       autocomplete="off"/>
+                                <button class="btn btn-primary" onClick="updateDevUrl()">Update</button>
+                                <hr>
                                 <h1>ULS</h1>
-                                <b>ULSv2 JSON Web Key (JWK):</b> (<a
-                                    href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
-                                <input type="text" readonly id="textulsv2jwk" class="form-control"
-                                       value="{{$facility->uls_jwk}}"><br>
-                                <button class="btn btn-primary" onClick="ulsv2JWK()">Generate New</button>
-                                <br><br>
-                                <b>Return URLs:</b>
-                                <div id="return-URLs">
-                                    <table class="table table-striped" id="ulsreturn-table">
-                                        <thead>
-                                        <tr>
-                                            <th style="color:#7a7a7a; width:40px;">ID</th>
-                                            <th style="color:#7a7a7a; width:500px;">URL</th>
-                                            <th style="color:#7a7a7a;">Actions</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach(\App\Classes\ULSHelper::getReturnPaths($facility->id) as $p)
-                                            <tr id="path-{{$p->order}}">
-                                                <td class="rp-order">{{ $p->order }}</td>
-                                                <td class="rp-url">{{ $p->url }}</td>
-                                                <td class="rp-actions">
-                                                    <button class="btn btn-info"
-                                                            onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
-                                                        <i class="fa fa-pencil"></i></button>
-                                                    <button class="btn btn-danger"
-                                                            onclick="removeUlsReturn({{$p->order}})">
-                                                        <i class="fa fa-remove"></i></button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                    <button class="btn btn-success" onclick="addUlsReturn()">Add Return URL</button>
-                                </div>
-                                <br><br>
-                                <h1>API (v1/v2)</h1>
-                                <b>APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) --
-                                symmetric key<br>
-                                <input class="form-control" type="text" id="textapiv2jwk"
-                                       value="{{$facility->apiv2_jwk}}" readonly><br>
-                                <button class="btn btn-primary" onClick="apiv2JWK()">Generate New</button>
-                                <br><br>
-                                <b>API Key:</b><br><input class="form-control" type="text" id="apikey"
-                                                          value="{{$facility->apikey}}"><br>
-                                <button class="btn btn-primary" onClick="apiGen()">Generate New</button>
-                                <br><br>
-                                <b>Sandbox API Key:</b><br>
-                                <p class="help-block">Use this key to prevent the live database from being changed.</p>
-                                <input class="form-control" type="text" id="apisbkey"
-                                           value="{{$facility->api_sandbox_key}}"><br>
-                                <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
-                                <br><br>
-                                @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
-                                    <b>IP (v1 only):</b><br><input class="form-control" type="text" id="apiip"
-                                                                   value="{{$facility->ip}}"><br>
-                                    <button class="btn btn-primary" onClick="ipUpdate()">Update</button>
+                                <fieldset>
+                                    <legend>Live</legend>
+                                    <b>ULSv2 JSON Web Key (JWK):</b> (<a
+                                        href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
+                                    <input type="text" readonly id="textulsv2jwk" class="form-control"
+                                           value="{{$facility->uls_jwk}}" autocomplete="off"><br>
+                                    <button class="btn btn-primary" onClick="ulsv2JWK()">Generate New</button>
                                     <br><br>
-                                    <b>Sandbox IP (v1 only):</b><br><input class="form-control" type="text" id="apisbip"
-                                                                           value="{{$facility->api_sandbox_ip}}"><br>
-                                    <button class="btn btn-primary" onClick="ipSBUpdate()">Update</button>
-                                @else
-                                    <b>IP (v1 only):</b> {{$facility->ip}}<br>
-                                    <b>Sandbox IP (v1 only):</b> {{$facility->api_sandbox_ip}}
-                                @endif
+                                    <b>Return URLs:</b>
+                                    <div id="return-URLs">
+                                        <table class="table table-striped" id="ulsreturn-table">
+                                            <thead>
+                                            <tr>
+                                                <th style="color:#7a7a7a; width:40px;">ID</th>
+                                                <th style="color:#7a7a7a; width:500px;">URL</th>
+                                                <th style="color:#7a7a7a;">Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach(\App\Classes\ULSHelper::getReturnPaths($facility->id) as $p)
+                                                <tr id="path-{{$p->order}}">
+                                                    <td class="rp-order">{{ $p->order }}</td>
+                                                    <td class="rp-url">{{ $p->url }}</td>
+                                                    <td class="rp-actions">
+                                                        <button class="btn btn-info"
+                                                                onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
+                                                            <i class="fa fa-pencil"></i></button>
+                                                        <button class="btn btn-danger"
+                                                                onclick="removeUlsReturn({{$p->order}})">
+                                                            <i class="fa fa-remove"></i></button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                        <button class="btn btn-success" onclick="addUlsReturn()">Add Return URL</button>
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <legend>Development</legend>
+                                    <b>Sandbox ULSv2 JSON Web Key (JWK):</b> (<a
+                                        href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
+                                    <p class="help-block">When the <strong>?test</strong> query string parameter is set,
+                                        ULS will not redirect to VATSIM login. Instead, it will authenticate a test user
+                                        with CID 999 and random rating and email. Additionally, the signature will be
+                                        created according to the Sandbox JWK below.</p>
+                                    <input type="text" readonly id="textulsv2jwkdev" class="form-control"
+                                           value="{{$facility->uls_jwk_dev}}" autocomplete="off"><br>
+                                    <button class="btn btn-primary" onClick="ulsv2JWK(true)">Generate New</button>
+                                    <button class="btn btn-warning" onClick="clearDevULSv2JWK()">Clear</button>
+                                </fieldset>
+                                <br><br>
+                                <h1>APIv2</h1>
+                                <fieldset>
+                                    <legend>Live</legend>
+                                    <b>APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page
+                                    38) --
+                                    symmetric key<br>
+                                    <input class="form-control" type="text" id="textapiv2jwk"
+                                           value="{{$facility->apiv2_jwk}}" readonly autocomplete="off"><br>
+                                    <button class="btn btn-primary" onClick="apiv2JWK()">Generate New</button>
+                                    <br><br>
+                                    <b>API Key:</b><br><input class="form-control" type="text" id="apikey"
+                                                              value="{{$facility->apikey}}" autocomplete="off"><br>
+                                    <button class="btn btn-primary" onClick="apiGen()">Generate New</button>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <legend>Development</legend>
+                                    <b>Sandbox APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC
+                                        7515</a> page
+                                    38) --
+                                    symmetric key<br>
+                                    <p class="help-block">Development Website URL must be set correctly in order for
+                                        returned data to be formatted according to RFC 7515.</p>
+                                    <input class="form-control" type="text" id="textapiv2jwkdev"
+                                           value="{{$facility->apiv2_jwk_dev}}" readonly autocomplete="off"><br>
+                                    <button class="btn btn-primary" onClick="apiv2JWK(true)">Generate New</button>
+                                    <button class="btn btn-warning" onClick="clearDevAPIv2JWK()">Clear</button>
+                                    <br><br>
+                                    <b>Sandbox API Key:</b><br>
+                                    <p class="help-block">Use this key to prevent the live database from being
+                                        changed.</p>
+                                    <input class="form-control" type="text" id="apisbkey"
+                                           value="{{$facility->api_sandbox_key}}" autocomplete="off"><br>
+                                    <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
+                                </fieldset>
+                                <hr>
+                                <h1>APIv1 (Deprecated)</h1>
+                                <fieldset>
+                                    <legend>Live</legend>
+                                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
+                                        <b>IP (v1 only):</b><br><input class="form-control" type="text" id="apiip"
+                                                                       value="{{$facility->ip}}" autocomplete="off">
+                                        <br>
+                                        <button class="btn btn-primary" onClick="ipUpdate()">Update</button>
+                                    @else
+                                        <b>IP (v1 only):</b> {{$facility->ip}}<br>
+                                    @endif
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <legend>Development</legend>
+                                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
+                                        <b>Sandbox IP (v1 only):</b><br><input class="form-control" type="text"
+                                                                               id="apisbip"
+                                                                               autocomplete="off"
+                                                                               value="{{$facility->api_sandbox_ip}}">
+                                        <br>
+                                        <button class="btn btn-primary" onClick="ipSBUpdate()">Update</button>
+                                    @else
+                                        <b>Sandbox IP (v1 only):</b> {{$facility->api_sandbox_ip}}
+                                    @endif
+                                </fieldset>
                             </div>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
@@ -511,23 +571,59 @@
         ).done(function (result) {
           bootbox.alert('URL saved successfully')
         }).fail(function (result) {
-          bootbox.alert('URL save failed.')
+          bootbox.alert('URL save failed. ' + result.responseJSON.msg + ".")
         })
       }
 
-      function ulsv2JWK () {
+      function updateDevUrl () {
         $.ajax(
-          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {uls2jwk: ''}}
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {url_dev: $('#facurldev').val()}}
         ).done(function (result) {
-          if (result) $('#textulsv2jwk').val(JSON.stringify(result))
+          bootbox.alert('Dev URL saved successfully.')
+        }).fail(function (result) {
+          bootbox.alert('Dev URL save failed. ' + result.responseJSON.msg + ".")
         })
       }
 
-      function apiv2JWK () {
+      function ulsv2JWK (isdev = false) {
         $.ajax(
-          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiv2jwk: ''}}
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
-          if (result) $('#textapiv2jwk').val(JSON.stringify(result))
+          if (result) {
+            if (!isdev) $('#textulsv2jwk').val(JSON.stringify(result[0]))
+            else $('#textulsv2jwkdev').val(JSON.stringify(result[0]))
+          }
+        })
+      }
+
+      function clearDevULSv2JWK () {
+        $.ajax(
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: 'X', jwkdev: true}}
+        ).done(function (result) {
+          if (result[0] === '') {
+            $('#textulsv2jwkdev').val('')
+          }
+        })
+      }
+
+      function apiv2JWK (isdev = false) {
+        $.ajax(
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: '', jwkdev: isdev}}
+        ).done(function (result) {
+          if (result) {
+            if (!isdev) $('#textapiv2jwk').val(JSON.stringify(result[0]))
+            else $('#textapiv2jwkdev').val(JSON.stringify(result[0]))
+          }
+        })
+      }
+
+      function clearDevAPIv2JWK () {
+        $.ajax(
+          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: 'X', jwkdev: true}}
+        ).done(function (result) {
+          if (result[0] === '') {
+            $('#textapiv2jwkdev').val('')
+          }
         })
       }
 
