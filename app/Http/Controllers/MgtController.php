@@ -449,7 +449,7 @@ class MgtController extends Controller
         $exp = $request->input("expiration", null);
         if (!$exp || !preg_match("/^\d{4}-\d{2}-\d{2}/", $exp)) {
             return redirect("/mgt/solo")->with("error",
-                "Expiration date is malformed.  Please use the YYYY-MM-DD format");
+                "Expiration date is malformed. Try a different browser.");
         }
         if (Carbon::createFromFormat('Y-m-d', $exp)->diffInDays() > 30) {
             return redirect("/mgt/solo")->with("error", "Expiration date cannot be more than 30 days away.");
@@ -486,6 +486,7 @@ class MgtController extends Controller
         }
 
         $cert->delete();
+        return session()->flash('success', 'Removed solo certification');
     }
 
     function getControllerPromote($cid)
