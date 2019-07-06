@@ -69,6 +69,7 @@ $.ajaxSetup({
 })
 $(function () {
   $('[data-toggle=\'tooltip\']').tooltip()
+  $('[rel=\'tooltip\']').tooltip()
   $('.dropdown-menu')
     .mouseenter(function () {
       $(this).parent('li').addClass('active')
