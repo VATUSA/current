@@ -179,14 +179,14 @@ class EmailMgtController extends Controller
     public function getWelcome() {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
-        $fac = Facility::find(\Auth::user()->facility);
+        $fac = Facility::find(Auth::user()->facility);
         return view('mgt.mail.welcome', ['welcome' => $fac->welcome_text]);
     }
 
     public function postWelcome(Request $request) {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
-        $fac = Facility::find(\Auth::user()->facility);
+        $fac = Facility::find(Auth::user()->facility);
         $fac->welcome_text = $request->input("welcome");
         $fac->save();
         return redirect("/mgt/mail/welcome")->with("success","Welcome email set.");
@@ -271,7 +271,8 @@ class EmailMgtController extends Controller
     {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
-        if (!in_array($template, ["examassigned","exampassed","examfailed"])) { return redirect("/mgt/mail/template")->with("error", "Invalid template"); }
+        if (!in_array($template, ["examassigned","exampassed","examfailed"]))
+            return redirect("/mgt/mail/template")->with("error", "Invalid template");
 
         $data = $request->template;
         $data = preg_replace(array('/<(\?|\%)\=?(php)?/', '/(\%|\?)>/'), array('',''), $data);
