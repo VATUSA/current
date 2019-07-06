@@ -11,6 +11,8 @@ use App\TicketHistory;
 use App\TicketReplies;
 use App\User;
 use Illuminate\Http\Request;
+use App\Classes\RoleHelper;
+use Auth;
 
 class HelpDeskController
     extends Controller
@@ -27,26 +29,26 @@ class HelpDeskController
 
     public function getList(Request $request, $status)
     {
-        if (!\Auth::check()) return redirect('/')->with("error", "Must be logged in to visit ticket center");
+        if (!Auth::check()) return redirect('/')->with("error", "Must be logged in to visit ticket center");
 
         if ($status == "search") {
             return view('help.search');
         }
         $sort = $sortdir = $page = $perpage = $start = $pages = null;
         if ($status == "mine") {
-            $tickets = Ticket::where('cid', \Auth::user()->cid)->orderBy('created_at', 'asc')->get();
+            $tickets = Ticket::where('cid', Auth::user()->cid)->orderBy('created_at', 'asc')->get();
             $status = "My";
         } elseif ($status == "myassigned") {
-            $tickets = Ticket::where('assigned_to', \Auth::user()->cid)->where('status', 'Open')->orderBy('created_at', 'asc')->get();
+            $tickets = Ticket::where('assigned_to', Auth::user()->cid)->where('status', 'Open')->orderBy('created_at', 'asc')->get();
             $status = "My Assigned";
         } elseif ($status == "open") {
             $status = "Open";
-            if(\App\Classes\RoleHelper::isVATUSAStaff())
+            if(RoleHelper::isVATUSAStaff())
                 $tickets = Ticket::where('status', 'Open')->orderBy('created_at', 'asc')->get();
             else
                 $tickets = Ticket::where('status', 'Open')->where(function($query) {
-                    $query->where('facility', \Auth::user()->facility)
-                        ->orwhere('assigned_to', \Auth::user()->cid);
+                    $query->where('facility', Auth::user()->facility)
+                        ->orwhere('assigned_to', Auth::user()->cid);
                         })->get();
         } elseif ($status == "closed") {
             $status = "Closed";
@@ -54,12 +56,12 @@ class HelpDeskController
             // Build query
             $tickets = new Ticket;
             $tickets = $tickets->where('status', 'Closed');
-            if(\App\Classes\RoleHelper::isVATUSAStaff())
+            if(!RoleHelper::isVATUSAStaff())
 
-            if (!\App\Classes\RoleHelper::isVATUSAStaff())
+            if (!RoleHelper::isVATUSAStaff())
                 $tickets = $tickets->where(function($query) {
-                    $query->where('facility', \Auth::user()->facility)
-                        ->orwhere('assigned_to', \Auth::user()->cid);
+                    $query->where('facility', Auth::user()->facility)
+                        ->orwhere('assigned_to', Auth::user()->cid);
                 });
             // Add sort row
             $sort = $request->input("sort", "created_at");
@@ -80,7 +82,7 @@ class HelpDeskController
     }
 
     public function postList($status) {
-        if (!\Auth::check()) return redirect('/')->with("error", "Must be logged in to visit ticket center");
+        if (!Auth::check()) return redirect('/')->with("error", "Must be logged in to visit ticket center");
 
         if ($status != "search") { return direct('/')->with("error", "Unknown status in post to ticket center"); }
 
@@ -105,14 +107,14 @@ class HelpDeskController
 
     public function getNew()
     {
-        if (!\Auth::check()) return redirect('/')->with('error', "Must be logged in to submit a ticket");
+        if (!Auth::check()) return redirect('/')->with('error', "Must be logged in to submit a ticket");
 
         return view('help.openticket');
     }
 
     public function postNew(Request $request)
     {
-        if (!\Auth::check()) return redirect('/')->with('error', "Must be logged in to submit a ticket");
+        if (!Auth::check()) return redirect('/')->with('error', "Must be logged in to submit a ticket");
 
         $this->validate($request, [
             'tSubject' => 'required|max:255',
@@ -122,7 +124,7 @@ class HelpDeskController
         ]);
 
         $ticket = new Ticket();
-        $ticket->cid = \Auth::user()->cid;
+        $ticket->cid = Auth::user()->cid;
         $ticket->subject = $request->input("tSubject");
         $ticket->body = $request->input("tMessage");
         $ticket->status = "Open";
@@ -133,12 +135,12 @@ class HelpDeskController
 
         $history = new TicketHistory();
         $history->ticket_id = $ticket->id;
-        $history->entry = "Ticket created by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ")";
+        $history->entry = "Ticket created by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ")";
         $history->save();
 
         $emails = [];
         $emails[] = "vatusa6@vatusa.net"; // During debug period
-        $emails[] = \Auth::user()->email;
+        $emails[] = Auth::user()->email;
 
         // Build emails array
         if ($ticket->assigned_to == 0) {
@@ -181,23 +183,23 @@ class HelpDeskController
         $ticket = Ticket::find($id);
         if (!$ticket) return redirect('/help')->with("error","Ticket not found");
 
-        if (!\Auth::check()) return redirect('/')->with('error', 'Must be logged in');
+        if (!Auth::check()) return redirect('/')->with('error', 'Must be logged in');
 
-        if ($ticket->cid == \Auth::user()->cid || \App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor(null, $ticket->facility)) {
+        if ($ticket->cid == Auth::user()->cid || RoleHelper::isFacilityStaff(null, $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility)) {
             if ($ticket->status == "Open") {
                 $ticket->status = "Closed";
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
-                $history->entry = \Auth::user()->fullname() . " (" . \Auth::user()->cid . ") closed the ticket.";
+                $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") closed the ticket.";
                 $history->save();
-                    EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Closed", "emails.help.closed", ["ticket" => $ticket, "closer" => \Auth::user()->fullname()]);
+                    EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Closed", "emails.help.closed", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
             } else {
                 $ticket->status = "Open";
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
-                $history->entry = \Auth::user()->fullname() . " (" . \Auth::user()->cid . ") opened the ticket.";
+                $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") opened the ticket.";
                 $history->save();
-                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Opened", "emails.help.reopened", ["ticket" => $ticket, "closer" => \Auth::user()->fullname()]);
+                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Opened", "emails.help.reopened", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
             }
             $ticket->save();
         }
@@ -209,9 +211,9 @@ class HelpDeskController
         $ticket = Ticket::find($id);
         if (!$ticket) return redirect('/help')->with("error","Ticket not found");
 
-        if (!\Auth::check()) return redirect('/')->with('error', 'Must be logged in');
+        if (!Auth::check()) return redirect('/')->with('error', 'Must be logged in');
 
-        if ($ticket->cid == \Auth::user()->cid || \App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor(null, $ticket->facility)) {
+        if ($ticket->cid == Auth::user()->cid || RoleHelper::isFacilityStaff(null, $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility)) {
             return view('help.viewticket', ['ticket' => $ticket]);
         }
         else
@@ -223,45 +225,45 @@ class HelpDeskController
         $ticket = Ticket::find($id);
         if (!$ticket) return redirect('/help')->with("error","Ticket not found");
 
-        if (!\Auth::check()) return redirect('/')->with('error', 'Must be logged in');
+        if (!Auth::check()) return redirect('/')->with('error', 'Must be logged in');
 
         if ($request->input("tReply", null) == null) { return redirect("/help/ticket/$id")->with("error","You cannot post a reply with an empty message.  If you're trying to open/close the ticket, use the toggle in the ticket summary."); }
 
-        if ($ticket->cid == \Auth::user()->cid || \App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor(null, $ticket->facility))
+        if ($ticket->cid == Auth::user()->cid || RoleHelper::isFacilityStaff(null, $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility))
         {
             $ticket->touch();
             $reply = new TicketReplies();
             $reply->ticket_id = $ticket->id;
-            $reply->cid = \Auth::user()->cid;
+            $reply->cid = Auth::user()->cid;
             $reply->body = $request->input("tReply");
             $reply->save();
 
             $history = new TicketHistory();
             $history->ticket_id = $ticket->id;
-            $history->entry = \Auth::user()->fullname() . " (" . \Auth::user()->cid . ") replied to the ticket.";
+            $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") replied to the ticket.";
             $history->save();
 
             if ($request->input("replyAndCloseSubmit")) {
                 $ticket->status = "Closed";
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
-                $history->entry = \Auth::user()->fullname() . " (" . \Auth::user()->cid . ") closed the ticket.";
+                $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") closed the ticket.";
                 $history->save();
-                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Closed", "emails.help.closed", ["ticket" => $ticket, "closer" => \Auth::user()->fullname()]);
+                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Closed", "emails.help.closed", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
             } elseif ($request->input("replyAndOpenSubmit")) {
                 $ticket->status = "Open";
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
-                $history->entry = \Auth::user()->fullname() . " (" . \Auth::user()->cid . ") opened the ticket.";
+                $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") opened the ticket.";
                 $history->save();
-                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Opened", "emails.help.reopened", ["ticket" => $ticket, "closer" => \Auth::user()->fullname()]);
+                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Opened", "emails.help.reopened", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
             }
             $ticket->save();
 
             $emails = [];
             $emails[] = "vatusa6@vatusa.net"; // During debug period
-            $emails[] = \Auth::user()->email;
-            if (\Auth::user()->cid != $ticket->cid) {
+            $emails[] = Auth::user()->email;
+            if (Auth::user()->cid != $ticket->cid) {
                 $emails[] = $ticket->submitter->email;
             }
 
@@ -311,7 +313,7 @@ class HelpDeskController
         $ticket = Ticket::find($id);
         if (!$ticket) abort(404);
 
-        if (\App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor(null, $ticket->facility))
+        if (RoleHelper::isFacilityStaff(null, $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility))
         {
             if ($request->input("facility")) {
                 $ticket->facility = $request->input("facility");
@@ -319,7 +321,7 @@ class HelpDeskController
 
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
-                $history->entry = \Auth::user()->fullname() . " (" . \Auth::user()->cid . ") assigned ticket to " . $ticket->facility . " facility.";
+                $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned ticket to " . $ticket->facility . " facility.";
                 $history->save();
             }
             if (isset($_POST['assign'])) {
@@ -329,7 +331,7 @@ class HelpDeskController
 
                     $history = new TicketHistory();
                     $history->ticket_id = $ticket->id;
-                    $history->entry = \Auth::user()->fullname() . " (" . \Auth::user()->cid . ") set ticket to unassigned.";
+                    $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") set ticket to unassigned.";
                     $history->save();
 
                     if ($ticket->facility == "ZHQ") {
@@ -363,7 +365,7 @@ class HelpDeskController
 
                     $history = new TicketHistory();
                     $history->ticket_id = $ticket->id;
-                    $history->entry = \Auth::user()->fullname() . " (" . \Auth::user()->cid . ") assigned the ticket to " . $user->fullname() . " (" . $user->cid . ").";
+                    $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned the ticket to " . $user->fullname() . " (" . $user->cid . ").";
                     $history->save();
 
                     EmailHelper::sendSupportEmail($user->email, $id, "Ticket assigned to you", "emails.help.assigned", ["ticket" => $ticket]);
@@ -380,13 +382,13 @@ class HelpDeskController
     // Knowledgebase Editor - Categories
 
     public function getKBE() {
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         return view('help.kbe.index');
     }
     public function deleteKBECategory(Request $request, $id) {
         if (!$request->ajax()) abort(403);
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $kbc = KnowledgebaseCategories::find($id);
         if (!$kbc) abort(404);
@@ -394,7 +396,7 @@ class HelpDeskController
     }
     public function postKBECategory(Request $request, $id) {
         if (!$request->ajax()) abort(403);
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $kbc = KnowledgebaseCategories::find($id);
         if (!$kbc) abort(404);
@@ -406,7 +408,7 @@ class HelpDeskController
 
     public function putKBECategory(Request $request) {
         if (!$request->ajax()) abort(403);
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $kbc = new KnowledgebaseCategories();
         $kbc->save();
@@ -415,7 +417,7 @@ class HelpDeskController
 
     // Knowledgebase Editor - Questions
     public function getKBECategory(Request $request, $id) {
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $kbc = KnowledgebaseCategories::find($id);
         if (!$kbc) return redirect('/help/kbe')->with("error", "Category not found");
@@ -425,7 +427,7 @@ class HelpDeskController
 
     public function getKBEQuestion(Request $request, $qid) {
         if (!$request->ajax()) abort(403);
-        //if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        //if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $kbq = KnowledgebaseQuestions::find($qid);
         if (!$kbq) return redirect('/help/kbe/$id')->with("error", "Question not found");
@@ -436,7 +438,7 @@ class HelpDeskController
 
     public function deleteKBEQuestion(Request $request, $id) {
         if (!$request->ajax()) abort(403);
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $question = KnowledgebaseQuestions::find($id);
         if (!$question) abort(404);
@@ -456,7 +458,7 @@ class HelpDeskController
 
     public function postKBEQuestionOrder(Request $request, $id) {
         if (!$request->ajax()) abort(403);
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $o = 1;
         foreach($_POST['kbe'] as $id) {
@@ -468,7 +470,7 @@ class HelpDeskController
     }
 
     public function getKBEeditQuestion($cid, $id) {
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
         $question = null;
         if ($id != 0) {
             $question = KnowledgebaseQuestions::find($id);
@@ -480,7 +482,7 @@ class HelpDeskController
     }
 
     public function postKBEeditQuestion($cid, $id) {
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
         $question = null;
         if ($id != 0) {
             $question = KnowledgebaseQuestions::find($id);
@@ -496,7 +498,7 @@ class HelpDeskController
         $cat = KnowledgebaseCategories::find($cid);
         if (!$cat) return direct('/help/kbe')->with("error", "Category not found");
 
-        $question->updated_by = \Auth::user()->cid;
+        $question->updated_by = Auth::user()->cid;
         $question->question = $_POST['question'];
         $question->answer = $_POST['answer'];
         $question->save();
@@ -506,7 +508,7 @@ class HelpDeskController
 
     public function putKBEQuestion(Request $request, $id) {
         if (!$request->ajax()) abort(403);
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $vars = [];
         parse_str(file_get_contents("php://input"), $vars);
@@ -521,20 +523,20 @@ class HelpDeskController
         $q->question = $vars['question'];
         $q->answer = $vars['answer'];
         $q->order = $oh;
-        $q->updated_by = \Auth::user()->cid;
+        $q->updated_by = Auth::user()->cid;
         $q->save();
     }
 
     public function postKBEQuestion(Request $request, $id) {
         if (!$request->ajax()) abort(403);
-        if (!\Auth::check() || !\App\Classes\RoleHelper::isVATUSAStaff()) abort(403);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
 
         $q = KnowledgebaseQuestions::find($id);
         if (!$q) abort(404);
 
         $q->question = $_POST['question'];
         $q->answer = $_POST['answer'];
-        $q->updated_by = \Auth::user()->cid;
+        $q->updated_by = Auth::user()->cid;
         $q->save();
     }
 }
