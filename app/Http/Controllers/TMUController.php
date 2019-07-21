@@ -7,9 +7,9 @@ use App\tmu_facilities;
 use App\tmu_colors;
 use App\tmu_maps;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class TMUController
-    extends Controller
+class TMUController extends Controller
 {
     function getCoords($fac)
     {
@@ -30,10 +30,10 @@ class TMUController
         }
 
         $geo = [
-            'type' => 'Feature',
+            'type'       => 'Feature',
             'properties' => ['facility' => "yes"],
-            'geometry' => [
-                'type' => 'Polygon',
+            'geometry'   => [
+                'type'        => 'Polygon',
                 'coordinates' => [
                     $gcoords
                 ]
@@ -112,10 +112,10 @@ class TMUController
         }
 
         $geo = [
-            'type' => 'Feature',
+            'type'       => 'Feature',
             'properties' => ['facility' => "yes"],
-            'geometry' => [
-                'type' => 'Polygon',
+            'geometry'   => [
+                'type'        => 'Polygon',
                 'coordinates' => [
                     $gcoords
                 ]
@@ -126,15 +126,15 @@ class TMUController
         $max = [$max_lat, $max_lon];
 
         return view('tmu.tmu', [
-            'coords_array' => json_encode($coords, JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION),
+            'coords_array'   => json_encode($coords, JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION),
             'coords_geoJSON' => $coords_geoJSON,
-            'min' => $min,
-            'max' => $max,
-            'default' => $default,
-            'colors' => json_encode($colors),
-            'fac' => $fac->id,
-            'facname' => $fac->name,
-            'dark' => $dark
+            'min'            => $min,
+            'max'            => $max,
+            'default'        => $default,
+            'colors'         => json_encode($colors),
+            'fac'            => $fac->id,
+            'facname'        => $fac->name,
+            'dark'           => $dark
         ]);
     }
 
