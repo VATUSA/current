@@ -120,7 +120,7 @@
                             <li><a href="http://www.vatsim.net/pilots/training" target="_blank">Training</a></li>
                             <li><a href="http://www.vatsim.net/pilots/virtual-airlines" target="_blank">Virtual
                                     Airlines</a></li>
-                            <li><a href="http://www.aircharts.org" target="_blank">Charts</a></li>
+                            <li><a href="https://www.skyvector.com" target="_blank">Charts</a></li>
                             <li><a href="http://www.flightaware.com/statistics/ifr-route/" target="_blank">Routes</a>
                             </li>
                             <li><a href="http://stats.vatsim.net/" target="_blank">VATSIM Stats/Tracking</a></li>
@@ -134,7 +134,7 @@
                                     </li>
                                     <li><a href="http://weather.uwyo.edu/upperair/sounding.html" target="_blank">Balloon
                                             Sounding</a></li>
-                                    <li><a href="http://aviationweather.gov/products/nws/winds/" target="_blank">Winds
+                                    <li><a href="https://aviationweather.gov/windtemp" target="_blank">Winds
                                             Aloft</a></li>
                                     <li><a href="http://digital.weather.gov" target="_blank">Graphical Forecasts</a>
                                     </li>
