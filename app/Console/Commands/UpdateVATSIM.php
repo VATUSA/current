@@ -85,7 +85,7 @@ class UpdateVATSIM extends Command
             $status = file_get_contents("http://status.vatsim.net");
             $data = explode("\n", $status);
             $status = [];
-            for ($i = 0 ; isset($data[$i]) ; $i++) {
+            for ($i = 0; isset($data[$i]); $i++) {
                 if (preg_match("/^url0=(.+)/", $data[$i], $matches)) {
                     $status[] = rtrim($matches[1]);
                 }
@@ -108,35 +108,49 @@ class UpdateVATSIM extends Command
         }
         $vdata = file_get_contents($server);
         if ($vdata == null) {
-            \Log::notice("There was an error retrieving VATSIM data from server $server... received header: $http_response_header");
+            \Log::notice("There was an error retrieving VATSIM data from server $server... received header:". json_encode($http_response_header));
+
             return;
         }
         $vdata = explode("\n", $vdata);
         $in_clients = false;
         $planes = [];
         foreach ($vdata as $line) {
-            if(preg_match('/^;/', $line) || preg_match('/^\s+/', $line) || $line == '') continue;          // Comments/blank line
+            if (preg_match('/^;/', $line) || preg_match('/^\s+/', $line) || $line == '') {
+                continue;
+            }          // Comments/blank line
 
-            if (preg_match("/^!CLIENTS:/", $line)) { $in_clients = true; continue; }
-            elseif (preg_match('/^!/', $line)) { $in_clients = false; continue; }
+            if (preg_match("/^!CLIENTS:/", $line)) {
+                $in_clients = true;
+                continue;
+            } elseif (preg_match('/^!/', $line)) {
+                $in_clients = false;
+                continue;
+            }
 
-            if (!$in_clients) continue;
+            if (!$in_clients) {
+                continue;
+            }
 
             $pdata = explode(":", $line);
-            if ($pdata[clienttype] == "ATC" || !$pdata[cid]) continue;
-            if ($pdata[latitude] < 0 || $pdata[longitude] > -20) continue;    // Only log part of our hemisphere
+            if (!isset($pdata[clienttype], $pdata[cid]) || $pdata[clienttype] == "ATC" || !$pdata[cid]) {
+                continue;
+            }
+            if (!isset($pdata[latitude], $pdata[longitude]) || $pdata[latitude] < 0 || $pdata[longitude] > -20) {
+                continue;
+            }    // Only log part of our hemisphere
             $planes[] = [
-                'callsign' => $pdata[callsign],
-                'cid' => $pdata[cid],
-                'type' => $pdata[planned_aircraft],
-                'dep' => $pdata[planned_depairport],
-                'arr' => $pdata[planned_destairport],
-                'route' => $pdata[planned_route],
-                'lat' => $pdata[latitude],
-                'lon' => $pdata[longitude],
-                'hdg' => $pdata[heading],
-                'spd' => $pdata[groundspeed],
-                'alt' => $pdata[altitude]
+                'callsign' => $pdata[callsign] ?? "",
+                'cid'      => $pdata[cid] ?? 0,
+                'type'     => $pdata[planned_aircraft] ?? "",
+                'dep'      => $pdata[planned_depairport] ?? "",
+                'arr'      => $pdata[planned_destairport] ?? "",
+                'route'    => $pdata[planned_route] ?? "",
+                'lat'      => $pdata[latitude] ?? "",
+                'lon'      => $pdata[longitude] ?? "",
+                'hdg'      => $pdata[heading] ?? 0,
+                'spd'      => $pdata[groundspeed] ?? 0,
+                'alt'      => $pdata[altitude] ?? 0
             ];
         }
 
