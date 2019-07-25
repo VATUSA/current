@@ -20,7 +20,7 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         NotFoundHttpException::class,
         ModelNotFoundException::class,
-        ValidationException::class,
+        ValidationException::class
     ];
 
     /**
