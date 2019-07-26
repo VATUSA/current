@@ -19,6 +19,8 @@
     <script type="text/javascript">
     $.apiUrl = () => ("{{ ((env('APP_ENV', 'prod') == 'prod') ? "https://api.vatusa.net" : "http://api.vatusa.devel") }}");
     </script>
+
+    @stack('scripts')
 </head>
 <body>
 @if(Request::is('/') || Request::is(''))
