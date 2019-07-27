@@ -4,6 +4,9 @@
 @push('scripts')
     <link type="text/css" href="{{ asset('datetimepicker/datetimepicker.css') }}" rel="stylesheet">
     <script src="{{ asset('datetimepicker/datetimepicker.js') }}"></script>
+    <!--<script
+        src="https://cdn.tiny.cloud/1/el8ylh3j522wfpdqh9jom4690z2k11t6m4cpz6kno4vn54oa/tinymce/5/tinymce.min.js"></script>-->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 @endpush
 
 @section('content')
@@ -98,7 +101,7 @@
                             </div>
                             <div class="panel-body">
                                 <p>Use this form to post public TMU Notices for your facilities.</p>
-                                <form class="form-horizontal">
+                                <form class="form-horizontal" id="new-notice">
                                     <div class="form-group">
                                         <label for="facility" class="col-sm-2 control-label">TMU Facility</label>
                                         <div class="col-sm-10">
@@ -147,8 +150,9 @@
                                         <label for="message" class="col-sm-2 control-label">Message</label>
                                         <div class="col-sm-10">
                                             <textarea class="form-control" name="message" id="message"
-                                                      autocomplete="off">
-                                            </textarea>
+                                                      autocomplete="off"></textarea>
+                                            <!--<p class="help-block">Use <code>&lt;b&gt;Bold&lt;/b&gt;</code> and <code>&lt;em&gt;Italics&lt;/em&gt;</code>
+                                                for formatting.</p>-->
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -173,7 +177,8 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i>
+                                            <button type="submit" class="btn btn-success" id="submit-new-notice"><i
+                                                    class="fa fa-check"></i>
                                                 Post
                                             </button>
                                         </div>
@@ -263,7 +268,26 @@
               $('#start-date').datetimepicker('setOptions', {minDate: 0})
             }
           })
-
+          $('#submit-new-notice').click(function (e) {
+            e.preventDefault()
+            let btn  = $(this),
+                form = $('form#new-notice')
+            btn.html('<i class=\'fa fa-spinner fa-spin\'></i> Posting...').attr('disabled', true)
+            $.ajax({
+              method: 'POST',
+              url   : $.apiUrl() + '/v2/tmu/notices/',
+              data  : $('#new-notice').serialize()
+            })
+              .done(function (result) {
+                btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
+                swal('Success!','The TMU Notice has been successfully posted.', 'success');
+              })
+              .error(function (result) {
+                console.log(result)
+                btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
+                swal('Error!','Could not post TMU notice. Error recieved: ' + result.responseJSON.msg, 'error');
+              })
+          })
         }
       )
     </script>
