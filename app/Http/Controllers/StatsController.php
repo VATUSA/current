@@ -7,7 +7,7 @@ use App\User;
 use App\Facility;
 use App\Transfers;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Response;
 
 class StatsController
     extends Controller
