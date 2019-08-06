@@ -6,7 +6,10 @@ use App\Classes\RoleHelper;
 use App\tmu_facilities;
 use App\tmu_colors;
 use App\tmu_maps;
+use App\TMUNotice;
+use GuzzleHttp\Client as API;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TMUController
     extends Controller
@@ -30,10 +33,10 @@ class TMUController
         }
 
         $geo = [
-            'type' => 'Feature',
+            'type'       => 'Feature',
             'properties' => ['facility' => "yes"],
-            'geometry' => [
-                'type' => 'Polygon',
+            'geometry'   => [
+                'type'        => 'Polygon',
                 'coordinates' => [
                     $gcoords
                 ]
@@ -112,10 +115,10 @@ class TMUController
         }
 
         $geo = [
-            'type' => 'Feature',
+            'type'       => 'Feature',
             'properties' => ['facility' => "yes"],
-            'geometry' => [
-                'type' => 'Polygon',
+            'geometry'   => [
+                'type'        => 'Polygon',
                 'coordinates' => [
                     $gcoords
                 ]
@@ -126,15 +129,15 @@ class TMUController
         $max = [$max_lat, $max_lon];
 
         return view('tmu.tmu', [
-            'coords_array' => json_encode($coords, JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION),
+            'coords_array'   => json_encode($coords, JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION),
             'coords_geoJSON' => $coords_geoJSON,
-            'min' => $min,
-            'max' => $max,
-            'default' => $default,
-            'colors' => json_encode($colors),
-            'fac' => $fac->id,
-            'facname' => $fac->name,
-            'dark' => $dark
+            'min'            => $min,
+            'max'            => $max,
+            'default'        => $default,
+            'colors'         => json_encode($colors),
+            'fac'            => $fac->id,
+            'facname'        => $fac->name,
+            'dark'           => $dark
         ]);
     }
 
@@ -354,5 +357,29 @@ class TMUController
         $map->save();
 
         return redirect("/mgt/tmu/$fac#mapping")->with("success", "Map " . $map->name . " saved successfully.");
+    }
+
+    public function getNotices(string $sector = null)
+    {
+        $notices = TMUNotice::where('start_date', '<=', 'UTC_TIMESTAMP()')
+            ->orderBy('priority', 'DESC')->orderBy('tmu_facility_id')->orderBy('start_date', 'DESC');
+        if ($sector) {
+            $allFacs = tmu_facilities::where('id', $sector)->orWhere('parent', $sector);
+            $notices = $notices->where('tmu_facility_id', $allFacs->get()->pluck('id'));
+        }
+        $notices = $notices->paginate(20);
+
+        $facilities = tmu_facilities::orderBy('parent', 'ASC')->orderBy('name',
+            'ASC')->get();
+        $facilitiesArr = [];
+        foreach ($facilities as $facility) {
+            $facilitiesArr[$facility->parent ?? $facility->id][] = [
+                'id'   => $facility->id,
+                'name' => $facility->name
+            ];
+        }
+
+        return view('tmu.notices')->with(compact('notices', 'facilitiesArr', 'sector'));
+
     }
 }

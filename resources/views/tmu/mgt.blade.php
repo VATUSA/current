@@ -100,6 +100,64 @@
                                 <p class="help-block">National Traffic Operations Status</p>
                             </div>
                             <div class="panel-body">
+                                <h4><i class="fa fa-list"></i> Active and Future Notices</h4>
+                                @php $allFacs = App\tmu_facilities::where('id', $fac)->orWhere('parent', $fac);
+                                     $notices = App\TMUNotice::where('start_date', '<=', 'UTC_TIMESTAMP()')
+                                                ->orderBy('priority', 'DESC')
+                                                ->orderBy('tmu_facility_id')
+                                                ->orderBy('start_date', 'DESC')
+                                                ->where('tmu_facility_id', $allFacs->get()->pluck('id'))->get();
+                                @endphp
+                                <table class="table table-responsive table-striped" id="notices-table">
+                                    <thead>
+                                    <tr>
+                                        <th style="width:10%;">Sector</th>
+                                        <th style="width:15%;">Effective Date</th>
+                                        <th style="width:45%;">Message</th>
+                                        <th style="width:15%;">Expire Date</th>
+                                        <th style="width:15%">Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @if(!$notices->count())
+                                        <tr class="warning">
+                                            <td colspan="4" style="text-align: center">
+                                                <i class="fa fa-info-circle"></i> No Notices Active
+                                            </td>
+                                        </tr>
+                                    @else
+                                        @foreach($notices as $notice)
+                                            @php
+                                                $priority = $notice->priority;
+                                                switch($priority) {
+                                                    case 1: $rcolor = 'warning'; break;
+                                                    case 2: $rcolor =  'success'; break;
+                                                    case 3: $rcolor = 'danger'; break;
+                                                    default: $rcolor = ''; break;
+                                                 }
+                                            @endphp
+                                            <tr class="{{ $rcolor }}">
+                                                <td>{{ $notice->tmuFacility->name }}</td>
+                                                <td>{{ \Illuminate\Support\Carbon::parse($notice->start_date)->format('m/d/Y H:i') }}</td>
+                                                <td>{{ $notice->message }}</td>
+                                                <td>{!! $notice->expire_date ? \Illuminate\Support\Carbon::parse($notice->expire_date)->format('m/d/Y H:i') : "<em>Indefinite</em>" !!}</td>
+                                                <td>
+                                                    <div>
+                                                        <button class="btn btn-warning edit-notice"
+                                                                data-id="{{$notice->id}}"><i class="fa fa-pencil"></i>
+                                                        </button>
+                                                        <button class="btn btn-danger remove-notice"
+                                                                data-id="{{ $notice->id }}"><i class="fa fa-remove"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                    </tbody>
+                                </table>
+                                <hr>
+                                <h4><i class="fa fa-plus"></i> Add New Notice</h4>
                                 <p>Use this form to post public TMU Notices for your facilities.</p>
                                 <form class="form-horizontal" id="new-notice">
                                     <div class="form-group">
@@ -280,12 +338,12 @@
             })
               .done(function (result) {
                 btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
-                swal('Success!','The TMU Notice has been successfully posted.', 'success');
+                swal('Success!', 'The TMU Notice has been successfully posted.', 'success')
               })
               .error(function (result) {
                 console.log(result)
                 btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
-                swal('Error!','Could not post TMU notice. Error recieved: ' + result.responseJSON.msg, 'error');
+                swal('Error!', 'Could not post TMU notice. Error recieved: ' + result.responseJSON.msg, 'error')
               })
           })
         }
