@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel {
         'App\Console\Commands\UpdateVATSIM',
         'App\Console\Commands\RoleSync',
         'App\Console\Commands\TransferEmails',
+        'App\Console\Commands\ExpireNotices'
     ];
 
     /**
@@ -37,7 +38,7 @@ class Kernel extends ConsoleKernel {
         $schedule->command('TattlerTransfers')->cron('15 0 * * *');
         $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00");
         $schedule->command('rolesync')->cron('45 * * * *');
-
+        $schedule->command('ntos:expire')->cron('* * * * *');
     }
 
 }
