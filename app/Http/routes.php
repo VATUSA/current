@@ -316,9 +316,10 @@ Route::group(['domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : 
     Route::post('/mgt/checklists/{clid}/{id}', 'MgtController@postChecklistItem');
 
     // TMU ********************
-    Route::get('tmu/{fac}','TMUController@getMap');
-    Route::get('tmu/{fac}/dark','TMUController@getMapDark');
-    Route::get('tmu/{fac}/coords', 'TMUController@getCoords');
+    Route::get('tmu/map/{fac}','TMUController@getMap');
+    Route::get('tmu/map/{fac}/dark','TMUController@getMapDark');
+    Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
+    Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
 
 //
 // VATUSA Mgt Mail Function
