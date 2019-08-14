@@ -136,7 +136,7 @@
                                                     default: $rcolor = ''; break;
                                                  }
                                             @endphp
-                                            <tr class="{{ $rcolor }}">
+                                            <tr class="{{ $rcolor }}" id="tmu-notice-{{ $notice->id }}">
                                                 <td>{{ $notice->tmuFacility->name }}</td>
                                                 <td>{{ \Illuminate\Support\Carbon::parse($notice->start_date)->format('m/d/Y H:i') }}</td>
                                                 <td>{{ $notice->message }}</td>
@@ -341,9 +341,40 @@
                 swal('Success!', 'The TMU Notice has been successfully posted.', 'success')
               })
               .error(function (result) {
-                console.log(result)
                 btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
                 swal('Error!', 'Could not post TMU notice. Error recieved: ' + result.responseJSON.msg, 'error')
+              })
+          })
+          $('.remove-notice').click(function () {
+            let id = $(this).data('id')
+            swal({
+              title     : 'Are you sure?',
+              text      : 'This will delete the Notice. This action cannot be undone.',
+              icon      : 'warning',
+              buttons   : {
+                cancel : 'No, cancel',
+                confirm: {
+                  text      : 'Yes, delete',
+                  closeModal: false,
+                  className : 'danger'
+                }
+              },
+              dangerMode: true
+            })
+              .then(r => {
+                if (r) {
+                  $.ajax({
+                    method: 'DELETE',
+                    url   : $.apiUrl() + '/v2/tmu/notices/' + id,
+                  })
+                    .done(function (result) {
+                      $('tr#tmu-notice-' + id).remove()
+                      swal('Success!', 'The TMU Notice has been successfully deleted.', 'success')
+                    })
+                    .error(function (result) {
+                      swal('Error!', 'Could not post TMU notice. Error recieved: ' + result.responseJSON.msg, 'error')
+                    })
+                }
               })
           })
         }
