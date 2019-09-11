@@ -14,6 +14,7 @@ $(document)
     })
       .done((data) => {
         waitingDialog.hide()
+        console.log(data)
         $('#emailRoot').html(emailPage(data))
       })
   })
