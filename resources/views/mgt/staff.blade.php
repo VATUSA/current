@@ -93,6 +93,14 @@
                                 :"<button onClick=\"assignStaff('US9')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         <tr>
+                            <td>VATUSA10</td>
+                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US10")}}</td>
+                            <td>{{\App\Classes\RoleHelper::roleTitle("US10")}}</td>
+                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US10")!="Vacant")?
+                                "<button onClick=\"deleteStaff('US10')\" class=\"btn btn-danger\">Vacate</button>"
+                                :"<button onClick=\"assignStaff('US10')\" class=\"btn btn-success\">Assign</button>")!!}</td>
+                        </tr>
+                        <tr>
                             <td>VATUSA11</td>
                             <td>{{\App\Classes\RoleHelper::getNameFromRole("US11")}}</td>
                             <td>{{\App\Classes\RoleHelper::roleTitle("US11")}}</td>
