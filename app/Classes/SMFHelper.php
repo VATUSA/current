@@ -37,13 +37,13 @@ class SMFHelper
 
         if ($user->rating == Helper::ratingIntFromShort("ADM")) {
             if (!RoleHelper::isVATUSAStaff()) {
-                static::setGroups($cid, static::findGroup("VATSIM Staff"));
+                static::setGroups($cid, static::findGroup("VATSIM Leadership"));
                 return;
             } else {
                 // Allow for them to get the VATUSA Staff group
                 // as secondary group if they have a VATUSA Staff role
                 // per Mark Hubbert
-                static::setGroups($cid, static::findGroup("VATSIM Staff"), static::findGroup("VATUSA Staff"));
+                static::setGroups($cid, static::findGroup("VATSIM Leadership"), static::findGroup("VATUSA Staff"));
                 return;
             }
         }
