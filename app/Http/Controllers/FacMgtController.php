@@ -25,7 +25,7 @@ class FacMgtController extends Controller
 
 
     public function getIndex($fac = null) {
-        if (!RoleHelper::isMentor() && !\App\Classes\RoleHelper::isInstructor() && !\App\Classes\RoleHelper::isFacilityStaff() && !\App\Classes\RoleHelper::isVATUSAStaff())
+        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilityStaff() && !RoleHelper::isVATUSAStaff())
             abort(401);
 
         if ($fac === null) {
@@ -38,8 +38,8 @@ class FacMgtController extends Controller
         if ($fac == "Winterfell") return view('eastereggs.winterfell');
 
         // Mentor-only users can only view their facility
-        if (RoleHelper::isMentor() && !(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
-            $fac = \Auth::user()->facility;
+        if (RoleHelper::isMentor() && !(RoleHelper::isFacilityStaff() || RoleHelper::isInstructor()))
+            $fac = Auth::user()->facility;
 
         $facility = Facility::find($fac);
 
@@ -54,7 +54,7 @@ class FacMgtController extends Controller
 
     public function postAPIGenerate(Request $request, $facility) {
         if (!$request->ajax()) abort(401);
-        if (!RoleHelper::hasRole(\Auth::user()->cid, $facility, "WM") && !RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $facility)) abort(500);
+        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) abort(500);
 
         $key = base64_encode(random_bytes(ceil(0.75 * 16)));
         $facility = Facility::find($facility);
@@ -69,7 +69,7 @@ class FacMgtController extends Controller
 
     public function postAPISandboxGenerate(Request $request, $facility) {
         if (!$request->ajax()) abort(401);
-        if (!RoleHelper::hasRole(\Auth::user()->cid, $facility, "WM") && !RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $facility)) abort(500);
+        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) abort(500);
 
         $key = base64_encode(random_bytes(ceil(0.75 * 16)));
         $facility = Facility::find($facility);
@@ -84,7 +84,7 @@ class FacMgtController extends Controller
 
     public function postAPIIP(Request $request, $facility) {
         if (!$request->ajax()) abort(500);
-        if (!RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $facility)) abort(401);
+        if (!RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) abort(401);
 
         $facility = Facility::find($facility);
         if ($facility->active != 1) abort(500);
@@ -98,7 +98,7 @@ class FacMgtController extends Controller
 
     public function postAPISandboxIP(Request $request, $facility) {
         if (!$request->ajax()) abort(500);
-        if (!RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $facility)) abort(401);
+        if (!RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) abort(401);
 
         $facility = Facility::find($facility);
         if ($facility->active != 1) abort(500);
@@ -112,7 +112,7 @@ class FacMgtController extends Controller
 
     public function postULSGenerate(Request $request, $facility) {
         if (!$request->ajax()) abort(500);
-        if (!RoleHelper::hasRole(\Auth::user()->cid, $facility, "WM") && !RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $facility)) abort(500);
+        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) abort(500);
 
         $key = base64_encode(random_bytes(ceil(0.75 * 16)));
         $facility = Facility::find($facility);
@@ -127,7 +127,7 @@ class FacMgtController extends Controller
 
     public function postULSReturn(Request $request, $facility) {
         if (!$request->ajax()) abort(500);
-        if (!RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") && !RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $facility)) abort(500);
+        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) abort(500);
 
         $facility = Facility::find($facility);
         if ($facility->active != 1) abort(500);
@@ -140,7 +140,7 @@ class FacMgtController extends Controller
 
     public function postULSDevReturn(Request $request, $facility) {
         if (!$request->ajax()) abort(500);
-        if (!RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") && !RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $facility)) abort(500);
+        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) abort(500);
 
         $facility = Facility::find($facility);
         if ($facility->active != 1) abort(500);
@@ -154,7 +154,7 @@ class FacMgtController extends Controller
     public function ajaxPosition(Request $request, $facility, $id) {
         if (!$request->ajax()) abort(403);
 
-        if (!RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "ATM") && !RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
+        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "ATM") && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
 
         switch ($id) {
             case 1:
@@ -185,6 +185,7 @@ class FacMgtController extends Controller
         $un = $u->fname . ' ' . $u->lname;
 
         if ($u->facility == "ZZN") return "User is not part of VATUSA and is not eligible for staff positions";
+        if($u->flag_preventStaffAssign) return "This user is current not eligible for a staff position. Please contact VATUSA Staff for more information.";
 
         $fu = Facility::where('id', $facility)->first();
         $fu->$spos = $cid;
@@ -194,7 +195,7 @@ class FacMgtController extends Controller
             $uc = User::where('cid', $cid)->first();
             $uc->addToFacility($facility);
 
-            $tr = new \App\Transfers;
+            $tr = new Transfers;
             $tr->cid = $cid;
             $tr->reason = "Auto Transfer: Controller set as staff.";
             $tr->to = $facility;
@@ -203,14 +204,14 @@ class FacMgtController extends Controller
             $tr->actionby = 0;
             $tr->save();
 
-            $log = new \App\Actions;
+            $log = new Actions;
             $log->to = $u->cid;
             $log->from = 0;
             $log->log = "Auto Transfer to " . $facility . ", controller set as staff.";
             $log->save();
         }
 
-        $log = new \App\Actions;
+        $log = new Actions;
         $log->to = $u->cid;
         $log->from = Auth::user()->cid;
         $log->log = "Set as " . $facility . " " . $pos . " by " . \App\Classes\Helper::nameFromCID(Auth::user()->cid);
@@ -229,19 +230,19 @@ class FacMgtController extends Controller
 
     public function deleteController(Request $request, $facility, $cid) {
         if (!$request->ajax()) abort(500);
-        if (!RoleHelper::hasRole(\Auth::user()->cid, $facility, "ATM") && !RoleHelper::hasRole(\Auth::user()->cid, $facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
+        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "ATM") && !RoleHelper::hasRole(Auth::user()->cid, $facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
 
         $user = User::find($cid);
         if (!$user) abort(404);
 
         parse_str(file_get_contents("php://input"), $vars);
 
-        $user->removeFromFacility(\Auth::user()->cid, $vars['reason']);
+        $user->removeFromFacility(Auth::user()->cid, $vars['reason']);
     }
 
     public function ajaxPositionDel(Request $request, $facility) {
         if (!$request->ajax()) abort(403);
-        if (!RoleHelper::hasRole(\Auth::user()->cid, $facility, "ATM") && !RoleHelper::hasRole(\Auth::user()->cid, $facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
+        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "ATM") && !RoleHelper::hasRole(Auth::user()->cid, $facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
 
         if (isset($_POST['pos'])) {
             $id = intval($_POST['pos']);
@@ -276,7 +277,7 @@ class FacMgtController extends Controller
                 $user = User::where('cid', $oldstaff)->first();
                 $log = new Actions();
                 $log->to = $user->cid;
-                $log->log = "User removed from " . $fu->name . " $pos by " . \Auth::user()->fullname() . ".";
+                $log->log = "User removed from " . $fu->name . " $pos by " . Auth::user()->fullname() . ".";
                 $log->save();
 
                 $email = $fu->id . "-" . $spos . "@vatusa.net";
@@ -301,13 +302,13 @@ class FacMgtController extends Controller
 
     public function ajaxTransfers(Request $request, $status) {
         if (!$request->ajax()) abort(500);
-        if (!RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "ATM") && !RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
+        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "ATM") && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
 
         if (($status == 1 || $status == 2) && isset($_POST['id'])) {
             if ($status == 2 && isset($_POST['reason']) && !empty($_POST['reason'])) {
                 $tr = Transfers::find($_POST['id']);
                 if ($tr != null) {
-                    $tr->reject(\Auth::user()->cid, $_POST['reason']);
+                    $tr->reject(Auth::user()->cid, $_POST['reason']);
                     return 'Transfer rejected';
                 } else return 'Transfer not found.';
 
@@ -315,7 +316,7 @@ class FacMgtController extends Controller
             if ($status == 1) {
                 $tr = Transfers::find($_POST['id']);
                 if ($tr != null) {
-                    $tr->accept(\Auth::user()->cid);
+                    $tr->accept(Auth::user()->cid);
                     return 'Transfer accepted';
                 } else return 'Transfer not found.';
 
@@ -328,9 +329,9 @@ class FacMgtController extends Controller
         //if (!RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "ATM") && !RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
 
         if (isset($_REQUEST['id'])) {
-            $t = \App\Transfers::where('id', $_REQUEST['id'])->count();
+            $t = Transfers::where('id', $_REQUEST['id'])->count();
             if ($t) {
-                $t = \App\Transfers::where('id', $_REQUEST['id'])->first();
+                $t = Transfers::where('id', $_REQUEST['id'])->first();
                 return $t->reason;
             }
         }

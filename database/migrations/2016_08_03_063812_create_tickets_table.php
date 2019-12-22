@@ -12,7 +12,7 @@ class CreateTicketsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('tickets', function (Blueprint $table) {
+		/*Schema::create('tickets', function (Blueprint $table) {
 		    $table->increments('id');
             $table->integer('cid');
             $table->string('subject');
@@ -21,7 +21,7 @@ class CreateTicketsTable extends Migration {
             $table->string("assigned_to");
             $table->enum('priority', ['Low','Normal','High']);
             $table->timestamps();
-        });
+        });*/
 	}
 
 	/**

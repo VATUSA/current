@@ -47,10 +47,22 @@
                                     <td><a href="mailto:vatusa3@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
                                 <tr>
+                                    <td>VATUSA13</td>
+                                    <td>{{\App\Classes\RoleHelper::getNameFromRole("US13")}}</td>
+                                    <td>{{\App\Classes\RoleHelper::roleTitle("US13")}}</td>
+                                    <td><a href="mailto:vatusa13@vatusa.net"><i class="fa fa-envelope"></i></a></td>
+                                </tr>
+                                <tr>
                                     <td>VATUSA4</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US4")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US4")}}</td>
                                     <td><a href="mailto:vatusa4@vatusa.net"><i class="fa fa-envelope"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>VATUSA14</td>
+                                    <td>{{\App\Classes\RoleHelper::getNameFromRole("US14")}}</td>
+                                    <td>{{\App\Classes\RoleHelper::roleTitle("US14")}}</td>
+                                    <td><a href="mailto:vatusa14@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
                                 <tr>
                                     <td>VATUSA5</td>
@@ -83,10 +95,16 @@
                                     <td><a href="mailto:vatusa9@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
                                 <tr>
+                                    <td>VATUSA10</td>
+                                    <td>{{\App\Classes\RoleHelper::getNameFromRole("US10")}}</td>
+                                    <td>{{\App\Classes\RoleHelper::roleTitle("US10")}}</td>
+                                    <td><a href="mailto:vatusa10@vatusa.net"><i class="fa fa-envelope"></i></a></td>
+                                </tr>
+                                <tr>
                                     <td>VATUSA11</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US11")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US11")}}</td>
-                                    <td>&nbsp;</td>
+                                    <td><a href="mailto:vatusa11@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -99,9 +117,22 @@
                                     <div class="col-sm-6">
                                         <select class="form-control" id="facility">
                                             <option value="0">Select a Facility</option>
-                                            @foreach (\App\Facility::where('active',1)->orderBy('name')->get() as $facility)
-                                            <option value="{{$facility->id}}">{{$facility->name}}</option>
-                                            @endforeach
+                                            <optgroup label="Western Region">
+                                                @foreach (\App\Facility::where(['active' => 1, 'region' => 7])->orderBy('name')->get() as $facility)
+                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
+                                                @endforeach
+                                            </optgroup>
+                                            <optgroup label="Southern Region">
+                                                @foreach (\App\Facility::where(['active' => 1, 'region' => 8])->orderBy('name')->get() as $facility)
+                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
+                                                @endforeach
+                                            </optgroup>
+                                            <optgroup label="Northeastern Region">
+                                                @foreach (\App\Facility::where(['active' => 1, 'region' => 9])->orderBy('name')->get() as $facility)
+                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
+                                                @endforeach
+                                            </optgroup>
+
                                         </select>
                                     </div>
                                 </div>

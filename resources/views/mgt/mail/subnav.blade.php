@@ -7,12 +7,7 @@
     <div class="panel-body">
         @if(\App\Classes\RoleHelper::isFacilityStaff())
             <a href="/mail">Webmail</a><br>
-            @if(\Carbon\Carbon::create(2017, 11, 27, 23, 59, 59)->isFuture())
-                <a href="/mgt/mail/conf">Manage Email</a><br>
-            @endif
-            @if(!\Carbon\Carbon::create(2017, 11, 27, 23, 59, 59)->isFuture())
-                <a href="/mgt/mail/account">Manage Email(s)</a><br>
-            @endif
+            <a href="/mgt/mail/account">Manage Email(s)</a><br>
             <a href="/mgt/mail/broadcast">Broadcast</a><br>
         @endif
         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() && !\App\Classes\RoleHelper::isVATUSAStaff())

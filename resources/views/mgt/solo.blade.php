@@ -29,11 +29,11 @@
                     <form action="/mgt/solo" method="post">
                         <input type="hidden" name="_token" value="{{csrf_token()}}">
                         <tr>
-                            <td colspan="2"><input type="text" name="cid" placeholder="CID"></td>
-                            <td><input type="text" name="position" placeholder="Position"></td>
-                            <td><input type="text" name="expiration" placeholder="Expiration (YYYY-MM-DD)"></td>
+                            <td colspan="2"><input type="text" name="cid" placeholder="CID" class="form-control" style="width:110px;"></td>
+                            <td><input type="text" name="position" placeholder="Position" class="form-control" style="width:150px"></td>
+                            <td><input type="date" name="expiration" placeholder="Expiration (YYYY-MM-DD)" class="form-control" style="padding:0; width:150px;"></td>
                             <td>
-                                <button type="submit" class="btn btn-default">Add</button>
+                                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Add</button>
                             </td>
                         </tr>
                     </form>
