@@ -7,6 +7,7 @@ use \App\TrainingBlock;
 use \App\TrainingChapter;
 use \App\TrainingProgress;
 use Auth;
+use Illuminate\Support\Facades\DB;
 
 class CBTController
     extends Controller

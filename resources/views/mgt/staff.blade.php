@@ -53,6 +53,14 @@
                                 :"<button onClick=\"assignStaff('US4')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         <tr>
+                            <td>VATUSA14</td>
+                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US14")}}</td>
+                            <td>{{\App\Classes\RoleHelper::roleTitle("US14")}}</td>
+                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US14")!="Vacant")?
+                                "<button onClick=\"deleteStaff('US14')\" class=\"btn btn-danger\">Vacate</button>"
+                                :"<button onClick=\"assignStaff('US14')\" class=\"btn btn-success\">Assign</button>")!!}</td>
+                        </tr>
+                        <tr>
                             <td>VATUSA5</td>
                             <td>{{\App\Classes\RoleHelper::getNameFromRole("US5")}}</td>
                             <td>{{\App\Classes\RoleHelper::roleTitle("US5")}}</td>
@@ -91,6 +99,14 @@
                             <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US9")!="Vacant")?
                                 "<button onClick=\"deleteStaff('US9')\" class=\"btn btn-danger\">Vacate</button>"
                                 :"<button onClick=\"assignStaff('US9')\" class=\"btn btn-success\">Assign</button>")!!}</td>
+                        </tr>
+                        <tr>
+                            <td>VATUSA10</td>
+                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US10")}}</td>
+                            <td>{{\App\Classes\RoleHelper::roleTitle("US10")}}</td>
+                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US10")!="Vacant")?
+                                "<button onClick=\"deleteStaff('US10')\" class=\"btn btn-danger\">Vacate</button>"
+                                :"<button onClick=\"assignStaff('US10')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         <tr>
                             <td>VATUSA11</td>

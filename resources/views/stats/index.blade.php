@@ -200,13 +200,17 @@
                                         @foreach(\App\Facility::where('active',1)->orWhere("id", "ZAE")->orderBy("name")->get() as $detfacility)
                                             <option value="{{$detfacility->id}}">{{$detfacility->name}}</option>
                                         @endforeach
-                                    </select> Year: <select id="examYearSelect"><option value="all">All</option>
+                                    </select> Year: <select id="examYearSelect">
+                                        <option value="all">All</option>
                                         @for($year = 2015; $year <= date("Y"); $year++)
-                                            <option{{ ($year == date("Y")) ? ' selected="true"' : ''}}>{{$year}}</option>
+                                            <option{{ ($year == date("Y")) ? ' selected="true"' : ''}}>{{$year}}
+                                            </option>
                                         @endfor
-                                    </select> Month: <select id="examMonthSelect"><option value="all">All</option>
+                                    </select> Month: <select id="examMonthSelect">
+                                        <option value="all">All</option>
                                         @for($month = 1 ; $month <= 12 ; $month++)
-                                            <option value="{{$month}}"{{ ($month == date("n")) ? ' selected="true"' : ''}}>{{date('F', mktime(0, 0, 0, $month, 1, 2017))}}</option>
+                                            <option value="{{$month}}" {{ ($month== date("n")) ? ' selected="true"' :
+                                            ''}}>{{date('F', mktime(0, 0, 0, $month, 1, 2017))}}</option>
                                         @endfor
                                     </select>
                                 </div>
@@ -244,167 +248,169 @@
       $(document).ready(function () {
         const updateExams = () => {
           if ($('#examfacilityselect').val() == 0) {
-            return false;
+            return false
           }
-          waitingDialog.show();
-          let querystring = '';
+          waitingDialog.show()
+          let querystring = ''
           if ($('#examYearSelect').val() != 'all') {
-            querystring = `?year=${$('#examYearSelect').val()}`;
+            querystring = `?year=${$('#examYearSelect').val()}`
           }
           if ($('#examMonthSelect').val() != 'all') {
-            querystring = querystring + `&month=${$('#examMonthSelect').val()}`;
+            querystring = querystring + `&month=${$('#examMonthSelect').val()}`
           }
           $.ajax({
-            url: 'https://api.vatusa.net/v2/stats/exams/' + $('#examfacilityselect').val() + querystring,
-            method: 'GET',
+            url     : 'https://api.vatusa.net/v2/stats/exams/' + $('#examfacilityselect').val() + querystring,
+            method  : 'GET',
             dataType: 'JSON'
           }).done((data) => {
             $('#examcontainertable tbody').html('')
-            waitingDialog.hide();
-            $('#examcontainer').show();
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].taken > 0) {
-                $('#examcontainertable tbody').append(`
+            waitingDialog.hide()
+            $('#examcontainer').show()
+            for (let i in data) {
+              if (data.hasOwnProperty(i)) {
+                if (data[i].taken > 0) {
+                  $('#examcontainertable tbody').append(`
                   <tr>
                   <td>${data[i].name}</td>
                   <td>${data[i].taken}</td>
                   <td>${data[i].passed} (${Math.floor((data[i].passed / data[i].taken) * 100)}%)</td>
                   <td>${data[i].failed} (${Math.floor((data[i].failed / data[i].taken) * 100)}%)</td>
                   </tr>
-                `);
+                `)
+                }
               }
             }
           })
         }
         $('#examfacilityselect').change(() => {
-          updateExams();
+          updateExams()
         })
         $('#examYearSelect').change(() => {
-          if ($('#examYearSelect').val() == "all") {
-            $('#examMonthSelect').val('all');
-            return false;
+          if ($('#examYearSelect').val() == 'all') {
+            $('#examMonthSelect').val('all')
+            return false
           }
 
-          updateExams();
+          updateExams()
         })
         $('#examMonthSelect').change(() => {
-          updateExams();
+          updateExams()
         })
         $('#detailfacilityselect').change(function () {
-          if ($('#detailfacilityselect').val() == "0") return;
-          $('#detailprocessing').show();
+          if ($('#detailfacilityselect').val() == '0') return
+          $('#detailprocessing').show()
           $.ajax({
-            url: '/stats/details/' + $('#detailfacilityselect').val(),
-            type: 'GET',
+            url     : '/stats/details/' + $('#detailfacilityselect').val(),
+            type    : 'GET',
             dataType: 'JSON',
           }).success(function (data) {
-            $('#detailprocessing').hide();
-            if ($('#detailfacilityselect').val() != "overview") {
-              $('#detailcontainer').show();
-              $('#detailcontainertable').show();
-              $('#detailtotal').html(data.total);
-              $('#detailobs').html(data.OBS);
-              $('#detailobsg30').html(data.OBSg30);
-              $('#details1').html(data.S1);
-              $('#details2').html(data.S2);
-              $('#details3').html(data.S3);
-              $('#detailc1').html(data.C1);
-              $('#detaili1').html(data.I1);
-              $('#chartContainer').height(300);
-              var chart = new CanvasJS.Chart("chartContainer", {
+            $('#detailprocessing').hide()
+            if ($('#detailfacilityselect').val() != 'overview') {
+              $('#detailcontainer').show()
+              $('#detailcontainertable').show()
+              $('#detailtotal').html(data.total)
+              $('#detailobs').html(data.OBS)
+              $('#detailobsg30').html(data.OBSg30)
+              $('#details1').html(data.S1)
+              $('#details2').html(data.S2)
+              $('#details3').html(data.S3)
+              $('#detailc1').html(data.C1)
+              $('#detaili1').html(data.I1)
+              $('#chartContainer').height(300)
+              var chart = new CanvasJS.Chart('chartContainer', {
                 legend: {
-                  verticalAlign: "center",
-                  horizontalAlign: "left"
+                  verticalAlign  : 'center',
+                  horizontalAlign: 'left'
                 },
-                theme: "theme4",
-                data: [
+                theme : 'theme4',
+                data  : [
                   {
-                    type: "pie",
-                    indexLabel: "{label}  {y}",
-                    showInLegend: true,
-                    toolTipContent: "{legendText} {y}",
-                    startAngle: -90,
-                    dataPoints: [
-                      {y: data.OBS, legendText: "Observer", label: "OBS"},
-                      {y: data.OBSg30, legendText: "Observer >30 days", label: "OBS >30"},
-                      {y: data.S1, legendText: "Student 1", label: "S1"},
-                      {y: data.S2, legendText: "Student 2", label: "S2"},
-                      {y: data.S3, legendText: "Student 3", label: "S3"},
-                      {y: data.C1, legendText: "Controller/Senior Controller", label: "C1-C3"},
-                      {y: data.I1, legendText: "Instructor and above", label: "I1+"},
+                    type          : 'pie',
+                    indexLabel    : '{label}  {y}',
+                    showInLegend  : true,
+                    toolTipContent: '{legendText} {y}',
+                    startAngle    : -90,
+                    dataPoints    : [
+                      {y: data.OBS, legendText: 'Observer', label: 'OBS'},
+                      {y: data.OBSg30, legendText: 'Observer >30 days', label: 'OBS >30'},
+                      {y: data.S1, legendText: 'Student 1', label: 'S1'},
+                      {y: data.S2, legendText: 'Student 2', label: 'S2'},
+                      {y: data.S3, legendText: 'Student 3', label: 'S3'},
+                      {y: data.C1, legendText: 'Controller/Senior Controller', label: 'C1-C3'},
+                      {y: data.I1, legendText: 'Instructor and above', label: 'I1+'},
                     ]
                   }
                 ]
-              });
-              chart.render();
+              })
+              chart.render()
             } else {
-              $('#detailcontainer').show();
-              $('#detailcontainertable').hide();
+              $('#detailcontainer').show()
+              $('#detailcontainertable').hide()
               //$data.OBS.each()
-              $('#chartContainer').height(600);
-              var chart = new CanvasJS.Chart("chartContainer", {
-                theme: "theme4",
+              $('#chartContainer').height(600)
+              var chart = new CanvasJS.Chart('chartContainer', {
+                theme: 'theme4',
                 axisY: {
-                  title: "Number of controllers",
-                  interval: 10,
-                  intervalType: "number",
-                  titleFontSize: "16",
-                  labelFontSize: "16"
+                  title        : 'Number of controllers',
+                  interval     : 10,
+                  intervalType : 'number',
+                  titleFontSize: '16',
+                  labelFontSize: '16'
                 },
                 axisX: {
-                  interval: 1,
-                  intervalType: "number",
-                  labelFontSize: "16",
+                  interval     : 1,
+                  intervalType : 'number',
+                  labelFontSize: '16',
                 },
-                data: [
+                data : [
                   {
-                    type: 'stackedColumn',
-                    toolTipContent: "{label}<br><span style='\"'color: {color};'\"'><strong>{name}</strong></span>: {y}",
-                    name: "OBS",
-                    showInLegend: true,
-                    dataPoints: data.OBS
+                    type          : 'stackedColumn',
+                    toolTipContent: '{label}<br><span style=\'"\'color: {color};\'"\'><strong>{name}</strong></span>: {y}',
+                    name          : 'OBS',
+                    showInLegend  : true,
+                    dataPoints    : data.OBS
                   },
                   {
-                    type: 'stackedColumn',
-                    toolTipContent: "{label}<br><span style='\"'color: {color};'\"'><strong>{name}</strong></span>: {y}",
-                    name: "S1",
-                    showInLegend: true,
-                    dataPoints: data.S1
+                    type          : 'stackedColumn',
+                    toolTipContent: '{label}<br><span style=\'"\'color: {color};\'"\'><strong>{name}</strong></span>: {y}',
+                    name          : 'S1',
+                    showInLegend  : true,
+                    dataPoints    : data.S1
                   },
                   {
-                    type: 'stackedColumn',
-                    toolTipContent: "{label}<br><span style='\"'color: {color};'\"'><strong>{name}</strong></span>: {y}",
-                    name: "S2",
-                    showInLegend: true,
-                    dataPoints: data.S2
+                    type          : 'stackedColumn',
+                    toolTipContent: '{label}<br><span style=\'"\'color: {color};\'"\'><strong>{name}</strong></span>: {y}',
+                    name          : 'S2',
+                    showInLegend  : true,
+                    dataPoints    : data.S2
                   },
                   {
-                    type: 'stackedColumn',
-                    toolTipContent: "{label}<br><span style='\"'color: {color};'\"'><strong>{name}</strong></span>: {y}",
-                    name: "S3",
-                    showInLegend: true,
-                    dataPoints: data.S3
+                    type          : 'stackedColumn',
+                    toolTipContent: '{label}<br><span style=\'"\'color: {color};\'"\'><strong>{name}</strong></span>: {y}',
+                    name          : 'S3',
+                    showInLegend  : true,
+                    dataPoints    : data.S3
                   },
                   {
-                    type: 'stackedColumn',
-                    toolTipContent: "{label}<br><span style='\"'color: {color};'\"'><strong>{name}</strong></span>: {y}",
-                    name: "C1-C3",
-                    showInLegend: true,
-                    dataPoints: data.C1
+                    type          : 'stackedColumn',
+                    toolTipContent: '{label}<br><span style=\'"\'color: {color};\'"\'><strong>{name}</strong></span>: {y}',
+                    name          : 'C1-C3',
+                    showInLegend  : true,
+                    dataPoints    : data.C1
                   },
                   {
-                    type: 'stackedColumn',
-                    toolTipContent: "{label}<br><span style='\"'color: {color};'\"'><strong>{name}</strong></span>: {y}",
-                    name: "I1+",
-                    showInLegend: true,
-                    dataPoints: data.I1
+                    type          : 'stackedColumn',
+                    toolTipContent: '{label}<br><span style=\'"\'color: {color};\'"\'><strong>{name}</strong></span>: {y}',
+                    name          : 'I1+',
+                    showInLegend  : true,
+                    dataPoints    : data.I1
                   },
                 ]
-              });
-              chart.render();
+              })
+              chart.render()
             }
-          });
-        });
-      });
+          })
+        })
+      })
     </script>
 @endsection

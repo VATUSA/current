@@ -22,7 +22,7 @@ class MyController
     public function getProfile()
     {
         $checks = [];
-        $eligible = \Auth::user()->transferEligible($checks);
+        $eligible = Auth::user()->transferEligible($checks);
         return view('my.profile', ['checks' => $checks, 'eligible' => $eligible]);
     }
 
@@ -48,7 +48,7 @@ class MyController
 
         if (Auth::user()->facility()->active)
             return redirect('/my/profile')->with('error', "You are already a member of a facility.");
-        
+
         return redirect('/info/join')->with('error', "You are not eligible to select a facility yet.");
     }
 
@@ -151,5 +151,23 @@ class MyController
     public function getExamIndex()
     {
         return view('my.exams.index');
+    }
+
+    public function toggleBroadcastEmails(Request $request) {
+        if(!$request->ajax()) abort(500);
+
+
+        $user = Auth::user();
+        $currentFlag = $user->flag_broadcastOptedIn;
+        $user->flag_broadcastOptedIn = !$currentFlag;
+        $user->saveOrFail();
+
+        $log = new Actions();
+        $log->from = 0;
+        $log->to = Auth::id();
+        $log->log = "Opted ". ($currentFlag ? "out of" : "in to") . " broadcast emails";
+        $log->save();
+
+        return "1";
     }
 }
