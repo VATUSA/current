@@ -147,6 +147,18 @@ class EmailHelper
     }
 
     /**
+     * Check if user has opted in to broadcast emails.
+     * @param $cid
+     *
+     * @return int
+     */
+    public static function isOptedIn($cid) {
+        $user = \App\User::find($cid);
+
+        return $user && $user->flag_broadcastOptedIn;
+    }
+
+    /**
      * @param string $email
      * @return bool
      */

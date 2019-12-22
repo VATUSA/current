@@ -79,7 +79,18 @@
                             Facilities
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            @foreach(\App\Facility::where('active', 1)->orderby('name', 'ASC')->get() as $f)
+                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5></li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
+                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
+                            @endforeach
+                            <li class="nav-divider"></li>
+                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southern Region</h5></li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
+                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
+                            @endforeach
+                            <li class="nav-divider"></li>
+                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern Region</h5></li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 9])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                         </ul>
@@ -109,7 +120,7 @@
                             <li><a href="http://www.vatsim.net/pilots/training" target="_blank">Training</a></li>
                             <li><a href="http://www.vatsim.net/pilots/virtual-airlines" target="_blank">Virtual
                                     Airlines</a></li>
-                            <li><a href="http://www.aircharts.org" target="_blank">Charts</a></li>
+                            <li><a href="https://www.skyvector.com" target="_blank">Charts</a></li>
                             <li><a href="http://www.flightaware.com/statistics/ifr-route/" target="_blank">Routes</a>
                             </li>
                             <li><a href="http://stats.vatsim.net/" target="_blank">VATSIM Stats/Tracking</a></li>
@@ -123,7 +134,7 @@
                                     </li>
                                     <li><a href="http://weather.uwyo.edu/upperair/sounding.html" target="_blank">Balloon
                                             Sounding</a></li>
-                                    <li><a href="http://aviationweather.gov/products/nws/winds/" target="_blank">Winds
+                                    <li><a href="https://aviationweather.gov/windtemp" target="_blank">Winds
                                             Aloft</a></li>
                                     <li><a href="http://digital.weather.gov" target="_blank">Graphical Forecasts</a>
                                     </li>
@@ -169,6 +180,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-expanded="false">Support <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
+                                <li><a href="https://status.vatusa.net">System Status</a></li>
                                 <li><a href="/help/kb">Knowledgebase/FAQ</a></li>
                                 <li><a href="/help/ticket/new">Open New Ticket</a></li>
                                 <li><a href="/help/ticket/mine">My Tickets</a></li>
@@ -213,7 +225,7 @@
                                     <li><a href="/my/assignbasic">Request Basic ATC Exam</a></li>
                                 @endif
                                 <li role="separator" class="divider"></li>
-                                <li><a href="https://login.vatusa.net/?logout">Logout</a></li>
+                                <li><a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : "//login.vatusa.net/?logout" }}">Logout</a></li>
                             </ul>
                         </li>
                         @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isMentor())
@@ -253,7 +265,7 @@
 
 
                     @else
-                        <li><a href="{{ (env('APP_ENV', 'prod') == "dev" ? "http://api.vatusa.dev/v2/llll" : url('login'))}}"><i class="fa fa-user"></i> Login</a></li>
+                        <li><a href="#" id="login-link" data-action="{{ url('login') }}"><i class="fa fa-user"></i> Login</a></li>
                     @endif
                 </ul>
             </div>
@@ -271,12 +283,12 @@
 <div class="container">
     @if(session('error'))
         <div class="alert alert-danger">
-            <strong>Error</strong> {!! session('error') !!}
+            <strong><i class="fa fa-warning"></i> Error!</strong> {!! session('error') !!}
         </div>
     @endif
     @if(session('success'))
         <div class="alert alert-success">
-            <strong>Success</strong> {!! session('success') !!}
+            <strong><i class="fa fa-check"></i> Success!</strong> {!! session('success') !!}
         </div>
     @endif
     @if (isset($errors) && count($errors) > 0)
@@ -308,15 +320,16 @@
 <footer>
     <div class="container">
         <hr>
-        <p>Copyright &copy; 2016{{ (date("Y")>2016)?"-".date("Y"):"" }} VATUSA - United States Division, VATSIM. All
+        <p>Copyright &copy; 2016-{{ date("Y") }} VATUSA - United States Division, VATSIM. All
             rights reserved. Any and all content on this website are for use with the Virtual Air Traffic Simulation
             Network (VATSIM) and may not be used for real-world navigation or aviation purposes and doing so could be a
             violation of federal law.</p>
-        <p>{!! \App\Classes\Helper::version() !!} - <a href="/info/privacy">Privacy Policy</a></p>
+        <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i class="fa fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/js/bootbox.min.js"></script>
 <script src="/js/jquery-ui.min.js"></script>
 <script src="/js/vatusa.js"></script>

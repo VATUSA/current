@@ -1,5 +1,36 @@
 @extends('layout')
 @section('title', 'My Profile')
+
+@section('scripts')
+    <script>
+      $('#toggleOptin').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on'),
+            spinner     = $(this).find('i.spinner-icon')
+
+        spinner.show()
+        $.ajax({
+          type: 'POST',
+          url : "{{ secure_url("/my/profile/toggleBroadcast") }}"
+        }).success(function (result) {
+          spinner.hide()
+          if (result === '1') {
+            //Success
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'danger' : 'success'))
+          }
+          else {
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle email opt-in setting.')
+          }
+        })
+          .error(function (result) {
+            spinner.hide()
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle email opt-in setting.')
+          })
+      })
+    </script>
+@endsection
+
 @section('content')
     <div class="container">
         <div class="panel panel-default">
@@ -9,6 +40,10 @@
                 </h3>
             </div>
             <div class="panel-body">
+                @if(session('fromAgreed'))
+                    <div class="alert alert-info"><strong><i class="fa fa-info-circle"></i> Please review your email broadcast opt-in setting.</strong></div>
+                    @php session()->forget('fromAgreed') @endphp
+                @endif
                 <form class="form-horizontal">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Name</label>
@@ -20,7 +55,8 @@
                         <label class="col-sm-2 control-label">Email</label>
                         <div class="col-sm-10">
                             <p class="form-control-static">{{Auth::user()->email}}</p>
-                            <span id="helpBlock" class="help-block">Click <a href="http://cert.vatsim.net/vatsimnet/newmail.php">here</a> to change.</span>
+                            <span id="helpBlock" class="help-block">Click <a
+                                    href="http://cert.vatsim.net/vatsimnet/newmail.php">here</a> to change.</span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -32,7 +68,24 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Rating</label>
                         <div class="col-sm-10">
-                            <p class="form-control-static">{{Auth::user()->urating->short}} ({{Auth::user()->urating->long}})</p>
+                            <p class="form-control-static">{{Auth::user()->urating->short}}
+                                ({{Auth::user()->urating->long}})</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Receive Broadcast Emails</label>
+                        <div class="col-sm-10">
+                            <span id="toggleOptin" style="font-size:1.8em;">
+                                <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_broadcastOptedIn ? "on text-success" : "off text-danger"}} "></i>
+                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                            </span>
+                            <p class="help-block">To receive emails from the VATUSA mass emailing system, you must
+                                opt-in by
+                                clicking on the toggle switch above. <br>This only affects the mass emailing system of
+                                ARTCCs
+                                that choose to use this response.<br><strong>This setting does not affect
+                                    account-related emails like transfer requests and exam results/assignments.</strong>
+                            </p>
                         </div>
                     </div>
                 </form>
@@ -83,7 +136,8 @@
                     <td>{!! ($checks['pending'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                 </tr>
                 <tr>
-                    <td>If the above are all green, you are eligible to submit a transfer request. Are you eligible?</td>
+                    <td>If the above are all green, you are eligible to submit a transfer request. Are you eligible?
+                    </td>
                     <td>{!! ($eligible)?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                 </tr>
             </table>

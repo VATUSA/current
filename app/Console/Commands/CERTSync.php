@@ -190,7 +190,7 @@ class CERTSync extends Command
         EmailHelper::sendEmail([
             "vatusa1@vatusa.net",
             "vatusa2@vatusa.net",
-            "vatusa6@vatusa.net",
+           // "vatusa6@vatusa.net",
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
         SMFHelper::createPost(7262, 83, "CERTSync Cycle", implode("\n", $this->log));
     }

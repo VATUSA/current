@@ -12,7 +12,7 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         'Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode',
-        'Illuminate\Cookie\Middleware\EncryptCookies',
+//        'Illuminate\Cookie\Middleware\EncryptCookies',
         'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
         'Illuminate\Session\Middleware\StartSession',
         'Illuminate\View\Middleware\ShareErrorsFromSession',
@@ -37,6 +37,7 @@ class Kernel extends HttpKernel
         'api' => 'App\Http\Middleware\API',
         "csrf" => 'App\Http\Middleware\VerifyCsrfToken',
         'lastactivity' => 'App\Http\Middleware\AuthLastActivity',
+        'privacy-agree' => 'App\Http\Middleware\PrivacyAgree'
     ];
 
 }

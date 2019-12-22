@@ -35,6 +35,24 @@ class InfoController
             if (ctype_alpha($fac) && strlen($fac) == 3) {
                 $facility = Facility::where('id', $fac)->first();
                 $id = $facility->id;
+                $regid = $facility->region;
+                switch ($regid) {
+                    case 7:
+                        $region = "Western";
+                        break;
+                    case 8:
+                        $region = "Southern";
+                        break;
+                    case 9:
+                        $region = "Northeastern";
+                        break;
+                    default:
+                        $region = "Unknown";
+                        break;
+                }
+                echo '<h2 class="text-center">' . $facility->name . '</h2>';
+                echo '<h4 class="text-center">' . "$region Region" . '</h4>';
+                echo '<h4 class="text-center">' . "ATD: " . RoleHelper::getNameFromRole("US{$regid}") . " (USA$regid)" . '</h4>';
                 echo '<h4>Facility Staff</h4><table class="table table-hover"><thead><tr><th>Position</th><th>Name</th><th>Email</th></tr>
                                 </thead>
                                 <tbody>
@@ -81,7 +99,8 @@ class InfoController
                                 </tr>
                                 </thead>
                                 <tbody>';
-                foreach (User::where('facility', $id)->orderBy('rating', 'desc')->orderBy('lname', 'asc')->orderBy('fname', 'asc')->get() as $c) {
+                foreach (User::where('facility', $id)->orderBy('rating', 'desc')->orderBy('lname',
+                    'asc')->orderBy('fname', 'asc')->get() as $c) {
                     echo '<tr>
                                     <td >' . $c->cid . '</td >
                                     <td >' . $c->fname . ' ' . $c->lname . '</td >

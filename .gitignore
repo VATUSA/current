@@ -2,7 +2,6 @@
 /public/dsm/*
 .idea
 storage/*
-gitversion
 composer.lock
 resources/views/emails/facility/*
 bootstrap/cache
@@ -10,3 +9,6 @@ bootstrap/cache
 node_modules
 .config.sh
 vendor
+_ide_helper.php
+.phpstorm.meta.php
+_ide_helper_models.php

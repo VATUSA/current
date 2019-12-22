@@ -46,5 +46,9 @@ class Facility extends Model {
     {
         return $this->hasOne('App\User', 'cid', 'wm')->first();
     }
+
+    public function returnPaths() {
+        return $this->hasMany(ReturnPaths::class);
+    }
 }
 

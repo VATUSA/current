@@ -18,15 +18,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>DP001 &mdash; Division General Policy</td>
-                        <td>6/01/2018</td>
-                        <td><a href="/docs/DP001.pdf" target="_blank">view</a></td>
+                    <tr class="no-hover">
+                        <td><strong>General Division</strong></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td>DP002 &mdash; Transferring and Visiting Controllers Policy</td>
-                        <td>11/01/2015</td>
-                        <td><a href="/docs/DP002.pdf" target="_blank">view</a></td>
+                        <td>DP001 &mdash; Division General Policy</td>
+                        <td>06/01/2018</td>
+                        <td><a href="/docs/DP001.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
                         <td>DP003 &mdash; Event Submission Policy</td>
@@ -35,22 +35,82 @@
                     </tr>
                     <tr>
                         <td>Chain of Command Flow Chart</td>
-                        <td>02/17/2018</td>
-                        <td><a href="/docs/orgchart.pdf" target="_blank">view</td>
+                        <td>07/21/2019</td>
+                        <td><a href="/docs/orgchart.pdf" target="_blank">view</a></td>
+                    </tr>
+                    <tr class="no-hover">
+                        <td><strong>Training Administration</strong></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>3120.1A &mdash; Division Interpretation on VATNA S1 Directive</td>
+                        <td>06/12/2019</td>
+                        <td><a href="/docs/3120.1A.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
                         <td>3120.311 &mdash; Procedures for Selection, Submission, and Appointment of Instructors</td>
-                        <td>02/01/2017</td>
-                        <td><a href="/docs/3120.311.pdf" target="_blank">view</a></td>
+                        <td>03/22/2019</td>
+                        @if(\Auth::check())
+                            <td><a href="/docs/3120.311.pdf" target="_blank">view</a></td>
+                        @else
+                            <td>internal</td>
+                        @endif
                     </tr>
                     <tr>
-                        <td>N D1021.1B &mdash; Division Email Scheme</td>
-                        <td>2/26/2017</td>
+                        <td>3120.4A &mdash; Division Training Policy</td>
+                        <td>07/01/2019</td>
+                        <td><a href="/docs/3120.4a.pdf" target="_blank">view</a></td>
+                    </tr>
+                    <tr>
+                        <td>3120.25A &mdash; Delivery and Ground Certification Statement</td>
+                        <td>07/01/2019</td>
+                        @if(\Auth::check() && (\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff()))
+                            <td><a href="/docs/3120.25A.pdf" target="_blank">view</a></td>
+                        @else
+                            <td>internal</td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td>3120.25B &mdash; S2 Rating Review Form</td>
+                        <td>07/01/2019</td>
+                        @if(\Auth::check() && (\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff()))
+                            <td><a href="/docs/3120.25B.pdf" target="_blank">view</a></td>
+                        @else
+                            <td>internal</td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td>3120.25C &mdash; S3 Rating Review Form</td>
+                        <td>07/01/2019</td>
+                        @if(\Auth::check() && (\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff()))
+                            <td><a href="/docs/3120.25C.pdf" target="_blank">view</a></td>
+                        @else
+                            <td>internal</td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td>3120.25D &mdash; C1 Rating Review Form</td>
+                        <td>07/01/2019</td>
+                        @if(\Auth::check() && (\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff()))
+                            <td><a href="/docs/3120.25D.pdf" target="_blank">view</a></td>
+                        @else
+                            <td>internal</td>
+                        @endif
+                    </tr>
+                    <tr class="no-hover">
+                        <td><strong>Information Technology</strong></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>D1021.1B &mdash; Division Email Scheme</td>
+                        <td>07/5/2019</td>
                         <td><a href="/docs/D1021.1.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
-                        <td>M1022B &mdash; Unified Login Scheme v2</td>
-                        <td>11/28/2017</td>
+                        <td>M1022B &mdash; Unified Login Scheme</td>
+                        <td>07/5/2019</td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/M1022.pdf" target="_blank">view</a></td>
                         @else
@@ -59,12 +119,23 @@
                     </tr>
                     <tr>
                         <td>N1022.1 &mdash; Authentication Security Practices</td>
-                        <td>5/15/2016</td>
+                        <td>05/15/2016</td>
                         <td><a href="/docs/N1022.1.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
-                        <td>T1000.2 &mdash; API - Next Gen</td>
-                        <td>6/25/2016</td>
+                        <td>T1000.1 &mdash; APIv2</td>
+                        <td>August 2019</td>
+                        <td><em rel="tooltip" title="Policy is a Work In Progress">WIP</em></td>
+                       {{-- @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
+                            <td><a href="/docs/T1000.1.pdf" target="_blank">view</a></td>
+                        @else
+                            <td>internal</td>
+                        @endif
+                        --}}
+                    </tr>
+                    <tr>
+                        <td>T1000.2 &mdash; APIv1 <em>(Deprecated)</em></td>
+                        <td>06/25/2016</td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/T1000.2.pdf" target="_blank">view</a></td>
                         @else
@@ -72,8 +143,8 @@
                         @endif
                     </tr>
                     <tr>
-                        <td>T1000.4 - CBT Editor</td>
-                        <td>8/23/2016</td>
+                        <td>T1000.4 &mdash; CBT Editor</td>
+                        <td>08/23/2016</td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/T1000.4.pdf" target="_blank">view</a></td>
                         @else
@@ -82,7 +153,7 @@
                     </tr>
                     <tr>
                         <td>Privacy Policy</td>
-                        <td>2/19/2018</td>
+                        <td>02/19/2018</td>
                         <td><a href="/info/privacy" target="_blank">view</a></td>
                     </tr>
                     </tbody>
