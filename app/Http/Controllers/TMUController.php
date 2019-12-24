@@ -9,6 +9,7 @@ use App\tmu_maps;
 use App\TMUNotice;
 use GuzzleHttp\Client as API;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class TMUController
@@ -361,7 +362,7 @@ class TMUController
 
     public function getNotices(string $sector = null)
     {
-        $notices = TMUNotice::where('start_date', '<=', 'UTC_TIMESTAMP()')
+        $notices = TMUNotice::where('start_date', '<=', Carbon::now('utc'))
             ->orderBy('priority', 'DESC')->orderBy('tmu_facility_id')->orderBy('start_date', 'DESC');
         if ($sector) {
             $allFacs = tmu_facilities::where('id', $sector)->orWhere('parent', $sector);

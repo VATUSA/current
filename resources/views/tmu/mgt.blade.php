@@ -102,7 +102,7 @@
                             <div class="panel-body">
                                 <h4><i class="fa fa-list"></i> Active and Future Notices</h4>
                                 @php $allFacs = App\tmu_facilities::where('id', $fac)->orWhere('parent', $fac);
-                                     $notices = App\TMUNotice::where('start_date', '<=', 'UTC_TIMESTAMP()')
+                                     $notices = App\TMUNotice::where('start_date', '<=', \Illuminate\Support\Carbon::now('utc'))
                                                 ->orderBy('priority', 'DESC')
                                                 ->orderBy('tmu_facility_id')
                                                 ->orderBy('start_date', 'DESC')
@@ -121,7 +121,7 @@
                                     <tbody>
                                     @if(!$notices->count())
                                         <tr class="warning">
-                                            <td colspan="4" style="text-align: center">
+                                            <td colspan="5" style="text-align: center">
                                                 <i class="fa fa-info-circle"></i> No Notices Active
                                             </td>
                                         </tr>
@@ -217,7 +217,7 @@
                                         <label for="message" class="col-sm-2 control-label">Effective Date<br><em>Zulu
                                                 Time</em></label>
                                         <div class="col-sm-10">
-                                            <input type="text" id="start-date" autocomplete="off">
+                                            <input type="text" id="start-date" name="start_date" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -230,7 +230,7 @@
                                                     Expiration Date
                                                 </label>
                                             </div>
-                                            <input type="text" id="expire-date" autocomplete="off">
+                                            <input type="text" id="expire-date" name="expire_date" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -242,6 +242,31 @@
                                         </div>
                                     </div>
                                 </form>
+                                <!-- Edit Notice Modal -->
+                                <div class="modal fade" id="edit-notice-modal" tabindex="-1" role="dialog"
+                                     aria-labelledby="Edit Notice">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <h4 class="modal-title" id="myModalLabel">Edit TMU Notice</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                ...
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                    Cancel
+                                                </button>
+                                                <button type="button" class="btn btn-success"><i
+                                                        class="fa fa-check"></i> Save changes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -338,7 +363,7 @@
             })
               .done(function (result) {
                 btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
-                swal('Success!', 'The TMU Notice has been successfully posted.', 'success')
+                swal('Success!', 'The TMU Notice has been successfully posted.', 'success').then(() => {location.reload()})
               })
               .error(function (result) {
                 btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
@@ -376,6 +401,9 @@
                     })
                 }
               })
+          })
+          $('.edit-notice').click(function () {
+            $('#edit-notice-modal').modal('toggle')
           })
         }
       )
