@@ -139,7 +139,7 @@
                                             <tr class="{{ $rcolor }}" id="tmu-notice-{{ $notice->id }}">
                                                 <td>{{ $notice->tmuFacility->name }}</td>
                                                 <td>{{ \Illuminate\Support\Carbon::parse($notice->start_date)->format('m/d/Y H:i') }}</td>
-                                                <td>{{ $notice->message }}</td>
+                                                <td>{!! $notice->message !!}</td>
                                                 <td>{!! $notice->expire_date ? \Illuminate\Support\Carbon::parse($notice->expire_date)->format('m/d/Y H:i') : "<em>Indefinite</em>" !!}</td>
                                                 <td>
                                                     <div>
@@ -173,7 +173,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="inputPassword3" class="col-sm-2 control-label">Priority</label>
+                                        <label for="priority1" class="col-sm-2 control-label">Priority</label>
                                         <div class="col-sm-10">
                                             <div class="has-warning">
                                                 <div class="radio">
@@ -209,19 +209,20 @@
                                         <div class="col-sm-10">
                                             <textarea class="form-control" name="message" id="message"
                                                       autocomplete="off"></textarea>
-                                            <!--<p class="help-block">Use <code>&lt;b&gt;Bold&lt;/b&gt;</code> and <code>&lt;em&gt;Italics&lt;/em&gt;</code>
-                                                for formatting.</p>-->
+                                            <p class="help-block">Use <code>&lt;b&gt;Bold&lt;/b&gt;</code>, <code>&lt;em&gt;Italics&lt;/em&gt;</code>,
+                                                and <code>&lt;u&gt;Underline&lt;/u&gt;</code>
+                                                for formatting.</p>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="message" class="col-sm-2 control-label">Effective Date<br><em>Zulu
+                                        <label for="start-date" class="col-sm-2 control-label">Effective Date<br><em>Zulu
                                                 Time</em></label>
                                         <div class="col-sm-10">
                                             <input type="text" id="start-date" name="start_date" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="message" class="col-sm-2 control-label">Expire Date</label>
+                                        <label for="hasExpires" class="col-sm-2 control-label">Expire Date</label>
                                         <div class="col-sm-10">
                                             <div class="checkbox">
                                                 <label>
@@ -251,16 +252,105 @@
                                                 <button type="button" class="close" data-dismiss="modal"
                                                         aria-label="Close"><span aria-hidden="true">&times;</span>
                                                 </button>
-                                                <h4 class="modal-title" id="myModalLabel">Edit TMU Notice</h4>
+                                                <h4 class="modal-title">Edit TMU Notice</h4>
                                             </div>
                                             <div class="modal-body">
-                                                ...
+                                                <form class="form-horizontal" id="edit-notice">
+                                                    <input type="hidden" id="edit-notice-id" name="notice_id" value="0">
+                                                    <div class="form-group">
+                                                        <label for="facility-edit" class="col-sm-2 control-label">TMU
+                                                            Facility</label>
+                                                        <div class="col-sm-10">
+                                                            <select class="form-control" name="facility"
+                                                                    id="facility-edit"
+                                                                    autocomplete="off">
+                                                                <option value="">-- Select One --</option>
+                                                                @foreach(\App\tmu_facilities::where('parent', $fac)->orWhere('id' , $fac)->orderBy('name')->get() as $tmufac)
+                                                                    <option
+                                                                        value="{{ $tmufac->id }}">{{ $tmufac->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="priority1-edit" class="col-sm-2 control-label">Priority</label>
+                                                        <div class="col-sm-10">
+                                                            <div class="has-warning">
+                                                                <div class="radio">
+                                                                    <label>
+                                                                        <input type="radio" name="priority"
+                                                                               id="priority1-edit" value="1"
+                                                                               autocomplete="off">
+                                                                        1 - Low
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="has-success">
+                                                                <div class="radio success">
+                                                                    <label>
+                                                                        <input type="radio" name="priority"
+                                                                               id="priority2-edit" value="2"
+                                                                               checked autocomplete="off">
+                                                                        2 - Normal
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="has-error">
+                                                                <div class="radio">
+                                                                    <label>
+                                                                        <input type="radio" name="priority"
+                                                                               id="priority3-edit" value="3"
+                                                                               autocomplete="off">
+                                                                        3 - Urgent
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="message-edit"
+                                                               class="col-sm-2 control-label">Message</label>
+                                                        <div class="col-sm-10">
+                                            <textarea class="form-control" name="message" id="message-edit"
+                                                      autocomplete="off"></textarea>
+                                                            <p class="help-block">Use
+                                                                <code>&lt;b&gt;Bold&lt;/b&gt;</code>, <code>&lt;em&gt;Italics&lt;/em&gt;</code>,
+                                                                and <code>&lt;u&gt;Underline&lt;/u&gt;</code>
+                                                                for formatting.</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="start-date-edit" class="col-sm-2 control-label">Effective
+                                                            Date<br><em>Zulu
+                                                                Time</em></label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="start-date-edit" name="start_date"
+                                                                   autocomplete="off">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="hasExpires-edit" class="col-sm-2 control-label">Expire
+                                                            Date</label>
+                                                        <div class="col-sm-10">
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    <input type="checkbox" name="hasExpires"
+                                                                           id="hasExpires-edit"
+                                                                           autocomplete="off"> Has
+                                                                    Expiration Date
+                                                                </label>
+                                                            </div>
+                                                            <input type="text" id="expire-date-edit" name="expire_date"
+                                                                   autocomplete="off">
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">
                                                     Cancel
                                                 </button>
-                                                <button type="button" class="btn btn-success"><i
+                                                <button type="button" class="btn btn-success" id="save-notice-edit"><i
                                                         class="fa fa-check"></i> Save changes
                                                 </button>
                                             </div>
@@ -332,6 +422,19 @@
             }
           })
           $('#expire-date').datetimepicker({inline: true}).datetimepicker('destroy')
+          $('#start-date-edit').datetimepicker({
+            format          : 'Y-m-d H:i',
+            formatDate      : 'Y-m-d',
+            formatTime      : 'H:i',
+            minDate         : 0,
+            inline          : true,
+            onChangeDateTime: function (ct) {
+              $('#expire-date-edit').datetimepicker('setOptions', {
+                minDate: $('#start-date-edit').val() ? $('#start-date-edit').val() : false
+              })
+            }
+          })
+          $('#expire-date-edit').datetimepicker({inline: true}).datetimepicker('destroy')
           $('#hasExpires').change(function () {
             if ($(this).is(':checked')) {
               $('#expire-date').datetimepicker({
@@ -349,6 +452,25 @@
             } else {
               $('#expire-date').datetimepicker('destroy')
               $('#start-date').datetimepicker('setOptions', {minDate: 0})
+            }
+          })
+          $('#hasExpires-edit').change(function () {
+            if ($(this).is(':checked')) {
+              $('#expire-date-edit').datetimepicker({
+                format          : 'Y-m-d H:i',
+                inline          : true,
+                formatDate      : 'Y-m-d',
+                formatTime      : 'H:i',
+                minDate         : $('#start-date-edit').val() ? $('#start-date-edit').val() : 0,
+                onChangeDateTime: function (ct) {
+                  $('#start-date-edit').datetimepicker('setOptions', {
+                    maxDate: $('#expire-date-edit').val() ? $('#expire-date-edit').val() : false
+                  })
+                }
+              })
+            } else {
+              $('#expire-date-edit').datetimepicker('destroy')
+              $('#start-date-edit').datetimepicker('setOptions', {minDate: 0})
             }
           })
           $('#submit-new-notice').click(function (e) {
