@@ -25,7 +25,7 @@
                     </tr>
                     <tr>
                         <td>DP001 &mdash; Division General Policy</td>
-                        <td>6/01/2018</td>
+                        <td>06/01/2018</td>
                         <td><a href="/docs/DP001.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
@@ -35,7 +35,7 @@
                     </tr>
                     <tr>
                         <td>Chain of Command Flow Chart</td>
-                        <td>02/17/2018</td>
+                        <td>07/21/2019</td>
                         <td><a href="/docs/orgchart.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr class="no-hover">
@@ -105,12 +105,12 @@
                     </tr>
                     <tr>
                         <td>D1021.1B &mdash; Division Email Scheme</td>
-                        <td>7/5/2019</td>
+                        <td>07/5/2019</td>
                         <td><a href="/docs/D1021.1.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
                         <td>M1022B &mdash; Unified Login Scheme</td>
-                        <td>7/5/2019</td>
+                        <td>07/5/2019</td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/M1022.pdf" target="_blank">view</a></td>
                         @else
@@ -119,12 +119,12 @@
                     </tr>
                     <tr>
                         <td>N1022.1 &mdash; Authentication Security Practices</td>
-                        <td>5/15/2016</td>
+                        <td>05/15/2016</td>
                         <td><a href="/docs/N1022.1.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
                         <td>T1000.1 &mdash; APIv2</td>
-                        <td>July 2019</td>
+                        <td>August 2019</td>
                         <td><em rel="tooltip" title="Policy is a Work In Progress">WIP</em></td>
                        {{-- @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/T1000.1.pdf" target="_blank">view</a></td>
@@ -135,7 +135,7 @@
                     </tr>
                     <tr>
                         <td>T1000.2 &mdash; APIv1 <em>(Deprecated)</em></td>
-                        <td>6/25/2016</td>
+                        <td>06/25/2016</td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/T1000.2.pdf" target="_blank">view</a></td>
                         @else
@@ -144,7 +144,7 @@
                     </tr>
                     <tr>
                         <td>T1000.4 &mdash; CBT Editor</td>
-                        <td>8/23/2016</td>
+                        <td>08/23/2016</td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/T1000.4.pdf" target="_blank">view</a></td>
                         @else
@@ -153,7 +153,7 @@
                     </tr>
                     <tr>
                         <td>Privacy Policy</td>
-                        <td>2/19/2018</td>
+                        <td>02/19/2018</td>
                         <td><a href="/info/privacy" target="_blank">view</a></td>
                     </tr>
                     </tbody>

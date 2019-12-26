@@ -359,7 +359,7 @@
     </div>
     <script>
       $(document).ready(function () {
-        $.post('/mgt/ajax/staff/{{$fac}}', function (data) {
+        $.post('{{ secure_url("/mgt/ajax/staff/$fac") }}', function (data) {
           $('#staff-table').html(data)
         })
         $('#facmgt').change(function () {
@@ -714,19 +714,19 @@
       }
 
       function ulsDevUpdate () {
-        $.post("/mgt/facility/{{$fac}}/uls/devreturn", {ret: $('#devret').val()}).done(function (result) {
+        $.post('{{ secure_url("/mgt/facility/$fac/uls/devreturn") }}', {ret: $('#devret').val()}).done(function (result) {
           bootbox.alert('Updated')
         })
       }
 
       function apiGen () {
-        $.post("/mgt/facility/{{$fac}}/api/generate", function (result) {
+        $.post('{{ secure_url("/mgt/facility/$fac/api/generate") }}', function (result) {
           if (result) $('#apikey').attr('value', result)
         })
       }
 
       function apiSBGen () {
-        $.post("/mgt/facility/{{$fac}}/api/generate/sandbox", function (result) {
+        $.post('{{ secure_url("/mgt/facility/$fac/api/generate/sandbox") }}', function (result) {
           if (result) $('#apisbkey').attr('value', result)
         })
       }
@@ -734,13 +734,13 @@
       @endif
       @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
       function ipUpdate () {
-        $.post("/mgt/facility/{{$fac}}/api/update", {apiip: $('#apiip').val()}).done(function (result) {
+        $.post('{{ secure_url("/mgt/facility/$fac/api/update") }}', {apiip: $('#apiip').val()}).done(function (result) {
           if (result == 1) bootbox.alert('Updated')
         })
       }
 
       function ipSBUpdate () {
-        $.post("/mgt/facility/{{$fac}}/api/update/sandbox", {apiip: $('#apisbip').val()}).done(function (result) {
+        $.post('{{ secure_url("/mgt/facility/{$fac}/api/update/sandbox") }}', {apiip: $('#apisbip').val()}).done(function (result) {
           if (result == 1) bootbox.alert('Updated')
         })
       }
@@ -748,7 +748,7 @@
       function appvTrans (id) {
         bootbox.confirm('Confirm approval?', function (result) {
           if (result) {
-            $.post('/mgt/ajax/transfers/1', {id: id}, function (data) {
+            $.post('{{ secure_url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
               bootbox.alert(data)
               window.refresh()
               location.reload(true)
@@ -761,7 +761,7 @@
         bootbox.prompt('Reason for rejection:', function (result) {
           if (result === null) {
           } else {
-            $.post('/mgt/ajax/transfers/2', {id: id, reason: result}, function (data) {
+            $.post('{{ secure_url('/mgt/ajax/transfers/2') }}', {id: id, reason: result}, function (data) {
               bootbox.alert(data)
               window.refresh()
               location.reload(true)
@@ -776,7 +776,7 @@
             return
           } else {
             $.ajax({
-              url : 'https://api.vatusa.net/v2/facility/{{$fac}}/roster/' + cid,
+              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/' + cid,
               type: 'DELETE',
               data: {'reason': result}
             }).success(function () {

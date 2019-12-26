@@ -1,29 +1,32 @@
-import tab from '../tab';
-import forwardPanel from './forwardPanel';
-import fullPanel from './fullPanel';
+import tab from '../tab'
+import forwardPanel from './forwardPanel'
+import fullPanel from './fullPanel'
 
 const emailPage = (data) => {
-  let first = true;
-  let html = `<form><ul class="nav nav-tabs" role="tablist">`;
-  data.map((i, v) => {
-    html = `${html}${tab(i.email,i.email.replace(/[@\-.]/g, ''),first)}`;
-    first = false;
-  });
+  let first = true
+  let html = `<form><ul class="nav nav-tabs" role="tablist">`
+  for (let i in data) {
+    if (data.hasOwnProperty(i) && i !== "testing")
+      html = `${html}${tab(data[i]["email"], data[i]["email"].replace(/[@\-.]/g, ''), first)}`
+    first = false
+  }
   html = `${html}</ul>
   <div class="tab-content">
-  `;
+  `
   first = true
-  data.map((i, v) => {
-    i.isActive = first;
-    if (i.type === "FULL") { html = `${html}${fullPanel(i)}`; }
-    if (i.type === "FORWARD" || i.type === "STATIC") { html = `${html}${forwardPanel(i)}`; }
-    first = false;
-  });
-  html = `${html}</div></form>`;
+  for (let i in data) {
+    if (data.hasOwnProperty(i) && i !== "testing") {
+      if (data[i]["type"] === 'FULL') { html = `${html}${fullPanel(data[i], first)}` }
+      if (data[i]["type"] === 'FORWARD' || data[i]["type"] === 'STATIC') { html = `${html}${forwardPanel(data[i], first)}` }
+      first = false
+    }
+  }
 
-  $('[data-toggle="tooltip"]').tooltip();
+  html = `${html}</div></form>`
 
-  return html;
-};
+  $('[data-toggle="tooltip"]').tooltip()
 
-export default emailPage;
+  return html
+}
+
+export default emailPage

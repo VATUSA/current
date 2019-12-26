@@ -344,6 +344,10 @@ class RoleHelper
         if (Auth::user()->facility == $facility && Auth::user()->rating >= Helper::ratingIntFromShort("I1") && Auth::user()->rating < Helper::ratingIntFromShort("SUP"))
             return true;
 
+        //ADMs have INS Access
+        if(Auth::user()->rating == Helper::ratingIntFromShort("ADM"))
+            return true;
+
         // Check for an instructor role
         if (Role::where("facility", $facility)->where("cid", $cid)->where("role", "INS")->count())
             return true;
