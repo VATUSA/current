@@ -222,7 +222,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="hasExpires" class="col-sm-2 control-label">Expire Date</label>
+                                        <label for="hasExpires" class="col-sm-2 control-label">Expire Date<br><em>Zulu
+                                                Time</em></label>
                                         <div class="col-sm-10">
                                             <div class="checkbox">
                                                 <label>
@@ -330,7 +331,8 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="hasExpires-edit" class="col-sm-2 control-label">Expire
-                                                            Date</label>
+                                                            Date<br><em>Zulu
+                                                                Time</em></label>
                                                         <div class="col-sm-10">
                                                             <div class="checkbox">
                                                                 <label>
