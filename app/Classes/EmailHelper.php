@@ -155,7 +155,7 @@ class EmailHelper
     public static function isOptedIn($cid) {
         $user = \App\User::find($cid);
 
-        return $user->flag_broadcastOptedIn;
+        return $user && $user->flag_broadcastOptedIn;
     }
 
     /**
