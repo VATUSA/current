@@ -167,10 +167,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 [
                     'name' => $this->fname . " " . $this->lname,
                     'facility' => $this->facname,
-                    'by' => $by,
+                    'by' => Helper::nameFromCID($by),
                     'msg' => $msg,
                     'facid' => $facility,
-                    'region' => $region
+                    'region' => $region,
+                    'obsInactive' => $this->rating == 1 && str_contains($msg,  ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
             );
         }

@@ -7,13 +7,13 @@ use App\User;
 use App\Facility;
 use App\Transfers;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Response;
 
 class StatsController
     extends Controller
 {
     public function getExportOverview() {
-        header("Content-type: text/csv");
+        header("Content-Type: text/csv");
         $response = "facility,atm,datm,ta,ec,fa,wm,transfers,controllers,\n";
         foreach(Facility::where('active',1)->orWhere('id','ZAE')->orderBy('id')->get() as $facility) {
             $response .= $facility->id . ",";
@@ -26,7 +26,10 @@ class StatsController
             $response .= Transfers::where('to', $facility->id)->where('status', 0)->count() . ",";
             $response .= User::where('facility', $facility->id)->count() . ",\n";
         }
-        return Response::make($response, 200, ['Content-Type' => 'text/plain']);
+        return response()->make($response, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition'=> 'attachment; filename="VATUSA Overview ' . date('Y-m-d') . '.csv"'
+        ]);
         //return response()->header('Content-Type', 'text/plain');
     }
 
@@ -48,7 +51,10 @@ class StatsController
             $response .= User::where('facility',$fac->id)->where('rating', Helper::ratingIntFromShort("ADM"))->count() . ",";
             $response .= User::where('facility',$fac->id)->count() . ",\n";
         }
-        return Response::make($response, 200, ['Content-Type' => 'text/plain']);
+        return response()->make($response, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition'=> 'attachment; filename="VATUSA Detailed Report ' . date('Y-m-d') . '.csv"'
+        ]);
     }
 
     public function getDetails(Request $request, $facility)
