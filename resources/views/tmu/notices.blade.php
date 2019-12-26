@@ -32,7 +32,7 @@
                             <th style="width:10%;">Facility/Sector</th>
                             <th style="width:15%;">Date</th>
                             <th style="width:60%;">Notice</th>
-                            <th style="width:15%;">Expire Date</th>
+                            <th style="width:15%;">Expire Date (UTC)</th>
                         </tr>
                         </thead>
                         <tbody>
