@@ -487,7 +487,7 @@
             })
               .done(function (result) {
                 btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
-                swal('Success!', 'The TMU Notice has been successfully posted.', 'success').then(() => {location.reload()})
+                swal('Success!', 'The TMU Notice has been successfully posted.', 'success').then(() => { location.reload() })
               })
               .error(function (result) {
                 btn.html('<i class=\'fa fa-check\'></i> Post').attr('disabled', false)
