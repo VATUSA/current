@@ -7,6 +7,7 @@
     <!--<script
         src="https://cdn.tiny.cloud/1/el8ylh3j522wfpdqh9jom4690z2k11t6m4cpz6kno4vn54oa/tinymce/5/tinymce.min.js"></script>-->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ asset('js/moment.js') }}"></script>
 @endpush
 
 @section('content')
@@ -411,31 +412,22 @@
       })
 
       $(function () {
+          let utcTime = moment().utc()
+          $('#start-date').val(utcTime.format('Y-MM-DD HH:mm'))
           $('#start-date').datetimepicker({
             format          : 'Y-m-d H:i',
             formatDate      : 'Y-m-d',
             formatTime      : 'H:i',
-            minDate         : 0,
+            minDate         : utcTime.format('Y-MM-DD'),
             inline          : true,
             onChangeDateTime: function (ct) {
               $('#expire-date').datetimepicker('setOptions', {
-                minDate: $('#start-date').val() ? $('#start-date').val() : false
+                minDate: $('#start-date').val() ? moment($('#start-date').val()).format('Y-MM-DD') : false
               })
             }
           })
+
           $('#expire-date').datetimepicker({inline: true}).datetimepicker('destroy')
-          $('#start-date-edit').datetimepicker({
-            format          : 'Y-m-d H:i',
-            formatDate      : 'Y-m-d',
-            formatTime      : 'H:i',
-            minDate         : 0,
-            inline          : true,
-            onChangeDateTime: function (ct) {
-              $('#expire-date-edit').datetimepicker('setOptions', {
-                minDate: $('#start-date-edit').val() ? $('#start-date-edit').val() : false
-              })
-            }
-          })
           $('#expire-date-edit').datetimepicker({inline: true}).datetimepicker('destroy')
           $('#hasExpires').change(function () {
             if ($(this).is(':checked')) {
@@ -444,16 +436,18 @@
                 inline          : true,
                 formatDate      : 'Y-m-d',
                 formatTime      : 'H:i',
-                minDate         : $('#start-date').val() ? $('#start-date').val() : 0,
+                minDate         : $('#start-date').val() ? moment($('#start-date').val()).format('Y-MM-DD') : utcTime.format('Y-MM-DD'),
                 onChangeDateTime: function (ct) {
                   $('#start-date').datetimepicker('setOptions', {
-                    maxDate: $('#expire-date').val() ? $('#expire-date').val() : false
+                    maxDate: $('#expire-date').val() ? moment($('#expire-date').val()).format('Y-MM-DD') : false,
                   })
                 }
               })
             } else {
               $('#expire-date').datetimepicker('destroy')
-              $('#start-date').datetimepicker('setOptions', {minDate: 0})
+              $('#start-date').datetimepicker('setOptions', {
+                maxDate: false
+              })
             }
           })
           $('#hasExpires-edit').change(function () {
@@ -463,16 +457,18 @@
                 inline          : true,
                 formatDate      : 'Y-m-d',
                 formatTime      : 'H:i',
-                minDate         : $('#start-date-edit').val() ? $('#start-date-edit').val() : 0,
+                minDate         : $('#start-date-edit').val() ? moment($('#start-date-edit').val()).format('Y-MM-DD') : utcTime.format('Y-MM-DD'),
                 onChangeDateTime: function (ct) {
                   $('#start-date-edit').datetimepicker('setOptions', {
-                    maxDate: $('#expire-date-edit').val() ? $('#expire-date-edit').val() : false
+                    maxDate: $('#expire-date-edit').val() ? moment($('#expire-date-edit').val()).format('Y-MM-DD') : false,
                   })
                 }
               })
             } else {
               $('#expire-date-edit').datetimepicker('destroy')
-              $('#start-date-edit').datetimepicker('setOptions', {minDate: 0})
+              $('#start-date-edit').datetimepicker('setOptions', {
+                maxDate: false
+              })
             }
           })
           $('#submit-new-notice').click(function (e) {
@@ -527,6 +523,67 @@
               })
           })
           $('.edit-notice').click(function () {
+            let btn = $(this),
+                id  = btn.data('id')
+
+            btn.prop('disabled', true)
+            $.ajax({
+              method: 'GET',
+              url   : $.apiUrl() + '/v2/tmu/notice/' + id,
+            })
+              .done(function (result) {
+                //Reset fields
+                $('#start-date-edit').datetimepicker('destroy')
+                $('#expire-date-edit').datetimepicker({inline: true}).datetimepicker('destroy')
+                $('#hasExpires-edit').prop('checked', true)
+                btn.prop('disabled', false)
+
+                //Populate fields
+                $('#edit-notice-id').val(id)
+                $('#facility-edit').val(result.tmu_facility_id)
+                for (let i = 1; i <= 3; i++)
+                  $('#priority' + i + '-edit').prop('checked', false)
+                $('#priority' + result.priority + '-edit').prop('checked', true)
+                $('#message-edit').html(result.message)
+
+                //Populate start date
+                $('#start-date-edit').val(result.start_date)
+                $('#start-date-edit').datetimepicker({
+                  format          : 'Y-m-d H:i',
+                  formatDate      : 'Y-m-d',
+                  formatTime      : 'H:i',
+                  minDate         : utcTime.format('Y-MM-DD'),
+                  inline          : true,
+                  onChangeDateTime: function (ct) {
+                    $('#expire-date-edit').datetimepicker('setOptions', {
+                      minDate: $('#start-date-edit').val() ? moment($('#start-date-edit').val()).format('Y-MM-DD') : false
+                    })
+                  }
+                })
+
+                if (result.expire_date !== null) {
+                  //Populate expire date
+                  $('#expire-date-edit').val(result.expire_date)
+                  $('#hasExpires-edit').prop('checked', true)
+                  $('#expire-date-edit').datetimepicker({
+                    format          : 'Y-m-d H:i',
+                    inline          : true,
+                    formatDate      : 'Y-m-d',
+                    formatTime      : 'H:i',
+                    minDate         : $('#start-date-edit').val() ? moment($('#start-date-edit').val()).format('Y-MM-DD') : 0,
+                    onChangeDateTime: function (ct) {
+                      $('#start-date-edit').datetimepicker('setOptions', {
+                        maxDate: $('#expire-date-edit').val() ? moment($('#expire-date-edit').val()).format('Y-MM-DD') : false
+                      })
+                    }
+                  })
+                }
+              })
+              .error(function (result) {
+                btn.prop('disabled', false)
+                swal('Error!', 'Unable to retrieve TMU Notice data for editing. ' + result.responseJSON.msg, 'error')
+              })
+
             $('#edit-notice-modal').modal('toggle')
           })
         }
