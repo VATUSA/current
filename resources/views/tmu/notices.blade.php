@@ -4,14 +4,16 @@
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">TMU Notices (N.T.O.S.)</h3>
+                <h3 class="panel-title">TMU Notices (N.T.O.S.)</h3><h5 class="help-block">This page refreshes every 30
+                    seconds.</h5>
             </div>
             <div class="panel-body">
                 <div class="form-group col-xs-4">
                     <label for="sectorselect">
                         Select Facility/Sector
                     </label>
-                    <select class="form-control" id="sectorselect" name="tmu_facility_id" autocomplete="off" onchange="window.location = '/tmu/notices/'+this.value">
+                    <select class="form-control" id="sectorselect" name="tmu_facility_id" autocomplete="off"
+                            onchange="window.location = '/tmu/notices/'+this.value">
                         <option @if(!$sector) selected @endif value="">-- All Sectors --</option>
                         @foreach($facilitiesArr as $fac => $sect)
                             <optgroup label="{{ \App\Classes\Helper::facShtLng($fac) }}">
@@ -67,4 +69,9 @@
             </div>
         </div>
     </div>
+    @push('scripts')
+        <script>
+          setTimeout(() => location.reload(true), 30000)
+        </script>
+    @endpush
 @endsection
