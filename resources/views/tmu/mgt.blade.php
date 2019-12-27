@@ -103,10 +103,11 @@
                             <div class="panel-body">
                                 <h4><i class="fa fa-list"></i> Active and Future Notices</h4>
                                 @php $allFacs = App\tmu_facilities::where('id', $fac)->orWhere('parent', $fac);
-                                     $notices = App\TMUNotice::where('start_date', '<=', \Illuminate\Support\Carbon::now('utc'))
+                                     $notices = App\TMUNotice::where('expire_date', '>=', \Illuminate\Support\Carbon::now('utc'))
+                                                ->orWhereNull('expire_date')
                                                 ->orderBy('priority', 'DESC')
-                                                ->orderBy('tmu_facility_id')
                                                 ->orderBy('start_date', 'DESC')
+                                                ->orderBy('tmu_facility_id')
                                                 ->where('tmu_facility_id', $allFacs->get()->pluck('id'))->get();
                                 @endphp
                                 <table class="table table-responsive table-striped" id="notices-table">
@@ -139,9 +140,12 @@
                                             @endphp
                                             <tr class="{{ $rcolor }}" id="tmu-notice-{{ $notice->id }}">
                                                 <td>{{ $notice->tmuFacility->name }}</td>
-                                                <td>{{ \Illuminate\Support\Carbon::parse($notice->start_date)->format('m/d/Y H:i') }}</td>
+                                                <td>@if($notice->start_date > \Illuminate\Support\Carbon::now())
+                                                        <i class="fa fa-calendar" rel="tooltip" title="Scheduled"></i>
+                                                        <em> @endif {{ $notice->start_date->format('m/d/Y H:i') }} @if($notice->start_date > \Illuminate\Support\Carbon::now()) </em> @endif
+                                                </td>
                                                 <td>{!! $notice->message !!}</td>
-                                                <td>{!! $notice->expire_date ? \Illuminate\Support\Carbon::parse($notice->expire_date)->format('m/d/Y H:i') : "<em>Indefinite</em>" !!}</td>
+                                                <td>{!! $notice->expire_date ? $notice->expire_date->format('m/d/Y H:i') : "<em>Indefinite</em>" !!}</td>
                                                 <td>
                                                     <div>
                                                         <button class="btn btn-warning edit-notice"
