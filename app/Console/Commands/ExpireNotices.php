@@ -38,7 +38,7 @@ class ExpireNotices extends Command
      */
     public function handle()
     {
-        $notices = TMUNotice::where('expire_date', '<=', 'UTC_TIMESTAMP()')->get();
+        $notices = TMUNotice::where('expire_date', '<=', 'NOW()')->get();
         foreach ($notices as $notice) {
             $notice->delete();
         }
