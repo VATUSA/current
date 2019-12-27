@@ -2,12 +2,12 @@
 @section('title', 'TMU Map Management')
 
 @push('scripts')
-    <link type="text/css" href="{{ asset('datetimepicker/datetimepicker.css') }}" rel="stylesheet">
-    <script src="{{ asset('datetimepicker/datetimepicker.js') }}"></script>
+    <link type="text/css" href="{{ secure_asset('datetimepicker/datetimepicker.css') }}" rel="stylesheet">
+    <script src="{{ secure_asset('datetimepicker/datetimepicker.js') }}"></script>
     <!--<script
         src="https://cdn.tiny.cloud/1/el8ylh3j522wfpdqh9jom4690z2k11t6m4cpz6kno4vn54oa/tinymce/5/tinymce.min.js"></script>-->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="{{ asset('js/moment.js') }}"></script>
+    <script src="{{ secure_asset('js/moment.js') }}"></script>
 @endpush
 
 @php
