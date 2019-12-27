@@ -17,7 +17,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script type="text/javascript">
-    $.apiUrl = () => ("{{ ((env('APP_ENV', 'prod') == 'prod') ? "https://api.vatusa.net" : "https://api.vatusa.devel") }}");
+      $.apiUrl = () => ("{{ ((env('APP_ENV', 'prod') == 'prod') ? "https://api.vatusa.net" : "https://api.vatusa.devel") }}")
     </script>
 
     @stack('scripts')
@@ -48,7 +48,7 @@
                             <span class="grab"><strong>{{Auth::user()->fname.' '.Auth::user()->lname}}</strong></span>
                             <br>
                             <small><i class="fa fa-user"></i> {{Auth::user()->cid}} &nbsp; &mdash; &nbsp; <i
-                                        class="fa fa-trophy"></i> {{\App\Classes\Helper::ratingShortFromInt(\Auth::user()->rating)}}
+                                    class="fa fa-trophy"></i> {{\App\Classes\Helper::ratingShortFromInt(\Auth::user()->rating)}}
                                 ({{Auth::user()->urating->long}})<br>
                                 <i class="fa fa-star"></i> {{\App\Classes\RoleHelper::getUserRole(Auth::user()->cid, Auth::user()->facility)}}
                                 - {{\App\Classes\Helper::facShtLng(Auth::user()->facility)}}
@@ -69,7 +69,7 @@
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                         aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
-                            class="icon-bar"></span> <span class="icon-bar"></span></button>
+                        class="icon-bar"></span> <span class="icon-bar"></span></button>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -81,17 +81,23 @@
                             Facilities
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5></li>
+                            <li class="dropdown-header"><h5
+                                    style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5>
+                            </li>
                             @foreach(\App\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
-                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southern Region</h5></li>
+                            <li class="dropdown-header"><h5
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southern Region</h5>
+                            </li>
                             @foreach(\App\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
-                            <li class="dropdown-header"><h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern Region</h5></li>
+                            <li class="dropdown-header"><h5
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern
+                                    Region</h5></li>
                             @foreach(\App\Facility::where(['active' => 1, 'region' => 9])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
@@ -155,56 +161,59 @@
                         <li class="dropdown"><a href="/info/join">Join Us</a></li>
                     @endif
                     @if(Auth::check())
-                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                            aria-expanded="false">
-                            TMU Maps
-                            <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="/tmu/notices" target="_blank">N.T.O.S. - TMU Notices</a></li>
-                            <li class="divider"></li>
-                            @foreach(\App\tmu_facilities::where('parent',null)->orderBy('id', 'asc')->get() as $f)
-                                @if(\App\tmu_facilities::where('parent', $f->id)->count() >= 1)
-                                    <li class="dropdown-submenu">
-                                        <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{$f->id}} - {{$f->name}}</a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/tmu/map/{{$f->id}}" target="_blank">{{$f->id}} - {{$f->name}}</a></li>
-                                            @foreach(\App\tmu_facilities::where('parent', $f->id)->orderBy('id', 'asc')->get() as $sf)
-                                                <li><a href="/tmu/map/{{$sf->id}}" target="_blank">{{$sf->id}} - {{$sf->name}}</a></li>
-                                            @endforeach
-                                        </ul>
-                                    </li>
-                                @else
-                                    <li><a href="/tmu/{{$f->id}}" target="_blank">{{$f->id}} - {{$f->name}}</a></li>
-                                @endif
-                            @endforeach
-                        </ul>
-                    </li>
-                    @endif
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-expanded="false">Support <span class="caret"></span></a>
+                        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                                aria-expanded="false">
+                                TMU Maps
+                                <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="https://status.vatusa.net">System Status</a></li>
-                                <li><a href="/help/kb">Knowledgebase/FAQ</a></li>
-                                <li><a href="/help/ticket/new">Open New Ticket</a></li>
-                                <li><a href="/help/ticket/mine">My Tickets</a></li>
-                                @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
-                                    <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
-                                                                    data-toggle="dropdown" role="button"
-                                                                    aria-expanded="false">Ticket Manager</a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/help/ticket/myassigned">My Assigned Tickets</a></li>
-                                            <li><a href="/help/ticket/open">Open Tickets</a></li>
-                                            <li><a href="/help/ticket/closed">Closed Tickets</a></li>
-                                            <li><a href="/help/ticket/search">Search Tickets</a></li>
-                                        </ul>
-                                    </li>
-                                    @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="/help/kbe">Knowledgebase Editor</a></li>
+                                <li><a href="/tmu/notices" target="_blank">N.T.O.S. - TMU Notices</a></li>
+                                <li class="divider"></li>
+                                @foreach(\App\tmu_facilities::where('parent',null)->orderBy('id', 'asc')->get() as $f)
+                                    @if(\App\tmu_facilities::where('parent', $f->id)->count() >= 1)
+                                        <li class="dropdown-submenu">
+                                            <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown"
+                                               role="button" aria-expanded="false">{{$f->id}} - {{$f->name}}</a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="/tmu/map/{{$f->id}}" target="_blank">{{$f->id}}
+                                                        - {{$f->name}}</a></li>
+                                                @foreach(\App\tmu_facilities::where('parent', $f->id)->orderBy('id', 'asc')->get() as $sf)
+                                                    <li><a href="/tmu/map/{{$sf->id}}" target="_blank">{{$sf->id}}
+                                                            - {{$sf->name}}</a></li>
+                                                @endforeach
+                                            </ul>
+                                        </li>
+                                    @else
+                                        <li><a href="/tmu/{{$f->id}}" target="_blank">{{$f->id}} - {{$f->name}}</a></li>
                                     @endif
-                                @endif
+                                @endforeach
                             </ul>
                         </li>
+                    @endif
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">Support <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="https://status.vatusa.net">System Status</a></li>
+                            <li><a href="/help/kb">Knowledgebase/FAQ</a></li>
+                            <li><a href="/help/ticket/new">Open New Ticket</a></li>
+                            <li><a href="/help/ticket/mine">My Tickets</a></li>
+                            @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
+                                <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
+                                                                data-toggle="dropdown" role="button"
+                                                                aria-expanded="false">Ticket Manager</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="/help/ticket/myassigned">My Assigned Tickets</a></li>
+                                        <li><a href="/help/ticket/open">Open Tickets</a></li>
+                                        <li><a href="/help/ticket/closed">Closed Tickets</a></li>
+                                        <li><a href="/help/ticket/search">Search Tickets</a></li>
+                                    </ul>
+                                </li>
+                                @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                    <li><a href="/help/kbe">Knowledgebase Editor</a></li>
+                                @endif
+                            @endif
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if(Auth::check())
@@ -214,7 +223,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{secure_url('my/profile')}}">Profile</a></li>
                                 @if(!Auth::user()->selectionEligible() && !Auth::user()->transferEligible())
-                                <li><a href="/my/profile">Why can I not join a facility?</a></li>
+                                    <li><a href="/my/profile">Why can I not join a facility?</a></li>
                                 @endif
                                 @if(Auth::user()->facility()->active || Auth::user()->facility == "ZHQ" || (Auth::user()->transferEligible() && !Auth::user()->selectionEligible()))
                                     <li><a href="{{secure_url('my/transfer')}}">Transfer Request</a></li>
@@ -229,7 +238,9 @@
                                     <li><a href="/my/assignbasic">Request Basic ATC Exam</a></li>
                                 @endif
                                 <li role="separator" class="divider"></li>
-                                <li><a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : "//login.vatusa.net/?logout" }}">Logout</a></li>
+                                <li>
+                                    <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : "//login.vatusa.net/?logout" }}">Logout</a>
+                                </li>
                             </ul>
                         </li>
                         @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isMentor())
@@ -242,7 +253,9 @@
                                         <li><a href="{{secure_url("mgt/controller")}}">Member Management</a></li>
                                     @endif
                                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "FE"))
-                                      <li><a href="{{secure_url('mgt/tmu')}}">TMU Map Management</a></li>
+                                        <li><a href="{{secure_url('mgt/tmu')}}">TMU Map Management</a></li>
+                                    @else
+                                        <li><a href="{{secure_url('mgt/tmu')}}">TMU Notices Management</a></li>
                                     @endif
                                     @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
                                         <li><a href="{{secure_url("exam")}}">Exam Management</a></li>
@@ -251,7 +264,7 @@
                                         <li><a href="{{secure_url("cbt/editor")}}">CBT Editor</a></li>
                                     @endif
                                     @if(\App\Classes\RoleHelper::isFacilityStaff())
-                                    <li><a href="{{secure_url("mgt/mail")}}">Email Management</a></li>
+                                        <li><a href="{{secure_url("mgt/mail")}}">Email Management</a></li>
                                     @endif
                                     @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                         <li><a href="/mgt/checklists">Training Checklists Management</a></li>
@@ -269,7 +282,8 @@
 
 
                     @else
-                        <li><a href="#" id="login-link" data-action="{{ url('login') }}"><i class="fa fa-user"></i> Login</a></li>
+                        <li><a href="#" id="login-link" data-action="{{ url('login') }}"><i class="fa fa-user"></i>
+                                Login</a></li>
                     @endif
                 </ul>
             </div>
@@ -307,16 +321,18 @@
     @endif
 </div>
 @if(env('APP_ENV') == 'dev')
-<div class="container">
-    <div class="alert alert-danger">
-        <strong>WARNING</strong> This is a development environment!!!  While live, it does feature beta/alpha software that may not be functioning.
+    <div class="container">
+        <div class="alert alert-danger">
+            <strong>WARNING</strong> This is a development environment!!! While live, it does feature beta/alpha
+            software that may not be functioning.
+        </div>
     </div>
-</div>
 @endif
 @if(env('APP_ENV') == 'alpha')
     <div class="container">
         <div class="alert alert-danger">
-            <strong>WARNING</strong> This is an active development environment.  Features are likely to be broken or in the active process of being changed.
+            <strong>WARNING</strong> This is an active development environment. Features are likely to be broken or in
+            the active process of being changed.
         </div>
     </div>
 @endif
@@ -328,7 +344,9 @@
             rights reserved. Any and all content on this website are for use with the Virtual Air Traffic Simulation
             Network (VATSIM) and may not be used for real-world navigation or aviation purposes and doing so could be a
             violation of federal law.</p>
-        <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i class="fa fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i class="fa fa-lock"></i> Privacy Policy</a></p>
+        <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i
+                    class="fa fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i
+                    class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>
 
@@ -342,11 +360,13 @@
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112506058-1"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  window.dataLayer = window.dataLayer || []
 
-  gtag('config', 'UA-112506058-1');
+  function gtag () {dataLayer.push(arguments)}
+
+  gtag('js', new Date())
+
+  gtag('config', 'UA-112506058-1')
 </script>
 </body>
 </html>
