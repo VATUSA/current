@@ -176,8 +176,7 @@ class TMUController
                 $fac = Auth::user()->facility;
             }
         }
-        if (!RoleHelper::isFacilitySeniorStaff(null, $fac) && !RoleHelper::hasRole(Auth::user()->cid, $fac,
-                "WM") && !RoleHelper::hasRole(Auth::user()->cid, $fac, "FE")) {
+        if (!(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isMentor())) {
             abort(401);
         }
 
