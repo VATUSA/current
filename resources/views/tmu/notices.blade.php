@@ -49,7 +49,8 @@
                                 @php
                                     $priority = $notice->priority;
                                     switch($priority) {
-                                        case 2: $rcolor =  'info'; break;
+                                        case 1: $rcolor =  'warning'; break;
+                                        case 2: $rcolor =  'success'; break;
                                         case 3: $rcolor = 'danger'; break;
                                         default: $rcolor = ''; break;
                                      }
