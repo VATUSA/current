@@ -183,7 +183,7 @@
                                             </ul>
                                         </li>
                                     @else
-                                        <li><a href="/tmu/{{$f->id}}" target="_blank">{{$f->id}} - {{$f->name}}</a></li>
+                                        <li><a href="/tmu/map/{{$f->id}}" target="_blank">{{$f->id}} - {{$f->name}}</a></li>
                                     @endif
                                 @endforeach
                             </ul>
