@@ -350,15 +350,15 @@
                                         </thead>
                                         @foreach (\App\Promotions::where('cid', $u->cid)->orderby('created_at', 'desc')->get() as $promo)
                                             <tr style="text-align: center">
-                                                <td style="width:20%">{!! $promo->created_at->format('m/d/Y') !!}</td>
-                                                <td>
+                                                <td style="width:30%">{!! $promo->created_at->format('m/d/Y') !!}<br><em>{{ \App\Classes\Helper::nameFromCID($promo->grantor) }}</em></td>
+                                                <td style="vertical-align: middle">
                                                     <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->from) }}</strong>
                                                 </td>
-                                                <td class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
+                                                <td style="vertical-align: middle" class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
                                                     <i
                                                         class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
                                                 </td>
-                                                <td>
+                                                <td style="vertical-align: middle">
                                                     <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->to) }}</strong>
                                                 </td>
                                             </tr>
