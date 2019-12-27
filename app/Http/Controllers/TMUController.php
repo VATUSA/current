@@ -362,7 +362,7 @@ class TMUController
 
     public function getNotices(string $sector = null)
     {
-        $notices = TMUNotice::where('start_date', '<=', Carbon::now('utc'))
+        $notices = TMUNotice::where('start_date', '<=', Carbon::now())
             ->orderBy('priority', 'DESC')->orderBy('tmu_facility_id')->orderBy('start_date', 'DESC');
         if ($sector) {
             $allFacs = tmu_facilities::where('id', $sector)->orWhere('parent', $sector);
