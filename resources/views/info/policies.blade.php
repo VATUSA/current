@@ -50,7 +50,7 @@
                     </tr>
                     <tr>
                         <td>3120.311 &mdash; Procedures for Selection, Submission, and Appointment of Instructors</td>
-                        <td>03/22/2019</td>
+                        <td>08/20/2019</td>
                         @if(\Auth::check())
                             <td><a href="/docs/3120.311.pdf" target="_blank">view</a></td>
                         @else
