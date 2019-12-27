@@ -257,7 +257,7 @@
                                                 <h4 class="modal-title">Edit TMU Notice</h4>
                                             </div>
                                             <div class="modal-body">
-                                                <form class="form-horizontal" id="edit-notice">
+                                                <form class="form-horizontal" id="edit-notice-form">
                                                     <input type="hidden" id="edit-notice-id" name="notice_id" value="0">
                                                     <div class="form-group">
                                                         <label for="facility-edit" class="col-sm-2 control-label">TMU
@@ -353,7 +353,8 @@
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">
                                                     Cancel
                                                 </button>
-                                                <button type="button" class="btn btn-success" id="save-notice-edit"><i
+                                                <button type="button" class="btn btn-success" id="save-notice-edit"
+                                                        data-loading-text="Saving..."><i
                                                         class="fa fa-check"></i> Save changes
                                                 </button>
                                             </div>
@@ -471,6 +472,7 @@
               })
             }
           })
+
           $('#submit-new-notice').click(function (e) {
             e.preventDefault()
             let btn  = $(this),
@@ -510,7 +512,7 @@
                 if (r) {
                   $.ajax({
                     method: 'DELETE',
-                    url   : $.apiUrl() + '/v2/tmu/notices/' + id,
+                    url   : $.apiUrl() + '/v2/tmu/notice/' + id,
                   })
                     .done(function (result) {
                       $('tr#tmu-notice-' + id).remove()
@@ -535,7 +537,7 @@
                 //Reset fields
                 $('#start-date-edit').datetimepicker('destroy')
                 $('#expire-date-edit').datetimepicker({inline: true}).datetimepicker('destroy')
-                $('#hasExpires-edit').prop('checked', true)
+                $('#hasExpires-edit').prop('checked', false)
                 btn.prop('disabled', false)
 
                 //Populate fields
@@ -547,7 +549,7 @@
                 $('#message-edit').html(result.message)
 
                 //Populate start date
-                $('#start-date-edit').val(result.start_date)
+                $('#start-date-edit').val(result.start_date.substr(0, result.start_date.length - 3))
                 $('#start-date-edit').datetimepicker({
                   format          : 'Y-m-d H:i',
                   formatDate      : 'Y-m-d',
@@ -563,7 +565,7 @@
 
                 if (result.expire_date !== null) {
                   //Populate expire date
-                  $('#expire-date-edit').val(result.expire_date)
+                  $('#expire-date-edit').val(result.expire_date.substr(0, result.expire_date.length - 3))
                   $('#hasExpires-edit').prop('checked', true)
                   $('#expire-date-edit').datetimepicker({
                     format          : 'Y-m-d H:i',
@@ -586,7 +588,25 @@
 
             $('#edit-notice-modal').modal('toggle')
           })
+          $('#save-notice-edit').click(function () {
+            let btn  = $(this),
+                form = $('#edit-notice-form'),
+                id   = $('#edit-notice-id').val()
+            btn.button('loading')
+            $.ajax({
+              method: 'PUT',
+              url   : $.apiUrl() + '/v2/tmu/notice/' + id,
+              data  : form.serialize()
+            })
+              .done(function (result) {
+                swal('Success!', 'The Notice has been edited.', 'success').then(() => { location.reload(true) })
+              })
+              .error(function (result) {
+                btn.button('reset')
+                swal('Error!', 'The Notice could not be edited. ' + result.responseJSON.msg, 'error')
+              })
+          })
         }
       )
     </script>
-@stop
+@endsection
