@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TMUNotice extends Model
 {
-    public $timestamps = ['created_at', 'updated_at', 'expire_date', 'start_date'];
+    public $dates = ['created_at', 'updated_at', 'expire_date', 'start_date'];
     protected $guarded = [];
     protected $table = 'tmu_notices';
 
