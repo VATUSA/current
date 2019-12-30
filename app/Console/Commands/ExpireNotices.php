@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\TMUNotice;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
 class ExpireNotices extends Command
 {
@@ -38,7 +39,7 @@ class ExpireNotices extends Command
      */
     public function handle()
     {
-        $notices = TMUNotice::where('expire_date', '<=', 'NOW()')->get();
+        $notices = TMUNotice::where('expire_date', '<=', Carbon::now())->get();
         foreach ($notices as $notice) {
             $notice->delete();
         }
