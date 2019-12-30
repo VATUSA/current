@@ -9,26 +9,38 @@
                     seconds.</h5>
             </div>
             <div class="panel-body">
-                <div class="form-group col-xs-4">
-                    <label for="sectorselect">
-                        Select Facility/Sector
-                    </label>
-                    <select class="form-control" id="sectorselect" name="tmu_facility_id" autocomplete="off"
-                            onchange="window.location = '/tmu/notices/'+this.value">
-                        <option @if(!$sector) selected @endif value="">-- All Sectors --</option>
-                        @foreach($facilitiesArr as $fac => $sect)
-                            <optgroup label="{{ \App\Classes\Helper::facShtLng($fac) }}">
-                                @foreach($sect as $i => $s)
-                                    <option
-                                        value="{{ $s['id'] }}"
-                                        @if($sector == $s['id']) selected @endif> {{ $s['name'] }} @if($s['name'] == \App\Classes\Helper::facShtLng($fac))
-                                            (All Sectors) @endif</option>
-                                @endforeach
-                            </optgroup>
-                        @endforeach
-                    </select>
+                <div class="row" style="margin-left:-5px;">
+                    <div class="form-group col-xs-4">
+                        <label for="sectorselect">
+                            Select Facility/Sector
+                        </label>
+                        <select class="form-control" id="sectorselect" name="tmu_facility_id" autocomplete="off"
+                                onchange="window.location = '/tmu/notices/'+this.value">
+                            <option @if(!$sector) selected @endif value="">-- All Sectors --</option>
+                            @foreach($facilitiesArr as $fac => $sect)
+                                <optgroup label="{{ \App\Classes\Helper::facShtLng($fac) }}">
+                                    @foreach($sect as $i => $s)
+                                        <option
+                                            value="{{ $s['id'] }}"
+                                            @if($sector == $s['id']) selected @endif> {{ $s['name'] }} @if($s['name'] == \App\Classes\Helper::facShtLng($fac))
+                                                (All Sectors) @endif</option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <section>
+                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
+                        <div class="text-center">
+                            <a href="{{ secure_url("/mgt/tmu") }}">
+                                <button class="btn btn-default"><i class="fa fa-pencil"></i>
+                                    Edit @if(!\App\Classes\RoleHelper::isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
+                                    Notices
+                                </button>
+                            </a>
+                        </div>
+                    @endif
                     <table class="table table-responsive table-striped">
                         <thead>
                         <tr>
