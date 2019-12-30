@@ -123,14 +123,6 @@
                             </div>
                             <div class="panel-body">
                                 <h4><i class="fa fa-list"></i> Active and Future Notices</h4>
-                                @php $allFacs = App\tmu_facilities::where('id', $fac)->orWhere('parent', $fac);
-                                     $notices = App\TMUNotice::where('expire_date', '>=', \Illuminate\Support\Carbon::now('utc'))
-                                                ->orWhereNull('expire_date')
-                                                ->orderBy('priority', 'DESC')
-                                                ->orderBy('start_date', 'DESC')
-                                                ->orderBy('tmu_facility_id')
-                                                ->where('tmu_facility_id', $allFacs->get()->pluck('id'))->get();
-                                @endphp
                                 <table class="table table-responsive table-striped" id="notices-table">
                                     <thead>
                                     <tr>
