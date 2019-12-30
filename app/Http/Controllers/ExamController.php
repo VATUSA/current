@@ -319,7 +319,7 @@ class ExamController extends Controller
         $this->canAssignExam();
 
         if (RoleHelper::isVATUSAStaff()) {
-            $exams = Exam::orderBy('facility_id')->orderBy('name')->get();
+            $exams = Exam::where('is_active', 1)->orderBy('name')->get();
         } else {
             $exams = Exam::where('is_active', 1)->where(function ($query) {
                 $query->where('facility_id', 'ZAE')
@@ -334,6 +334,7 @@ class ExamController extends Controller
                 'name' => $exam->name
             );
         }
+        ksort($examArr);
 
         return View('exams.assign', ['exams' => $examArr, 'expireoptions' => ExamHelper::expireOptions()]);
     }
