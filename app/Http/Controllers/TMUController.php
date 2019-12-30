@@ -182,7 +182,15 @@ class TMUController
 
         $tmufac = tmu_facilities::where('id', $fac)->orWhere('parent', $fac)->orderBy('id')->get();
 
-        return view('tmu.mgt', ['facilities' => $tmufac, 'fac' => $fac, 'facname' => $fac]);
+        $notices = TMUNotice::where(function ($q) {
+            $q->where('expire_date', '>=', \Illuminate\Support\Carbon::now('utc'));
+            $q->orWhereNull('expire_date');
+        })->orderBy('priority', 'DESC')
+            ->orderBy('start_date', 'DESC')
+            ->orderBy('tmu_facility_id')
+            ->where('tmu_facility_id', $tmufac->pluck('id'))->get();
+
+        return view('tmu.mgt', ['facilities' => $tmufac, 'fac' => $fac, 'facname' => $fac, 'notices' => $notices]);
     }
 
     function postMgtCoords(Request $request, $ofac = null)
@@ -361,8 +369,10 @@ class TMUController
 
     public function getNotices(string $sector = null)
     {
-        $notices = TMUNotice::where('start_date', '<=', Carbon::now())
-            ->orderBy('priority', 'DESC')->orderBy('tmu_facility_id')->orderBy('start_date', 'DESC');
+        $notices = TMUNotice::where(function ($q) {
+            $q->where('expire_date', '>=', Carbon::now('utc'));
+            $q->orWhereNull('expire_date');
+        })->where('start_date', '<=', Carbon::now())->orderBy('priority', 'DESC')->orderBy('tmu_facility_id')->orderBy('start_date', 'DESC');
         if ($sector) {
             $allFacs = tmu_facilities::where('id', $sector)->orWhere('parent', $sector);
             $notices = $notices->where('tmu_facility_id', $allFacs->get()->pluck('id'));
