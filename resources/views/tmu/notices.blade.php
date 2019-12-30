@@ -1,5 +1,6 @@
 @extends('layout')
 @section('title', 'TMU Notices (N.T.O.S.)')
+
 @section('content')
     <div class="container">
         <div class="panel panel-default">
@@ -34,7 +35,7 @@
                             <th style="width:10%;">Facility/Sector</th>
                             <th style="width:15%;">Date</th>
                             <th style="width:60%;">Notice</th>
-                            <th style="width:15%;">Expire Date (UTC)</th>
+                            <th style="width:15%;">Expiration Date (UTC)</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -58,8 +59,8 @@
                                 <tr class="{{ $rcolor }}">
                                     <td>{{ $notice->tmuFacility->name }}</td>
                                     <td>{{ \Illuminate\Support\Carbon::parse($notice->start_date)->format('m/d/Y H:i') }}</td>
-                                    <td>{{ $notice->message }}</td>
-                                    <td>{!! $notice->expire_date ? \Illuminate\Support\Carbon::parse($notice->expire_date)->format('m/d/Y H:i') : "<em>Indefinite</em>" !!}</td>
+                                    <td>{!! $notice->message !!}</td>
+                                    <td>{!! $notice->expire_date ? $notice->expire_date->format('m/d/Y H:i') : "<em>Indefinite</em>" !!}</td>
                                 </tr>
                             @endforeach
                         @endif
