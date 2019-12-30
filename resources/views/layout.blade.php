@@ -243,7 +243,7 @@
                                 </li>
                             </ul>
                         </li>
-                        @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isMentor())
+                        @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isMentor())
                             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
                                                     role="button" aria-expanded="false">
                                     <i class="fa fa-cogs"></i> Actions<span class="caret"></span></a>
@@ -261,20 +261,20 @@
                                         <li><a href="{{secure_url("exam")}}">Exam Management</a></li>
                                     @endif
                                     @if (\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
-                                        <li><a href="{{secure_url("cbt/editor")}}">CBT Editor</a></li>
+                                        <li><a href="{{secure_url("cbt/editor") }}">CBT Editor</a></li>
                                     @endif
                                     @if(\App\Classes\RoleHelper::isFacilityStaff())
-                                        <li><a href="{{secure_url("mgt/mail")}}">Email Management</a></li>
+                                        <li><a href="{{secure_url("mgt/mail") }}">Email Management</a></li>
                                     @endif
                                     @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="/mgt/checklists">Training Checklists Management</a></li>
-                                        <li><a href="{{secure_url("mgt/ace")}}">ACE Team Management</a></li>
-                                        <li><a href="{{secure_url("mgt/staff")}}">Division Staff Management</a></li>
-                                        <li><a href="{{secure_url("mgt/err")}}">Submit Transfer Request</a></li>
+                                        <li><a href="{{ secure_url("/mgt/checklists") }}">Training Checklists Management</a></li>
+                                        <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
+                                        <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a></li>
+                                        <li><a href="{{secure_url("mgt/err") }}">Submit Transfer Request</a></li>
                                     @endif
-                                    <li><a href="/stats">Division Statistics</a></li>
+                                    <li><a href="{{ secure_url("/stats") }}">Division Statistics</a></li>
                                     @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="/mgt/solo">Solo Certifications</a></li>
+                                        <li><a href="{{ secure_url("mgt/solo") }}">Solo Certifications</a></li>
                                     @endif
                                 </ul>
                             </li>
