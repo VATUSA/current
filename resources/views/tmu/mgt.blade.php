@@ -8,6 +8,8 @@
         src="https://cdn.tiny.cloud/1/el8ylh3j522wfpdqh9jom4690z2k11t6m4cpz6kno4vn54oa/tinymce/5/tinymce.min.js"></script>-->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ secure_asset('js/moment.js') }}"></script>
+    <script
+        src="https://cdn.tiny.cloud/1/zhw7l11edc5qt7r2a27lkrpa8aecclri5bsd4p7vaoet3u00/tinymce/5/tinymce.min.js"></script>
 @endpush
 
 @php
@@ -36,7 +38,9 @@
                                                                   role="tab"
                                                                   data-toggle="tab">Facilities</a></li>
                     @endif
-                    <li role="presentation" @if(!$facilityAccess) class="active" @endif><a href="#notices" aria-controls="mapping" role="tab" data-toggle="tab">N.T.O.S.
+                    <li role="presentation" @if(!$facilityAccess) class="active" @endif><a href="#notices"
+                                                                                           aria-controls="mapping"
+                                                                                           role="tab" data-toggle="tab">N.T.O.S.
                             (TMU Notices)</a></li>
                 </ul>
                 <div class="tab-content">
@@ -229,11 +233,13 @@
                                     <div class="form-group">
                                         <label for="message" class="col-sm-2 control-label">Message</label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" name="message" id="message"
+                                            <textarea class="form-control format" name="message" id="message"
                                                       autocomplete="off"></textarea>
-                                            <p class="help-block">Use <code>&lt;b&gt;Bold&lt;/b&gt;</code>, <code>&lt;em&gt;Italics&lt;/em&gt;</code>,
-                                                and <code>&lt;u&gt;Underline&lt;/u&gt;</code>
-                                                for formatting.</p>
+                                            <p class="help-block">
+                                                Your Notice should contain information regarding delays,
+                                                ground stops, routing, MIT, etc. Notices should <strong>not</strong>
+                                                include publically-accessible information such
+                                                as NOTAMs or weather. </p>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -334,12 +340,13 @@
                                                         <label for="message-edit"
                                                                class="col-sm-2 control-label">Message</label>
                                                         <div class="col-sm-10">
-                                            <textarea class="form-control" name="message" id="message-edit"
+                                            <textarea class="form-control format" name="message" id="message-edit"
                                                       autocomplete="off"></textarea>
-                                                            <p class="help-block">Use
-                                                                <code>&lt;b&gt;Bold&lt;/b&gt;</code>, <code>&lt;em&gt;Italics&lt;/em&gt;</code>,
-                                                                and <code>&lt;u&gt;Underline&lt;/u&gt;</code>
-                                                                for formatting.</p>
+                                                            <p class="help-block">
+                                                                Your Notice should contain information regarding delays,
+                                                                ground stops, routing, MIT, etc. Notices should <strong>not</strong>
+                                                                include publically-accessible information such
+                                                                as NOTAMs or weather. </p>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -434,6 +441,19 @@
       })
 
       $(function () {
+          tinyMCE.init({
+            selector: 'textarea.format',
+            menubar : false,
+            plugins : [
+              'advlist autolink lists link charmap preview anchor',
+              'searchreplace visualblocks code fullscreen',
+              'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar : 'undo redo | ' +
+              ' bold italic underline | outdent indent |' +
+              ' removeformat '
+          })
+
           let utcTime = moment().utc()
           $('#start-date').val(utcTime.format('Y-MM-DD HH:mm'))
           $('#start-date').datetimepicker({
@@ -496,6 +516,8 @@
 
           $('#submit-new-notice').click(function (e) {
             e.preventDefault()
+            tinyMCE.triggerSave()
+
             let btn  = $(this),
                 form = $('form#new-notice')
             btn.html('<i class=\'fa fa-spinner fa-spin\'></i> Posting...').attr('disabled', true)
@@ -568,6 +590,7 @@
                   $('#priority' + i + '-edit').prop('checked', false)
                 $('#priority' + result.priority + '-edit').prop('checked', true)
                 $('#message-edit').html(result.message)
+                tinyMCE.get('message-edit').setContent(result.message)
 
                 //Populate start date
                 $('#start-date-edit').val(result.start_date.substr(0, result.start_date.length - 3))
@@ -614,6 +637,9 @@
                 form = $('#edit-notice-form'),
                 id   = $('#edit-notice-id').val()
             btn.button('loading')
+
+            tinyMCE.triggerSave()
+
             $.ajax({
               method: 'PUT',
               url   : $.apiUrl() + '/v2/tmu/notice/' + id,
