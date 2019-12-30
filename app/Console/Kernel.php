@@ -32,13 +32,13 @@ class Kernel extends ConsoleKernel {
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('CERTSync')->cron('30 23,11 * * *');
-        $schedule->command('ULSTokens')->cron('* * * * *');
-        $schedule->command('UpdateVATSIM')->cron('* * * * *');
+        $schedule->command('ULSTokens')->everyMinute();
+        $schedule->command('UpdateVATSIM')->everyMinute();
         $schedule->command('ExamReassign')->hourly();
         $schedule->command('TattlerTransfers')->cron('15 0 * * *');
         $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00");
         $schedule->command('rolesync')->cron('45 * * * *');
-        $schedule->command('ntos:expire')->cron('* * * * *');
+        $schedule->command('ntos:expire')->everyMinute();
     }
 
 }
