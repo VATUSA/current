@@ -21,6 +21,7 @@
                 {!! Form::label('CID') !!}
                 {!! Form::text('cid', '', ['class' => 'form-control col-md-5']) !!}
             </div>
+            <br><br>
             <div class="form-group">
                 {!! Form::label("Exam") !!}
                 <select class="form-control" name="exam">
