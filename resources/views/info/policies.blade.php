@@ -105,12 +105,12 @@
                     </tr>
                     <tr>
                         <td>D1021.1B &mdash; Division Email Scheme</td>
-                        <td>07/5/2019</td>
+                        <td>07/05/2019</td>
                         <td><a href="/docs/D1021.1.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
                         <td>M1022B &mdash; Unified Login Scheme</td>
-                        <td>07/5/2019</td>
+                        <td>07/05/2019</td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/M1022.pdf" target="_blank">view</a></td>
                         @else
@@ -124,7 +124,7 @@
                     </tr>
                     <tr>
                         <td>T1000.1 &mdash; APIv2</td>
-                        <td>August 2019</td>
+                        <td>Summer 2020</td>
                         <td><em rel="tooltip" title="Policy is a Work In Progress">WIP</em></td>
                        {{-- @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/T1000.1.pdf" target="_blank">view</a></td>
