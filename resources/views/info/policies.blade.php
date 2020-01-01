@@ -30,7 +30,7 @@
                     </tr>
                     <tr>
                         <td>DP003 &mdash; Event Submission Policy</td>
-                        <td>03/10/2018</td>
+                        <td>01/01/2020</td>
                         <td><a href="/docs/DP003.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
