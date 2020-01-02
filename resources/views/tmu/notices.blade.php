@@ -33,7 +33,7 @@
                 <section>
                     @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
                         <div class="text-center">
-                            <a href="{{ secure_url("/mgt/tmu") }}">
+                            <a href="{{ secure_url("/mgt/tmu#notices") }}">
                                 <button class="btn btn-default"><i class="fa fa-pencil"></i>
                                     Edit @if(!\App\Classes\RoleHelper::isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
                                     Notices
