@@ -137,7 +137,7 @@
                                     @if(!$notices->count())
                                         <tr class="warning">
                                             <td colspan="5" style="text-align: center">
-                                                <i class="fa fa-info-circle"></i> No Notices Active
+                                                <i class="fa fa-info-circle"></i> No Active or Future Notices
                                             </td>
                                         </tr>
                                     @else
