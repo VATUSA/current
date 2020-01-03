@@ -152,7 +152,7 @@
                                                  }
                                             @endphp
                                             <tr class="{{ $rcolor }}" id="tmu-notice-{{ $notice->id }}">
-                                                <td>{{ $notice->tmuFacility->name }}</td>
+                                                <td>{{ "[" . $notice->tmuFacility->id . "] " . $notice->tmuFacility->name }}</td>
                                                 <td>@if($notice->start_date > \Illuminate\Support\Carbon::now())
                                                         <i class="fa fa-calendar" rel="tooltip" title="Scheduled"></i>
                                                         <em> @endif {{ $notice->start_date->format('m/d/Y H:i') }} @if($notice->start_date > \Illuminate\Support\Carbon::now()) </em> @endif
@@ -185,7 +185,7 @@
                                                     autocomplete="off">
                                                 <option value="">-- Select One --</option>
                                                 @foreach(\App\tmu_facilities::where('parent', $fac)->orWhere('id' , $fac)->orderBy('name')->get() as $tmufac)
-                                                    <option value="{{ $tmufac->id }}">{{ $tmufac->name }}</option>
+                                                    <option value="{{ $tmufac->id }}">{{ "[" . $tmufac->id . "] " . $tmufac->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -288,7 +288,7 @@
                                                                 <option value="">-- Select One --</option>
                                                                 @foreach(\App\tmu_facilities::where('parent', $fac)->orWhere('id' , $fac)->orderBy('name')->get() as $tmufac)
                                                                     <option
-                                                                        value="{{ $tmufac->id }}">{{ $tmufac->name }}</option>
+                                                                        value="{{ $tmufac->id }}">{{ "[" . $tmufac->id . "] " . $tmufac->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
