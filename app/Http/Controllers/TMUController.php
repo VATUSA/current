@@ -188,7 +188,7 @@ class TMUController
         })->orderBy('priority', 'DESC')
             ->orderBy('start_date', 'DESC')
             ->orderBy('tmu_facility_id')
-            ->where('tmu_facility_id', $tmufac->pluck('id'))->get();
+            ->whereIn('tmu_facility_id', $tmufac->pluck('id'))->get();
 
         return view('tmu.mgt', ['facilities' => $tmufac, 'fac' => $fac, 'facname' => $fac, 'notices' => $notices]);
     }
@@ -375,7 +375,7 @@ class TMUController
         })->where('start_date', '<=', Carbon::now())->orderBy('priority', 'DESC')->orderBy('tmu_facility_id')->orderBy('start_date', 'DESC');
         if ($sector) {
             $allFacs = tmu_facilities::where('id', $sector)->orWhere('parent', $sector);
-            $notices = $notices->where('tmu_facility_id', $allFacs->get()->pluck('id'));
+            $notices = $notices->whereIn('tmu_facility_id', $allFacs->get()->pluck('id'));
         }
         $notices = $notices->paginate(20);
 
