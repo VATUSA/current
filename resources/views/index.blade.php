@@ -35,7 +35,7 @@
             <div class="row">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">TMU Notices (N.T.O.S.)</h3>
+                        <h3 class="panel-title">TMU Notices (N.T.O.S.) <a href="{{ secure_url("/tmu/notices") }}" target="_blank"><i class="fa fa-share-square"></i></a></h3>
                     </div>
                     <div class="panel-body">
                         <section>
