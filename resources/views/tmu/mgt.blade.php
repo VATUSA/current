@@ -577,7 +577,7 @@
 
                 //Populate fields
                 $('#edit-notice-id').val(id)
-                $('#facility-edit').val(result.tmu_facility_id)
+                $('#facility-edit').val(result.tmu_facility.id)
                 for (let i = 1; i <= 3; i++)
                   $('#priority' + i + '-edit').prop('checked', false)
                 $('#priority' + result.priority + '-edit').prop('checked', true)
