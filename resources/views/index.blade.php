@@ -31,7 +31,7 @@
             </div>
         </div>
         <br>
-        @if($notices->count() && \Illuminate\Support\Facades\Auth::user())
+        @if($notices->count())
             <div class="row">
                 <div class="panel panel-default">
                     <div class="panel-heading">

@@ -160,7 +160,9 @@
                     @if((Auth::check() && !Auth::user()->facility()->active && Auth::user()->facility != "ZHQ") || !Auth::check())
                         <li class="dropdown"><a href="/info/join">Join Us</a></li>
                     @endif
-                    @if(Auth::check())
+                    @if(!Auth::check())
+                        <li><a href="/tmu/notices" target="_blank">N.T.O.S. - TMU Notices</a></li>
+                    @else
                         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                                 aria-expanded="false">
                                 TMU Maps
