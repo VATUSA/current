@@ -185,7 +185,8 @@
                                                     autocomplete="off">
                                                 <option value="">-- Select One --</option>
                                                 @foreach(\App\tmu_facilities::where('parent', $fac)->orWhere('id' , $fac)->orderBy('name')->get() as $tmufac)
-                                                    <option value="{{ $tmufac->id }}">{{ "[" . $tmufac->id . "] " . $tmufac->name }}</option>
+                                                    <option
+                                                        value="{{ $tmufac->id }}">{{ "[" . $tmufac->id . "] " . $tmufac->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -253,6 +254,22 @@
                                                 </label>
                                             </div>
                                             <input type="text" id="expire-date" name="expire_date" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="isdelay" class="col-sm-2 control-label">
+                                            Other Settings
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="isdelay" name="is_delay" autocomplete="off">
+                                                    Ground Stop/Delay
+                                                </label>
+                                            </div>
+                                            <p class="help-block">Check this box if the Notice involves a ground stop,
+                                                delay, or other information <strong>beneficial to a pilot</strong>. <br>This
+                                                will be used with third-party integration.</p>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -365,6 +382,22 @@
                                                             </div>
                                                             <input type="text" id="expire-date-edit" name="expire_date"
                                                                    autocomplete="off">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="isdelay-edit" class="col-sm-2 control-label">
+                                                            Other Settings
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    <input type="checkbox" id="isdelay-edit" name="is_delay" autocomplete="off">
+                                                                    Ground Stop/Delay
+                                                                </label>
+                                                            </div>
+                                                            <p class="help-block">Check this box if the Notice involves a ground stop,
+                                                                delay, or other information <strong>beneficial to a pilot</strong>. <br>This
+                                                                will be used with third-party integration.</p>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -583,6 +616,7 @@
                 $('#priority' + result.priority + '-edit').prop('checked', true)
                 $('#message-edit').html(result.message)
                 tinyMCE.get('message-edit').setContent(result.message)
+                $('#isdelay-edit').prop('checked', result.is_delay);
 
                 //Populate start date
                 $('#start-date-edit').val(result.start_date.substr(0, result.start_date.length - 3))
