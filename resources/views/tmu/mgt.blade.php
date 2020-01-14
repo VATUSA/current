@@ -263,13 +263,27 @@
                                         <div class="col-sm-10">
                                             <div class="checkbox">
                                                 <label>
-                                                    <input type="checkbox" id="isdelay" name="is_delay" autocomplete="off">
+                                                    <input type="checkbox" id="isdelay" name="is_delay"
+                                                           autocomplete="off">
                                                     Ground Stop/Delay
                                                 </label>
                                             </div>
                                             <p class="help-block">Check this box if the Notice involves a ground stop,
                                                 delay, or other information <strong>beneficial to a pilot</strong>. <br>This
                                                 will be used with third-party integration.</p>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="isprefroute"
+                                                           name="is_pref_route" autocomplete="off">
+                                                    Preferred Routing
+                                                </label>
+                                            </div>
+                                            <p class="help-block">Check this box if the Notice is a
+                                                preferred routing. <strong>The message must only contain
+                                                    the route itself with departure and arrival airports
+                                                    included. (ex. <kbd>KSEA SEATL4 BUWZO KRATR2
+                                                        KPDX</kbd>)</strong>
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -391,13 +405,29 @@
                                                         <div class="col-sm-10">
                                                             <div class="checkbox">
                                                                 <label>
-                                                                    <input type="checkbox" id="isdelay-edit" name="is_delay" autocomplete="off">
+                                                                    <input type="checkbox" id="isdelay-edit"
+                                                                           name="is_delay" autocomplete="off">
                                                                     Ground Stop/Delay
                                                                 </label>
                                                             </div>
-                                                            <p class="help-block">Check this box if the Notice involves a ground stop,
-                                                                delay, or other information <strong>beneficial to a pilot</strong>. <br>This
+                                                            <p class="help-block">Check this box if the Notice involves
+                                                                a ground stop,
+                                                                delay, or other information <strong>beneficial to a
+                                                                    pilot</strong>. <br>This
                                                                 will be used with third-party integration.</p>
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    <input type="checkbox" id="isprefroute-edit"
+                                                                           name="is_pref_route" autocomplete="off">
+                                                                    Preferred Routing
+                                                                </label>
+                                                            </div>
+                                                            <p class="help-block">Check this box if the Notice is a
+                                                                preferred routing. <strong>The message must only contain
+                                                                    the route itself with departure and arrival airports
+                                                                    included. (ex. <kbd>KSEA SEATL4 BUWZO KRATR2
+                                                                        KPDX</kbd>)</strong>
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -616,7 +646,8 @@
                 $('#priority' + result.priority + '-edit').prop('checked', true)
                 $('#message-edit').html(result.message)
                 tinyMCE.get('message-edit').setContent(result.message)
-                $('#isdelay-edit').prop('checked', result.is_delay);
+                $('#isdelay-edit').prop('checked', result.is_delay)
+                $('#isprefroute-edit').prop('checked', result.is_pref_route)
 
                 //Populate start date
                 $('#start-date-edit').val(result.start_date.substr(0, result.start_date.length - 3))
