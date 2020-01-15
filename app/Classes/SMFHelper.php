@@ -83,12 +83,6 @@ class SMFHelper
             $addl = static::findGroup($role);
         }
 
-        if (RoleHelper::isWebTeam($cid)) {
-            if ($addl) {
-                $addl .= ",";
-            }
-            $addl .= static::findGroup("Web Team");
-        }
         if (RoleHelper::hasRole($cid, 'ZHQ', 'ACE')) {
             if ($addl) {
                 $addl .= ",";
@@ -100,13 +94,37 @@ class SMFHelper
             if ($addl) {
                 $addl .= ",";
             }
-            $addl .= static::findGroup("Instructors");
+            if ($grp === static::findGroup("Members")) {
+                //INS Priority over Members
+                $grp = static::findGroup("Instructors");
+                $addl .= static::findGroup("Members");
+            } else {
+                $addl .= static::findGroup("Instructors");
+            }
         }
         if (RoleHelper::hasRole($cid, $user->facility, "MTR")) {
             if ($addl) {
                 $addl .= ",";
             }
-            $addl .= static::findGroup("Mentors");
+            if ($grp === static::findGroup("Members")) {
+                //MTR Priority over Members
+                $grp = static::findGroup("Mentors");
+                $addl .= static::findGroup("Members");
+            } else {
+                $addl .= static::findGroup("Mentors");
+            }
+        }
+        if (RoleHelper::isWebTeam($cid)) {
+            if ($addl) {
+                $addl .= ",";
+            }
+            if ($grp === static::findGroup("Members")) {
+                //WT Priority over Members
+                $grp = static::findGroup("Web Team");
+                $addl .= static::findGroup("Members");
+            } else {
+                $addl .= static::findGroup("Web Team");
+            }
         }
 
         static::setGroups($cid, $grp, $addl);
