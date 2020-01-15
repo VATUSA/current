@@ -20,6 +20,7 @@ use Auth;
 use App\TrainingBlock;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class ExamController extends Controller
