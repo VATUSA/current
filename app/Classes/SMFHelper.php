@@ -89,19 +89,40 @@ class SMFHelper
             }
             $addl .= static::findGroup("Ace Team");
         }
+        if ($user->rating === Helper::ratingIntFromShort("SUP") && $grp === static::findGroup("Members")) {
+            //Supervisor over Members (same perms set), WT, INSs, and MTRs
+            if ($addl) {
+                $addl .= ",";
+            }
+            $grp = static::findGroup("VATSIM Supervisors");
+            $addl .= static::findGroup("Members");
+        }
+        if (RoleHelper::isWebTeam($cid)) {
+            if ($addl) {
+                $addl .= ",";
+            }
+            if ($grp === static::findGroup("Members")) {
+                //WT Priority over INS, MTRs, Members
+                $grp = static::findGroup("Web Team");
+                $addl .= static::findGroup("Members");
+            } else {
+                $addl .= static::findGroup("Web Team");
+            }
+        }
         if (RoleHelper::hasRole($cid, $user->facility,
                 "INS") || ($user->rating >= Helper::ratingIntFromShort("I1") && $user->rating < Helper::ratingIntFromShort("SUP"))) {
             if ($addl) {
                 $addl .= ",";
             }
             if ($grp === static::findGroup("Members")) {
-                //INS Priority over Members
+                //INS Priority over Members and MTRs
                 $grp = static::findGroup("Instructors");
                 $addl .= static::findGroup("Members");
             } else {
                 $addl .= static::findGroup("Instructors");
             }
         }
+
         if (RoleHelper::hasRole($cid, $user->facility, "MTR")) {
             if ($addl) {
                 $addl .= ",";
@@ -114,18 +135,7 @@ class SMFHelper
                 $addl .= static::findGroup("Mentors");
             }
         }
-        if (RoleHelper::isWebTeam($cid)) {
-            if ($addl) {
-                $addl .= ",";
-            }
-            if ($grp === static::findGroup("Members")) {
-                //WT Priority over Members
-                $grp = static::findGroup("Web Team");
-                $addl .= static::findGroup("Members");
-            } else {
-                $addl .= static::findGroup("Web Team");
-            }
-        }
+
 
         static::setGroups($cid, $grp, $addl);
     }
