@@ -102,6 +102,12 @@ class SMFHelper
             }
             $addl .= static::findGroup("Instructors");
         }
+        if (RoleHelper::hasRole($cid, $user->facility, "MTR")) {
+            if ($addl) {
+                $addl .= ",";
+            }
+            $addl .= static::findGroup("Mentors");
+        }
 
         static::setGroups($cid, $grp, $addl);
     }
