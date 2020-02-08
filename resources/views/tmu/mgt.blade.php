@@ -279,10 +279,8 @@
                                                 </label>
                                             </div>
                                             <p class="help-block">Check this box if the Notice is a
-                                                preferred routing. <strong>The message must only contain
-                                                    the route itself with departure and arrival airports
-                                                    included. (ex. <kbd>KSEA SEATL4 BUWZO KRATR2
-                                                        KPDX</kbd>)</strong>
+                                                preferred routing. <br><strong>The message must contain the affected
+                                                    airports and the routes, following this example: <br><kbd>KSEA-KPDX: SEATL4 BUWZO KRATR2</kbd></strong>
                                             </p>
                                         </div>
                                     </div>
@@ -423,10 +421,8 @@
                                                                 </label>
                                                             </div>
                                                             <p class="help-block">Check this box if the Notice is a
-                                                                preferred routing. <strong>The message must only contain
-                                                                    the route itself with departure and arrival airports
-                                                                    included. (ex. <kbd>KSEA SEATL4 BUWZO KRATR2
-                                                                        KPDX</kbd>)</strong>
+                                                                preferred routing. <br><strong>The message must contain the affected
+                                                                    airports and the routes, following this example: <br><kbd>KSEA-KPDX: SEATL4 BUWZO KRATR2</kbd></strong>
                                                             </p>
                                                         </div>
                                                     </div>
