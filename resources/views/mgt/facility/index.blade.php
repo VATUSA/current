@@ -590,8 +590,8 @@
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
           if (result) {
-            if (!isdev) $('#textulsv2jwk').val(JSON.stringify(result[0]))
-            else $('#textulsv2jwkdev').val(JSON.stringify(result[0]))
+            if (!isdev) $('#textulsv2jwk').val(result.uls_jwk)
+            else $('#textulsv2jwkdev').val(result.uls_jwk_dev)
           }
         })
       }
@@ -600,7 +600,7 @@
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: 'X', jwkdev: true}}
         ).done(function (result) {
-          if (result[0] === '') {
+          if (result.hasOwnProperty("status") && result.status === "OK") {
             $('#textulsv2jwkdev').val('')
           }
         })
@@ -610,9 +610,9 @@
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
-          if (result) {
-            if (!isdev) $('#textapiv2jwk').val(JSON.stringify(result[0]))
-            else $('#textapiv2jwkdev').val(JSON.stringify(result[0]))
+          if (result.hasOwnProperty("status") && result.status === "OK") {
+            if (!isdev) $('#textapiv2jwk').val(result.api_jwk)
+            else $('#textapiv2jwkdev').val(result.api_jwk_dev)
           }
         })
       }
@@ -621,7 +621,7 @@
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: 'X', jwkdev: true}}
         ).done(function (result) {
-          if (result[0] === '') {
+          if (result.hasOwnProperty("status") && result.status === "OK") {
             $('#textapiv2jwkdev').val('')
           }
         })
