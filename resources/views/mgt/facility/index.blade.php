@@ -374,28 +374,33 @@
         })
 
         $.ajax({
-          url : $.apiUrl() + '/roster-{{$fac}}',
+          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster',
           type: 'GET'
         }).success(function (data) {
-          data = JSON.parse(data)
           var html = ''
-          $.each(data.users, function (i) {
-            html = html + '<tr><td>' + data.users[i].cid + '</td>'
-            html = html + '<td>' + data.users[i].lname + ', ' + data.users[i].fname + '</td>'
-            html = html + '<td>' + data.users[i].rating_short + '</td>'
-            var date = new Date(data.users[i].join_date)
-            html = html + '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
-            html = html + '<td class="text-right">'
+          $.each(data, function (i) {
+            if(data[i].cid == undefined) return;
+            html += '<tr><td>' + data[i].cid + '</td>'
+            html += "<td>"
+            if (data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
+            html += data[i].lname + ', ' + data[i].fname
+            html += '</td>'
+            html += '<td>' + data[i].rating_short;
+            if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
+            html += '</td>'
+            var date = new Date(data[i].facility_join)
+            html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
+            html += '<td class="text-right">'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isInstructor(\Auth::user()->cid, $fac))
-              if (data.users[i].promotion_eligible == '1') {
-                html = html + '<a href="/mgt/controller/' + data.users[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
+              if (data[i].promotion_eligible == true) {
+                html += '<a href="/mgt/controller/' + data[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
               }
               @endif
-                html = html + '<a href="/mgt/controller/' + data.users[i].cid + '"><i class="fa fa-search"></i></a>'
+                html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html = html + ' &nbsp; <a href="#" onClick="deleteController(' + data.users[i].cid + ')"><i class="text-danger fa fa-remove"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteController(' + data[i].cid + ')"><i class="text-danger fa fa-remove"></i></a>'
               @endif
-                html = html + '</td></tr>'
+                html += '</td></tr>'
           })
           $('#memtablebody').html(html)
           $('#memtable').toggle()
@@ -571,7 +576,7 @@
         ).done(function (result) {
           bootbox.alert('URL saved successfully')
         }).fail(function (result) {
-          bootbox.alert('URL save failed. ' + result.responseJSON.msg + ".")
+          bootbox.alert('URL save failed. ' + result.responseJSON.msg + '.')
         })
       }
 
@@ -581,7 +586,7 @@
         ).done(function (result) {
           bootbox.alert('Dev URL saved successfully.')
         }).fail(function (result) {
-          bootbox.alert('Dev URL save failed. ' + result.responseJSON.msg + ".")
+          bootbox.alert('Dev URL save failed. ' + result.responseJSON.msg + '.')
         })
       }
 
@@ -600,7 +605,7 @@
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: 'X', jwkdev: true}}
         ).done(function (result) {
-          if (result.hasOwnProperty("status") && result.status === "OK") {
+          if (result.hasOwnProperty('status') && result.status === 'OK') {
             $('#textulsv2jwkdev').val('')
           }
         })
@@ -610,7 +615,7 @@
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: '', jwkdev: isdev}}
         ).done(function (result) {
-          if (result.hasOwnProperty("status") && result.status === "OK") {
+          if (result.hasOwnProperty('status') && result.status === 'OK') {
             if (!isdev) $('#textapiv2jwk').val(result.api_jwk)
             else $('#textapiv2jwkdev').val(result.api_jwk_dev)
           }
@@ -621,7 +626,7 @@
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: 'X', jwkdev: true}}
         ).done(function (result) {
-          if (result.hasOwnProperty("status") && result.status === "OK") {
+          if (result.hasOwnProperty('status') && result.status === 'OK') {
             $('#textapiv2jwkdev').val('')
           }
         })
