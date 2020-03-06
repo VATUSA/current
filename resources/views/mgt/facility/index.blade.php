@@ -385,7 +385,7 @@
             if (data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
             html += data[i].lname + ', ' + data[i].fname
             html += '</td>'
-            html += '<td>' + data[i].rating_short;
+            html += '<td data-text="' + data[i].rating + '"><span style="display:none">' + data[i].rating + '</span>' + data[i].rating_short;
             if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
             html += '</td>'
             var date = new Date(data[i].facility_join)
