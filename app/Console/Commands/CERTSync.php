@@ -11,12 +11,15 @@ use App\Classes\Helper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
 use App\Role;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use App\Classes\CertHelper;
 use App\User;
 use App\Transfers;
 use App\Facility;
 use App\Actions;
+use GuzzleHttp\Client as Guzzle;
+use Illuminate\Support\Carbon;
 
 class CERTSync extends Command
 {
@@ -44,6 +47,26 @@ class CERTSync extends Command
      */
     public function handle()
     {
+        $start = microtime(true);
+        $i = 0;
+        foreach (User::where('cid', '>', 800000)->where('facility', 'ZZN')->get() as $user) {
+            try {
+                $i++;
+                $data = (new Guzzle())->get("https://cert.vatsim.net/vatsimnet/idstatus.php?cid={$user->cid}");
+            } catch (RequestException $e) {
+                echo \GuzzleHttp\Psr7\str($e->getRequest());
+                if ($e->hasResponse()) {
+                    echo \GuzzleHttp\Psr7\str($e->getResponse());
+                }
+                dd("Error after $i");
+            }
+            $xml = simplexml_load_string($data->getBody());
+            $user = $xml->user[0];
+        }
+        dd("Ended after " . (microtime(true) - $start) . " ms.");
+
+
+        dd('done');
         $added = 0;
         $rejoin = 0;
         $deleted = 0;
@@ -51,7 +74,9 @@ class CERTSync extends Command
         $data = CertHelper::downloadDivision();
         \DB::table("controllers")->update(["cert_update" => 0]);
         foreach ($data as $row2) {
-            if (!$row2 || $row2 == "") continue;
+            if (!$row2 || $row2 == "") {
+                continue;
+            }
             $row = str_getcsv($row2);
             if (!isset($row[1])) {
                 echo "Error on row: $row2\n";
@@ -150,7 +175,8 @@ class CERTSync extends Command
                             $log->save();
                         }
                         // Now let us check to see if they have ever been in a facility.. if not, we need to override the need basic flag.
-                        if (Transfers::where('cid', $row[CSV_CID])->where('to', 'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->count() < 1) {
+                        if (Transfers::where('cid', $row[CSV_CID])->where('to', 'NOT LIKE', 'ZAE')->where('to',
+                                'NOT LIKE', 'ZZN')->count() < 1) {
                             $user->flag_needbasic = 1;
                             $user->save();
                         }
@@ -186,11 +212,12 @@ class CERTSync extends Command
             }
         }
         $this->log[] = "";
-        $this->log[] = "Added: $added Rejoin: $rejoin Deleted: $deleted Active Members: " . User::where('facility', 'NOT LIKE', "ZZN")->count();
+        $this->log[] = "Added: $added Rejoin: $rejoin Deleted: $deleted Active Members: " . User::where('facility',
+                'NOT LIKE', "ZZN")->count();
         EmailHelper::sendEmail([
             "vatusa1@vatusa.net",
             "vatusa2@vatusa.net",
-           // "vatusa6@vatusa.net",
+            // "vatusa6@vatusa.net",
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
         SMFHelper::createPost(7262, 83, "CERTSync Cycle", implode("\n", $this->log));
     }
@@ -198,7 +225,9 @@ class CERTSync extends Command
     public function checkDeleted($user)
     {
         $removals = "";
-        if ($user->facility == "ZAE" || $user->facility == "ZZN") return;
+        if ($user->facility == "ZAE" || $user->facility == "ZZN") {
+            return;
+        }
         $fac = Facility::find($user->facility);
         if (RoleHelper::hasRole($user->cid, $user->facility, "ATM")) {
             RoleHelper::deleteStaff($user->facility, $user->cid, "ATM");
@@ -230,7 +259,8 @@ class CERTSync extends Command
         }
 
         if ($removals) {
-            SMFHelper::createPost(7262, 82, "CERTSync: Staff deletion report for " . $user->fullname() . " (" . $user->cid . ")", $removals);
+            SMFHelper::createPost(7262, 82,
+                "CERTSync: Staff deletion report for " . $user->fullname() . " (" . $user->cid . ")", $removals);
             $this->log[] = $removals;
         }
     }
