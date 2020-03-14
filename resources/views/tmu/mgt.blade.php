@@ -232,7 +232,7 @@
                                                 Your Notice should contain information regarding delays,
                                                 ground stops, routing, MIT, etc. Notices should <strong>not</strong>
                                                 include publically-accessible information such
-                                                as NOTAMs or weather. </p>
+                                                as NOTAMs or weather. <strong><em>Please check that there are no extra lines after your message. Remove all extra lines before submitting.</em></strong></p>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -367,7 +367,7 @@
                                                                 Your Notice should contain information regarding delays,
                                                                 ground stops, routing, MIT, etc. Notices should <strong>not</strong>
                                                                 include publically-accessible information such
-                                                                as NOTAMs or weather. </p>
+                                                                as NOTAMs or weather. <strong><em>Please check that there are no extra lines after your message. Remove all extra lines before submitting.</em></strong></p>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
