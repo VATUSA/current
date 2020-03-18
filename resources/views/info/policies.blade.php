@@ -34,6 +34,11 @@
                         <td><a href="/docs/DP003.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
+                        <td>GO 32020.1 &mdash; Temporary Suspension of Live Events</td>
+                        <td>03/17/2020</td>
+                        <td><a href="/docs/GO-320201.pdf" target="_blank">view</a></td>
+                    </tr>
+                    <tr>
                         <td>Chain of Command Flow Chart</td>
                         <td>07/21/2019</td>
                         <td><a href="/docs/orgchart.pdf" target="_blank">view</a></td>
