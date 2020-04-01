@@ -30,7 +30,7 @@ class FacMgtController extends Controller
 
         if ($fac === null) {
             if (RoleHelper::isVATUSAStaff())
-                $fac = "HCF";
+                $fac = "PCF";
             else
                 $fac = \Auth::user()->facility;
         }
