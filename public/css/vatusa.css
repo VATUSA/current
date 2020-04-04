@@ -1637,3 +1637,7 @@ tr.no-hover:hover {
     width: 100%;
     margin: 0 auto;
 }
+
+#pos-types li a:hover {
+    cursor:pointer;
+}

@@ -3,6 +3,9 @@
 
 @section('scripts')
     <script>
+      if (document.location.hash)
+        $('.nav-tabs a[href=' + document.location.hash + ']').tab('show')
+
       $('.delete-log').click(function (e) {
         e.preventDefault()
 
