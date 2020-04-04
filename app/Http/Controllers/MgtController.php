@@ -46,12 +46,16 @@ class MgtController extends Controller
             return view('eastereggs.katniss');
         }
 
-        if (User::where('cid', $cid)->count()) {
-            $u = User::where('cid', $cid)->first();
+        $user = User::where('cid', $cid);
+        if ($user->count()) {
+            $user = $user->first();
             $checks = [];
-            $eligible = $u->transferEligible($checks);
+            $eligible = $user->transferEligible($checks);
 
-            return view('mgt.controller.index', ['u' => $u, 'checks' => $checks, 'eligible' => $eligible]);
+            /** Training Records */
+            $trainingRecords = $user->facility == Auth::user()->facility || RoleHelper::isVATUSAStaff() ? $user->trainingRecords : [];
+
+            return view('mgt.controller.index', ['u' => $user, 'checks' => $checks, 'eligible' => $eligible, 'trainingRecords' => $trainingRecords]);
         } else {
             return view('mgt.controller.404');
         }
@@ -428,6 +432,7 @@ class MgtController extends Controller
         if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isInstructor() && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
+
         return view('mgt.solo');
     }
 
@@ -491,6 +496,7 @@ class MgtController extends Controller
         }
 
         $cert->delete();
+
         return session()->flash('success', 'Removed solo certification');
     }
 

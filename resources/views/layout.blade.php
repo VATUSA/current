@@ -10,6 +10,7 @@
     <link href="/css/bootstrap-formhelpers.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="/css/vatusa.css" rel="stylesheet">
+    @stack('styles')
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!--[if lt IE 9]>
