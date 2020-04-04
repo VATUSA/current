@@ -4,7 +4,7 @@
 @section('scripts')
     <script>
       if (document.location.hash)
-        $('.nav-tabs a[href=' + document.location.hash + ']').tab('show')
+        $('.nav-tabs li:not(.disabled) a[href=' + document.location.hash + ']').tab('show')
 
       $('.delete-log').click(function (e) {
         e.preventDefault()
@@ -155,8 +155,12 @@
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Exams</a></li>
                     @endif
-                    <li role="presentation"><a href="#training" data-controls="training" role="tab"
-                                               data-toggle="tab">Training</a></li>
+                    @php $canViewTraining = $u->facility == Auth::user()->facility || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
+                    <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
+                        title="Not a home controller at your ARTCC" @endif><a href="#training"
+                                                                              @if($canViewTraining) data-controls="training"
+                                                                              role="tab"
+                                                                              data-toggle="tab" @endif>Training</a></li>
                     <li role="presentation"><a href="#cbt" data-controls="cbt" role="tab"
                                                data-toggle="tab">CBT Progress</a></li>
                     @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
