@@ -12,18 +12,23 @@
                 </div>
             </form>
             <BR>
-            <ul class="nav nav-pills nav-stacked" role="tablist">
-                <li role="presentation" class="active"><a href="#" aria-controls="all" role="tab" data-toggle="pill"><i
+            <ul class="nav nav-pills nav-stacked" role="tablist" id="pos-types">
+                <li role="presentation" class="active"><a href="#training" data-controls="all" aria-controls="all" role="tab"
+                                                          data-toggle="pill"><i
                             class="fa fa-list"></i> All Records</a></li>
-                <li role="presentation"><a href="#" aria-controls="del" role="tab" data-toggle="pill">Clearance
+                <li role="presentation"><a href="#training"  data-controls="del" aria-controls="del" role="tab" data-toggle="pill">Clearance
                         Delivery</a></li>
-                <li role="presentation"><a href="#" aria-controls="gnd" role="tab" data-toggle="pill">Ground</a></li>
-                <li role="presentation"><a href="#" aria-controls="twr" role="tab" data-toggle="pill">Tower</a></li>
-                <li role="presentation"><a href="#" aria-controls="app" role="tab" data-toggle="pill">Approach</a></li>
-                <li role="presentation"><a href="#" aria-controls="ctr" role="tab" data-toggle="pill">Center</a></li>
+                <li role="presentation"><a href="#training" data-controls="gnd" aria-controls="gnd" role="tab"
+                                           data-toggle="pill">Ground</a></li>
+                <li role="presentation"><a href="#training" data-controls="twr" aria-controls="twr" role="tab"
+                                           data-toggle="pill">Tower</a></li>
+                <li role="presentation"><a href="#training" data-controls="app" aria-controls="app" role="tab" data-toggle="pill">Approach</a>
+                </li>
+                <li role="presentation"><a href="#training" data-controls="del" aria-controls="ctr" role="tab"
+                                           data-toggle="pill">Center</a></li>
             </ul>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8" id="training-content">
             <div class="tab-content">
                 <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
                 <div role="tabpanel" class="tab-pane active" id="all">All!</div>
@@ -32,3 +37,15 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script>$(function () {
+        $('#pos-types li a').click(function (e) {
+          e.preventDefault()
+          let target = $(this).data('controls')
+          $('#training-content div[role="tabpanel"]#' + target).show()
+          $('#training-content div[role="tabpanel"]:not(#' + target + ')').hide()
+        })
+      })
+    </script>
+@endpush
