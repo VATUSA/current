@@ -9,6 +9,7 @@ use App\Classes\SMFHelper;
 use App\Promotions;
 use App\Role;
 use App\SoloCert;
+use App\TrainingRecord;
 use App\Transfers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,11 +33,20 @@ class MgtController extends Controller
 //        $this->middleware('ins');
     }
 
-    public function getController($cid = null)
+    public function getController($cid = null, $trainingfac = null)
     {
         if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilityStaff() && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
+
+        $trainingfac = $trainingfac ?? "";
+
+        //For testing
+        if (!$trainingfac) {
+            $trainingfac = 'ZSE';
+        }
+
+        $trainingfaclist = Auth::user()->trainingRecords()->groupBy('facility_id')->get();
 
         if ($cid == null) {
             return view('mgt.controller.blank');
@@ -55,7 +65,9 @@ class MgtController extends Controller
             /** Training Records */
             $trainingRecords = $user->facility == Auth::user()->facility || RoleHelper::isVATUSAStaff() ? $user->trainingRecords : [];
 
-            return view('mgt.controller.index', ['u' => $user, 'checks' => $checks, 'eligible' => $eligible, 'trainingRecords' => $trainingRecords]);
+
+            return view('mgt.controller.index',
+                compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingfaclist', 'trainingfac'));
         } else {
             return view('mgt.controller.404');
         }
