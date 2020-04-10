@@ -13,8 +13,9 @@
                     <select class="form-control" id="tng-artcc-select" autocomplete="off">
                         <option value="" @if(!$trainingfac) selected @endif>-- Select One --</option>
                         @foreach($trainingfaclist as $fac)
-                        <option value="{{ $fac->facility->id }}" @if($trainingfac == $fac->facility->id) selected @endif>{{ $fac->facility->name }}</option>
-                            @endforeach
+                            <option value="{{ $fac->facility->id }}"
+                                    @if($trainingfac == $fac->facility->id) selected @endif>{{ $fac->facility->name }}</option>
+                        @endforeach
                     </select>
                 </div>
             </form>
@@ -56,9 +57,9 @@
                                 <th>Position</th>
                                 <th>Instructor</th>
                                 <th>Duration</th>
-                                <th>Score</th>
-                                <th>Actions</th>
-                                <th>Location</th>
+                                <th class="alert-ignore">Score</th>
+                                <th class="alert-ignore">Actions</th>
+                                <th class="alert-ignore">Location</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -69,15 +70,15 @@
                                     </td>
                                     <td>{{ $record->position }}</td>
                                     <td>{{ $record->instructor->fullname() }}</td>
-                                    <td>{{ $record->duration }}</td>
-                                    <td>
+                                    <td>{{ substr($record->duration, 0, 5) }}</td>
+                                    <td class="alert-ignore">
                                         @for($i = 1; $i <= 5; $i++)
                                             <span
                                                 class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
                                             &nbsp;
                                         @endfor
                                     </td>
-                                    <td>
+                                    <td class="alert-ignore">
                                         <div class="btn-group">
                                             <button class="btn btn-primary"><span
                                                     class="glyphicon glyphicon-eye-open"></span></button>
@@ -85,7 +86,8 @@
                                             @if($canModify)
                                                 <button class="btn btn-warning"><span
                                                         class="glyphicon glyphicon-pencil"></span></button>
-                                                <button class="btn btn-danger"><span
+                                                <button class="btn btn-danger delete-tr"
+                                                        data-id="{{ $record->id }}"><span
                                                         class="glyphicon glyphicon-remove"></span></button>
                                             @endif
                                         </div>
@@ -108,6 +110,7 @@
 </div>
 
 @push('scripts')
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript"
@@ -121,12 +124,13 @@
         })
         $('.training-records-list').DataTable({
           responsive  : true,
-          autoWidth: false,
-          lengthMenu: [5, 10, 15, 25],
-          pageLength: 10,
-          columnDefs  : [
-            {visible: false, targets: 6}
-          ],
+          autoWidth   : false,
+          lengthMenu  : [5, 10, 15, 25],
+          pageLength  : 10,
+          columnDefs  : [{
+            visible: false,
+            targets: 6
+          }],
           order       : [[0, 'desc']],
           drawCallback: function (settings) {
             let api = this.api()
@@ -143,6 +147,48 @@
               }
             })
           }
+        })
+        $('.delete-tr').click(function () {
+          let btn = $(this),
+              id  = btn.data('id'),
+              tr  = btn.parents('tr')
+          let alertText = document.createElement('table')
+          alertText.className = 'table table-border'
+          alertText.innerHTML = $('.training-records-list').first().children('thead').ignore('.alert-ignore').html()
+            + '<tbody><tr>' + tr.ignore('.alert-ignore').html() + '</tr></tbody>'
+
+          swal({
+            title     : 'Deleting Training Record',
+            content   : alertText,
+            text      : 'Are you sure you want to delete the training record?',
+            icon      : 'warning',
+            buttons   : {
+              cancel : {
+                text   : 'No, cancel',
+                visible: true,
+              },
+              confirm: {
+                text      : 'Yes, delete',
+                closeModal: false
+              }
+            },
+            dangerMode: true,
+          })
+            .then(willDelete => {
+              if (willDelete) {
+                $.ajax({
+                  url   : $.apiUrl() + '/v2/training/record/' + id,
+                  method: 'DELETE'
+                }).success(() => {
+                  swal('Success!', 'The training record has been deleted.', 'success')
+                  btn.parents('tr').remove()
+                })
+                  .error(err => swal('Error!', 'The training record could not be deleted.' + JSON.stringify(err), 'error'))
+              } else {
+                return false
+              }
+            })
+
         })
       })
 
