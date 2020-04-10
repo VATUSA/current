@@ -18,7 +18,11 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script type="text/javascript">
+      //Custom jQuery Elements
       $.apiUrl = () => ("{{ ((env('APP_ENV', 'prod') == 'prod') ? "https://api.vatusa.net" : "https://api.vatusa.devel") }}")
+      $.fn.ignore = function (sel) {
+        return this.clone().find(sel || '>*').remove().end()
+      }
     </script>
 
     @stack('scripts')
@@ -186,7 +190,8 @@
                                             </ul>
                                         </li>
                                     @else
-                                        <li><a href="/tmu/map/{{$f->id}}" target="_blank">{{$f->id}} - {{$f->name}}</a></li>
+                                        <li><a href="/tmu/map/{{$f->id}}" target="_blank">{{$f->id}} - {{$f->name}}</a>
+                                        </li>
                                     @endif
                                 @endforeach
                             </ul>
@@ -270,7 +275,8 @@
                                         <li><a href="{{secure_url("mgt/mail") }}">Email Management</a></li>
                                     @endif
                                     @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="{{ secure_url("/mgt/checklists") }}">Training Checklists Management</a></li>
+                                        <li><a href="{{ secure_url("/mgt/checklists") }}">Training Checklists
+                                                Management</a></li>
                                         <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
                                         <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a></li>
                                         <li><a href="{{secure_url("mgt/err") }}">Submit Transfer Request</a></li>
