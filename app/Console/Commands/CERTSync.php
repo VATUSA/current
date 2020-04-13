@@ -132,16 +132,15 @@ class CERTSync extends Command
                 continue;
             }
 
-            if ($division !== "United States") {
-                $leftIds[] = $user->cid;
-                continue;
-            }
-
             $user->lname = $lname;
             $user->fname = $fname;
             $user->rating = $rating;
             $user->save();
 
+            if ($division !== "United States") {
+                $leftIds[] = $user->cid;
+                continue;
+            }
             if ($rating == -2) {
                 if (!$user->flag_homecontroller) {
                     $this->log[] = "Non-member {$user->fullname()} ({$user->cid}) marked inactive by VATSIM. Deleting.";
