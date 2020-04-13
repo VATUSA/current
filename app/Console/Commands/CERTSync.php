@@ -93,18 +93,18 @@ class CERTSync extends Command
                                 $purgeIds[] = $user->cid;
                             } else {
                                 $this->log[] = "Home controller {$user->fullname()} ({$user->cid}) no longer exists in VATUSA database. Deleting.";
-                                //    $this->line("Non-member {$user->fullname()} ({$user->cid}) no longer exists in VATUSA database. Deleting.");
+                                // $this->line("Non-member {$user->fullname()} ({$user->cid}) no longer exists in VATUSA database. Deleting.");
                             }
                             continue 2;
                         } else {
                             $error = true;
-                            //  $this->error(\GuzzleHttp\Psr7\str($e->getRequest()) . "\n" . \GuzzleHttp\Psr7\str($e->getResponse()));
-                            //  $this->line("Error after $i");
+                            // $this->error(\GuzzleHttp\Psr7\str($e->getRequest()) . "\n" . \GuzzleHttp\Psr7\str($e->getResponse()));
+                            // $this->line("Error after $i");
                         }
                     } else {
                         $error = true;
-                        //   $this->error(\GuzzleHttp\Psr7\str($e->getRequest()) . "\n" . \GuzzleHttp\Psr7\str($e->getResponse()));
-                        //  $this->line("Error after $i");
+                        // $this->error(\GuzzleHttp\Psr7\str($e->getRequest()) . "\n" . \GuzzleHttp\Psr7\str($e->getResponse()));
+                        // $this->line("Error after $i");
                     }
                 }
 
@@ -116,7 +116,7 @@ class CERTSync extends Command
                     break;
                 }
             }
-            //$this->line($i);
+            // $this->line($i);
             $xml = simplexml_load_string($data->getBody());
             $xmlUser = $xml->user[0];
 
@@ -156,7 +156,7 @@ class CERTSync extends Command
             if ($rating >= 0) {
                 $user->cert_update = 1;
             } else {
-                //Suspended
+                // Suspended
                 $log = new Actions();
                 $log->to = $user->cid;
                 $log->log = "User suspended, removing from division";
@@ -175,7 +175,7 @@ class CERTSync extends Command
                 try {
                     Actions::find($logId)->delete();
                 } catch (\Exception $e) {
-                    //DB Error
+                    // DB Error
                     continue;
                 }
             }
@@ -223,12 +223,12 @@ class CERTSync extends Command
             "vatusa2@vatusa.net",
             // "vatusa6@vatusa.net",
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
-        //  SMFHelper::createPost(7262, 83, "CERTSync Cycle", implode("\n", $this->log));
+        // SMFHelper::createPost(7262, 83, "CERTSync Cycle", implode("\n", $this->log));
 
         foreach ($this->log as $line) {
             // $this->info($line);
         }
-        //  $this->line("Completed in " . (microtime(true) - $start) . " seconds");
+        // $this->line("Completed in " . (microtime(true) - $start) . " seconds");
     }
 
     public function checkDeleted($user)
