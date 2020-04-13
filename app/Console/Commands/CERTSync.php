@@ -137,7 +137,7 @@ class CERTSync extends Command
             $user->rating = $rating;
             $user->save();
 
-            if ($division !== "United States") {
+            if ($division !== "United States" && $user->flag_homecontroller) {
                 $leftIds[] = $user->cid;
                 continue;
             }
