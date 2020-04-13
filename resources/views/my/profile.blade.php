@@ -56,7 +56,7 @@
                         <div class="col-sm-10">
                             <p class="form-control-static">{{Auth::user()->email}}</p>
                             <span id="helpBlock" class="help-block">Click <a
-                                    href="http://cert.vatsim.net/vatsimnet/newmail.php">here</a> to change.</span>
+                                    href="http://cert.vatsim.net/vatsimnet/newmail.php">here</a> to change. Your email will be updated here on your next login.</span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -70,6 +70,7 @@
                         <div class="col-sm-10">
                             <p class="form-control-static">{{Auth::user()->urating->short}}
                                 ({{Auth::user()->urating->long}})</p>
+                            <p class="help-block">Your rating is updated on login. If it is incorrect, <a href="https://login.vatusa.net?logout">logout</a> and log back in.</p>
                         </div>
                     </div>
                     <div class="form-group">
