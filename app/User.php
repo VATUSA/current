@@ -201,6 +201,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             SMFHelper::createPost(7262, 82, "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility, "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
     }
 
+    public function purge($alltables = false) {
+        $this->delete();
+
+        //TODO: Purge from All Tables
+    }
+
     public function transferEligible(&$checks = null)
     {
         if ($checks === null)
