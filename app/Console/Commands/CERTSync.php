@@ -137,6 +137,11 @@ class CERTSync extends Command
                 continue;
             }
 
+            $user->lname = $lname;
+            $user->fname = $fname;
+            $user->rating = $rating;
+            $user->save();
+
             if ($rating == -2) {
                 if (!$user->flag_homecontroller) {
                     $this->log[] = "Non-member {$user->fullname()} ({$user->cid}) marked inactive by VATSIM. Deleting.";
@@ -149,12 +154,9 @@ class CERTSync extends Command
                 }
                 continue;
             }
-
-            $user->lname = $lname;
-            $user->fname = $fname;
-            $user->rating = $rating;
             if ($rating >= 0) {
                 $user->cert_update = 1;
+                $user->save();
             } else {
                 // Suspended
                 $log = new Actions();
@@ -164,7 +166,6 @@ class CERTSync extends Command
                 $logIds[] = $log->id;
                 // $this->line("{$user->fullname()} ($user->cid) Suspended.");
             }
-            $user->save();
         }
         // $this->info("Processed $i records. Now determining deletions. Complete log will be output after completion.");
 
