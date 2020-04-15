@@ -2,6 +2,7 @@
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.css"/>
 @endpush
+@include('mgt.controller.training.view')
 
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Training Records</h3></div>
@@ -80,7 +81,7 @@
                                     </td>
                                     <td class="alert-ignore">
                                         <div class="btn-group">
-                                            <button class="btn btn-primary"><span
+                                            <button class="btn btn-primary view-record" data-id="{{ $record->id }}"><span
                                                     class="glyphicon glyphicon-eye-open"></span></button>
                                             @php $canModify = \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac) || $record->instructor_id == Auth::user()->cid; @endphp
                                             @if($canModify)
@@ -110,87 +111,11 @@
 </div>
 
 @push('scripts')
+    <script src="https://kit.fontawesome.com/63288b607f.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript"
             src="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
-    <script>$(function () {
-        $('#pos-types li a').click(function (e) {
-          e.preventDefault()
-          let target = $(this).data('controls')
-          $('#training-content div[role="tabpanel"]#' + target).show()
-          $('#training-content div[role="tabpanel"]:not(#' + target + ')').hide()
-        })
-        $('.training-records-list').DataTable({
-          responsive  : true,
-          autoWidth   : false,
-          lengthMenu  : [5, 10, 15, 25],
-          pageLength  : 10,
-          columnDefs  : [{
-            visible: false,
-            targets: 6
-          }],
-          order       : [[0, 'desc']],
-          drawCallback: function (settings) {
-            let api = this.api()
-            let rows = api.rows({page: 'current'}).nodes()
-            let last = null
-
-            api.column(6, {page: 'current'}).data().each(function (group, i) {
-              if (last !== group) {
-                $(rows).eq(i).before(
-                  '<tr class="group"><td colspan="6"><strong>' + group + '</strong></td></tr>'
-                )
-
-                last = group
-              }
-            })
-          }
-        })
-        $('.delete-tr').click(function () {
-          let btn = $(this),
-              id  = btn.data('id'),
-              tr  = btn.parents('tr')
-          let alertText = document.createElement('table')
-          alertText.className = 'table table-border'
-          alertText.innerHTML = $('.training-records-list').first().children('thead').ignore('.alert-ignore').html()
-            + '<tbody><tr>' + tr.ignore('.alert-ignore').html() + '</tr></tbody>'
-
-          swal({
-            title     : 'Deleting Training Record',
-            content   : alertText,
-            text      : 'Are you sure you want to delete the training record?',
-            icon      : 'warning',
-            buttons   : {
-              cancel : {
-                text   : 'No, cancel',
-                visible: true,
-              },
-              confirm: {
-                text      : 'Yes, delete',
-                closeModal: false
-              }
-            },
-            dangerMode: true,
-          })
-            .then(willDelete => {
-              if (willDelete) {
-                $.ajax({
-                  url   : $.apiUrl() + '/v2/training/record/' + id,
-                  method: 'DELETE'
-                }).success(() => {
-                  swal('Success!', 'The training record has been deleted.', 'success')
-                  btn.parents('tr').remove()
-                })
-                  .error(err => swal('Error!', 'The training record could not be deleted.' + JSON.stringify(err), 'error'))
-              } else {
-                return false
-              }
-            })
-
-        })
-      })
-
-    </script>
+    <script src="{{ secure_asset("js/training.js") }}" type="text/javascript"></script>
 @endpush
