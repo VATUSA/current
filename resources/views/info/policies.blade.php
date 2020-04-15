@@ -35,7 +35,7 @@
                     </tr>
                     <tr>
                         <td>GO 32020.1 &mdash; Temporary Suspension of Live Events</td>
-                        <td>03/17/2020</td>
+                        <td>04/15/2020</td>
                         <td><a href="/docs/GO-320201.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
@@ -58,6 +58,15 @@
                         <td>03/20/2020</td>
                         @if(\Auth::check())
                             <td><a href="/docs/3120.311.pdf" target="_blank">view</a></td>
+                        @else
+                            <td>internal</td>
+                        @endif
+                    </tr>
+                    <tr>
+                        <td>3120.1D &mdash; Instructor Developmental Detail Program</td>
+                        <td>04/10/2020</td>
+                        @if(\Auth::check())
+                            <td><a href="/docs/3120.1D.pdf" target="_blank">view</a></td>
                         @else
                             <td>internal</td>
                         @endif
