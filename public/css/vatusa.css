@@ -1639,5 +1639,18 @@ tr.no-hover:hover {
 }
 
 #pos-types li a:hover {
-    cursor:pointer;
+    cursor: pointer;
+}
+
+#training-info td:not(:last-child):first-child {
+    font-weight: bold;
+    text-align: right;
+    border-right: 2px solid #ddd;
+}
+#training-info tr:last-child {
+    background-color: #f9f9f9 !important;
+}
+
+#training-info tr:last-child td {
+    border-width: 3px;
 }
