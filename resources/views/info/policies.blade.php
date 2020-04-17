@@ -19,9 +19,7 @@
                     </thead>
                     <tbody>
                     <tr class="no-hover">
-                        <td><strong>General Division</strong></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
+                        <td colspan="3"><strong>General Division</strong></td>
                     </tr>
                     <tr>
                         <td>DP001 &mdash; Division General Policy</td>
@@ -39,14 +37,17 @@
                         <td><a href="/docs/GO-320201.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
+                        <td>GO 41520 &mdash; Temporary Suspension of Visitor Applications</td>
+                        <td>04/15/2020</td>
+                        <td><a href="/docs/GO-41520.pdf" target="_blank">view</a></td>
+                    </tr>
+                    <tr>
                         <td>Chain of Command Flow Chart</td>
                         <td>07/21/2019</td>
                         <td><a href="/docs/orgchart.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr class="no-hover">
-                        <td><strong>Training Administration</strong></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
+                        <td colspan="3"><strong>Training Administration</strong></td>
                     </tr>
                     <tr>
                         <td>3120.1A &mdash; Division Interpretation on VATNA S1 Directive</td>
@@ -113,9 +114,7 @@
                         @endif
                     </tr>
                     <tr class="no-hover">
-                        <td><strong>Information Technology</strong></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
+                        <td colspan="3"><strong>Information Technology</strong></td>
                     </tr>
                     <tr>
                         <td>D1021.1B &mdash; Division Email Scheme</td>
