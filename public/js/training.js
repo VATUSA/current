@@ -86,6 +86,20 @@ $(function () {
     }).done(result => {
       btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>').attr('disabled', false)
       console.log(result)
+
+      $('.training-position').html(result.position)
+      $('.training-student').html(result.student.fname + ' ' + result.student.lname)
+      $('#training-artcc').html(result.facility.name);
+      scoreStr = "";
+      for(let i = 1; i <= 5; i++) {
+        scoreStr += "<span class='glyphicon glyphicon-star";
+        scoreStr += i > result.score ? "-empty" : ""
+        scoreStr += "'></span> &nbsp;"
+      }
+      $('#training-score').html(scoreStr)
+      $('#training-datetime').html(moment(result.session_date).format('dddd, MMMM Do YYYY, hh:mm'))
+      //Duration
+
     })
       .fail((xhr, status, error) => {
         btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>').attr('disabled', false)
