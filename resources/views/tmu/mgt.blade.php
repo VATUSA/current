@@ -97,7 +97,7 @@
                                                         <b>The last point must be the same as the first point to close
                                                             the
                                                             polygon.</b></p>
-                                                    <form id="boundaryForm" method="post"
+                                                    <form id="boundaryForm-{{$facility->id}}" method="post"
                                                           action="/mgt/tmu/{{$facility->id}}/coords">
                                                     <textarea class="form-control" name="coords" rows="10"
                                                               id="coordbox_{{$facility->id}}">{{$facility->coords}}</textarea><br>
@@ -487,7 +487,7 @@
           }).fail(function() {
               bootbox.alert("There was an error saving coordinates.  Please try again later.");
           });*/
-          $('#boundaryForm').submit()
+          $('#boundaryForm-' + fac).submit()
         })
       })
 
