@@ -52,8 +52,6 @@
                                 ({{Auth::user()->urating->long}})<br>
                                 <i class="fa fa-star"></i> {{\App\Classes\RoleHelper::getUserRole(Auth::user()->cid, Auth::user()->facility)}}
                                 - {{\App\Classes\Helper::facShtLng(Auth::user()->facility)}}
-                                {{(!empty(Auth::user()->facility) && (Auth::user()->facility != 'HCF' && Auth::user()->facility != 'ZHQ' && !preg_match('/^ZZ/', Auth::user()->facility)) ? '' : '')}}
-                                {{(!empty(Auth::user()->facility) && Auth::user()->facility == 'HCF' ? 'Control Facility' : '')}}
                             </small>
                         </div>
                     </div>

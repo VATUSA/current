@@ -201,6 +201,7 @@ class TMUController
 
         if ($ofac == null) {
             $fac = Auth::user()->facility;
+            $ofac = $fac;
         } else {
             $fac = $ofac;
         }
@@ -228,7 +229,7 @@ class TMUController
         $tmufac->save();
 
         return redirect("/mgt/tmu")->with("success",
-            "Facility coordinates saved. <a href=/tmu/{$ofac}>Click here</a> to view map.");
+            "Facility coordinates saved. <a href='/tmu/map/{$ofac}'>Click here</a> to view the map.");
     }
 
     function getMgtColors($ofac = null)
