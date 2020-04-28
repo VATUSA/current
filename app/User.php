@@ -24,12 +24,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $table = "controllers";
     public $primaryKey = "cid";
     public $incrementing = false;
-    public $timestamps = ["created_at", "updated_at", "lastactivity", "facility_join"];
+    public $timestamps = ["created_at", "updated_at"];
     protected $hidden = ["password", "remember_token", "cert_update", "access_token", "refresh_token", "token_expires"];
 
     public function getDates()
     {
-        return ["created_at", "updated_at", "lastactivity", "facility_join"];
+        return ["created_at", "updated_at"];
     }
 
     public function fullname()
