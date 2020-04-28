@@ -29,7 +29,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getDates()
     {
-        return ["created_at", "updated_at"];
+        return ["created_at", "updated_at", "lastactivity"];
     }
 
     public function fullname()
