@@ -1,6 +1,7 @@
 @push('styles')
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset("datetimepicker/datetimepicker.css") }}">
 @endpush
 @include('mgt.controller.training.view')
 
@@ -81,11 +82,12 @@
                                     </td>
                                     <td class="alert-ignore">
                                         <div class="btn-group">
-                                            <button class="btn btn-primary view-record" data-id="{{ $record->id }}"><span
+                                            <button class="btn btn-primary view-tr" data-id="{{ $record->id }}"><span
                                                     class="glyphicon glyphicon-eye-open"></span></button>
                                             @php $canModify = \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac) || $record->instructor_id == Auth::user()->cid; @endphp
                                             @if($canModify)
-                                                <button class="btn btn-warning"><span
+                                                <button class="btn btn-warning edit-tr"
+                                                        data-id="{{ $record->id }}"><span
                                                         class="glyphicon glyphicon-pencil"></span></button>
                                                 <button class="btn btn-danger delete-tr"
                                                         data-id="{{ $record->id }}"><span
@@ -111,6 +113,9 @@
 </div>
 
 @push('scripts')
+    <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
+    <script
+        src="https://cdn.tiny.cloud/1/zhw7l11edc5qt7r2a27lkrpa8aecclri5bsd4p7vaoet3u00/tinymce/5/tinymce.min.js"></script>
     <script src="https://kit.fontawesome.com/63288b607f.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
