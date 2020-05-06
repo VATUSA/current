@@ -4,21 +4,32 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="myModalLabel">Training on <span class="training-position"><i>Loading...</i></span> for <span
-                            class="training-student"><i>Loading...</i></span></h4>
+                <h4 class="modal-title" id="myModalLabel">Training on <span class="training-position"><i>Loading...</i></span>
+                    for <span
+                        class="training-student"><i>Loading...</i></span></h4>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <table id="training-info" class="table table-striped table-responsive">
+                    <div class="text-center">
+                        <div class="btn-group" style="margin-bottom: 8px;">
+                            <button class="btn btn-warning" id="tr-view-edit" data-id=""><span
+                                    class="glyphicon glyphicon-pencil"></span> Edit
+                            </button>
+                            <button class="btn btn-danger tr-modal-delete" data-id=""><span
+                                    class="glyphicon glyphicon-remove"></span> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <table class="table table-striped table-responsive training-info">
                         <tbody>
                         <tr>
                             <td>Position</td>
-                            <td><span id="training-artcc">Seattle ARTCC</span> - <span class="training-position">SEA_APP</span></td>
+                            <td><span id="training-artcc">Seattle ARTCC</span> - <span
+                                    class="training-position"></span></td>
                         </tr>
                         <tr>
                             <td>Score</td>
                             <td id="training-score">
-                                @php $score = 4; @endphp
                                 @for($i = 1; $i <= 5; $i++)
                                     <span
                                         class="glyphicon @if($i > $score) glyphicon-star-empty @else glyphicon-star @endif"></span>
@@ -28,75 +39,26 @@
                         </tr>
                         <tr>
                             <td>Date and Time</td>
-                            <td id="training-datetime">January 8, 2001</td>
+                            <td id="training-datetime"></td>
                         </tr>
                         <tr>
                             <td>Duration</td>
-                            <td>1 hour 30 minutes</td>
+                            <td id="training-duration"></td>
                         </tr>
                         <tr>
                             <td>Number of Movements</td>
-                            <td>45</td>
+                            <td id="training-movements"></td>
                         </tr>
                         <tr>
                             <td>Location</td>
-                            <td>Sweatbox</td>
+                            <td id="training-location"></td>
                         </tr>
                         <tr>
                             <td>Instructor</td>
-                            <td>Aaron Schwartz</td>
+                            <td id="training-instructor"></td>
                         </tr>
                         <tr>
-                            <td colspan="2">
-
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu tempor nibh, quis
-                                aliquam nunc. Pellentesque hendrerit at nisi volutpat rhoncus. Class aptent taciti
-                                sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In orci lacus,
-                                hendrerit in ultricies quis, vulputate sed lectus. Donec felis risus, fringilla in
-                                accumsan tempor, porta eget diam. Duis et libero ante. Phasellus auctor condimentum
-                                tortor sit amet elementum. Morbi iaculis ligula felis, quis suscipit justo aliquet sit
-                                amet. Quisque molestie, diam at auctor tempor, metus nibh porttitor dui, nec aliquet
-                                dolor urna vitae dolor. Nam justo justo, feugiat vitae euismod sit amet, fermentum et
-                                enim. Vivamus sit amet lectus lectus. In sollicitudin libero ac massa facilisis
-                                bibendum. Nullam ex erat, mollis vitae pharetra porta, sagittis pulvinar turpis.
-                                Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;
-                                Curabitur vitae tincidunt odio. Praesent in risus euismod, faucibus tortor lacinia,
-                                lobortis tortor.
-
-                                Nulla faucibus est in nulla tincidunt hendrerit. Vivamus a orci urna. Pellentesque
-                                venenatis tempor enim. Nunc blandit elit eget consequat tristique. Aliquam mollis, dolor
-                                at dapibus egestas, nulla libero rutrum ligula, nec suscipit enim elit in dui. Ut
-                                pharetra justo vel libero elementum fermentum. Sed non varius nisi. Curabitur hendrerit
-                                id lacus at porta. In hac habitasse platea dictumst. Suspendisse elementum arcu aliquam
-                                felis pulvinar, non varius leo dictum. Vestibulum tempor eros eget pharetra porta.
-                                Pellentesque vel tortor ultrices, volutpat tellus et, imperdiet est.
-
-                                Suspendisse faucibus purus vel tellus lacinia, vel tincidunt purus luctus. Nulla
-                                facilisi. Nulla vitae neque turpis. Etiam varius tincidunt erat, eget vehicula tellus
-                                pharetra eu. Fusce vel sem fringilla magna semper lobortis at eu tortor. Praesent sed
-                                lacinia est. Cras scelerisque nec enim et rutrum. Mauris diam augue, interdum a dapibus
-                                eu, elementum eu dui. Suspendisse hendrerit faucibus consequat. Nam eleifend diam vel
-                                erat facilisis ornare. Sed nec urna non nunc fermentum dictum. Morbi lobortis velit non
-                                diam lobortis auctor id in neque.
-
-                                Etiam finibus lacus eu dictum aliquam. Nam sed est nec ligula blandit facilisis non nec
-                                diam. In eget venenatis sapien. Cras euismod eleifend hendrerit. Nullam in urna sed leo
-                                dignissim lobortis. Integer ut arcu non nunc molestie gravida nec quis lorem. Sed
-                                scelerisque odio eget maximus vulputate. Curabitur pharetra ipsum ut dignissim congue.
-                                Vestibulum dignissim blandit interdum. Vestibulum ante ipsum primis in faucibus orci
-                                luctus et ultrices posuere cubilia Curae; Nullam egestas eu erat at tempus. In hac
-                                habitasse platea dictumst.
-
-                                Vestibulum tellus mauris, rhoncus id lobortis et, ultricies ullamcorper nibh. Nam
-                                rhoncus, urna id efficitur rutrum, massa erat venenatis urna, vitae fermentum sem nisl
-                                vel magna. Sed tincidunt tellus mauris, vel tincidunt purus molestie quis. Fusce sodales
-                                diam consequat ipsum malesuada, vel rhoncus mauris euismod. Morbi sit amet libero sit
-                                amet magna egestas vulputate a id augue. Aliquam et vehicula lacus. Nam ullamcorper
-                                posuere ligula dictum luctus. Quisque sagittis porta venenatis. Mauris ut mattis libero,
-                                suscipit elementum risus. Donec commodo tellus arcu, ac imperdiet enim auctor in.
-                                Vivamus id massa venenatis, pulvinar lorem id, scelerisque orci. Donec volutpat congue
-                                odio, sed semper dolor ornare tempus. Aliquam erat volutpat. Nullam tincidunt tellus
-                                urna, ut lacinia mi ornare volutpat.
+                            <td colspan="2" id="training-notes">
                             </td>
                         </tr>
                         </tbody>
@@ -104,6 +66,111 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit-training-record" tabindex="-1" role="dialog" aria-labelledby="Edit-Training-Record">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Edit Training Record for <span
+                        id="e-training-student"></span> on <span
+                            class="e-training-position"></span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="text-center">
+                        <div class="btn-group" style="margin-bottom: 8px;">
+                            <button class="btn btn-danger tr-modal-delete" data-id=""><span
+                                    class="glyphicon glyphicon-remove"></span> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <form class="training-info" id="edit-tr-form" method="post">
+                        <table id="edit-tr-layout" class="table table-striped table-responsive">
+                            <tbody>
+                            <tr>
+                                <td><label for="e-training-position">Position</label></td>
+                                <td><p class="form-control-static" id="e-training-artcc"></p> - <input class="form-control e-training-position"
+                                                                                            type="text"
+                                                                                            name="position"
+                                                                                            placeholder="ex. SEA_APP"
+                                                                                            required autocomplete="off">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="e-training-score">Progress</label></td>
+                                <td>
+                                    <select class="form-control" name="score" id="e-training-score" required autocomplete="off">
+                                        <option value="0">-- Select One --</option>
+                                        <option value="1">1 - No Progress</option>
+                                        <option value="2">2 - Little Progress</option>
+                                        <option value="3">3 - Average Progress</option>
+                                        <option value="4">4 - Great Progress</option>
+                                        <option value="5">5 - Exceptional Progress</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="e-training-datetime">Date and Time (UTC)</label></td>
+                                <td><input class="form-control" type="text" name="datetime" id="e-training-datetime"
+                                           required autocomplete="off"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="e-training-duration-hrs">Duration</label></td>
+                                <td><input class="form-control" type="number" name="duration"
+                                           id="e-training-duration-hrs" min="0" autocomplete="off">:<input class="form-control" type="number"
+                                                                                name="duration"
+                                                                                id="e-training-duration-mins" step="15" min="0" max="45" autocomplete="off"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="e-training-movements">Number of Movements</label></td>
+                                <td><input class="form-control" type="number" name="movements" id="e-training-movements" placeholder="ex. 8"
+                                           required autocomplete="off">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="e-training-location">Location</label></td>
+                                <td><select class="form-control" name="location" id="e-training-location" required autocomplete="off">
+                                        <option value="-1">-- Select One --</option>
+                                        <option value="0">Classroom</option>
+                                        <option value="1">Live</option>
+                                        <option value="2">Sweatbox</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="e-training-instructor">Instructor</label></td>
+                                <td>
+                                    <!--<select class="form-control" name="instructor" id="e-training-instructor" required autocomplete="off">
+                                        <option value="">-- Select One --</option>
+                                    </select>
+                                    -->
+                                    <p class="form-control-static" id="e-training-instructor"></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <label for="e-training-notes" class="text-center" style="display: block;">Training Notes</label>
+                                    <textarea class="form-control" name="notes" id="e-training-notes"
+                                              required autocomplete="off"></textarea>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-id="" id="e-training-submit"><span
+                            class="glyphicon glyphicon-ok"></span> Submit
+                    </button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal"><span
+                            class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
                 </div>
             </div>
         </div>
