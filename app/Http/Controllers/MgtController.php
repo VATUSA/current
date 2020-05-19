@@ -35,7 +35,7 @@ class MgtController extends Controller
 
     public function getController($cid = null, $trainingfac = null)
     {
-        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilityStaff() && !RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff() && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")) {
             abort(401);
         }
 
