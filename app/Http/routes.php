@@ -13,9 +13,12 @@
 
 //
 // VATUSA API Functions
-// api.vatusa.net/(apikey)/(request)/(params)
+// api.vatusa.devel/(apikey)/(request)/(params)
 //
-Route::group(['domain' => 'api.vatusa.net', 'middleware' => 'api'], function () {
+Route::group([
+    'domain' => ((config('app.env') == 'dev') ? 'www.vatusa.devel' : ((config('app.env') == 'alpha') ? 'alpha' : 'www') . '.vatusa.net'),
+    'middleware' => 'api'
+], function () {
     Route::group(['prefix' => '{apikey}/', 'middleware' => 'apikey'], function () {
         // CBT
         Route::get('cbt/block', 'APIController@getCBTBlocks');
@@ -67,35 +70,35 @@ Route::group(['domain' => 'api.vatusa.net', 'middleware' => 'api'], function () 
     Route::get('news,{limit}.{ext}', 'APIController@getPublicNews')->where(['ext' => '[A-Za-z]+', 'limit' => '\d+']);
     Route::get('news', 'APIController@getPublicNews')->where(['ext' => '[A-Za-z]+', 'limit' => '\d+']);
 
-    Route::get('events.{ext},{limit}', 'APIController@getPublicEvents')->where(['ext'   => '[A-Za-z]+',
-                                                                                'limit' => '\d+'
+    Route::get('events.{ext},{limit}', 'APIController@getPublicEvents')->where(['ext' => '[A-Za-z]+',
+        'limit' => '\d+'
     ]);
     Route::get('events,{limit}', 'APIController@getPublicEvents')->where(['ext' => '[A-Za-z]+', 'limit' => '\d+']);
     Route::get('events.{ext}', 'APIController@getPublicEvents')->where(['ext' => '[A-Za-z]+', 'limit' => '\d+']);
-    Route::get('events,{limit}.{ext}', 'APIController@getPublicEvents')->where(['ext'   => '[A-Za-z]+',
-                                                                                'limit' => '\d+'
+    Route::get('events,{limit}.{ext}', 'APIController@getPublicEvents')->where(['ext' => '[A-Za-z]+',
+        'limit' => '\d+'
     ]);
     Route::get('events', 'APIController@getPublicEvents')->where(['ext' => '[A-Za-z]+', 'limit' => '\d+']);
 
-    Route::get('roster-{fac}.{ext},{limit}', 'APIController@getPublicRoster')->where(['fac'   => '[A-Z][A-Z][A-Z]',
-                                                                                      'ext'   => '[A-Za-z]+',
-                                                                                      'limit' => '\d+'
+    Route::get('roster-{fac}.{ext},{limit}', 'APIController@getPublicRoster')->where(['fac' => '[A-Z][A-Z][A-Z]',
+        'ext' => '[A-Za-z]+',
+        'limit' => '\d+'
     ]);
-    Route::get('roster-{fac},{limit}', 'APIController@getPublicRoster')->where(['fac'   => '[A-Z][A-Z][A-Z]',
-                                                                                'ext'   => '[A-Za-z]+',
-                                                                                'limit' => '\d+'
+    Route::get('roster-{fac},{limit}', 'APIController@getPublicRoster')->where(['fac' => '[A-Z][A-Z][A-Z]',
+        'ext' => '[A-Za-z]+',
+        'limit' => '\d+'
     ]);
-    Route::get('roster-{fac}.{ext}', 'APIController@getPublicRoster')->where(['fac'   => '[A-Z][A-Z][A-Z]',
-                                                                              'ext'   => '[A-Za-z]+',
-                                                                              'limit' => '\d+'
+    Route::get('roster-{fac}.{ext}', 'APIController@getPublicRoster')->where(['fac' => '[A-Z][A-Z][A-Z]',
+        'ext' => '[A-Za-z]+',
+        'limit' => '\d+'
     ]);
-    Route::get('roster-{fac},{limit}.{ext}', 'APIController@getPublicRoster')->where(['fac'   => '[A-Z][A-Z][A-Z]',
-                                                                                      'ext'   => '[A-Za-z]+',
-                                                                                      'limit' => '\d+'
+    Route::get('roster-{fac},{limit}.{ext}', 'APIController@getPublicRoster')->where(['fac' => '[A-Z][A-Z][A-Z]',
+        'ext' => '[A-Za-z]+',
+        'limit' => '\d+'
     ]);
-    Route::get('roster-{fac}', 'APIController@getPublicRoster')->where(['fac'   => '[A-Z][A-Z][A-Z]',
-                                                                        'ext'   => '[A-Za-z]+',
-                                                                        'limit' => '\d+'
+    Route::get('roster-{fac}', 'APIController@getPublicRoster')->where(['fac' => '[A-Z][A-Z][A-Z]',
+        'ext' => '[A-Za-z]+',
+        'limit' => '\d+'
     ]);
 
     Route::get('planes', 'APIController@getPublicPlanes');
@@ -105,8 +108,9 @@ Route::group(['domain' => 'api.vatusa.net', 'middleware' => 'api'], function () 
     });
 });
 
-Route::group(['domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : ((env('APP_ENV') == 'alpha') ? 'alpha' : 'www') . '.vatusa.net'),
-              'middleware' => ['smf', 'csrf', 'lastactivity']
+Route::group([
+    'domain' => ((config('app.env') == 'dev') ? 'www.vatusa.devel' : ((config('app.env') == 'alpha') ? 'alpha' : 'www') . '.vatusa.net'),
+    'middleware' => ['smf', 'csrf', 'lastactivity']
 ], function () {
     Route::get('/login', 'AuthController@getLogin');
     Route::get('/logout', function () {
@@ -248,78 +252,78 @@ Route::group(['domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : 
 // VATUSA Mgt Facility Function
 // dev.vatusa.net/mgt/facility/{route}
 //
-    Route::get('/mgt/facility/{fac?}', 'FacMgtController@getIndex');
-    Route::delete('/mgt/facility/{fac}/{cid}', 'FacMgtController@deleteController');
-    Route::post('/mgt/facility/{fac}/api/generate', 'FacMgtController@postAPIGenerate');
-    Route::post('/mgt/facility/{fac}/api/generate/sandbox','FacMgtController@postAPISandboxGenerate');
-    Route::post('/mgt/facility/{fac}/api/update', 'FacMgtController@postAPIIP');
-    Route::post('/mgt/facility/{fac}/api/update/sandbox', 'FacMgtController@postAPISandboxIP');
-    Route::post('/mgt/facility/{fac}/uls/generate', 'FacMgtController@postULSGenerate');
-    Route::post('/mgt/facility/{fac}/uls/return', 'FacMgtController@postULSReturn');
-    Route::post('/mgt/facility/{fac}/uls/devreturn', 'FacMgtController@postULSDevReturn');
-    Route::get('/mgt/ace', 'MgtController@getAce');
-    Route::post('/mgt/ace', 'MgtController@putAce');
-    Route::get('/mgt/ace/delete/{cid}', 'MgtController@deleteAce');
-    Route::post('/mgt/action/add', 'MgtController@addLog');
-    Route::post('/mgt/ajax/position/{facility}/{id}', 'FacMgtController@ajaxPosition');
-    Route::post('/mgt/ajax/del/position/{facility}', 'FacMgtController@ajaxPositionDel');
-    Route::post('/mgt/ajax/staff/{facility}', 'FacMgtController@ajaxStaffTable');
-    Route::post('/mgt/ajax/transfers/{status}', 'FacMgtController@ajaxTransfers');
-    Route::get('/mgt/ajax/transfer/reason', 'FacMgtController@ajaxTransferReason');
-    Route::get('/mgt/controller', 'MgtController@getController');
-    Route::get('/mgt/controller/{cid}', 'MgtController@getController');
-    Route::get('/mgt/controller/{cid}/mentor', 'MgtController@getControllerMentor');
-    Route::get('/mgt/controller/{cid}/exams', 'MgtController@getControllerExams');
-    Route::post('/mgt/controller/{cid}/rating', 'MgtController@postControllerRating');
-    Route::get('/mgt/controller/{cid}/transfers', 'MgtController@getControllerTransfers');
-    Route::get('/mgt/controller/{cid}/transferwaiver', 'MgtController@getControllerTransferWaiver');
-    Route::get('/mgt/controller/{cid}/actions', 'MgtController@getControllerActions');
-    Route::get('/mgt/controller/{cid}/transfer/override', 'MgtController@getControllerTransferOverride');
-    Route::put('/mgt/controller/{cid}/transfer/override', 'MgtController@putControllerTransferOverride');
-    Route::get('/mgt/controller/{cid}/promote', 'MgtController@getControllerPromote');
-    Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
-    Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
-    Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
-    Route::post('/mgt/controller/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
-    Route::post('/mgt/controller/toggleInsRole', 'MgtController@toggleInsRole');
-    Route::get('/mgt/err', 'MgtController@getERR');
-    Route::post('/mgt/err', 'MgtController@postERR');
-    Route::get('/mgt/solo', 'MgtController@getSolo');
-    Route::post('/mgt/solo', 'MgtController@postSolo');
-    Route::delete('/mgt/solo/{id}', 'MgtController@deleteSolo')->where('id', '[0-9]+');
-    Route::get('/mgt/staff', 'MgtController@getStaff');
-    Route::delete('/mgt/staff/{role}', 'MgtController@deleteStaff');
-    Route::put('/mgt/staff/{role}', 'MgtController@putStaff');
-    Route::get('/mgt/checklists', 'MgtController@getChecklists');
-    Route::put('/mgt/checklists', 'MgtController@putChecklists');
-    Route::post('/mgt/checklists/order', 'MgtController@postChecklistsOrder');
-    Route::post('/mgt/checklists/{id}', 'MgtController@postChecklist')->where('id', '[0-9]+');
-    Route::delete('/mgt/checklists/{id}', 'MgtController@deleteChecklist')->where('id', '[0-9]+');
+        Route::get('/mgt/facility/{fac?}', 'FacMgtController@getIndex');
+        Route::delete('/mgt/facility/{fac}/{cid}', 'FacMgtController@deleteController');
+        Route::post('/mgt/facility/{fac}/api/generate', 'FacMgtController@postAPIGenerate');
+        Route::post('/mgt/facility/{fac}/api/generate/sandbox', 'FacMgtController@postAPISandboxGenerate');
+        Route::post('/mgt/facility/{fac}/api/update', 'FacMgtController@postAPIIP');
+        Route::post('/mgt/facility/{fac}/api/update/sandbox', 'FacMgtController@postAPISandboxIP');
+        Route::post('/mgt/facility/{fac}/uls/generate', 'FacMgtController@postULSGenerate');
+        Route::post('/mgt/facility/{fac}/uls/return', 'FacMgtController@postULSReturn');
+        Route::post('/mgt/facility/{fac}/uls/devreturn', 'FacMgtController@postULSDevReturn');
+        Route::get('/mgt/ace', 'MgtController@getAce');
+        Route::post('/mgt/ace', 'MgtController@putAce');
+        Route::get('/mgt/ace/delete/{cid}', 'MgtController@deleteAce');
+        Route::post('/mgt/action/add', 'MgtController@addLog');
+        Route::post('/mgt/ajax/position/{facility}/{id}', 'FacMgtController@ajaxPosition');
+        Route::post('/mgt/ajax/del/position/{facility}', 'FacMgtController@ajaxPositionDel');
+        Route::post('/mgt/ajax/staff/{facility}', 'FacMgtController@ajaxStaffTable');
+        Route::post('/mgt/ajax/transfers/{status}', 'FacMgtController@ajaxTransfers');
+        Route::get('/mgt/ajax/transfer/reason', 'FacMgtController@ajaxTransferReason');
+        Route::get('/mgt/controller', 'MgtController@getController');
+        Route::get('/mgt/controller/{cid}', 'MgtController@getController');
+        Route::get('/mgt/controller/{cid}/mentor', 'MgtController@getControllerMentor');
+        Route::get('/mgt/controller/{cid}/exams', 'MgtController@getControllerExams');
+        Route::post('/mgt/controller/{cid}/rating', 'MgtController@postControllerRating');
+        Route::get('/mgt/controller/{cid}/transfers', 'MgtController@getControllerTransfers');
+        Route::get('/mgt/controller/{cid}/transferwaiver', 'MgtController@getControllerTransferWaiver');
+        Route::get('/mgt/controller/{cid}/actions', 'MgtController@getControllerActions');
+        Route::get('/mgt/controller/{cid}/transfer/override', 'MgtController@getControllerTransferOverride');
+        Route::put('/mgt/controller/{cid}/transfer/override', 'MgtController@putControllerTransferOverride');
+        Route::get('/mgt/controller/{cid}/promote', 'MgtController@getControllerPromote');
+        Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
+        Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
+        Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
+        Route::post('/mgt/controller/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
+        Route::post('/mgt/controller/toggleInsRole', 'MgtController@toggleInsRole');
+        Route::get('/mgt/err', 'MgtController@getERR');
+        Route::post('/mgt/err', 'MgtController@postERR');
+        Route::get('/mgt/solo', 'MgtController@getSolo');
+        Route::post('/mgt/solo', 'MgtController@postSolo');
+        Route::delete('/mgt/solo/{id}', 'MgtController@deleteSolo')->where('id', '[0-9]+');
+        Route::get('/mgt/staff', 'MgtController@getStaff');
+        Route::delete('/mgt/staff/{role}', 'MgtController@deleteStaff');
+        Route::put('/mgt/staff/{role}', 'MgtController@putStaff');
+        Route::get('/mgt/checklists', 'MgtController@getChecklists');
+        Route::put('/mgt/checklists', 'MgtController@putChecklists');
+        Route::post('/mgt/checklists/order', 'MgtController@postChecklistsOrder');
+        Route::post('/mgt/checklists/{id}', 'MgtController@postChecklist')->where('id', '[0-9]+');
+        Route::delete('/mgt/checklists/{id}', 'MgtController@deleteChecklist')->where('id', '[0-9]+');
 
-    Route::delete('/mgt/deleteActionLog/{log}', 'MgtController@deleteActionLog')->where('id', '[0-9]+');
+        Route::delete('/mgt/deleteActionLog/{log}', 'MgtController@deleteActionLog')->where('id', '[0-9]+');
 
-    Route::get('/mgt/tmu', 'TMUController@getMgtIndex');
-    Route::get('/mgt/tmu/{fac}', 'TMUController@getMgtIndex');
-    Route::get('/mgt/tmu/{fac}/colors', 'TMUController@getMgtColors');
-    Route::post('/mgt/tmu/colors','TMUController@postMgtColors');
-    Route::post('/mgt/tmu/{fac}/colors','TMUController@postMgtColors');
+        Route::get('/mgt/tmu', 'TMUController@getMgtIndex');
+        Route::get('/mgt/tmu/{fac}', 'TMUController@getMgtIndex');
+        Route::get('/mgt/tmu/{fac}/colors', 'TMUController@getMgtColors');
+        Route::post('/mgt/tmu/colors', 'TMUController@postMgtColors');
+        Route::post('/mgt/tmu/{fac}/colors', 'TMUController@postMgtColors');
 
-    Route::post('/mgt/tmu/{fac}/coords', 'TMUController@postMgtCoords');
+        Route::post('/mgt/tmu/{fac}/coords', 'TMUController@postMgtCoords');
 
-    Route::get('/mgt/tmu/{fac}/mapping/{id}', 'TMUController@getMgtMapping');
-    Route::post('/mgt/tmu/{fac}/mapping/{id}', 'TMUController@postMgtMapping');;
+        Route::get('/mgt/tmu/{fac}/mapping/{id}', 'TMUController@getMgtMapping');
+        Route::post('/mgt/tmu/{fac}/mapping/{id}', 'TMUController@postMgtMapping');;
 
-    Route::get('/mgt/checklists/{id}', 'MgtController@getChecklistItems');
-    Route::put('/mgt/checklists/{id}', 'MgtController@putChecklistItem');
-    Route::post('/mgt/checklists/{id}/order', 'MgtController@postChecklistItemsOrder');
-    Route::delete('/mgt/checklists/{clid}/{id}', 'MgtController@deleteChecklistItem');
-    Route::post('/mgt/checklists/{clid}/{id}', 'MgtController@postChecklistItem');
+        Route::get('/mgt/checklists/{id}', 'MgtController@getChecklistItems');
+        Route::put('/mgt/checklists/{id}', 'MgtController@putChecklistItem');
+        Route::post('/mgt/checklists/{id}/order', 'MgtController@postChecklistItemsOrder');
+        Route::delete('/mgt/checklists/{clid}/{id}', 'MgtController@deleteChecklistItem');
+        Route::post('/mgt/checklists/{clid}/{id}', 'MgtController@postChecklistItem');
 
-    // TMU ********************
-    Route::get('tmu/map/{fac}','TMUController@getMap');
-    Route::get('tmu/map/{fac}/dark','TMUController@getMapDark');
-    Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
-    Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
+        // TMU ********************
+        Route::get('tmu/map/{fac}', 'TMUController@getMap');
+        Route::get('tmu/map/{fac}/dark', 'TMUController@getMapDark');
+        Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
+        Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
 
 //
 // VATUSA Mgt Mail Function
