@@ -500,11 +500,16 @@ class RoleHelper
             $staff[] = ['cid' => $f->wm, 'name' => $f->wm()->fullname(), 'role' => "WM"];
         }
 
-        foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))->where('facility',
-            $facility)->orderBy('fname')->orderBy('lname')->get() as $user) {
-            if (!static::isFacilityStaff($user->cid, $facility)) {
-                $staff[] = ['cid' => $user->cid, 'name' => $user->fullname(), 'role' => 'INS'];
-            }
+        foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))
+            ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('SUP'))
+            ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('ADM'))
+            ->where('facility', $facility)
+            ->orderBy('fname')
+            ->orderBy('lname')
+            ->get() as $user) {
+                if (!static::isFacilityStaff($user->cid, $facility)) {
+                    $staff[] = ['cid' => $user->cid, 'name' => $user->fullname(), 'role' => 'INS'];
+                }
         }
 
         if ($getVATUSA && $facility == "ZHQ") {
