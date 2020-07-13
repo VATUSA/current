@@ -500,6 +500,7 @@ class RoleHelper
             $staff[] = ['cid' => $f->wm, 'name' => $f->wm()->fullname(), 'role' => "WM"];
         }
 
+        // Eloquent: I1s/I2s/I3s Listing (do not include SUPs/ADMs)
         foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))
             ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('SUP'))
             ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('ADM'))
@@ -508,8 +509,23 @@ class RoleHelper
             ->orderBy('lname')
             ->get() as $user) {
                 if (!static::isFacilityStaff($user->cid, $facility)) {
-                    $staff[] = ['cid' => $user->cid, 'name' => $user->fullname(), 'role' => 'INS'];
+                    $staff[] = [
+                        'cid' => $user->cid,
+                        'name' => $user->fullname(),
+                        'role' => 'INS'
+                    ];
                 }
+        }
+
+        // Eloquent: SUPs Tagged as Instructors
+        foreach (\App\Role::where('facility', $facility)->where('role', 'INS')->get() as $s) {
+            if (!static::isFacilityStaff($s->cid, $facility)) {
+                $staff[] = [
+                    'cid' => $s->cid,
+                    'name' => $s->user->fullname(),
+                    'role' => 'INS'
+                ];
+            }
         }
 
         if ($getVATUSA && $facility == "ZHQ") {
