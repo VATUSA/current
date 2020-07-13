@@ -35,7 +35,7 @@
                                             @foreach(\App\Facility::where('active', '1')->orWhere('id','ZAE')->orderBy('name')->get() as $f)
                                                 <option value="{{$f['id']}}"{{($f['id']==$ticket->facility)?" selected=\"true\"":""}}>{{$f['name']}}</option>
                                             @endforeach
-                                        </select> <b>* After changing, does not save without changing Assigned To.</b>
+                                        </select> <b>* After changing, does not save without changing "Assigned To" dropdown.</b>
                                     @else
                                         <p class="form-control-static">{{\App\Facility::find($ticket->facility)->name}}</p>
                                     @endif
@@ -202,13 +202,13 @@
     @if(\App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor())
         <script type="text/javascript">
             $('#tFacility').change(function () {
-                waitingDialog.show("Loading... make sure to click change \"Assigned To\" drop down to save!", {
+                waitingDialog.show("Loading... make sure to change \"Assigned To\" drop-down to save!", {
                     dialogsize: "sm",
                     progressType: "ogblue"
                 });
                 if ($('#tFacility').val() == "ZAE") {
                     $('#tAssignTo').replaceOptions([
-                        {text: "!!!Change Me!!!", value: -1},
+                        {text: "Notice: Assign Member To Save", value: -1},
                         {text: "VATUSA3", value: 0}
                     ]);
                 } else {

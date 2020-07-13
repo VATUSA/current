@@ -66,7 +66,7 @@ class AJAXController
 
         $ret = [];
 
-        $ret[] = [ 'text' => "!!! CHANGE ME !!!", 'value' => -1 ];
+        $ret[] = [ 'text' => "Notice: Assign Member To Save", 'value' => -1 ];
         $ret[] = [ 'text' => "Unassigned", 'value' => 0 ];
 
         foreach($staff as $s) {
