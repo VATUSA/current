@@ -506,21 +506,62 @@ class RoleHelper
             $staff[] = ['cid' => $f->wm, 'name' => $f->wm()->fullname(), 'role' => "WM"];
         }
 
-        foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))->where('facility',
-            $facility)->orderBy('fname')->orderBy('lname')->get() as $user) {
-            if (!static::isFacilityStaff($user->cid, $facility)) {
-                $staff[] = ['cid' => $user->cid, 'name' => $user->fullname(), 'role' => 'INS'];
+        if ($facility != "ZAE") {
+            // Eloquent: I1s/I2s/I3s Listing (do not include SUPs/ADMs)
+            foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))
+                ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('SUP'))
+                ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('ADM'))
+                ->where('facility', $facility)
+                ->orderBy('fname')
+                ->orderBy('lname')
+                ->get() as $user) {
+                    if (!static::isFacilityStaff($user->cid, $facility)) {
+                        $staff[] = [
+                            'cid' => $user->cid,
+                            'name' => $user->fullname(),
+                            'role' => 'INS'
+                        ];
+                    }
+            }
+
+            // Eloquent: SUPs Tagged as Instructors
+            foreach (\App\Role::where('facility', $facility)->where('role', 'INS')->get() as $s) {
+                if (!static::isFacilityStaff($s->cid, $facility)) {
+                    $staff[] = [
+                        'cid' => $s->cid,
+                        'name' => $s->user->fullname(),
+                        'role' => 'INS'
+                    ];
+                }
             }
         }
 
         if ($getVATUSA && $facility == "ZHQ") {
-            foreach (\App\Role::where('facility', 'ZHQ')->where('role', 'LIKE', "US%")->orderBy("role")->get() as $r) {
-                $staff[] = [
-                    'cid'  => $r->cid,
-                    'name' => $r->user->fullname() . " (" . static::roleTitle($r->role) . ")",
-                    'role' => str_replace("US", "VATUSA", $r->role)
-                ];
+            // Eloquent: All VATUSA Staff
+            foreach (\App\Role::where('facility', 'ZHQ')
+                ->where('role', 'LIKE', "US%")
+                ->orderBy("role")
+                ->get() as $r) {
+                    $staff[] = [
+                        'cid'  => $r->cid,
+                        'name' => $r->user->fullname() . " (" . static::roleTitle($r->role) . ")",
+                        'role' => str_replace("US", "VATUSA", $r->role)
+                    ];
             }
+        }
+
+        if ($facility == "ZAE") {
+            // Eloquent: VATUSA Training Staff (%3 [e.g. 3/13])
+            foreach(\App\Role::where('facility', 'ZHQ')
+                ->where('role', 'LIKE', "%3")
+                ->orderBy("role")
+                ->get() as $v) {
+                    $staff[] = [
+                        'cid' => $v->cid,
+                        'name' => $v->user->fullname() . " (" . static::roleTitle($v->role) . ")",
+                        'role' => str_replace("US", "VATUSA", $v->role)
+                    ];
+                }
         }
 
         return $staff;
