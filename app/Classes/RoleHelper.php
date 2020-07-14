@@ -408,32 +408,38 @@ class RoleHelper
      * @param null|integer $cid
      * @param null|string  $facility
      *
+     * @param bool         $includeVATUSAStaff
+     *
      * @return bool
      */
-    public static function isInstructor($cid = null, $facility = null)
+    public static function isInstructor($cid = null, $facility = null, $includeVATUSAStaff = true)
     {
         if (!Auth::check()) {
             return false;
         }
-        if (($cid == null || $cid == 0)) {
+        if (is_null($cid) || !$cid) {
             $cid = Auth::user()->cid;
+            $user = Auth::user();
+        }
+        else {
+            $user = User::find($cid);
         }
         if ($facility == null) {
-            $facility = Auth::user()->facility;
+            $facility = $user->facility;
         }
 
         // Check home controller, if no always assume no
-        if (!Auth::user()->flag_homecontroller) {
+        if (!$user->flag_homecontroller) {
             return false;
         }
 
-        // First check home facility and rating (excluding SUP)
-        if (Auth::user()->facility == $facility && Auth::user()->rating >= Helper::ratingIntFromShort("I1") && Auth::user()->rating < Helper::ratingIntFromShort("SUP")) {
+        // First check facility and rating (excluding SUP)
+        if ($user->facility == $facility && $user->rating >= Helper::ratingIntFromShort("I1") && $user->rating < Helper::ratingIntFromShort("SUP")) {
             return true;
         }
 
         //ADMs have INS Access
-        if (Auth::user()->rating == Helper::ratingIntFromShort("ADM")) {
+        if ($user->rating == Helper::ratingIntFromShort("ADM")) {
             return true;
         }
 
@@ -443,7 +449,7 @@ class RoleHelper
         }
 
         // Check for VATUSA staff, global access.
-        if (static::isVATUSAStaff($cid)) {
+        if ($includeVATUSAStaff && RoleHelper::isVATUSAStaff($cid)) {
             return true;
         }
 
