@@ -201,13 +201,15 @@
                                         <li>{{$u->facility}}
                                             - {{\App\Classes\Helper::facShtLng($u->facility)}}</li>
                                         <li>Member of {{$u->facility}} since {{ $u->facility_join }}</li>
-                                        <li>Mentor?
-                                            @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $u->facility))
-                                                <a href="/mgt/controller/{{$u->cid}}/mentor">{{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}</a>
-                                            @else
-                                                {{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}
-                                            @endif
-                                        </li>
+                                        @if(!str_contains($u->urating->long, "Instructor"))
+                                            <li>Mentor?
+                                                @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $u->facility))
+                                                    <a href="/mgt/controller/{{$u->cid}}/mentor">{{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}</a>
+                                                @else
+                                                    {{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}
+                                                @endif
+                                            </li>
+                                        @endif
                                         <br>
                                         <li>Last Activity Forum: {{$u->lastActivityForum()}} days ago</li>
                                         <li>Last Activity Website: {{$u->lastActivityWebsite()}} days ago</li>
@@ -350,15 +352,18 @@
                                         </thead>
                                         @foreach (\App\Promotions::where('cid', $u->cid)->orderby('created_at', 'desc')->get() as $promo)
                                             <tr style="text-align: center">
-                                                <td style="width:20%">{!! $promo->created_at->format('m/d/Y') !!}</td>
-                                                <td>
+                                                <td style="width:30%">{!! $promo->created_at->format('m/d/Y') !!}
+                                                    <br><em>{{ \App\Classes\Helper::nameFromCID($promo->grantor) }}</em>
+                                                </td>
+                                                <td style="vertical-align: middle">
                                                     <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->from) }}</strong>
                                                 </td>
-                                                <td class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
+                                                <td style="vertical-align: middle"
+                                                    class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
                                                     <i
                                                         class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
                                                 </td>
-                                                <td>
+                                                <td style="vertical-align: middle">
                                                     <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->to) }}</strong>
                                                 </td>
                                             </tr>
@@ -551,7 +556,8 @@
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
                                         <p class="help-block">This will prevent the controller from being assigned a
-                                            staff role by facility staff. <br> Only a VATUSA Staff Member will be able to
+                                            staff role by facility staff. <br> Only a VATUSA Staff Member will be able
+                                            to
                                             assign him or her a role.</p>
                                     </div>
                                 </div>

@@ -137,12 +137,13 @@ for ($i = 1 ; $i <= 360 ; $i++) {
     }
     L.control.clock({}).addTo(mymap);
 
+    /*
     L.Control.AirStats = L.Control.extend({
       options: {
         // topright, topleft, bottomleft, bottomright
         position: 'bottomleft'
       },
-      initialize: function (options /*{ data: {...}  }*/) {
+      initialize: function (options) {
         L.Util.setOptions(this, options);
       },
       onAdd: function (map) {
@@ -153,11 +154,11 @@ for ($i = 1 ; $i <= 360 ; $i++) {
         return container;
       },
     });
-
     L.control.airstats = function(id, options) {
       return new L.Control.AirStats(id, options);
     }
     L.control.airstats({}).addTo(mymap);
+    */
 
     L.Control.DarkLight = L.Control.extend({
       options: {
@@ -239,12 +240,12 @@ for ($i = 1 ; $i <= 360 ; $i++) {
     setInterval(function() { updatePlanes(); }, 1 * 60 * 1000); // Update every minute
     setInterval(function() { updateNEXRAD(); }, 10 * 60 * 1000); // Update NEXRAD every 10 minutes
 
-    $('.airstats').click(function() { window.location = "https://www.airstats.org"; });
+    //$('.airstats').click(function() { window.location = "https://www.airstats.org"; });
     $('.toggledarklight').click(function() {
       @if ($dark)
-      window.location="/tmu/{{$fac}}"
+      window.location="/tmu/map/{{$fac}}"
       @else
-      window.location="/tmu/{{$fac}}/dark"
+      window.location="/tmu/map/{{$fac}}/dark"
       @endif
     })
   </script>
