@@ -268,6 +268,9 @@
                                     @if(\App\Classes\RoleHelper::isFacilityStaff())
                                         <li><a href="{{secure_url("mgt/mail") }}">Email Management</a></li>
                                     @endif
+                                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff())
+                                        <li><a href="{{url("mgt/app/push")}}">iDENT App Management</a></li>
+                                    @endif
                                     @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                         <li><a href="{{ secure_url("/mgt/checklists") }}">Training Checklists Management</a></li>
                                         <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
