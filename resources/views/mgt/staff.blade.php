@@ -45,6 +45,14 @@
                                 :"<button onClick=\"assignStaff('US3')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         <tr>
+                            <td>VATUSA13</td>
+                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US13")}}</td>
+                            <td>{{\App\Classes\RoleHelper::roleTitle("US13")}}</td>
+                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US13")!="Vacant")?
+                                "<button onClick=\"deleteStaff('US13')\" class=\"btn btn-danger\">Vacate</button>"
+                                :"<button onClick=\"assignStaff('US13')\" class=\"btn btn-success\">Assign</button>")!!}</td>
+                        </tr>
+                        <tr>
                             <td>VATUSA4</td>
                             <td>{{\App\Classes\RoleHelper::getNameFromRole("US4")}}</td>
                             <td>{{\App\Classes\RoleHelper::roleTitle("US4")}}</td>
@@ -115,14 +123,6 @@
                             <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US11")!="Vacant")?
                                 "<button onClick=\"deleteStaff('US11')\" class=\"btn btn-danger\">Vacate</button>"
                                 :"<button onClick=\"assignStaff('US11')\" class=\"btn btn-success\">Assign</button>")!!}</td>
-                        </tr>
-                        <tr>
-                            <td>VATUSA13</td>
-                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US13")}}</td>
-                            <td>{{\App\Classes\RoleHelper::roleTitle("US13")}}</td>
-                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US13")!="Vacant")?
-                                "<button onClick=\"deleteStaff('US13')\" class=\"btn btn-danger\">Vacate</button>"
-                                :"<button onClick=\"assignStaff('US13')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -425,6 +425,9 @@ class MgtController extends Controller
 
     function getSolo()
     {
+        if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isInstructor() && !RoleHelper::isVATUSAStaff()) {
+            abort(401);
+        }
         return view('mgt.solo');
     }
 
