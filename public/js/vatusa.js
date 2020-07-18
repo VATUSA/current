@@ -61,7 +61,8 @@ var waitingDialog = waitingDialog || (function ($) {
 })(jQuery)
 $.ajaxSetup({
   headers  : {
-    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+    'X-Requested-With': 'XMLHttpRequest'
   },
   xhrFields: {
     withCredentials: true

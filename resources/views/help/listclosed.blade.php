@@ -12,6 +12,8 @@
                     <a href="/help/ticket/search" class="btn btn-warning">Search Tickets</a>
                 </div>
             </div>
+
+            <hr>
         @endif
         <div class="row">
             <div class="col-lg-12">

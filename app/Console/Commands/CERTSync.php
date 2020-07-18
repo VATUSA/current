@@ -1,22 +1,16 @@
 <?php namespace App\Console\Commands;
 
-define("CSV_CID", 0);
-define("CSV_RATING", 1);
-define("CSV_FNAME", 2);
-define("CSV_LNAME", 3);
-define("CSV_EMAIL", 4);
-
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
 use App\Role;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
-use App\Classes\CertHelper;
 use App\User;
-use App\Transfers;
 use App\Facility;
 use App\Actions;
+use GuzzleHttp\Client as Guzzle;
 
 class CERTSync extends Command
 {
@@ -24,9 +18,25 @@ class CERTSync extends Command
     /**
      * The console command name.
      *
-     * @var string
+     * @var $signature
      */
-    protected $name = 'CERTSync';
+    protected $signature = 'CERTSync {--A|all : Process all users, including non-members}';
+
+    private $ratings = [
+        "Inactive"          => -2,
+        "Suspended"         => -1,
+        "Unknown"           => 0,
+        "Pilot/Observer"    => 1,
+        "Student"           => 2,
+        "Student 2"         => 3,
+        "Senior Student"    => 4,
+        "Controller"        => 5,
+        "Senior Controller" => 7,
+        "Instructor"        => 8,
+        "Senior Instructor" => 10,
+        "Supervisor"        => 11,
+        "Administrator"     => 12
+    ];
 
     /**
      * The console command description.
@@ -37,6 +47,15 @@ class CERTSync extends Command
 
     public $log;
 
+    private $guzzle;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->guzzle = new Guzzle();
+    }
+
     /**
      * Execute the console command.
      *
@@ -44,161 +63,180 @@ class CERTSync extends Command
      */
     public function handle()
     {
-        $added = 0;
-        $rejoin = 0;
+        $start = microtime(true);
         $deleted = 0;
-        $this->log = array();
-        $data = CertHelper::downloadDivision();
         \DB::table("controllers")->update(["cert_update" => 0]);
-        foreach ($data as $row2) {
-            if (!$row2 || $row2 == "") continue;
-            $row = str_getcsv($row2);
-            if (!isset($row[1])) {
-                echo "Error on row: $row2\n";
+        $i = 0;
+        $logIds = [];
+        $purgeIds = [];
+        $errorIds = [];
+        $leftIds = [];
+
+        $users = $this->option("all") ? User::all() : User::where('facility', '!=', 'ZZN');
+        foreach ($users->get() as $user) {
+            $retries = 0;
+            $error = false;
+            while (true) {
+                if ($retries > 3) {
+                    $this->error("3 consecutive errors occurred after $i. Aborting.");
+                    exit(2);
+                }
+                try {
+                    $i++;
+                    $data = $this->guzzle->get("https://cert.vatsim.net/vatsimnet/idstatus.php?cid={$user->cid}");
+                } catch (RequestException $e) {
+                    if ($e->hasResponse()) {
+                        if ($e->getResponse()->getStatusCode() == 404) {
+                            if ($user->facility == "ZZN") {
+                                $this->log[] = "Non-member {$user->fullname()} ({$user->cid}) no longer exists in VATUSA database. Deleting.";
+                                // $this->line("Non-member {$user->fullname()} ({$user->cid}) no longer exists in VATUSA database. Deleting.");
+                                $purgeIds[] = $user->cid;
+                            } else {
+                                $this->log[] = "Home controller {$user->fullname()} ({$user->cid}) no longer exists in VATUSA database. Deleting.";
+                                // $this->line("Non-member {$user->fullname()} ({$user->cid}) no longer exists in VATUSA database. Deleting.");
+                            }
+                            continue 2;
+                        } else {
+                            $error = true;
+                            // $this->error(\GuzzleHttp\Psr7\str($e->getRequest()) . "\n" . \GuzzleHttp\Psr7\str($e->getResponse()));
+                            // $this->line("Error after $i");
+                        }
+                    } else {
+                        $error = true;
+                        // $this->error(\GuzzleHttp\Psr7\str($e->getRequest()) . "\n" . \GuzzleHttp\Psr7\str($e->getResponse()));
+                        // $this->line("Error after $i");
+                    }
+                }
+
+                if ($error) {
+                    $retries++;
+                    $error = false;
+                    sleep(2);
+                } else {
+                    break;
+                }
+            }
+            // $this->line($i);
+            $xml = simplexml_load_string($data->getBody());
+            $xmlUser = $xml->user[0];
+
+            $lname = (string)$xmlUser->name_last ?? null;
+            $fname = (string)$xmlUser->name_first ?? null;
+            $rating = $this->ratings[(string)$xmlUser->rating] ?? 0;
+            $division = (string)$xmlUser->division ?? null;
+
+            if (is_null($lname) || is_null($fname) || is_null($division)) {
+                $this->log[] = "XML Error. Skipping.";
+                $this->line("XML Error. Skipping.");
+                $errorIds[] = $user->cid;
                 continue;
             }
 
-            if ($row[CSV_RATING] > 0 && $row[CSV_CID] > 800000) {
-                $user = User::find($row[0]);
-                if (!$user || $user == null) {
-                    $user = new User();
-                    $user->cid = $row[CSV_CID];
-                    $user->fname = $row[CSV_FNAME];
-                    $user->lname = $row[CSV_LNAME];
-                    $user->email = $row[CSV_EMAIL];
-                    $user->rating = $row[CSV_RATING];
-                    $user->facility = "ZAE";
-                    $user->facility_join = \DB::raw("NOW()");
-                    //$user->created_at = \DB::raw("NOW()");
-                    $user->flag_needbasic = 1;
-                    $user->flag_xferOverride = 0;
-                    $user->flag_homecontroller = 1;
-                    $user->cert_update = 1;
-                    $this->log[] = "Added " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (" . Helper::ratingShortFromInt($user->rating) . ")";
-                    echo "Adding " . $user->fname . " " . $user->lname . " (" . $user->cid . ").\n";
-                    EmailHelper::sendEmail($user->email, "Welcome to VATUSA", "emails.user.join", []);
+            $user->lname = $lname;
+            $user->fname = $fname;
+            $user->rating = $rating;
+            $user->save();
 
-                    $log = new Actions();
-                    $log->to = $user->cid;
-                    $log->log = "Joined division, facility set to " . $user->facility . " by CERTSync";
-                    $log->save();
-
-                    $added++;
+            if ($division !== "United States" && $user->flag_homecontroller) {
+                $leftIds[] = $user->cid;
+                continue;
+            }
+            if ($rating == -2) {
+                if (!$user->flag_homecontroller) {
+                    $this->log[] = "Non-member {$user->fullname()} ({$user->cid}) marked inactive by VATSIM. Deleting.";
+                    // $this->line("Non-member {$user->fullname()} ({$user->cid}) marked inactive by VATSIM. Deleting.");
+                    $purgeIds[] = $user->cid;
                 } else {
-                    $user->fname = $row[CSV_FNAME];
-                    $user->lname = $row[CSV_LNAME];
-                    $user->email = $row[CSV_EMAIL];
-                    $user->rating = $row[CSV_RATING];
-                    if ($user->flag_homecontroller == 0) {
-                        // User is rejoining division... let's check and see if they left >6 months ago.
-                        if (Transfers::where('cid', $row[CSV_CID])->where('actiontext', "Left division")
-                            ->where(\DB::raw("DATE_ADD(created_at, INTERVAL 90 day)"), '>=', \DB::raw('NOW()'))
-                            ->orderBy('created_at', 'DESC')->count()
-                        ) {
-                            $t = Transfers::where('cid', $row[CSV_CID])->where('actiontext', "Left division")
-                                ->where(\DB::raw("DATE_ADD(created_at, INTERVAL 90 day)"), '>=', \DB::raw('NOW()'))
-                                ->orderBy('created_at', 'DESC')->first();
-                            $user->addToFacility($t->from);
-                            $trans = new Transfers();
-                            $trans->cid = $user->cid;
-                            $trans->to = $t->from;
-                            $trans->from = "ZZN";
-                            $trans->status = 1;
-                            $trans->actiontext = "Rejoined division";
-                            $trans->reason = "Rejoined division";
-                            $trans->save();
-                            $log = new Actions();
-                            $log->to = $user->cid;
-                            $log->log = "Rejoined division, facility set to " . $user->facility . " by CERTSync";
-                            $log->save();
-                        } elseif (Transfers::where('cid', $row[CSV_CID])->where('actiontext', "Left division")
-                            ->where(\DB::raw("DATE_ADD(created_at, INTERVAL 6 month)"), '<=', \DB::raw('NOW()'))
-                            ->orderBy('created_at', 'DESC')->count()
-                        ) {
-                            $user->facility = "ZAE";
-                            $user->facility_join = \DB::raw('NOW()');
-                            $user->flag_needbasic = 1;
-                            $trans = new Transfers();
-                            $trans->cid = $user->cid;
-                            $trans->to = $user->facility;
-                            $trans->from = "ZZN";
-                            $trans->status = 1;
-                            $trans->actiontext = "Rejoined division";
-                            $trans->reason = "Rejoined division";
-                            $trans->save();
-
-                            $log = new Actions();
-                            $log->to = $user->cid;
-                            $log->log = "Rejoined division, facility set to " . $user->facility . " by CERTSync";
-                            $log->save();
-                        } else {
-                            $user->facility = "ZAE";
-                            $user->facility_join = \DB::raw('NOW()');
-                            $user->flag_needbasic = 0;
-                            $trans = new Transfers();
-                            $trans->cid = $user->cid;
-                            $trans->to = $user->facility;
-                            $trans->from = "ZZN";
-                            $trans->status = 1;
-                            $trans->actiontext = "Rejoined division";
-                            $trans->reason = "Rejoined division";
-                            $trans->save();
-
-                            $log = new Actions();
-                            $log->to = $user->cid;
-                            $log->log = "Rejoined division, facility set to " . $user->facility . " by CERTSync";
-                            $log->save();
-                        }
-                        // Now let us check to see if they have ever been in a facility.. if not, we need to override the need basic flag.
-                        if (Transfers::where('cid', $row[CSV_CID])->where('to', 'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->count() < 1) {
-                            $user->flag_needbasic = 1;
-                            $user->save();
-                        }
-
-                        $this->log[] = "User rejoined division " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (" . Helper::ratingShortFromInt($user->rating) . ")";
-                        $rejoin++;
-                    }
-                    $user->flag_homecontroller = 1;
-                    $user->cert_update = 1;
+                    $this->log[] = "Home controller {$user->fullname()} ({$user->cid}) marked inactive by VATSIM. Removing.";
+                    // $this->line("Home controller {$user->fullname()} ({$user->cid}) marked inactive by VATSIM. Removing.");
+                    $leftIds[] = $user->cid;
                 }
+                continue;
+            }
+            if ($rating >= 0) {
+                $user->cert_update = 1;
                 $user->save();
-            } elseif ($row[CSV_RATING] == 0) {
-                $user = User::find($row[CSV_CID]);
-                if ($user != null) {
-                    $user->cert_update = 0;
-                    echo "Set " . $row[CSV_CID] . " cert_update to 0\n";
+            } else {
+                // Suspended
+                $log = new Actions();
+                $log->to = $user->cid;
+                $log->log = "User suspended, removing from division";
+                $log->save();
+                $logIds[] = $log->id;
+                // $this->line("{$user->fullname()} ($user->cid) Suspended.");
+            }
+        }
+        // $this->info("Processed $i records. Now determining deletions. Complete log will be output after completion.");
+
+        $pendingDeletions = User::where('cert_update', 0)->where('facility', '!=', 'ZZN');
+        if ($pendingDeletions->count() + count($purgeIds) >= 500) {
+            $this->log[] = "More than 500 records are going to be deleted... possible error. Aborting.";
+            foreach ($logIds as $logId) {
+                try {
+                    Actions::find($logId)->delete();
+                } catch (\Exception $e) {
+                    // DB Error
+                    continue;
+                }
+            }
+        } else {
+            if ($pendingDeletions->count() > 0) {
+                $delUsers = $pendingDeletions->get();
+                foreach ($delUsers as $delUser) {
+                    if (in_array($delUser->cid, $errorIds)) {
+                        continue;
+                    }
+
+                    switch ($delUser->rating) {
+                        case -2:
+                            $message = "Inactive";
+                            break;
+                        case -1:
+                            $message = "Suspended";
+                            break;
+                        default:
+                            $message = "Left division";
+                            break;
+                    }
+
+                    $delUser->removeFromFacility("Automated", $message, "ZZN");
+                    $delUser->flag_homecontroller = 0;
+                    $delUser->cert_update = 1;
+                    $delUser->save();
+                    $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . (($delUser->rating >= 0 ? Helper::ratingShortFromInt($delUser->rating) : "Suspended")) . ")";
+                    $this->checkDeleted($delUser);
+                    $deleted++;
                 }
             }
         }
-        if (User::where('cert_update', 0)->where('facility', 'NOT LIKE', 'ZZN')->count() >= 500) {
-            $this->log[] = "!!!!!!! More than 500 records weren't updated in this pass.  Not going to delete any of them";
-        } elseif (User::where('cert_update', 0)->where('facility', 'NOT LIKE', 'ZZN')->count() > 0) {
-            $users = User::where('cert_update', 0)->where('facility', 'NOT LIKE', 'ZZN')->get();
-            foreach ($users as $user) {
-
-                $user->removeFromFacility("Automated", "Left division", "ZZN");
-                $user->flag_homecontroller = 0;
-                $user->cert_update = 1;
-                $user->save();
-                $this->log[] = "Deleted " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (" . Helper::ratingShortFromInt($user->rating) . ")";
-                $this->checkDeleted($user);
+        if (count($purgeIds)) {
+            foreach ($purgeIds as $purgeId) {
+                User::find($purgeId)->purge();
                 $deleted++;
             }
         }
         $this->log[] = "";
-        $this->log[] = "Added: $added Rejoin: $rejoin Deleted: $deleted Active Members: " . User::where('facility', 'NOT LIKE', "ZZN")->count();
+        $this->log[] = "Deleted: $deleted Active Members: " . User::where('facility',
+                'NOT LIKE', "ZZN")->count();
         EmailHelper::sendEmail([
             "vatusa1@vatusa.net",
             "vatusa2@vatusa.net",
-           // "vatusa6@vatusa.net",
+            // "vatusa6@vatusa.net",
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
-        SMFHelper::createPost(7262, 83, "CERTSync Cycle", implode("\n", $this->log));
+        // SMFHelper::createPost(7262, 83, "CERTSync Cycle", implode("\n", $this->log));
+
+        foreach ($this->log as $line) {
+            // $this->info($line);
+        }
+        // $this->line("Completed in " . (microtime(true) - $start) . " seconds");
     }
 
     public function checkDeleted($user)
     {
         $removals = "";
-        if ($user->facility == "ZAE" || $user->facility == "ZZN") return;
+        if ($user->facility == "ZAE" || $user->facility == "ZZN") {
+            return;
+        }
         $fac = Facility::find($user->facility);
         if (RoleHelper::hasRole($user->cid, $user->facility, "ATM")) {
             RoleHelper::deleteStaff($user->facility, $user->cid, "ATM");
@@ -229,9 +267,10 @@ class CERTSync extends Command
             $role->delete();
         }
 
-        if ($removals) {
-            SMFHelper::createPost(7262, 82, "CERTSync: Staff deletion report for " . $user->fullname() . " (" . $user->cid . ")", $removals);
+        /*if ($removals) {
+            SMFHelper::createPost(7262, 82,
+                "CERTSync: Staff deletion report for " . $user->fullname() . " (" . $user->cid . ")", $removals);
             $this->log[] = $removals;
-        }
+        }*/
     }
 }

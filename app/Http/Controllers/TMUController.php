@@ -6,10 +6,14 @@ use App\Classes\RoleHelper;
 use App\tmu_facilities;
 use App\tmu_colors;
 use App\tmu_maps;
+use App\TMUNotice;
+use GuzzleHttp\Client as API;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-class TMUController extends Controller
+class TMUController
+    extends Controller
 {
     function getCoords($fac)
     {
@@ -172,14 +176,21 @@ class TMUController extends Controller
                 $fac = Auth::user()->facility;
             }
         }
-        if (!RoleHelper::isFacilitySeniorStaff(null, $fac) && !RoleHelper::hasRole(Auth::user()->cid, $fac,
-                "WM") && !RoleHelper::hasRole(Auth::user()->cid, $fac, "FE")) {
+        if (!(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isMentor())) {
             abort(401);
         }
 
         $tmufac = tmu_facilities::where('id', $fac)->orWhere('parent', $fac)->orderBy('id')->get();
 
-        return view('tmu.mgt', ['facilities' => $tmufac, 'fac' => $fac, 'facname' => $fac]);
+        $notices = TMUNotice::where(function ($q) {
+            $q->where('expire_date', '>=', \Illuminate\Support\Carbon::now('utc'));
+            $q->orWhereNull('expire_date');
+        })->orderBy('priority', 'DESC')
+            ->orderBy('start_date', 'DESC')
+            ->orderBy('tmu_facility_id')
+            ->whereIn('tmu_facility_id', $tmufac->pluck('id'))->get();
+
+        return view('tmu.mgt', ['facilities' => $tmufac, 'fac' => $fac, 'facname' => $fac, 'notices' => $notices]);
     }
 
     function postMgtCoords(Request $request, $ofac = null)
@@ -190,6 +201,7 @@ class TMUController extends Controller
 
         if ($ofac == null) {
             $fac = Auth::user()->facility;
+            $ofac = $fac;
         } else {
             $fac = $ofac;
         }
@@ -217,7 +229,7 @@ class TMUController extends Controller
         $tmufac->save();
 
         return redirect("/mgt/tmu")->with("success",
-            "Facility coordinates saved. <a href=/tmu/{$ofac}>Click here</a> to view map.");
+            "Facility coordinates saved. <a href='/tmu/map/{$ofac}'>Click here</a> to view the map.");
     }
 
     function getMgtColors($ofac = null)
@@ -354,5 +366,31 @@ class TMUController extends Controller
         $map->save();
 
         return redirect("/mgt/tmu/$fac#mapping")->with("success", "Map " . $map->name . " saved successfully.");
+    }
+
+    public function getNotices(string $sector = null)
+    {
+        $notices = TMUNotice::where(function ($q) {
+            $q->where('expire_date', '>=', Carbon::now('utc'));
+            $q->orWhereNull('expire_date');
+        })->where('start_date', '<=', Carbon::now())->orderBy('priority', 'DESC')->orderBy('tmu_facility_id')->orderBy('start_date', 'DESC');
+        if ($sector) {
+            $allFacs = tmu_facilities::where('id', $sector)->orWhere('parent', $sector);
+            $notices = $notices->whereIn('tmu_facility_id', $allFacs->get()->pluck('id'));
+        }
+        $notices = $notices->paginate(20);
+
+        $facilities = tmu_facilities::orderBy('parent', 'ASC')->orderBy('name',
+            'ASC')->get();
+        $facilitiesArr = [];
+        foreach ($facilities as $facility) {
+            $facilitiesArr[$facility->parent ?? $facility->id][] = [
+                'id'   => $facility->id,
+                'name' => $facility->name
+            ];
+        }
+
+        return view('tmu.notices')->with(compact('notices', 'facilitiesArr', 'sector'));
+
     }
 }
