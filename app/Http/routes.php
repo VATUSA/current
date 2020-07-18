@@ -321,6 +321,12 @@ Route::group(['domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : 
     Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
     Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
 
+
+        //iDENT App ***************
+        Route::get('mgt/app/push', 'AppController@getIndex');
+        Route::post('mgt/app/push', 'AppController@postPush');
+        Route::get('mgt/app/log', 'AppController@getLog');
+        Route::get('mgt/app/log', 'AppController@getPushLog');
 //
 // VATUSA Mgt Mail Function
 // dev.vatusa.net/mgt/mail/{route}
