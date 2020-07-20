@@ -19,13 +19,16 @@
                 <ul id="cbtblocksortable" class="sortable">
                     @foreach($chapters as $c)
                         <li id="cbt_{{$c->id}}" name="{{$c->id}}">
-                            <i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteChapter({{$c->id}})"></i>&nbsp;&nbsp;
+                            <i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteChapter({{$c->id}})"></i>&nbsp;&nbsp;
                             <i class="fa @if($c->visible == 1) fa-toggle-on @else fa-toggle-off @endif text-success" id="toggle{{$c->id}}" onClick="toggleChapter({{$c->id}})"></i>
-                            <i class="fa fa-pencil text-info" onClick="renameChapter({{$c->id}})"></i>
-                            <i class="fa fa-external-link" onClick="changeLink({{$c->id}})"></i>
+                            <i class="fas fa-pencil-alt text-info" onClick="renameChapter({{$c->id}})"></i>
+                            <i class="fas fa-external-link-alt" onClick="changeLink({{$c->id}})"></i>
                             <span id="name_{{$c->id}}">{{$c->name}}</span></li>
                     @endforeach
                 </ul>
+
+                <hr>
+
                 <button class="btn btn-success" onClick="newChapter({{$blockid}})">New Chapter</button>
             </div>
         </div>
@@ -97,7 +100,7 @@
                         data: { name: result },
                         success:function(data) {
 
-                            $("#cbtblocksortable").append('<li id="cbt_' + data + '"><i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteChapter(' + data + ')"></i>&nbsp;&nbsp;<i class="fa fa-toggle-on text-success" id="toggle' + data + '" onClick="toggleChapter(' + data + ')"></i> <i class="fa fa-pencil text-info" onClick="renameChapter(' + data + ')"></i> <i class="fa fa-external-link" onClick="changeLink(' + data + ')"></i> <span id="name_' + data + '">' + result + '</span></li>');
+                            $("#cbtblocksortable").append('<li id="cbt_' + data + '"><i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteChapter(' + data + ')"></i>&nbsp;&nbsp;<i class="fa fa-toggle-on text-success" id="toggle' + data + '" onClick="toggleChapter(' + data + ')"></i> <i class="fas fa-pencil-alt text-info" onClick="renameChapter(' + data + ')"></i> <i class="fas fa-external-link-alt" onClick="changeLink(' + data + ')"></i> <span id="name_' + data + '">' + result + '</span></li>');
                         }
                     });
                 }

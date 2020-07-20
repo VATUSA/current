@@ -176,10 +176,10 @@
                                                     <td class="rp-actions">
                                                         <button class="btn btn-info"
                                                                 onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
-                                                            <i class="fa fa-pencil"></i></button>
+                                                            <i class="fas fa-pencil-alt"></i></button>
                                                         <button class="btn btn-danger"
                                                                 onclick="removeUlsReturn({{$p->order}})">
-                                                            <i class="fa fa-remove"></i></button>
+                                                            <i class="fas fa-times"></i></button>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -707,8 +707,8 @@
               '<td class="rp-order">' + order + '</td>' +
               '<td class="rp-url">' + url + '</td>' +
               '<td class="rp-actions">' +
-              '<button class="btn btn-info" onclick="editUlsReturn(' + order + ')"><i class="fa fa-pencil"></i></button>' +
-              '&nbsp;<button class="btn btn-danger" onclick="removeUlsReturn(' + order + ')"> <i class="fa fa-remove"></i></button>' +
+              '<button class="btn btn-info" onclick="editUlsReturn(' + order + ')"><i class="fas fa-pencil-alt"></i></button>' +
+              '&nbsp;<button class="btn btn-danger" onclick="removeUlsReturn(' + order + ')"> <i class="fas fa-times"></i></button>' +
               '</td>'
             $(element).appendTo('#ulsreturn-table > tbody')
           }).error(data => {

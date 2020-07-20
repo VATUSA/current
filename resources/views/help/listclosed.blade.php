@@ -46,17 +46,17 @@
                                     @if($sort == "id")
                                         {!! ($sortdir == "asc") ? '<i class="fa fa-arrow-up"></i>' : '<i class="fa fa-arrow-down"></i>'!!}
                                     @else
-                                        <i class="fa fa-arrows-v"></i>
+                                        <i class="fas fa-arrows-alt-v"></i>
                                     @endif
                                 </a></th>
                             @if(\App\Classes\RoleHelper::isVATUSAStaff())
                                 <th class="fit"><a
                                             href="/help/ticket/closed?sort=facility&dir={{($sort == "facility")?$osortdir:"desc"}}&page=1">Facility
-                                        @if($sort == "facility")
-                                            {!! ($sortdir == "asc") ? '<i class="fa fa-arrow-up"></i>' : '<i class="fa fa-arrow-down"></i>'!!}
-                                        @else
-                                            <i class="fa fa-arrows-v"></i>
-                                        @endif
+                                    @if($sort == "facility")
+                                        {!! ($sortdir == "asc") ? '<i class="fa fa-arrow-up"></i>' : '<i class="fa fa-arrow-down"></i>'!!}
+                                    @else
+                                        <i class="fas fa-arrows-alt-v"></i>
+                                    @endif
                                     </a></th>
                             @endif
                             <th>Subject</th>
@@ -67,7 +67,7 @@
                                     @if($sort == "created_at")
                                         {!! ($sortdir == "asc") ? '<i class="fa fa-arrow-up"></i>' : '<i class="fa fa-arrow-down"></i>'!!}
                                     @else
-                                        <i class="fa fa-arrows-v"></i>
+                                        <i class="fas fa-arrows-alt-v"></i>
                                     @endif
                                 </a></th>
                             <th class="fit"><a
@@ -76,7 +76,7 @@
                                     @if($sort == "updated_at")
                                         {!! ($sortdir == "asc") ? '<i class="fa fa-arrow-up"></i>' : '<i class="fa fa-arrow-down"></i>'!!}
                                     @else
-                                        <i class="fa fa-arrows-v"></i>
+                                        <i class="fas fa-arrows-alt-v"></i>
                                     @endif
                                 </a></th>
                             <th class="fit">Last Replier</th>
