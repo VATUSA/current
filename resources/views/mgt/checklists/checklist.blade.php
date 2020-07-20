@@ -12,8 +12,8 @@
                 <ul id="cbtblocksortable" class="sortable">
                     @foreach($cl->items as $c)
                         <li id="cl_{{$c->id}}" name="{{$c->id}}">
-                            <i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteItem({{$c->id}})"></i>&nbsp;&nbsp;
-                            <i class="fa fa-pencil text-info" onClick="changeItem({{$c->id}})"></i>
+                            <i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteItem({{$c->id}})"></i>&nbsp;&nbsp;
+                            <i class="fas fa-pencil-alt text-info" onClick="changeItem({{$c->id}})"></i>
                             <span id="name_{{$c->id}}">{{$c->item}}</span></li>
                     @endforeach
                 </ul>
@@ -64,7 +64,7 @@
                         data: { name: result },
                         success:function(data) {
                             waitingDialog.hide();
-                            $("#cbtblocksortable").append('<li id="cl_' + data + '"><i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteItem(' + data + ')"></i>&nbsp;&nbsp; <i class="fa fa-pencil text-info" onClick="changeItem(' + data + ')"></i> <span id="name_' + data + '">' + result + '</span></li>');
+                            $("#cbtblocksortable").append('<li id="cl_' + data + '"><i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteItem(' + data + ')"></i>&nbsp;&nbsp; <i class="fas fa-pencil-alt text-info" onClick="changeItem(' + data + ')"></i> <span id="name_' + data + '">' + result + '</span></li>');
                         }
                     });
                 }

@@ -119,7 +119,7 @@
                             <td>{{$q->id}}</td>
                             <td>{{$q->question}}</td>
                             <td>@if($q->type == 1) T/F @else MC @endif</td>
-                            <td><i class="fa fa-edit" onClick="editQuestion({{$q->id}})"></i> <i class="fa fa-trash text-danger" onClick="deleteQuestion({{$q->id}})"></i></td>
+                            <td><i class="fas fa-edit" onClick="editQuestion({{$q->id}})"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteQuestion({{$q->id}})"></i></td>
                         </tr>
                     @endforeach
                 </table>

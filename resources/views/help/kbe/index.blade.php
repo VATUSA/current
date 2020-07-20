@@ -12,8 +12,8 @@
                 <tbody>
                 @foreach(\App\KnowledgebaseCategories::all() as $kbc)
                     <tr>
-                        <td id="kb_{{$kbc->id}}"><i class="fa fa-trash-o text-danger" onClick="deleteKBC({{$kbc->id}})"></i>&nbsp;&nbsp;
-                            <i class="fa fa-pencil text-info" onClick="renameKBC({{$kbc->id}})"></i>
+                        <td id="kb_{{$kbc->id}}"><i class="fas fa-trash-alt text-danger" onClick="deleteKBC({{$kbc->id}})"></i>&nbsp;&nbsp;
+                            <i class="fas fa-pencil-alt text-info" onClick="renameKBC({{$kbc->id}})"></i>
                             <a href="/help/kbe/{{$kbc->id}}"><span id="name_{{$kbc->id}}">{{$kbc->name}}</span></a></td>
                     </tr>
                 @endforeach
@@ -48,7 +48,7 @@
                 type: 'PUT',
                 success: function(data) {
                     waitingDialog.hide();
-                    $('#kbc_table tbody').append('<tr><td id="kbc_' + data + '"><i class="fa fa-trash-o text-danger" onClick="deleteKBC(' + data + ')"></i>&nbsp;&nbsp;<i class="fa fa-pencil text-info" onClick="renameKBC(' + data + ')"></i> <a href="/help/kbe/' + data + '"><span id="name_' + data + '">New Knowledgebase Category</span></a></td></tr>');
+                    $('#kbc_table tbody').append('<tr><td id="kbc_' + data + '"><i class="fas fa-trash-alt text-danger" onClick="deleteKBC(' + data + ')"></i>&nbsp;&nbsp;<i class="fas fa-pencil-alt text-info" onClick="renameKBC(' + data + ')"></i> <a href="/help/kbe/' + data + '"><span id="name_' + data + '">New Knowledgebase Category</span></a></td></tr>');
                 }
             });
         }

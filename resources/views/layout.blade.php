@@ -8,7 +8,7 @@
     <title>VATUSA - @yield('title')</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-formhelpers.min.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" rel="stylesheet">
     <link href="/css/vatusa.css" rel="stylesheet">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -245,45 +245,113 @@
                                 </li>
                             </ul>
                         </li>
+
                         @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isMentor())
                             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
                                                     role="button" aria-expanded="false">
                                     <i class="fa fa-cogs"></i> Actions<span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    @if(\App\Classes\RoleHelper::isMentor() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM"))
-                                        <li><a href="{{secure_url("mgt/facility")}}">Facility Management</a></li>
-                                        <li><a href="{{secure_url("mgt/controller")}}">Member Management</a></li>
-                                    @endif
-                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "FE"))
-                                        <li><a href="{{secure_url('mgt/tmu')}}">TMU Map Management</a></li>
-                                    @else
-                                        <li><a href="{{secure_url('mgt/tmu')}}">TMU Notices Management</a></li>
-                                    @endif
-                                    @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                        <li><a href="{{secure_url("exam")}}">Exam Management</a></li>
-                                    @endif
-                                    @if (\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
-                                        <li><a href="{{secure_url("cbt/editor") }}">CBT Editor</a></li>
-                                    @endif
-                                    @if(\App\Classes\RoleHelper::isFacilityStaff())
-                                        <li><a href="{{secure_url("mgt/mail") }}">Email Management</a></li>
-                                    @endif
-                                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                        <li><a href="{{url("mgt/app/push")}}">iDENT App Management</a></li>
-                                    @endif
-                                    @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="{{ secure_url("/mgt/checklists") }}">Training Checklists Management</a></li>
-                                        <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
-                                        <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a></li>
-                                        <li><a href="{{secure_url("mgt/err") }}">Submit Transfer Request</a></li>
-                                    @endif
-                                    <li><a href="{{ secure_url("/stats") }}">Division Statistics</a></li>
-                                    @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="{{ secure_url("mgt/solo") }}">Solo Certifications</a></li>
-                                    @endif
-                                </ul>
-                            </li>
-                        @endif
+                                
+                                    <ul class="dropdown-menu" role="menu">
+
+                                    <!-- Facility -->
+                                    <li class="dropdown-header">
+                                        <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
+                                        <i class="fas fa-building"></i> Facility Actions</h5>
+                                    </li>
+
+                                        <!-- Facility Management [Mentor/Instructors/VATUSA/ATM/DATM/TA/WM] -->
+                                        @if(\App\Classes\RoleHelper::isMentor() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM"))
+                                            <li><a href="{{secure_url("mgt/facility")}}">Facility Management</a></li>
+                                        @endif
+                                        
+                                        <!-- TMU Management [ATM/DATM/TA/WM/FE] -->
+                                        @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "FE"))
+                                            <li><a href="{{secure_url('mgt/tmu')}}">TMU Map Management</a></li>
+                                        @else
+                                            <li><a href="{{secure_url('mgt/tmu')}}">TMU Notices Management</a></li>
+                                        @endif
+
+                                    <!-- Controllers -->
+                                    <li class="nav-divider"></li>
+                                    <li class="dropdown-header">
+                                        <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
+                                        <i class="fas fa-users-cog"></i> Controller Actions</h5>
+                                    </li>
+
+                                        <!-- Member Management [Mentor/Instructors/ATM/DATM/TA/VATUSA/WM] -->
+                                        @if(\App\Classes\RoleHelper::isMentor() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM"))
+                                            <li><a href="{{secure_url("mgt/controller")}}">Member Management</a></li>
+                                        @endif
+
+                                        <!-- Submit Transfer Request [VATUSA] -->
+                                        @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                            <li><a href="{{secure_url("mgt/err") }}">Submit Transfer Request</a></li>
+                                        @endif
+
+                                    <!-- Training --> 
+                                    <li class="nav-divider"></li>
+                                    <li class="dropdown-header">
+                                        <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
+                                        <i class="fas fa-chalkboard-teacher"></i> Training Actions</h5>
+                                    </li>
+
+                                        <!-- Exam Management [Instructors/ATM/DATM/TA] -->
+                                        @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
+                                            <li><a href="{{secure_url("exam")}}">Exam Management</a></li>
+                                        @endif
+
+                                        <!-- CBT Editor [VATUSA/ATM/DATM/TA] -->
+                                        @if (\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
+                                            <li><a href="{{secure_url("cbt/editor") }}">CBT Editor</a></li>
+                                        @endif
+                                        
+                                        <!-- Checklists Management [VATUSA] -->
+                                        @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                            <li><a href="{{ secure_url("/mgt/checklists") }}">Checklists Management</a></li>
+                                        @endif
+                                    
+
+                                    <!-- Communication --> 
+                                    <li class="nav-divider"></li>
+                                    <li class="dropdown-header">
+                                        <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
+                                        <i class="fas fa-broadcast-tower"></i> Communication Actions</h5>
+                                    </li>
+
+                                        <!-- Email Management [ATM/DATM/TA/VATUSA] -->
+                                        @if(\App\Classes\RoleHelper::isFacilityStaff())
+                                            <li><a href="{{secure_url("mgt/mail") }}">Email Management</a></li>
+                                        @endif
+
+                                        <!-- iDENT App Management [ATM/DATM/TA/VATUSA] -->
+                                        @if (\App\Classes\RoleHelper::isFacilitySeniorStaff())
+                                            <li><a href="{{url("mgt/app/push")}}">iDENT App Management</a></li>
+                                        @endif
+
+                                    <!-- Division -->
+                                    <li class="nav-divider"></li>
+                                    <li class="dropdown-header">
+                                        <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
+                                        <i class="fas fa-city"></i> Division Actions</h5>
+                                    </li>
+
+                                        <!-- ACE Team/Division Staff Management [VATUSA] -->
+                                        @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                            <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
+                                            <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a></li>
+                                        @endif
+
+                                        <!-- Division Statistics [All] -->
+                                        <li><a href="{{ secure_url("/stats") }}">Division Statistics</a></li>
+
+                                        <!-- Solo Certifications [Instructors/ATM/DATM/TA/VATUSA]
+                                        @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
+                                            <li><a href="{{ secure_url("mgt/solo") }}">Solo Certifications</a></li>
+                                        @endif
+
+                                    </ul>
+                                </li>
+                            @endif
 
 
                     @else
@@ -306,7 +374,7 @@
 <div class="container">
     @if(session('error'))
         <div class="alert alert-danger">
-            <strong><i class="fa fa-warning"></i> Error!</strong> {!! session('error') !!}
+            <strong><i class="fas fa-exclamation-circle"></i> Error!</strong> {!! session('error') !!}
         </div>
     @endif
     @if(session('success'))
@@ -350,7 +418,7 @@
             Network (VATSIM) and may not be used for real-world navigation or aviation purposes and doing so could be a
             violation of federal law.</p>
         <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i
-                    class="fa fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i
+                    class="fab fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i
                     class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>

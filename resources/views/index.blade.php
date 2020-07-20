@@ -42,7 +42,7 @@
                             @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
                                 <div class="text-center">
                                     <a href="{{ secure_url("/mgt/tmu#notices") }}">
-                                        <button class="btn btn-default"><i class="fa fa-pencil"></i>
+                                        <button class="btn btn-default"><i class="fa fa-pencil-alt"></i>
                                             Edit @if(!\App\Classes\RoleHelper::isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
                                             Notices
                                         </button>
@@ -139,7 +139,7 @@
           var html = ''
           $.each(data.news, function (i) {
             html = html + '<tr onClick="window.location=\'' + data.news[i].url + '\';" style="cursor: pointer">'
-            html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-text-o fa-2x"></i></td>'
+            html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
             html = html + '<td><p><strong>' + data.news[i].subject + '</strong><br><small>' + data.news[i].humandate + '</small></p></td></tr>'
           })
           $('#newsbody').html(html)
