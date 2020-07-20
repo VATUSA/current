@@ -36,7 +36,7 @@
                             <td><a href="/mgt/controller/{{$reassign->cid}}" data-toggle="tooltip" data-placement="bottom" title="{{$reassign->cid}}">{{\App\Classes\Helper::nameFromCID($reassign->cid)}}</a></td>
                             <td><a href="/mgt/controller/{{$reassign->instructor_id}}" data-toggle="tooltip" data-placement="bottom" title="{{$reassign->instructor_id}}">{{\App\Classes\Helper::nameFromCID($reassign->instructor_id)}}</a></td>
                             <td colspan="2">Reassign on {{date("M j, Y", strtotime($reassign->reassign_date))}}</td>
-                            <td>@if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $exam->facility_id) || $exam->instructor_id == \Auth::user()->cid) <i class="fa fa-trash-o text-danger" onClick="deleteReassign({{$reassign->id}})"></i> @endif</td>
+                            <td>@if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $exam->facility_id) || $exam->instructor_id == \Auth::user()->cid) <i class="fas fa-trash-alt text-danger" onClick="deleteReassign({{$reassign->id}})"></i> @endif</td>
                         </tr>
                     @endforeach
                     @foreach(\App\ExamAssignment::where('exam_id', $exam->id)->get() as $assign)
@@ -46,7 +46,7 @@
                             <td><a href="/mgt/controller/{{$assign->instructor_id}}" data-toggle="tooltip" data-placement="bottom" title="{{$assign->instructor_id}}">{{\App\Classes\Helper::nameFromCID($assign->instructor_id)}}</a></td>
                             <td>{{date("M j, Y", strtotime($assign->assigned_date))}}</td>
                             <td>{{date("M j, Y", strtotime($assign->expire_date))}}</td>
-                            <td>@if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $exam->facility_id) || $exam->instructor_id == \Auth::user()->cid) <i class="fa fa-trash-o text-danger" onClick="deleteAssign({{$assign->id}})"></i> @endif</td>
+                            <td>@if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $exam->facility_id) || $exam->instructor_id == \Auth::user()->cid) <i class="fas fa-trash-alt text-danger" onClick="deleteAssign({{$assign->id}})"></i> @endif</td>
                         </tr>
                     @endforeach
                     @if ($flag == 0)
