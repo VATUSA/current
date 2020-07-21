@@ -98,7 +98,7 @@
                                                                                                     onClick="appvTrans({{$t->id}})"><i
                                                             class="fa fa-check"></i></a> &nbsp; <a href="#"
                                                                                                    onClick="rejTrans({{$t->id}})"><i
-                                                            class="fa fa-remove"></i></a></td>
+                                                            class="fa fa-times"></i></a></td>
                                             @else
                                                 <td>&nbsp;</td>
                                             @endif
@@ -398,7 +398,7 @@
               @endif
                 html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html += ' &nbsp; <a href="#" onClick="deleteController(' + data[i].cid + ')"><i class="text-danger fa fa-remove"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteController(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
