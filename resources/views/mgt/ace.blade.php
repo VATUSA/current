@@ -15,7 +15,7 @@
                               method="post">
                             @if(Session::has('aceSubmit'))
                                 @if(Session::get('aceSubmit') !== true)
-                                    <div class="alert alert-danger"><i class="fa fa-warning"></i>
+                                    <div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i>
                                         <strong>Error!</strong>
                                         There was an error adding the controller to the ACE
                                         team.<strong> {{ Session::get('aceSubmit') }}</strong></div>

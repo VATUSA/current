@@ -24,13 +24,16 @@
                 <ul id="cbtblocksortable" class="sortable">
                     @foreach($blocks as $b)
                         <li id="cbt_{{$b->id}}">
-                            <i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteBlock({{$b->id}})"></i>&nbsp;&nbsp;
+                            <i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteBlock({{$b->id}})"></i>&nbsp;&nbsp;
                             <i class="fa @if($b->visible == 1) fa-toggle-on @else fa-toggle-off @endif text-success" id="toggle{{$b->id}}" onClick="toggleBlock({{$b->id}})"></i>
-                            <i class="fa fa-pencil text-info" onClick="renameBlock({{$b->id}})"></i>
+                            <i class="fas fa-pencil-alt text-info" onClick="renameBlock({{$b->id}})"></i>
                             <i class="fa fa-lock" onClick="changeAccess({{$b->id}}, '{{$b->level}}')"></i>
                             <a href="/cbt/editor/{{$b->id}}"><span id="name_{{$b->id}}">{{$b->name}}</span></a></li>
                     @endforeach
                 </ul>
+
+                <hr>
+
                 <button class="btn btn-success" onClick="newBlock('{{$fac}}')">New Block</button>
             </div>
         </div>
@@ -119,7 +122,7 @@
                 url: '/cbt/editor/ajax/block/' + fac,
                 type: 'PUT',
                 success: function(data) {
-                    $('#cbtblocksortable').append('<li id="cbt_' + data + '"><i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteBlock(' + data + ')"></i>&nbsp;&nbsp;<i class="fa fa-toggle-on text-success" id="toggle' + data + '" onClick="toggleBlock(' + data + ')"></i> <i class="fa fa-pencil text-info" onClick="renameBlock(' + data + ')"></i> <a href="/cbt/editor/' + data + '"><span id="name_' + data + '">New Training Block</span></a></li>');
+                    $('#cbtblocksortable').append('<li id="cbt_' + data + '"><i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteBlock(' + data + ')"></i>&nbsp;&nbsp;<i class="fa fa-toggle-on text-success" id="toggle' + data + '" onClick="toggleBlock(' + data + ')"></i> <i class="fas fa-pencil-alt text-info" onClick="renameBlock(' + data + ')"></i> <a href="/cbt/editor/' + data + '"><span id="name_' + data + '">New Training Block</span></a></li>');
                 }
             });
         }
