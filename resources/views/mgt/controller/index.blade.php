@@ -530,7 +530,7 @@
                                                            href="#"
                                                            data-action="{{ secure_url('mgt/deleteActionLog/'.$a->id) }}"
                                                            class="text-danger delete-log"><i
-                                                                class="fa fa-remove"></i></a>
+                                                                class="fa fa-times"></i></a>
                                                         <i class="spinner-icon fa fa-spinner fa-spin"
                                                            style="display:none;"></i>
 
