@@ -12,8 +12,8 @@
                 <ul id="cbtblocksortable" class="sortable">
                     @foreach($category->questions as $c)
                         <li id="kbe_{{$c->id}}" name="{{$c->id}}">
-                            <i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteQuestion({{$c->id}})"></i>&nbsp;&nbsp;
-                            <a href="/help/kbe/{{$category->id}}/{{$c->id}}"><i class="fa fa-pencil text-info"></i></a>
+                            <i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteQuestion({{$c->id}})"></i>&nbsp;&nbsp;
+                            <a href="/help/kbe/{{$category->id}}/{{$c->id}}"><i class="fas fa-pencil-alt text-info"></i></a>
                             <span id="name_{{$c->id}}">{{$c->question}}</span></li>
                     @endforeach
                 </ul>
@@ -77,9 +77,9 @@
                                 type: 'PUT',
                                 data: { question: q, answer: a },
                                 success:function(data) {
-                                    $("#cbtblocksortable").append('<li id="kbe_' + data + '" name="' + data + '"><i class="fa fa-arrows-v arrows"></i>'
-                                            +'<i class="fa fa-trash-o text-danger" onClick="deleteQuestion(' + data + ')"></i>' +
-                                            ' <i class="fa fa-pencil text-info" onClick="editQuestion(' + data + ')"></i>' +
+                                    $("#cbtblocksortable").append('<li id="kbe_' + data + '" name="' + data + '"><i class="fas fa-arrows-alt-v arrows"></i>'
+                                            +'<i class="fas fa-trash-alt text-danger" onClick="deleteQuestion(' + data + ')"></i>' +
+                                            ' <i class="fas fa-pencil-alt text-info" onClick="editQuestion(' + data + ')"></i>' +
                                             ' <span id="name_' + data + '">' + q + '</span></li>');
                                     $('#newQuestionQuestion').val("");
                                     $('#newQuestionAnswer').val('');

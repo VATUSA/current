@@ -18,7 +18,7 @@
           message : '<strong>Are you sure you want to delete the log entry?</strong><hr style="margin-top:10px;margin-bottom:10px;">' + content,
           buttons : {
             confirm: {
-              label    : '<i class="fa fa-remove"></i> Yes, delete',
+              label    : '<i class="fas fa-times"></i> Yes, delete',
               className: 'btn-danger'
             },
             cancel : {
@@ -190,7 +190,7 @@
                                                 <p class="text-success"><i class="fa fa-check"></i> Receiving Broadcast
                                                     Emails</p>
                                             @else
-                                                <p class="text-danger"><i class="fa fa-remove"></i> Not Receiving
+                                                <p class="text-danger"><i class="fas fa-times"></i> Not Receiving
                                                     Broadcast
                                                     Emails
                                                 </p>
@@ -253,7 +253,7 @@
                                                     </option>
                                                 </select>
                                                 <div class="alert alert-danger" id="ratingchange-warning"
-                                                     style="display:none;"><strong><i class="fa fa-warning"></i>
+                                                     style="display:none;"><strong><i class="fas fa-times"></i>
                                                         Warning!</strong> This controller currently has the Prevent
                                                     Staff Role Assignment flag.
                                                 </div>
@@ -530,7 +530,7 @@
                                                            href="#"
                                                            data-action="{{ secure_url('mgt/deleteActionLog/'.$a->id) }}"
                                                            class="text-danger delete-log"><i
-                                                                class="fa fa-remove"></i></a>
+                                                                class="fa fa-times"></i></a>
                                                         <i class="spinner-icon fa fa-spinner fa-spin"
                                                            style="display:none;"></i>
 
