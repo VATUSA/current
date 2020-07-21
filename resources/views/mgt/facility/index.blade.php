@@ -60,8 +60,8 @@
                                                     class="fa fa-user-plus"></i> {{\App\Transfers::where('to', $fac)->where('status', 0)->count()}}</span>
                                         </h1></td>
                                     <td><h1><span data-toggle="tooltip" data-placement="bottom"
-                                                  title="Promotions this Month"><i
-                                                    class="fa fa-star"></i> {{$promotionEligible}}</span></h1></td>
+                                                  title="Total Eligible for Promotion">
+                                                  <i class="fas fa-school"></i> {{$promotionEligible}}</span></h1></td>
                                 </tr>
                             </table>
                             <hr>
@@ -98,7 +98,7 @@
                                                                                                     onClick="appvTrans({{$t->id}})"><i
                                                             class="fa fa-check"></i></a> &nbsp; <a href="#"
                                                                                                    onClick="rejTrans({{$t->id}})"><i
-                                                            class="fa fa-remove"></i></a></td>
+                                                            class="fa fa-times"></i></a></td>
                                             @else
                                                 <td>&nbsp;</td>
                                             @endif
@@ -176,10 +176,10 @@
                                                     <td class="rp-actions">
                                                         <button class="btn btn-info"
                                                                 onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
-                                                            <i class="fa fa-pencil"></i></button>
+                                                            <i class="fas fa-pencil-alt"></i></button>
                                                         <button class="btn btn-danger"
                                                                 onclick="removeUlsReturn({{$p->order}})">
-                                                            <i class="fa fa-remove"></i></button>
+                                                            <i class="fas fa-times"></i></button>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -398,7 +398,7 @@
               @endif
                 html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html += ' &nbsp; <a href="#" onClick="deleteController(' + data[i].cid + ')"><i class="text-danger fa fa-remove"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteController(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
@@ -707,8 +707,8 @@
               '<td class="rp-order">' + order + '</td>' +
               '<td class="rp-url">' + url + '</td>' +
               '<td class="rp-actions">' +
-              '<button class="btn btn-info" onclick="editUlsReturn(' + order + ')"><i class="fa fa-pencil"></i></button>' +
-              '&nbsp;<button class="btn btn-danger" onclick="removeUlsReturn(' + order + ')"> <i class="fa fa-remove"></i></button>' +
+              '<button class="btn btn-info" onclick="editUlsReturn(' + order + ')"><i class="fas fa-pencil-alt"></i></button>' +
+              '&nbsp;<button class="btn btn-danger" onclick="removeUlsReturn(' + order + ')"> <i class="fas fa-times"></i></button>' +
               '</td>'
             $(element).appendTo('#ulsreturn-table > tbody')
           }).error(data => {
