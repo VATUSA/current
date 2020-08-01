@@ -314,7 +314,7 @@
                                             @endif
                                         </tr>
                                         <tr>
-                                            <td>Has it been at least 90 days since promotion to S1, S2 or S3?</td>
+                                            <td>Has it been at least 90 days since promotion to S1, S2, S3, or C1?</td>
                                             <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                                         </tr>
                                         <tr>
