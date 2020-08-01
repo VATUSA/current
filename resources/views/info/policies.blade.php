@@ -43,8 +43,9 @@
                     </tr>
                     <tr>
                         <td>Chain of Command Flow Chart</td>
-                        <td>05/27/2020</td>
-                        <td><a href="/docs/orgchart-new.png" target="_blank">view</a></td>
+                        <td>August 2020</td>
+                        <!--<td><a href="/docs/orgchart-new.png" target="_blank">view</a></td>-->
+                        <td><em rel="tooltip" title="Policy is a Work In Progress">WIP</em></td>
                     </tr>
                     <tr class="no-hover">
                         <td colspan="3"><strong>Training Administration</strong></td>
@@ -137,7 +138,7 @@
                     </tr>
                     <tr>
                         <td>T1000.1 &mdash; APIv2</td>
-                        <td>Summer 2020</td>
+                        <td>Soon&trade;</td>
                         <td><em rel="tooltip" title="Policy is a Work In Progress">WIP</em></td>
                        {{-- @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/T1000.1.pdf" target="_blank">view</a></td>
