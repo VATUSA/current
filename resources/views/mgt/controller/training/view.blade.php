@@ -30,6 +30,7 @@
                         <tr>
                             <td>Score</td>
                             <td id="training-score">
+                                @php $score = rand(1,5); @endphp
                                 @for($i = 1; $i <= 5; $i++)
                                     <span
                                         class="glyphicon @if($i > $score) glyphicon-star-empty @else glyphicon-star @endif"></span>
@@ -79,7 +80,7 @@
                 </button>
                 <h4 class="modal-title" id="myModalLabel">Edit Training Record for <span
                         id="e-training-student"></span> on <span
-                            class="e-training-position"></span></h4>
+                        class="e-training-position"></span></h4>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
@@ -95,17 +96,20 @@
                             <tbody>
                             <tr>
                                 <td><label for="e-training-position">Position</label></td>
-                                <td><p class="form-control-static" id="e-training-artcc"></p> - <input class="form-control e-training-position"
-                                                                                            type="text"
-                                                                                            name="position"
-                                                                                            placeholder="ex. SEA_APP"
-                                                                                            required autocomplete="off">
+                                <td><p class="form-control-static" id="e-training-artcc"></p> - <input
+                                        class="form-control e-training-position"
+                                        type="text"
+                                        name="position"
+                                        id="e-training-position"
+                                        placeholder="ex. SEA_APP"
+                                        required autocomplete="off">
                                 </td>
                             </tr>
                             <tr>
                                 <td><label for="e-training-score">Progress</label></td>
                                 <td>
-                                    <select class="form-control" name="score" id="e-training-score" required autocomplete="off">
+                                    <select class="form-control" name="score" id="e-training-score" required
+                                            autocomplete="off">
                                         <option value="0">-- Select One --</option>
                                         <option value="1">1 - No Progress</option>
                                         <option value="2">2 - Little Progress</option>
@@ -117,25 +121,29 @@
                             </tr>
                             <tr>
                                 <td><label for="e-training-datetime">Date and Time (UTC)</label></td>
-                                <td><input class="form-control" type="text" name="datetime" id="e-training-datetime"
+                                <td><input class="form-control" type="text" name="session_date" id="e-training-datetime"
                                            required autocomplete="off"></td>
                             </tr>
                             <tr>
                                 <td><label for="e-training-duration-hrs">Duration</label></td>
-                                <td><input class="form-control" type="number" name="duration"
-                                           id="e-training-duration-hrs" min="0" autocomplete="off">:<input class="form-control" type="number"
-                                                                                name="duration"
-                                                                                id="e-training-duration-mins" step="15" min="0" max="45" autocomplete="off"></td>
+                                <td><input class="form-control" type="number" name="duration-hours"
+                                           id="e-training-duration-hrs" min="0" autocomplete="off">:<input
+                                        class="form-control" type="number"
+                                        name="duration-mins"
+                                        id="e-training-duration-mins" step="15" min="0" max="45" autocomplete="off">
+                                </td>
                             </tr>
                             <tr>
                                 <td><label for="e-training-movements">Number of Movements</label></td>
-                                <td><input class="form-control" type="number" name="movements" id="e-training-movements" placeholder="ex. 8"
+                                <td><input class="form-control" type="number" name="movements" id="e-training-movements"
+                                           placeholder="ex. 8"
                                            required autocomplete="off">
                                 </td>
                             </tr>
                             <tr>
                                 <td><label for="e-training-location">Location</label></td>
-                                <td><select class="form-control" name="location" id="e-training-location" required autocomplete="off">
+                                <td><select class="form-control" name="location" id="e-training-location" required
+                                            autocomplete="off">
                                         <option value="-1">-- Select One --</option>
                                         <option value="0">Classroom</option>
                                         <option value="1">Live</option>
@@ -155,7 +163,8 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <label for="e-training-notes" class="text-center" style="display: block;">Training Notes</label>
+                                    <label for="e-training-notes" class="text-center" style="display: block;">Training
+                                        Notes</label>
                                     <textarea class="form-control" name="notes" id="e-training-notes"
                                               required autocomplete="off"></textarea>
                                 </td>
