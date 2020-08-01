@@ -107,7 +107,7 @@ $(function () {
       if (durHours > 0) durationStr += durHours + ' hour' + ((durHours > 1 ? 's' : '')) + ' '
       if (durMinutes > 0) durationStr += durMinutes + ' minute' + ((durMinutes > 1 ? 's' : ''))
       $('#training-duration').html(durationStr)
-      $('#training-movements').html(!isNaN(parseInt(result.num_movements)) ? result.movements : '<em>Not Available</em>')
+      $('#training-movements').html(!isNaN(parseInt(result.movements)) ? result.movements : '<em>Not Available</em>')
       let location = ''
       switch (result.location) {
         case 0:
@@ -131,7 +131,7 @@ $(function () {
     })
       .fail((xhr, status, error) => {
         btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>').attr('disabled', false)
-        alert('Unable to get training record. ' + error)
+        swal('Error!', 'Unable to get training record. ' + error, 'error')
       })
   })
   $('.edit-tr').click(function () {
@@ -144,8 +144,7 @@ $(function () {
       url   : $.apiUrl() + '/v2/training/record/' + id,
       method: 'GET',
     }).done(result => {
-      btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>').attr('disabled', false)
-      console.log(result)
+      btn.html('<span class=\'glyphicon glyphicon-pencil\'></span>').attr('disabled', false)
 
       $('#edit-training-record .tr-modal-delete, #e-training-submit').attr('data-id', id)
       $('input.e-training-position').val(result.position)
@@ -153,17 +152,17 @@ $(function () {
       $('#e-training-student').html(result.student.fname + ' ' + result.student.lname)
       $('#e-training-artcc').html(result.facility.name)
       $('#e-training-score').val(result.score)
-      $('#e-training-datetime').val(moment(result.session_date).format('MM/DD/YYYY HH:mm'))
+      $('#e-training-datetime').val(moment(result.session_date).format('YYYY-MM-DD HH:mm'))
       $('#e-training-duration-hrs').val(moment.duration(result.duration).hours())
       $('#e-training-duration-mins').val(moment.duration(result.duration).minutes())
-      $('#e-training-movements').val(result.num_movements)
+      $('#e-training-movements').val(result.movements)
       $('#e-training-location').val(result.location)
       $('#e-training-instructor').html(result.instructor.fname + ' ' + result.instructor.lname)
-     // $('#e-training-notes').html(result.notes)
+      // $('#e-training-notes').html(result.notes)
 
       $('#e-training-datetime').datetimepicker({
         timepicker: true,
-        format    : 'm/d/Y H:i',
+        format    : 'Y-m-d H:i',
         mask      : true,
         maxDate   : '+1970/01/01',
         step      : 15
@@ -175,7 +174,7 @@ $(function () {
         imagetools_cors_hosts        : ['picsum.photos'],
         menubar                      : 'file edit view insert format tools table help',
         toolbar                      : 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | charmap emoticons | fullscreen preview save | image media link',
-        toolbar_sticky               : true,
+        toolbar_sticky               : false,
         autosave_ask_before_unload   : true,
         autosave_interval            : '30s',
         autosave_prefix              : '{path}{query}-{id}-',
@@ -188,9 +187,9 @@ $(function () {
         noneditable_noneditable_class: 'mceNonEditable',
         toolbar_mode                 : 'sliding',
         contextmenu                  : 'link image imagetools table',
-        setup : editor => {
+        setup                        : editor => {
           editor.on('init', e => {
-            editor.setContent(result.notes);
+            editor.setContent(result.notes)
           })
         }
       })
@@ -198,8 +197,8 @@ $(function () {
 
     })
       .fail((xhr, status, error) => {
-        btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>').attr('disabled', false)
-        alert('Unable to get training record. ' + error)
+        btn.html('<span class=\'glyphicon glyphicon-pencil\'></span>').attr('disabled', false)
+        swal('Error!', 'Unable to get training record. ' + error, 'error')
       })
 
   })
@@ -248,6 +247,37 @@ $(function () {
           return false
         }
       })
+  })
+
+  $('#e-training-submit').click(function (e) {
+    e.preventDefault()
+    let btn      = $(this),
+        id       = btn.data('id'),
+        formData = {
+          position    : $('#e-training-position').val(),
+          progress    : $('#e-training-score').val(),
+          session_date: $('#e-training-datetime').val(),
+          duration    : $('#e-training-duration-hrs').val() + ':' + $('#e-training-duration-mins').val(),
+          movements   : $('#e-training-movements').val(),
+          location    : $('#e-training-location').val(),
+          notes       : tinyMCE.get('e-training-notes').getContent()
+        }
+
+    btn.html('<i class=\'fas fa-spinner fa-spin\'></i>').attr('disabled', true)
+    $.ajax({
+      url   : $.apiUrl() + '/v2/training/record/' + id,
+      method: 'PUT',
+      data  : formData
+    }).done(result => {
+      btn.html('<span class=\'glyphicon glyphicon-ok\'></span> Submit').attr('disabled', false)
+      if (result.status === 'OK')
+        swal('Success!', 'The training record has been successfully edited. ', 'success')
+      else
+        swal('Error!', 'Unable to edit training record. ' + result.error, 'error')
+    }).fail((xhr, status, error) => {
+      btn.html('<span class=\'glyphicon glyphicon-ok\'></span> Submit').attr('disabled', false)
+      swal('Error!', 'Unable to edit training record. ' + error, 'error')
+    })
   })
 
 })
