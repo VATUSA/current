@@ -287,7 +287,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         // S1-S3 within 90 check
         $promotion = Promotions::where('cid', $this->cid)->where("to", "<=",
-            Helper::ratingIntFromShort("S3"))->where('created_at', '>=',
+            Helper::ratingIntFromShort("C1"))->where('created_at', '>=',
             \DB::raw('DATE(NOW() - INTERVAL 90 DAY)'))->first();
         if ($promotion == null) {
             $checks['promo'] = 1;
