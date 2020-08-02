@@ -9,10 +9,11 @@
     <div class="panel-heading"><h3 class="panel-title">Training Records</h3></div>
     <div class="panel-body">
         <div class="col-md-3" style="border-right: 1px solid #ccc;">
-            <form class="form-inline">
+            <form class="form-inline" action="{{ Request::url() }}#training" method="POST"
+                  id="training-artcc-select-form">
                 <div class="form-group">
                     <label for="tng-artcc-select">ARTCC:</label>
-                    <select class="form-control" id="tng-artcc-select" autocomplete="off">
+                    <select class="form-control" id="tng-artcc-select" autocomplete="off" name="fac">
                         <option value="" @if(!$trainingfac) selected @endif>-- Select One --</option>
                         @foreach($trainingfaclist as $fac)
                             <option value="{{ $fac->facility->id }}"
@@ -45,14 +46,9 @@
             <div class="tab-content">
                 <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
                 @php $postypes = ['DEL', 'GND', 'TWR', 'APP', 'CTR']; @endphp
-                <div role="tabpanel" class="tab-pane" id="all">All!</div>
-                @foreach($postypes as $postype)
-                    <div role="tabpanel" class="tab-pane @if($postype == 'GND') active @endif'"
-                         id="{{strtolower($postype)}}">
-                        @php $records = $trainingRecords->filter(function($record) use ($postype) {
-                                                                    return preg_match("/$postype\$/", $record->position); })
-                        @endphp
-                        <table class="training-records-list table table-striped" id="training-records-{{$postype}}">
+                <div role="tabpanel" class="tab-pane active" id="all">
+                    @if($trainingRecords->count() && $trainingfaclist->count())
+                        <table class="training-records-list table table-striped" id="training-records-all">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -65,7 +61,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($records as $record)
+                            @foreach($trainingRecords as $record)
                                 <tr>
                                     <td><span
                                             class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
@@ -82,7 +78,8 @@
                                     </td>
                                     <td class="alert-ignore">
                                         <div class="btn-group">
-                                            <button class="btn btn-primary view-tr" data-id="{{ $record->id }}"><span
+                                            <button class="btn btn-primary view-tr"
+                                                    data-id="{{ $record->id }}"><span
                                                     class="glyphicon glyphicon-eye-open"></span></button>
                                             @php $canModify = \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac) || $record->instructor_id == Auth::user()->cid; @endphp
                                             @if($canModify)
@@ -105,7 +102,88 @@
                             @endforeach
                             </tbody>
                         </table>
-                    </div>
+                    @elseif($trainingfaclist->count())
+                        <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
+                            controller has records from multiple facilities. Please select a facility from the left.
+                        </div>
+                    @else
+                        <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
+                            controller has no training records.
+                        </div>
+                    @endif
+                    <input type="hidden" id="cid" value="{{ $user->cid }}">
+                    <input type="hidden" id="fac" value="{{ $trainingfac }}">
+                    <input type="hidden" id="canAdd" value="{{ $canAddTR }}"></div>
+                @foreach($postypes as $postype)
+                    <div role="tabpanel" class="tab-pane"
+                         id="{{strtolower($postype)}}">
+                        @if($trainingRecords->count() && $trainingfaclist->count())
+                            @php $records = $trainingRecords->filter(function($record) use ($postype) {
+                                                                    return preg_match("/$postype\$/", $record->position); })
+                            @endphp
+                            <table class="training-records-list table table-striped" id="training-records-{{$postype}}">
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Position</th>
+                                    <th>Instructor</th>
+                                    <th>Duration</th>
+                                    <th class="alert-ignore">Score</th>
+                                    <th class="alert-ignore">Actions</th>
+                                    <th class="alert-ignore">Location</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($records as $record)
+                                    <tr>
+                                        <td><span
+                                                class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
+                                        </td>
+                                        <td>{{ $record->position }}</td>
+                                        <td>{{ $record->instructor->fullname() }}</td>
+                                        <td>{{ substr($record->duration, 0, 5) }}</td>
+                                        <td class="alert-ignore">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span
+                                                    class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
+                                                &nbsp;
+                                            @endfor
+                                        </td>
+                                        <td class="alert-ignore">
+                                            <div class="btn-group">
+                                                <button class="btn btn-primary view-tr"
+                                                        data-id="{{ $record->id }}"><span
+                                                        class="glyphicon glyphicon-eye-open"></span></button>
+                                                @php $canModify = \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac) || $record->instructor_id == Auth::user()->cid; @endphp
+                                                @if($canModify)
+                                                    <button class="btn btn-warning edit-tr"
+                                                            data-id="{{ $record->id }}"><span
+                                                            class="glyphicon glyphicon-pencil"></span></button>
+                                                    <button class="btn btn-danger delete-tr"
+                                                            data-id="{{ $record->id }}"><span
+                                                            class="glyphicon glyphicon-remove"></span></button>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td>@switch($record->location)
+                                                @case(0) Classroom @break
+                                                @case(1) Live @break
+                                                @case(2) Sweatbox @break
+                                            @endswitch
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        @elseif($trainingfaclist->count())
+                            <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
+                                controller has records from multiple facilities. Please select a facility from the left.
+                            </div>
+                        @else
+                            <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
+                                controller has no training records.
+                            </div>
+                        @endif </div>
                 @endforeach
             </div>
         </div>

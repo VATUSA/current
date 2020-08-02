@@ -6,6 +6,10 @@
       if (document.location.hash)
         $('.nav-tabs li:not(.disabled) a[href=' + document.location.hash + ']').tab('show')
 
+      $('.nav-tabs a').on('shown.bs.tab', function (e) {
+        history.pushState({}, '', e.target.hash);
+      })
+
       $('.delete-log').click(function (e) {
         e.preventDefault()
 
