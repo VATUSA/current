@@ -268,6 +268,7 @@ Route::group(['domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : 
     Route::get('/mgt/ajax/transfer/reason', 'FacMgtController@ajaxTransferReason');
     Route::get('/mgt/controller', 'MgtController@getController');
     Route::get('/mgt/controller/{cid}', 'MgtController@getController');
+    Route::post('/mgt/controller/{cid}', 'MgtController@getController');
     Route::get('/mgt/controller/{cid}/mentor', 'MgtController@getControllerMentor');
     Route::get('/mgt/controller/{cid}/exams', 'MgtController@getControllerExams');
     Route::post('/mgt/controller/{cid}/rating', 'MgtController@postControllerRating');

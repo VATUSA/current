@@ -15,7 +15,7 @@
                             <button class="btn btn-warning" id="tr-view-edit" data-id=""><span
                                     class="glyphicon glyphicon-pencil"></span> Edit
                             </button>
-                            <button class="btn btn-danger tr-modal-delete" data-id=""><span
+                            <button class="btn btn-danger" id="tr-view-delete" data-id=""><span
                                     class="glyphicon glyphicon-remove"></span> Delete
                             </button>
                         </div>
@@ -78,7 +78,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="myModalLabel">Edit Training Record for <span
+                <h4 class="modal-title">Edit Training Record for <span
                         id="e-training-student"></span> on <span
                         class="e-training-position"></span></h4>
             </div>
@@ -86,18 +86,18 @@
                 <div class="container-fluid">
                     <div class="text-center">
                         <div class="btn-group" style="margin-bottom: 8px;">
-                            <button class="btn btn-danger tr-modal-delete" data-id=""><span
+                            <button class="btn btn-danger tr-modal-delete" data-id="" id="tr-edit-delete"><span
                                     class="glyphicon glyphicon-remove"></span> Delete
                             </button>
                         </div>
                     </div>
                     <form class="training-info" id="edit-tr-form" method="post">
-                        <table id="edit-tr-layout" class="table table-striped table-responsive">
+                        <table id="edit-tr-layout" class="table table-striped table-responsive tr-modal-layout">
                             <tbody>
                             <tr>
                                 <td><label for="e-training-position">Position</label></td>
                                 <td><p class="form-control-static" id="e-training-artcc"></p> - <input
-                                        class="form-control e-training-position"
+                                        class="form-control e-training-position training-position"
                                         type="text"
                                         name="position"
                                         id="e-training-position"
@@ -108,7 +108,7 @@
                             <tr>
                                 <td><label for="e-training-score">Progress</label></td>
                                 <td>
-                                    <select class="form-control" name="score" id="e-training-score" required
+                                    <select class="form-control training-score" name="score" id="e-training-score" required
                                             autocomplete="off">
                                         <option value="0">-- Select One --</option>
                                         <option value="1">1 - No Progress</option>
@@ -121,28 +121,28 @@
                             </tr>
                             <tr>
                                 <td><label for="e-training-datetime">Date and Time (UTC)</label></td>
-                                <td><input class="form-control" type="text" name="session_date" id="e-training-datetime"
+                                <td><input class="form-control training-datetime" type="text" name="session_date" id="e-training-datetime"
                                            required autocomplete="off"></td>
                             </tr>
                             <tr>
                                 <td><label for="e-training-duration-hrs">Duration</label></td>
-                                <td><input class="form-control" type="number" name="duration-hours"
+                                <td><input class="form-control training-duration" type="number" name="duration-hours"
                                            id="e-training-duration-hrs" min="0" autocomplete="off">:<input
-                                        class="form-control" type="number"
+                                        class="form-control training-duration" type="number"
                                         name="duration-mins"
                                         id="e-training-duration-mins" step="15" min="0" max="45" autocomplete="off">
                                 </td>
                             </tr>
                             <tr>
                                 <td><label for="e-training-movements">Number of Movements</label></td>
-                                <td><input class="form-control" type="number" name="movements" id="e-training-movements"
+                                <td><input class="form-control training-movements" type="number" name="movements" id="e-training-movements"
                                            placeholder="ex. 8"
                                            required autocomplete="off">
                                 </td>
                             </tr>
                             <tr>
                                 <td><label for="e-training-location">Location</label></td>
-                                <td><select class="form-control" name="location" id="e-training-location" required
+                                <td><select class="form-control training-location" name="location" id="e-training-location" required
                                             autocomplete="off">
                                         <option value="-1">-- Select One --</option>
                                         <option value="0">Classroom</option>
@@ -165,7 +165,7 @@
                                 <td colspan="2">
                                     <label for="e-training-notes" class="text-center" style="display: block;">Training
                                         Notes</label>
-                                    <textarea class="form-control" name="notes" id="e-training-notes"
+                                    <textarea class="form-control training-notes" name="notes" id="e-training-notes"
                                               required autocomplete="off"></textarea>
                                 </td>
                             </tr>
@@ -175,6 +175,112 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-id="" id="e-training-submit"><span
+                            class="glyphicon glyphicon-ok"></span> Submit
+                    </button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal"><span
+                            class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="new-training-record" tabindex="-1" role="dialog" aria-labelledby="New-Training-Record">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Create Training Record for <span
+                        id="n-training-student">{{ $user->fullname() }}</span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form class="training-info" id="new-tr-form" method="post">
+                        <table id="new-tr-layout" class="table table-striped table-responsive tr-modal-layout">
+                            <tbody>
+                            <tr>
+                                <td><label for="n-training-position">Position</label></td>
+                                <td><p class="form-control-static" id="n-training-artcc">{{ $trainingfacname }}</p> - <input
+                                        class="form-control n-training-position training-position"
+                                        type="text"
+                                        name="position"
+                                        id="n-training-position"
+                                        placeholder="ex. SEA_APP"
+                                        required autocomplete="off">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="e-training-score">Progress</label></td>
+                                <td>
+                                    <select class="form-control training-score" name="score" id="n-training-score" required
+                                            autocomplete="off">
+                                        <option value="0">-- Select One --</option>
+                                        <option value="1">1 - No Progress</option>
+                                        <option value="2">2 - Little Progress</option>
+                                        <option value="3">3 - Average Progress</option>
+                                        <option value="4">4 - Great Progress</option>
+                                        <option value="5">5 - Exceptional Progress</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="n-training-datetime">Date and Time (UTC)</label></td>
+                                <td><input class="form-control training-datetime" type="text" name="session_date" id="n-training-datetime"
+                                           required autocomplete="off"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="n-training-duration-hrs">Duration</label></td>
+                                <td><input class="form-control training-duration" type="number" name="duration-hours"
+                                           id="n-training-duration-hrs" min="0" autocomplete="off">:<input
+                                        class="form-control training-duration" type="number"
+                                        name="duration-mins"
+                                        id="n-training-duration-mins" step="15" min="0" max="45" autocomplete="off">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="n-training-movements">Number of Movements</label></td>
+                                <td><input class="form-control training-movements" type="number" name="movements" id="n-training-movements"
+                                           placeholder="ex. 8"
+                                           required autocomplete="off">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="n-training-location">Location</label></td>
+                                <td><select class="form-control training-location" name="location" id="n-training-location" required
+                                            autocomplete="off">
+                                        <option value="-1">-- Select One --</option>
+                                        <option value="0">Classroom</option>
+                                        <option value="1">Live</option>
+                                        <option value="2">Sweatbox</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="n-training-instructor">Instructor</label></td>
+                                <td>
+                                    <select class="form-control" name="instructor" id="n-training-instructor" required autocomplete="off">
+                                        <option value="">-- Select One --</option>
+                                        @foreach($ins as $cid => $name)
+                                            <option value="{{ $cid }}">{{ $name }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <label for="n-training-notes" class="text-center" style="display: block;">Training
+                                        Notes</label>
+                                    <textarea class="form-control training-notes" name="notes" id="n-training-notes"
+                                              required autocomplete="off"></textarea>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-id="" id="n-training-submit"><span
                             class="glyphicon glyphicon-ok"></span> Submit
                     </button>
                     <button type="button" class="btn btn-warning" data-dismiss="modal"><span

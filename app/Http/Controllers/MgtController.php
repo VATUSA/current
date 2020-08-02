@@ -33,20 +33,12 @@ class MgtController extends Controller
 //        $this->middleware('ins');
     }
 
-    public function getController($cid = null, $trainingfac = null)
+    public function getController(Request $request, $cid = null)
     {
-        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff() && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")) {
+        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff() && !RoleHelper::hasRole(Auth::user()->cid,
+                Auth::user()->facility, "WM")) {
             abort(401);
         }
-
-        $trainingfac = $trainingfac ?? "";
-
-        //For testing
-        if (!$trainingfac) {
-            $trainingfac = 'ZSE';
-        }
-
-        $trainingfaclist = Auth::user()->trainingRecords()->groupBy('facility_id')->get();
 
         if ($cid == null) {
             return view('mgt.controller.blank');
@@ -57,24 +49,64 @@ class MgtController extends Controller
         }
 
         $user = User::where('cid', $cid);
+
         if ($user->count()) {
             $user = $user->first();
             $checks = [];
             $eligible = $user->transferEligible($checks);
 
             /** Training Records */
-            $trainingRecords = $user->facility == Auth::user()->facility || RoleHelper::isVATUSAStaff() ? $user->trainingRecords : [];
+            $trainingfac = $request->input('fac', null);
+            $trainingfaclist = $user->trainingRecords()->groupBy('facility_id')->get();
 
+            if (!$trainingfac) {
+                if ($trainingfaclist->count() == 1) {
+                    $trainingfac = $trainingfaclist->first()->facility_id;
+                    $trainingfacname = Helper::facShtLng($trainingfac);
+                } else {
+                    $trainingfac = "ZHQ";
+                    $trainingfacname = "";
+                }
+            } else {
+                if (Facility::find($trainingfac)) {
+                    $trainingfacname = Helper::facShtLng($trainingfac);
+                } else {
+                    abort(500);
+                }
+            }
+            $trainingRecords = $user->facility == Auth::user()->facility || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
+                $trainingfac)->get() : [];
+            $canAddTR = RoleHelper::isTrainingStaff();
+
+            //Get INS at ARTCC
+            $ins = [];
+            $users = User::where('facility', $trainingfac)->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+                ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
+            if ($users) {
+                foreach ($users as $tUser) {
+                    $ins[$tUser->cid] = $tUser->fullname();
+                }
+            }
+            $users = Role::where('facility', $trainingfac)->where('role', 'INS')->get();
+            if ($users) {
+                foreach ($users as $tUser) {
+                    $ins[$tUser->cid] = Helper::nameFromCID($tUser->cid);
+                }
+            }
+            asort($ins);
 
             return view('mgt.controller.index',
-                compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingfaclist', 'trainingfac'));
+                compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingfaclist', 'trainingfac',
+                    'trainingfacname', 'ins', 'canAddTR'));
         } else {
             return view('mgt.controller.404');
         }
     }
 
-    public function getControllerMentor($cid)
-    {
+    public
+    function getControllerMentor(
+        $cid
+    ) {
         if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff()) {
             return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
         }
@@ -109,8 +141,11 @@ class MgtController extends Controller
     }
 
     /* Controller AJAX */
-    public function getControllerTransfers(Request $request, $cid)
-    {
+    public
+    function getControllerTransfers(
+        Request $request,
+        $cid
+    ) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -131,8 +166,11 @@ class MgtController extends Controller
         }
     }
 
-    public function postControllerRating(Request $request, $cid)
-    {
+    public
+    function postControllerRating(
+        Request $request,
+        $cid
+    ) {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -171,8 +209,11 @@ class MgtController extends Controller
         return;
     }
 
-    public function getControllerTransferWaiver(Request $request, $cid)
-    {
+    public
+    function getControllerTransferWaiver(
+        Request $request,
+        $cid
+    ) {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -204,8 +245,10 @@ class MgtController extends Controller
         return;
     }
 
-    public function getControllerToggleBasic($cid)
-    {
+    public
+    function getControllerToggleBasic(
+        $cid
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -222,7 +265,8 @@ class MgtController extends Controller
     /*
      * Ace Team
      */
-    public function getAce()
+    public
+    function getAce()
     {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
@@ -232,8 +276,11 @@ class MgtController extends Controller
         return view('mgt.ace', ['roles' => $roles]);
     }
 
-    public function deleteAce(Request $request, $cid)
-    {
+    public
+    function deleteAce(
+        Request $request,
+        $cid
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -247,8 +294,10 @@ class MgtController extends Controller
         return redirect("/mgt/ace");
     }
 
-    public function putAce(Request $request)
-    {
+    public
+    function putAce(
+        Request $request
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -279,7 +328,8 @@ class MgtController extends Controller
     /*
      * Division Staff Management
      */
-    public function getStaff()
+    public
+    function getStaff()
     {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
@@ -288,8 +338,11 @@ class MgtController extends Controller
         return view('mgt.staff');
     }
 
-    public function deleteStaff(Request $request, $role)
-    {
+    public
+    function deleteStaff(
+        Request $request,
+        $role
+    ) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -307,8 +360,11 @@ class MgtController extends Controller
         }
     }
 
-    public function putStaff(Request $request, $role)
-    {
+    public
+    function putStaff(
+        Request $request,
+        $role
+    ) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -355,8 +411,10 @@ class MgtController extends Controller
         SMFHelper::setPermissions($cid);
     }
 
-    public function addLog(Request $request)
-    {
+    public
+    function addLog(
+        Request $request
+    ) {
         if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -377,8 +435,10 @@ class MgtController extends Controller
         return redirect('/mgt/controller/' . $le->to)->with('success', 'Your log entry has been added.');
     }
 
-    public function getERR(Request $request)
-    {
+    public
+    function getERR(
+        Request $request
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -386,8 +446,10 @@ class MgtController extends Controller
         return view('mgt.err', ['cid' => $request->input("cid", '')]);
     }
 
-    public function postERR(Request $request)
-    {
+    public
+    function postERR(
+        Request $request
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -563,8 +625,9 @@ class MgtController extends Controller
         }
     }
 
-    // Checklists
-    public function getChecklists()
+// Checklists
+    public
+    function getChecklists()
     {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
@@ -574,8 +637,10 @@ class MgtController extends Controller
         return view('mgt.checklists.checklists', ['checklists' => $checklists]);
     }
 
-    public function getChecklistItems($id)
-    {
+    public
+    function getChecklistItems(
+        $id
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -587,7 +652,8 @@ class MgtController extends Controller
         return view('mgt.checklists.checklist', ['cl' => $checklist]);
     }
 
-    public function postChecklistsOrder()
+    public
+    function postChecklistsOrder()
     {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
@@ -605,7 +671,8 @@ class MgtController extends Controller
         echo 1;
     }
 
-    public function postChecklistItemsOrder()
+    public
+    function postChecklistItemsOrder()
     {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
@@ -623,7 +690,8 @@ class MgtController extends Controller
         echo 1;
     }
 
-    public function putChecklists()
+    public
+    function putChecklists()
     {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
@@ -645,8 +713,10 @@ class MgtController extends Controller
         echo $list->id;
     }
 
-    public function postChecklist($id)
-    {
+    public
+    function postChecklist(
+        $id
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -663,8 +733,10 @@ class MgtController extends Controller
         echo "1";
     }
 
-    public function deleteChecklist($clid)
-    {
+    public
+    function deleteChecklist(
+        $clid
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -686,8 +758,10 @@ class MgtController extends Controller
         }
     }
 
-    public function putChecklistItem($id)
-    {
+    public
+    function putChecklistItem(
+        $id
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -710,8 +784,11 @@ class MgtController extends Controller
         echo $list->id;
     }
 
-    public function postChecklistItem($clid, $id)
-    {
+    public
+    function postChecklistItem(
+        $clid,
+        $id
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -728,8 +805,11 @@ class MgtController extends Controller
         echo "1";
     }
 
-    public function deleteChecklistItem($clid, $id)
-    {
+    public
+    function deleteChecklistItem(
+        $clid,
+        $id
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -754,8 +834,10 @@ class MgtController extends Controller
      *
      * @return string
      */
-    public function deleteActionLog($log)
-    {
+    public
+    function deleteActionLog(
+        $log
+    ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -772,8 +854,10 @@ class MgtController extends Controller
         return "1";
     }
 
-    public function toggleStaffPrevent(Request $request)
-    {
+    public
+    function toggleStaffPrevent(
+        Request $request
+    ) {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -788,8 +872,10 @@ class MgtController extends Controller
         return "1";
     }
 
-    public function toggleInsRole(Request $request)
-    {
+    public
+    function toggleInsRole(
+        Request $request
+    ) {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {

@@ -1647,6 +1647,7 @@ tr.no-hover:hover {
     text-align: right;
     border-right: 2px solid #ddd;
 }
+
 .training-info tr:last-child {
     background-color: #f9f9f9 !important;
 }
@@ -1654,15 +1655,19 @@ tr.no-hover:hover {
 .training-info tr:last-child td {
     border-width: 3px;
 }
-#edit-tr-form input, #edit-tr-form .form-control-static {
+
+form > table.tr-modal-layout input, form > table.tr-modal-layout .form-control-static {
     display: inline;
 }
-input.e-training-position {
+
+input.e-training-position, input.n-training-position {
     width: 150px;
 }
-#e-training-score, #e-training-datetime, #e-training-location {
+
+.training-score, .training-datetime, .training-location {
     width: 200px;
 }
-input[id^="e-training-duration"], #e-training-movements {
+
+.training-duration, .training-movements {
     width: 80px;
 }

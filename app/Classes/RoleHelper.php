@@ -579,4 +579,10 @@ class RoleHelper
     {
         return ['MENTOR', 'INS'];
     }
+
+    public static function isTrainingStaff($cid = null, bool $includeMentor = true)
+    {
+        return ($includeMentor && self::isMentor($cid)) || self::isInstructor($cid) || self::isFacilitySeniorStaff($cid, $cid ? Helper::facFromCID($cid) : null,
+                true);
+    }
 }
