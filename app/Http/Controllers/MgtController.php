@@ -79,21 +79,29 @@ class MgtController extends Controller
             $canAddTR = RoleHelper::isTrainingStaff();
 
             //Get INS at ARTCC
-            $ins = [];
+            $ins = ['ins' => [], 'mtr' => []];
             $users = User::where('facility', $trainingfac)->where('rating', '>=', Helper::ratingIntFromShort("I1"))
                 ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
             if ($users) {
                 foreach ($users as $tUser) {
-                    $ins[$tUser->cid] = $tUser->fullname();
+                    $ins['ins'][$tUser->cid] = $tUser->fullname();
                 }
             }
             $users = Role::where('facility', $trainingfac)->where('role', 'INS')->get();
             if ($users) {
                 foreach ($users as $tUser) {
-                    $ins[$tUser->cid] = Helper::nameFromCID($tUser->cid);
+                    $ins['ins'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
                 }
             }
-            asort($ins);
+            $users = Role::where('facility', $trainingfac)->where('role', 'MTR')->get();
+            if ($users) {
+                foreach ($users as $tUser) {
+                    $ins['mtr'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
+                }
+            }
+            foreach ($ins as $type => $users) {
+                asort($ins[$type]);
+            }
 
             return view('mgt.controller.index',
                 compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingfaclist', 'trainingfac',
@@ -907,5 +915,18 @@ class MgtController extends Controller
         }
 
         return "1";
+    }
+
+
+    public function ajaxCanModifyRecord($record)
+    {
+        $record = TrainingRecord::find($record);
+        if (!$record->count()) {
+            return response()->json(false);
+        }
+
+        return response()->json(Auth::check() && $record->student_id != Auth::user()->cid &&
+            (RoleHelper::isFacilitySeniorStaff() ||
+                (RoleHelper::isTrainingStaff() && $record->instructor_id == Auth::user()->cid)));
     }
 }
