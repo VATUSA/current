@@ -55,14 +55,21 @@
                                 <th>Position</th>
                                 <th>Instructor</th>
                                 <th>Duration</th>
-                                <th class="alert-ignore">Score</th>
+                                <th class="alert-ignore">Progress</th>
                                 <th class="alert-ignore">Actions</th>
                                 <th class="alert-ignore">Location</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($trainingRecords as $record)
-                                <tr>
+                                @php $color = "";
+                                    switch($record->ots_status) {
+                                        case 1: $color = "success"; break;
+                                        case 2: $color = "danger"; break;
+                                        case 3: $color = "info"; break;
+                                    }
+                                    @endphp
+                                <tr @if($color) class="{{ $color }}" @endif>
                                     <td><span
                                             class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
                                     </td>
@@ -81,7 +88,9 @@
                                             <button class="btn btn-primary view-tr"
                                                     data-id="{{ $record->id }}"><span
                                                     class="glyphicon glyphicon-eye-open"></span></button>
-                                            @php $canModify = \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac) || $record->instructor_id == Auth::user()->cid; @endphp
+                                            @php $canModify = \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac, false, false) ||
+                                                                  (\App\Classes\RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac, false)
+                                                                   && $record->instructor_id == Auth::user()->cid); @endphp
                                             @if($canModify)
                                                 <button class="btn btn-warning edit-tr"
                                                         data-id="{{ $record->id }}"><span
@@ -128,14 +137,21 @@
                                     <th>Position</th>
                                     <th>Instructor</th>
                                     <th>Duration</th>
-                                    <th class="alert-ignore">Score</th>
+                                    <th class="alert-ignore">Progress</th>
                                     <th class="alert-ignore">Actions</th>
                                     <th class="alert-ignore">Location</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($records as $record)
-                                    <tr>
+                                    @php $color = "";
+                                    switch($record->ots_status) {
+                                        case 1: $color = "success"; break;
+                                        case 2: $color = "danger"; break;
+                                        case 3: $color = "info"; break;
+                                    }
+                                    @endphp
+                                    <tr @if($color) class="{{ $color }}" @endif>
                                         <td><span
                                                 class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
                                         </td>
@@ -154,7 +170,10 @@
                                                 <button class="btn btn-primary view-tr"
                                                         data-id="{{ $record->id }}"><span
                                                         class="glyphicon glyphicon-eye-open"></span></button>
-                                                @php $canModify = \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac) || $record->instructor_id == Auth::user()->cid; @endphp
+                                                @php $canModify = \App\Classes\RoleHelper::isVATUSAStaff() ||
+                                                                  \App\Classes\RoleHelper::isFacilitySeniorStaff($trainingfac) ||
+                                                                  (\App\Classes\RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac)
+                                                                   && $record->instructor_id == Auth::user()->cid); @endphp
                                                 @if($canModify)
                                                     <button class="btn btn-warning edit-tr"
                                                             data-id="{{ $record->id }}"><span

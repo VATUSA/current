@@ -285,7 +285,7 @@ class RoleHelper
         return false;
     }
 
-    public static function isFacilitySeniorStaff($cid = null, $facility = null, $isApi = false)
+    public static function isFacilitySeniorStaff($cid = null, $facility = null, $isApi = false, bool $includeVATUSA = true)
     {
         if (!\Auth::check() && !$isApi) {
             return false;
@@ -297,7 +297,7 @@ class RoleHelper
             $facility = \Auth::user()->facility;
         }
 
-        if (static::isVATUSAStaff($cid)) {
+        if (static::isVATUSAStaff($cid) && $includeVATUSA) {
             return true;
         }
 
@@ -410,7 +410,7 @@ class RoleHelper
      *
      * @return bool
      */
-    public static function isInstructor($cid = null, $facility = null)
+    public static function isInstructor($cid = null, $facility = null, bool $includeVATUSA = true)
     {
         if (!Auth::check()) {
             return false;
@@ -443,20 +443,23 @@ class RoleHelper
         }
 
         // Check for VATUSA staff, global access.
-        if (static::isVATUSAStaff($cid)) {
+        if (static::isVATUSAStaff($cid) && $includeVATUSA) {
             return true;
         }
 
         return false;
     }
 
-    public static function isMentor($cid = null)
+    public static function isMentor($cid = null, $facility = null)
     {
         if (!Auth::check()) {
             return false;
         }
         if ($cid == null || $cid == 0) {
             $cid = Auth::user()->cid;
+        }
+        if (!$facility) {
+            $facility = Auth::user()->facility;
         }
         $user = User::find($cid);
         if (!$user->flag_homecontroller) {
@@ -466,7 +469,7 @@ class RoleHelper
             return false;
         }
 
-        if (Role::where("cid", $cid)->where("facility", $user->facility)->where("role", "MTR")->count()) {
+        if (Role::where("cid", $cid)->where("facility", $facility)->where("role", "MTR")->count()) {
             return true;
         }
 
@@ -580,9 +583,9 @@ class RoleHelper
         return ['MENTOR', 'INS'];
     }
 
-    public static function isTrainingStaff($cid = null, bool $includeMentor = true)
+    public static function isTrainingStaff($cid = null, bool $includeMentor = true, $facility = null, bool $includeVATUSA = true)
     {
-        return ($includeMentor && self::isMentor($cid)) || self::isInstructor($cid) || self::isFacilitySeniorStaff($cid, $cid ? Helper::facFromCID($cid) : null,
-                true);
+        return ($includeMentor && self::isMentor($cid, $facility)) || self::isInstructor($cid, $facility, $includeVATUSA) || self::isFacilitySeniorStaff($cid,
+                $facility,false, $includeVATUSA);
     }
 }

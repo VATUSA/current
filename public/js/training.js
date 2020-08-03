@@ -158,8 +158,24 @@ $(function () {
     }).done(result => {
       btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>').attr('disabled', false)
 
-      $('#tr-view-delete').attr('data-id', id)
-      $('#tr-view-edit').attr('data-id', id)
+      $.ajax({
+        url: '/mgt/controller/ajax/canModifyRecord/' + id
+      }).done(result => {
+        if (result) {
+          $('#v-modify-group').show()
+          $('#tr-view-delete').attr('data-id', id)
+          $('#tr-view-edit').attr('data-id', id)
+        } else {
+          $('#v-modify-group').hide()
+          $('#tr-view-delete').attr('data-id', '')
+          $('#tr-view-edit').attr('data-id', '')
+        }
+      }).fail((xhr, status, error) => {
+        $('#v-modify-group').hide()
+        $('#tr-view-delete').attr('data-id', '')
+        $('#tr-view-edit').attr('data-id', '')
+      })
+
       $('.training-position').html(result.position)
       $('.training-student').html(result.student.fname + ' ' + result.student.lname)
       $('#training-artcc').html(result.facility.name)
@@ -198,6 +214,26 @@ $(function () {
       $('#training-instructor').html(result.instructor.fname + ' ' + result.instructor.lname)
       $('#training-notes').html(result.notes)
 
+      $('#training-ots-exam').hide()
+      $('#training-ots-exam-pass').hide()
+      $('#training-ots-exam-fail').hide()
+      $('#training-ots-exam-rec').hide()
+      if (result.ots_status)
+        $('#training-ots-exam').show()
+      switch (result.ots_status) {
+        case 1:
+          $('#training-ots-exam-pass').show()
+          break
+        case 2:
+          $('#training-ots-exam-fail').show()
+          break
+        case 3:
+          $('#training-ots-exam-rec').show()
+          break
+        default:
+          $('#training-ots-exam').hide()
+          break
+      }
       $('#view-training-record').modal('show')
     })
       .fail((xhr, status, error) => {
@@ -407,14 +443,15 @@ $(function () {
     let btn      = $(this),
         id       = btn.data('id'),
         formData = {
-          position    : $('#n-training-position').val(),
-          facility    : $('#fac').val(),
-          score       : $('#n-training-score').val(),
-          session_date: $('#n-training-datetime').val(),
-          duration    : $('#n-training-duration-hrs').val() + ':' + $('#n-training-duration-mins').val(),
-          movements   : $('#n-training-movements').val(),
-          location    : $('#n-training-location').val(),
-          notes       : tinyMCE.get('n-training-notes').getContent()
+          position     : $('#n-training-position').val(),
+          facility     : $('#fac').val(),
+          score        : $('#n-training-score').val(),
+          session_date : $('#n-training-datetime').val(),
+          duration     : $('#n-training-duration-hrs').val() + ':' + $('#n-training-duration-mins').val(),
+          movements    : $('#n-training-movements').val(),
+          location     : $('#n-training-location').val(),
+          instructor_id: $('#n-training-instructor').length ? $('#n-training-instructor').val() : 0,
+          notes        : tinyMCE.get('n-training-notes').getContent()
         },
         cid      = $('#cid').val()
 
@@ -442,5 +479,21 @@ $(function () {
     let input = $(this),
         curr  = input.val()
     if (curr < 10) $(this).val('0' + curr)
+  })
+
+  $('.ots-status-input').change(function () {
+    $('.ots-status-input').parent().attr('class', 'btn btn-default ots-status-input-label')
+    let parent = $(this).parent()
+    switch (parseInt($(this).val())) {
+      case 1:
+        parent.removeClass('btn-default').addClass('btn-success')
+        break
+      case 2:
+        parent.removeClass('btn-default').addClass('btn-danger')
+        break
+      case 3:
+        parent.removeClass('btn-default').addClass('btn-info')
+        break
+    }
   })
 })
