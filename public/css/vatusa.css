@@ -1671,3 +1671,12 @@ input.e-training-position, input.n-training-position {
 .training-duration, .training-movements {
     width: 80px;
 }
+span[id^="training-ots-exam-"] {
+    font-size: 1em;
+}
+.ots-status-input-label {
+     -webkit-transition: all 0.2s ease;
+     -moz-transition: all 0.2s ease;
+     -o-transition: all 0.2s ease;
+     transition: all 0.2s ease;
+ }
