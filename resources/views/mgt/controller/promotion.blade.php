@@ -20,48 +20,37 @@
                         <form class="form-horizontal" id="promotion-form">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <div class="form-group">
-                                <div class="col-sm-3 control-label">
-                                    <b>Student</b>
-                                </div>
-                                <p class="col-sm-9 form-control-static">
+                                <label class="col-sm-3 control-label" for="student">Student</label>
+                                <p class="col-sm-9 form-control-static" id="student">
                                     {{$u->fname}} {{$u->lname}} ({{$u->cid}})
-                                    <br>
-                                    <!-- Show promotion graphic line in Ratings tab: -->
-                                    <!-- S3 -> C1 -->
                                 </p>
                             </div>
                             <div class="form-group">
-                                <label for="examiner" class="col-sm-3 control-label">Examiner CID</label>
-                                <div class="col-sm-9">
-                                    <input type="number" id="examiner" name="examiner"
-                                           placeholder="CID" value="{{\Auth::user()->cid}}" class="form-control"
-                                           style="width:150px;">
-                                </div>
+                                <label class="col-sm-3 control-label">Rating</label>
+                                <p class="col-sm-9 form-control-static">
+                                    {{ \App\Classes\Helper::ratingShortFromInt($u->rating) }} <i
+                                        class="fa fa-arrow-right text-success" style="padding:0 10px;"></i>
+                                    <strong>{{ \App\Classes\Helper::ratingShortFromInt($u->rating + 1) }}</strong>
+                                </p>
                             </div>
                             <div class="form-group">
-                                <div class="col-sm-3 control-label">
-                                    <b>Rating Grantor</b>
-                                </div>
+                                <label class="col-sm-3 control-label">Rating Grantor</label>
                                 <p class="col-sm-9 form-control-static">
                                     {{\Auth::user()->fname}} {{\Auth::user()->lname}} ({{\Auth::user()->cid}})
                                 </p>
                             </div>
                             <div class="form-group">
-                                <div class="col-sm-3 control-label">
-                                    <b>Date of Exam (UTC)</b>
-                                </div>
+                                <label class="col-sm-3 control-label" for="exam-date">Date of Exam (UTC)</label>
                                 <div class="col-sm-9">
                                     <input class="form-control" name="date" id="exam-date" value="{{ date('Y-m-d') }}"
-                                           style="width:150px;">
+                                           style="width:150px;" autocomplete="off">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="col-sm-3 control-label">
-                                    <b>Exam Position</b>
-                                </div>
+                                <label class="col-sm-3 control-label" for="position">Exam Position</label>
                                 <div class="col-sm-9">
                                     <input type="text" name="position" id="position" placeholder="Position (ABC_CTR)"
-                                           class="form-control" style="width:150px;">
+                                           class="form-control" style="width:150px;" autocomplete="off">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -87,7 +76,8 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-3 col-sm-offset-3">
-                                    <button type="submit" class="btn btn-success btn-block" style="width:150px;" disabled><span
+                                    <button type="submit" class="btn btn-success btn-block" style="width:150px;"
+                                            disabled><span
                                             class="glyphicon glyphicon-ok"></span> Submit
                                     </button>
                                 </div>
@@ -98,15 +88,43 @@
                         <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> Enter the
                             position on the left to view the applicable OTS Evaluation Form.
                         </div>
+                        <div class="list-group">
+                            <a class="list-group-item list-group-item list-group-item-success disabled" id="gnd">
+                                <h4 class="list-group-item-heading">Delivery and Ground Certification Statement<span
+                                        class="glyphicon glyphicon-share pull-right"></span></h4>
+                                <p class="list-group-item-text">I certify that via observations of the
+                                    student/developmental controller’s training that s/he meets the required standards
+                                    for Delivery/Ground certification as outlined in VATUSA Job Order 3120.4 (and
+                                    alphabetical revisions thereof).</p>
+                            </a>
+                            <a class="list-group-item list-group-item list-group-item-success disabled" id="twr">
+                                <h4 class="list-group-item-heading">S2 (Tower) Rating Review Form<span
+                                        class="glyphicon glyphicon-arrow-right pull-right"></span></h4>
+                                <p class="list-group-item-text">VATUSA Competency Review and Certification for Tower</p>
+                            </a>
+                            <a class="list-group-item list-group-item-success disabled" id="app">
+                                <h4 class="list-group-item-heading">S3 (Approach) Rating Review Form<span
+                                        class="glyphicon glyphicon-arrow-right pull-right"></span></h4>
+                                <p class="list-group-item-text">VATUSA Competency Review and Certification for
+                                    Approach</p>
+                            </a>
+                            <a class="list-group-item list-group-item list-group-item-success disabled" id="ctr">
+                                <h4 class="list-group-item-heading">C1 (Center) Rating Review Form<span
+                                        class="glyphicon glyphicon-arrow-right pull-right"></span></h4>
+                                <p class="list-group-item-text">VATUSA Competency Review and Certification for
+                                    Center</p>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     @push('scripts')
+        <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
         <script type="text/javascript">
           $(document).ready(function () {
-            $('[name=examiner]').autocomplete({
+            /*$('[name=examiner]').autocomplete({
               source   : '/ajax/cid',
               minLength: 2,
               select   : function (event, ui) {
@@ -114,12 +132,23 @@
 
                 return false
               }
-            })
-          })
-        </script>
-        <script type="text/javascript">
-          $(function () {
+            })*/
 
+            $('#exam-date').datetimepicker({
+              timepicker: false,
+              format    : 'Y-m-d',
+              mask      : true,
+              maxDate   : '+1970/01/01',
+              step      : 15
+            })
+
+            $('#position').keyup(function () {
+              $(this).val($(this).val().toUpperCase())
+              $('.list-group-item:not(.disabled)').addClass('disabled')
+              let pos = $(this).val().split('_')
+              if (pos.length)
+                $('#' + pos.pop().toLowerCase()).removeClass('disabled')
+            })
           })
         </script>
     @endpush
