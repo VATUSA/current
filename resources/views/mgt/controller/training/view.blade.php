@@ -177,21 +177,28 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td> <label for="e-training-ots-grp">OTS Exam</label></td>
+                                <td><label for="e-training-ots-grp">OTS Exam</label></td>
                                 <td>
                                     <div class="btn-group" data-toggle="buttons" id="e-training-ots-grp">
                                         <label class="btn btn-default active ots-status-input-label">
-                                            <input type="radio" name="ots_status" id="ots-status-0" value="0" autocomplete="off" class="ots-status-input" checked>
+                                            <input type="radio" name="ots_status" id="e-ots-status-0" value="0"
+                                                   autocomplete="off" class="ots-status-input" checked>
                                             No OTS
                                         </label>
                                         <label class="btn btn-default ots-status-input-label">
-                                            <input type="radio" name="options" id="ots-status-1" value="1" class="ots-status-input"  autocomplete="off"><span class="glyphicon glyphicon-ok"></span> Pass
+                                            <input type="radio" name="ots_status" id="e-ots-status-1" value="1"
+                                                   class="ots-status-input" autocomplete="off"><span
+                                                class="glyphicon glyphicon-ok"></span> Pass
                                         </label>
                                         <label class="btn btn-default ots-status-input-label">
-                                            <input type="radio" name="options" id="ots-status-2" value="2" class="ots-status-input"  autocomplete="off"><span class="glyphicon glyphicon-remove"></span> Fail
+                                            <input type="radio" name="ots_status" id="e-ots-status-2" value="2"
+                                                   class="ots-status-input" autocomplete="off"><span
+                                                class="glyphicon glyphicon-remove"></span> Fail
                                         </label>
                                         <label class="btn btn-default ots-status-input-label">
-                                            <input type="radio" name="options" id="ots-status-3" value="3" class="ots-status-input"  autocomplete="off"><span class="glyphicon glyphicon-info-sign"></span> Recommend
+                                            <input type="radio" name="ots_status" id="e-ots-status-3" value="3"
+                                                   class="ots-status-input" autocomplete="off"><span
+                                                class="glyphicon glyphicon-info-sign"></span> Recommend
                                         </label>
                                     </div>
                                 </td>
@@ -299,7 +306,7 @@
                             <tr>
                                 <td><label for="n-training-instructor">Instructor/Mentor</label></td>
                                 <td>
-                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
+                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, Auth::user()->facility, false, false))
                                         <select class="form-control" name="instructor" id="n-training-instructor"
                                                 required
                                                 autocomplete="off">
@@ -315,6 +322,33 @@
                                     @else
                                         <p class="form-control-static">{{ Auth::user()->fullname() }}</p>
                                     @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="e-training-ots-grp">OTS Exam</label></td>
+                                <td>
+                                    <div class="btn-group" data-toggle="buttons" id="n-training-ots-grp">
+                                        <label class="btn btn-default active ots-status-input-label">
+                                            <input type="radio" name="ots_status" id="n-ots-status-0" value="0"
+                                                   autocomplete="off" class="ots-status-input" checked>
+                                            No OTS
+                                        </label>
+                                        <label class="btn btn-default ots-status-input-label">
+                                            <input type="radio" name="options" id="n-ots-status-1" value="1"
+                                                   class="ots-status-input" autocomplete="off"><span
+                                                class="glyphicon glyphicon-ok"></span> Pass
+                                        </label>
+                                        <label class="btn btn-default ots-status-input-label">
+                                            <input type="radio" name="options" id="n-ots-status-2" value="2"
+                                                   class="ots-status-input" autocomplete="off"><span
+                                                class="glyphicon glyphicon-remove"></span> Fail
+                                        </label>
+                                        <label class="btn btn-default ots-status-input-label">
+                                            <input type="radio" name="options" id="n-ots-status-3" value="3"
+                                                   class="ots-status-input" autocomplete="off"><span
+                                                class="glyphicon glyphicon-info-sign"></span> Recommend
+                                        </label>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>

@@ -441,7 +441,7 @@
                             </div>
                         </div>
                     @endif
-                    <div class="tab-pane" role="tabpanel" id="training">@include('mgt.controller.training.training')</div>
+                    <div class="tab-pane" role="tabpanel" id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
                     <div class="tab-pane" role="tabpanel" id="cbt">
                         <h3>CBT Results</h3>
                         <div class="panel-group" id="accordion">

@@ -28,6 +28,11 @@
                                                           role="tab"
                                                           data-toggle="pill"><i
                             class="fa fa-list"></i> All Records</a></li>
+                <li role="presentation"><a href="#training" data-controls="ots" aria-controls="ots"
+                                           role="tab"
+                                           data-toggle="pill"><i
+                            class="fa fa-flag"></i> OTS Exams</a></li>
+                <hr>
                 <li role="presentation"><a href="#training" data-controls="del" aria-controls="del" role="tab"
                                            data-toggle="pill">Clearance
                         Delivery</a></li>
@@ -45,7 +50,7 @@
         <div class="col-md-9" id="training-content">
             <div class="tab-content">
                 <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
-                @php $postypes = ['DEL', 'GND', 'TWR', 'APP', 'CTR']; @endphp
+                @php $postypes = ['OTS', 'DEL', 'GND', 'TWR', 'APP', 'CTR']; @endphp
                 <div role="tabpanel" class="tab-pane active" id="all">
                     @if($trainingRecords->count() && $trainingfaclist->count())
                         <table class="training-records-list table table-striped" id="training-records-all">
@@ -68,7 +73,7 @@
                                         case 2: $color = "danger"; break;
                                         case 3: $color = "info"; break;
                                     }
-                                    @endphp
+                                @endphp
                                 <tr @if($color) class="{{ $color }}" @endif>
                                     <td><span
                                             class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
@@ -90,11 +95,13 @@
                                                     class="glyphicon glyphicon-eye-open"></span></button>
                                             @php $canModify = \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac, false, false) ||
                                                                   (\App\Classes\RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac, false)
-                                                                   && $record->instructor_id == Auth::user()->cid); @endphp
-                                            @if($canModify)
+                                                                   && $record->instructor_id == Auth::user()->cid);
+                                                 $canEditDelete = !in_array($record->ots_status, [1, 2]); @endphp
+                                            @if($canModify && $canEditDelete)
                                                 <button class="btn btn-warning edit-tr"
                                                         data-id="{{ $record->id }}"><span
-                                                        class="glyphicon glyphicon-pencil"></span></button>
+                                                        class="glyphicon glyphicon-pencil"></span>
+                                                </button>
                                                 <button class="btn btn-danger delete-tr"
                                                         data-id="{{ $record->id }}"><span
                                                         class="glyphicon glyphicon-remove"></span></button>
@@ -128,7 +135,8 @@
                          id="{{strtolower($postype)}}">
                         @if($trainingRecords->count() && $trainingfaclist->count())
                             @php $records = $trainingRecords->filter(function($record) use ($postype) {
-                                                                    return preg_match("/$postype\$/", $record->position); })
+                                                                    return $postype == "OTS" ? in_array($record->ots_status, [1,2]) : preg_match("/$postype\$/", $record->position);
+                                                                    })
                             @endphp
                             <table class="training-records-list table table-striped" id="training-records-{{$postype}}">
                                 <thead>
@@ -170,11 +178,11 @@
                                                 <button class="btn btn-primary view-tr"
                                                         data-id="{{ $record->id }}"><span
                                                         class="glyphicon glyphicon-eye-open"></span></button>
-                                                @php $canModify = \App\Classes\RoleHelper::isVATUSAStaff() ||
-                                                                  \App\Classes\RoleHelper::isFacilitySeniorStaff($trainingfac) ||
-                                                                  (\App\Classes\RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac)
-                                                                   && $record->instructor_id == Auth::user()->cid); @endphp
-                                                @if($canModify)
+                                                @php $canModify = \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac, false, false) ||
+                                                                  (\App\Classes\RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac, false)
+                                                                   && $record->instructor_id == Auth::user()->cid);
+                                                 $canEditDelete = !in_array($record->ots_status, [1, 2]); @endphp
+                                                @if($canModify && $canEditDelete)
                                                     <button class="btn btn-warning edit-tr"
                                                             data-id="{{ $record->id }}"><span
                                                             class="glyphicon glyphicon-pencil"></span></button>
