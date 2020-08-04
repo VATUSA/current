@@ -141,53 +141,58 @@ Route::group([
 //
 //
 // #Viewer#
-        Route::get('/cbt', 'CBTController@getIndex');
-        Route::get('/cbt/{fac}', 'CBTController@getIndex')->where('fac', '[A-Z]{3}');
-        Route::put('/cbt/{id}', 'CBTController@putIndex')->where('id', '[0-9]+');
+        Route::group(['middleware' => 'auth'], function() {
+            Route::get('/cbt', 'CBTController@getIndex');
+            Route::get('/cbt/{fac}', 'CBTController@getIndex')->where('fac', '[A-Z]{3}');
+            Route::put('/cbt/{id}', 'CBTController@putIndex')->where('id', '[0-9]+');
 // #Editor#
-        Route::get('/cbt/editor', 'CBTController@getEditor');
-        Route::get('/cbt/editor/{fac}', 'CBTController@getEditor')->where('fac', '[A-Z]{3}');
-        Route::get('/cbt/editor/{id}', 'CBTController@getEditorBlock')->where('id', '[0-9]+');
+            Route::get('/cbt/editor', 'CBTController@getEditor');
+            Route::get('/cbt/editor/{fac}', 'CBTController@getEditor')->where('fac', '[A-Z]{3}');
+            Route::get('/cbt/editor/{id}', 'CBTController@getEditorBlock')->where('id', '[0-9]+');
 // CBT Ajax Functions
 // --- Block
-        Route::post('/cbt/editor/ajax/blocktoggle/{id}', 'CBTController@ajaxBlockToggle')->where('id', '[0-9]+');
-        Route::delete('/cbt/editor/ajax/block/{id}', 'CBTController@ajaxDeleteBlock')->where('id', '[0-9]+');
-        Route::put('/cbt/editor/ajax/block/{fac}', 'CBTController@ajaxPutBlock')->where('fac', '[A-Z]{3}');
-        Route::post('/cbt/editor/ajax/block/order/{fac}', 'CBTController@ajaxOrderBlock')->where('fac', '[A-Z]{3}');
-        Route::post('/cbt/editor/ajax/block/rename/{id}', 'CBTController@ajaxRenameBlock')->where('id', '[0-9]+');
-        Route::post('/cbt/editor/ajax/block/access/{id}', 'CBTController@ajaxChangeAccess')->where('id', '[0-9]+');
+            Route::post('/cbt/editor/ajax/blocktoggle/{id}', 'CBTController@ajaxBlockToggle')->where('id', '[0-9]+');
+            Route::delete('/cbt/editor/ajax/block/{id}', 'CBTController@ajaxDeleteBlock')->where('id', '[0-9]+');
+            Route::put('/cbt/editor/ajax/block/{fac}', 'CBTController@ajaxPutBlock')->where('fac', '[A-Z]{3}');
+            Route::post('/cbt/editor/ajax/block/order/{fac}', 'CBTController@ajaxOrderBlock')->where('fac', '[A-Z]{3}');
+            Route::post('/cbt/editor/ajax/block/rename/{id}', 'CBTController@ajaxRenameBlock')->where('id', '[0-9]+');
+            Route::post('/cbt/editor/ajax/block/access/{id}', 'CBTController@ajaxChangeAccess')->where('id', '[0-9]+');
 // --- Chapter
-        Route::delete('/cbt/editor/ajax/chapter/{id}', 'CBTController@ajaxChapterDelete')->where('id', '[0-9]+');
-        Route::put('/cbt/editor/ajax/chapter/{id}', 'CBTController@ajaxChapterNew')->where('id', '[0-9]+');
-        Route::post('/cbt/editor/ajax/chapter/{id}', 'CBTController@ajaxChapterModify')->where('id', '[0-9]+');
-
+            Route::delete('/cbt/editor/ajax/chapter/{id}', 'CBTController@ajaxChapterDelete')->where('id', '[0-9]+');
+            Route::put('/cbt/editor/ajax/chapter/{id}', 'CBTController@ajaxChapterNew')->where('id', '[0-9]+');
+            Route::post('/cbt/editor/ajax/chapter/{id}', 'CBTController@ajaxChapterModify')->where('id', '[0-9]+');
+        });
 // Helpdesk
-        Route::get('/help', 'HelpdeskController@getIndex');
+        Route::get('/help', function() {
+           return Redirect::to('/help/kb');
+        });
         Route::get('/help/kb', 'HelpdeskController@getKBIndex');
         // KB Category
-        Route::get('/help/kbe', 'HelpdeskController@getKBE');
-        Route::delete('/help/kbe/{id}', 'HelpdeskController@deleteKBECategory');
-        Route::put('/help/kbe', 'HelpdeskController@putKBECategory');
-        Route::post('/help/kbe/{id}', 'HelpdeskController@postKBECategory');
-        // KB Question
-        Route::get('/help/kbe/{id}', 'HelpdeskController@getKBECategory');
-        Route::get('/help/kbe/{cid}/{id}', 'HelpdeskController@getKBEeditQuestion');
-        Route::post('/help/kbe/{cid}/{id}', 'HelpdeskController@postKBEeditQuestion');
 
-        Route::get('/help/kbe/ajax/question/{id}', 'HelpdeskController@getKBEQuestion');
-        Route::post('/help/kbe/ajax/question/order/{id}', 'HelpdeskController@postKBEQuestionOrder');
-        Route::delete('/help/kbe/ajax/question/{id}', 'HelpdeskController@deleteKBEQuestion');
-        Route::put('/help/kbe/ajax/question/{id}', 'HelpdeskController@putKBEQuestion');
-        Route::post('/help/kbe/ajax/question/{id}', 'HelpdeskController@postKBEQuestion');
-        // Support Tickets
-        Route::get('/help/ticket/new', 'HelpdeskController@getNew');
-        Route::post('/help/ticket/new', 'HelpdeskController@postNew');
-        Route::get('/help/ticket/{status}', 'HelpdeskController@getList')->where('status', '[A-Za-z]+');
-        Route::post('/help/ticket/{status}', 'HelpdeskController@postList')->where('status', '[A-Za-z]+');
-        Route::get('/help/ticket/{id}', 'HelpdeskController@getTicket');
-        Route::post('/help/ticket/{id}', 'HelpdeskController@postTicket');
-        Route::post('/help/ticket/ajax/{id}', 'HelpdeskController@postTicketAjax');
-        Route::get('/help/ticket/{id}/status', 'HelpdeskController@getTicketToggleStatus');
+        Route::group(['middleware' => 'auth'], function() {
+            Route::get('/help/kbe', 'HelpdeskController@getKBE');
+            Route::delete('/help/kbe/{id}', 'HelpdeskController@deleteKBECategory');
+            Route::put('/help/kbe', 'HelpdeskController@putKBECategory');
+            Route::post('/help/kbe/{id}', 'HelpdeskController@postKBECategory');
+            // KB Question
+            Route::get('/help/kbe/{id}', 'HelpdeskController@getKBECategory');
+            Route::get('/help/kbe/{cid}/{id}', 'HelpdeskController@getKBEeditQuestion');
+            Route::post('/help/kbe/{cid}/{id}', 'HelpdeskController@postKBEeditQuestion');
+
+            Route::get('/help/kbe/ajax/question/{id}', 'HelpdeskController@getKBEQuestion');
+            Route::post('/help/kbe/ajax/question/order/{id}', 'HelpdeskController@postKBEQuestionOrder');
+            Route::delete('/help/kbe/ajax/question/{id}', 'HelpdeskController@deleteKBEQuestion');
+            Route::put('/help/kbe/ajax/question/{id}', 'HelpdeskController@putKBEQuestion');
+            Route::post('/help/kbe/ajax/question/{id}', 'HelpdeskController@postKBEQuestion');
+            // Support Tickets
+            Route::get('/help/ticket/new', 'HelpdeskController@getNew');
+            Route::post('/help/ticket/new', 'HelpdeskController@postNew');
+            Route::get('/help/ticket/{status}', 'HelpdeskController@getList')->where('status', '[A-Za-z]+');
+            Route::post('/help/ticket/{status}', 'HelpdeskController@postList')->where('status', '[A-Za-z]+');
+            Route::get('/help/ticket/{id}', 'HelpdeskController@getTicket');
+            Route::post('/help/ticket/{id}', 'HelpdeskController@postTicket');
+            Route::post('/help/ticket/ajax/{id}', 'HelpdeskController@postTicketAjax');
+            Route::get('/help/ticket/{id}/status', 'HelpdeskController@getTicketToggleStatus');
 
 //
 // My VATUSA Function
@@ -235,7 +240,7 @@ Route::group([
         Route::delete('/exam/reassignment/{id}', 'ExamController@deleteReassignment')->where('id', '[0-9]+');
 // Result
         Route::get('/exam/result/{id}', 'ExamController@getResult');
-
+    });
 //
 // VATUSA Info Function
 // dev.vatusa.net/info/{route}
@@ -256,100 +261,101 @@ Route::group([
 // VATUSA Mgt Facility Function
 // dev.vatusa.net/mgt/facility/{route}
 //
-        Route::get('/mgt/facility/{fac?}', 'FacMgtController@getIndex');
-        Route::delete('/mgt/facility/{fac}/{cid}', 'FacMgtController@deleteController');
-        Route::post('/mgt/facility/{fac}/api/generate', 'FacMgtController@postAPIGenerate');
-        Route::post('/mgt/facility/{fac}/api/generate/sandbox', 'FacMgtController@postAPISandboxGenerate');
-        Route::post('/mgt/facility/{fac}/api/update', 'FacMgtController@postAPIIP');
-        Route::post('/mgt/facility/{fac}/api/update/sandbox', 'FacMgtController@postAPISandboxIP');
-        Route::post('/mgt/facility/{fac}/uls/generate', 'FacMgtController@postULSGenerate');
-        Route::post('/mgt/facility/{fac}/uls/return', 'FacMgtController@postULSReturn');
-        Route::post('/mgt/facility/{fac}/uls/devreturn', 'FacMgtController@postULSDevReturn');
-        Route::get('/mgt/ace', 'MgtController@getAce');
-        Route::post('/mgt/ace', 'MgtController@putAce');
-        Route::get('/mgt/ace/delete/{cid}', 'MgtController@deleteAce');
-        Route::post('/mgt/action/add', 'MgtController@addLog');
-        Route::get('/mgt/ajax/canModifyRecord/{record}', 'MgtController@ajaxCanModifyRecord');
-        Route::post('/mgt/ajax/position/{facility}/{id}', 'FacMgtController@ajaxPosition');
-        Route::post('/mgt/ajax/del/position/{facility}', 'FacMgtController@ajaxPositionDel');
-        Route::post('/mgt/ajax/staff/{facility}', 'FacMgtController@ajaxStaffTable');
-        Route::post('/mgt/ajax/transfers/{status}', 'FacMgtController@ajaxTransfers');
-        Route::get('/mgt/ajax/transfer/reason', 'FacMgtController@ajaxTransferReason');
-        Route::get('/mgt/controller/ajax/canModifyRecord/{record}', 'MgtController@ajaxCanModifyRecord');
-        Route::get('/mgt/controller', 'MgtController@getController');
-        Route::get('/mgt/controller/{cid}', 'MgtController@getController');
-        Route::post('/mgt/controller/{cid}', 'MgtController@getController');
-        Route::get('/mgt/controller/{cid}/mentor', 'MgtController@getControllerMentor');
-        Route::get('/mgt/controller/{cid}/exams', 'MgtController@getControllerExams');
-        Route::post('/mgt/controller/{cid}/rating', 'MgtController@postControllerRating');
-        Route::get('/mgt/controller/{cid}/transfers', 'MgtController@getControllerTransfers');
-        Route::get('/mgt/controller/{cid}/transferwaiver', 'MgtController@getControllerTransferWaiver');
-        Route::get('/mgt/controller/{cid}/actions', 'MgtController@getControllerActions');
-        Route::get('/mgt/controller/{cid}/transfer/override', 'MgtController@getControllerTransferOverride');
-        Route::put('/mgt/controller/{cid}/transfer/override', 'MgtController@putControllerTransferOverride');
-        Route::get('/mgt/controller/{cid}/promote', 'MgtController@getControllerPromote');
-        Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
-        Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
-        Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
-        Route::post('/mgt/controller/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
-        Route::post('/mgt/controller/toggleInsRole', 'MgtController@toggleInsRole');
-        Route::get('/mgt/err', 'MgtController@getERR');
-        Route::post('/mgt/err', 'MgtController@postERR');
-        Route::get('/mgt/solo', 'MgtController@getSolo');
-        Route::post('/mgt/solo', 'MgtController@postSolo');
-        Route::delete('/mgt/solo/{id}', 'MgtController@deleteSolo')->where('id', '[0-9]+');
-        Route::get('/mgt/staff', 'MgtController@getStaff');
-        Route::delete('/mgt/staff/{role}', 'MgtController@deleteStaff');
-        Route::put('/mgt/staff/{role}', 'MgtController@putStaff');
-        Route::get('/mgt/checklists', 'MgtController@getChecklists');
-        Route::put('/mgt/checklists', 'MgtController@putChecklists');
-        Route::post('/mgt/checklists/order', 'MgtController@postChecklistsOrder');
-        Route::post('/mgt/checklists/{id}', 'MgtController@postChecklist')->where('id', '[0-9]+');
-        Route::delete('/mgt/checklists/{id}', 'MgtController@deleteChecklist')->where('id', '[0-9]+');
+        Route::group(['middleware' => 'auth'], function () {
+            Route::get('/mgt/facility/{fac?}', 'FacMgtController@getIndex');
+            Route::delete('/mgt/facility/{fac}/{cid}', 'FacMgtController@deleteController');
+            Route::post('/mgt/facility/{fac}/api/generate', 'FacMgtController@postAPIGenerate');
+            Route::post('/mgt/facility/{fac}/api/generate/sandbox', 'FacMgtController@postAPISandboxGenerate');
+            Route::post('/mgt/facility/{fac}/api/update', 'FacMgtController@postAPIIP');
+            Route::post('/mgt/facility/{fac}/api/update/sandbox', 'FacMgtController@postAPISandboxIP');
+            Route::post('/mgt/facility/{fac}/uls/generate', 'FacMgtController@postULSGenerate');
+            Route::post('/mgt/facility/{fac}/uls/return', 'FacMgtController@postULSReturn');
+            Route::post('/mgt/facility/{fac}/uls/devreturn', 'FacMgtController@postULSDevReturn');
+            Route::get('/mgt/ace', 'MgtController@getAce');
+            Route::post('/mgt/ace', 'MgtController@putAce');
+            Route::get('/mgt/ace/delete/{cid}', 'MgtController@deleteAce');
+            Route::post('/mgt/action/add', 'MgtController@addLog');
+            Route::get('/mgt/ajax/canModifyRecord/{record}', 'MgtController@ajaxCanModifyRecord');
+            Route::post('/mgt/ajax/position/{facility}/{id}', 'FacMgtController@ajaxPosition');
+            Route::post('/mgt/ajax/del/position/{facility}', 'FacMgtController@ajaxPositionDel');
+            Route::post('/mgt/ajax/staff/{facility}', 'FacMgtController@ajaxStaffTable');
+            Route::post('/mgt/ajax/transfers/{status}', 'FacMgtController@ajaxTransfers');
+            Route::get('/mgt/ajax/transfer/reason', 'FacMgtController@ajaxTransferReason');
+            Route::get('/mgt/controller/ajax/canModifyRecord/{record}', 'MgtController@ajaxCanModifyRecord');
+            Route::get('/mgt/controller', 'MgtController@getController');
+            Route::get('/mgt/controller/{cid}', 'MgtController@getController');
+            Route::post('/mgt/controller/{cid}', 'MgtController@getController');
+            Route::get('/mgt/controller/{cid}/mentor', 'MgtController@getControllerMentor');
+            Route::get('/mgt/controller/{cid}/exams', 'MgtController@getControllerExams');
+            Route::post('/mgt/controller/{cid}/rating', 'MgtController@postControllerRating');
+            Route::get('/mgt/controller/{cid}/transfers', 'MgtController@getControllerTransfers');
+            Route::get('/mgt/controller/{cid}/transferwaiver', 'MgtController@getControllerTransferWaiver');
+            Route::get('/mgt/controller/{cid}/actions', 'MgtController@getControllerActions');
+            Route::get('/mgt/controller/{cid}/transfer/override', 'MgtController@getControllerTransferOverride');
+            Route::put('/mgt/controller/{cid}/transfer/override', 'MgtController@putControllerTransferOverride');
+            Route::get('/mgt/controller/{cid}/promote', 'MgtController@getControllerPromote');
+            Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
+            Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
+            Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
+            Route::post('/mgt/controller/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
+            Route::post('/mgt/controller/toggleInsRole', 'MgtController@toggleInsRole');
+            Route::get('/mgt/err', 'MgtController@getERR');
+            Route::post('/mgt/err', 'MgtController@postERR');
+            Route::get('/mgt/solo', 'MgtController@getSolo');
+            Route::post('/mgt/solo', 'MgtController@postSolo');
+            Route::delete('/mgt/solo/{id}', 'MgtController@deleteSolo')->where('id', '[0-9]+');
+            Route::get('/mgt/staff', 'MgtController@getStaff');
+            Route::delete('/mgt/staff/{role}', 'MgtController@deleteStaff');
+            Route::put('/mgt/staff/{role}', 'MgtController@putStaff');
+            Route::get('/mgt/checklists', 'MgtController@getChecklists');
+            Route::put('/mgt/checklists', 'MgtController@putChecklists');
+            Route::post('/mgt/checklists/order', 'MgtController@postChecklistsOrder');
+            Route::post('/mgt/checklists/{id}', 'MgtController@postChecklist')->where('id', '[0-9]+');
+            Route::delete('/mgt/checklists/{id}', 'MgtController@deleteChecklist')->where('id', '[0-9]+');
 
-        Route::delete('/mgt/deleteActionLog/{log}', 'MgtController@deleteActionLog')->where('id', '[0-9]+');
+            Route::delete('/mgt/deleteActionLog/{log}', 'MgtController@deleteActionLog')->where('id', '[0-9]+');
 
-        Route::get('/mgt/tmu', 'TMUController@getMgtIndex');
-        Route::get('/mgt/tmu/{fac}', 'TMUController@getMgtIndex');
-        Route::get('/mgt/tmu/{fac}/colors', 'TMUController@getMgtColors');
-        Route::post('/mgt/tmu/colors', 'TMUController@postMgtColors');
-        Route::post('/mgt/tmu/{fac}/colors', 'TMUController@postMgtColors');
+            Route::get('/mgt/tmu', 'TMUController@getMgtIndex');
+            Route::get('/mgt/tmu/{fac}', 'TMUController@getMgtIndex');
+            Route::get('/mgt/tmu/{fac}/colors', 'TMUController@getMgtColors');
+            Route::post('/mgt/tmu/colors', 'TMUController@postMgtColors');
+            Route::post('/mgt/tmu/{fac}/colors', 'TMUController@postMgtColors');
 
-        Route::post('/mgt/tmu/{fac}/coords', 'TMUController@postMgtCoords');
+            Route::post('/mgt/tmu/{fac}/coords', 'TMUController@postMgtCoords');
 
-        Route::get('/mgt/tmu/{fac}/mapping/{id}', 'TMUController@getMgtMapping');
-        Route::post('/mgt/tmu/{fac}/mapping/{id}', 'TMUController@postMgtMapping');;
+            Route::get('/mgt/tmu/{fac}/mapping/{id}', 'TMUController@getMgtMapping');
+            Route::post('/mgt/tmu/{fac}/mapping/{id}', 'TMUController@postMgtMapping');;
 
-        Route::get('/mgt/checklists/{id}', 'MgtController@getChecklistItems');
-        Route::put('/mgt/checklists/{id}', 'MgtController@putChecklistItem');
-        Route::post('/mgt/checklists/{id}/order', 'MgtController@postChecklistItemsOrder');
-        Route::delete('/mgt/checklists/{clid}/{id}', 'MgtController@deleteChecklistItem');
-        Route::post('/mgt/checklists/{clid}/{id}', 'MgtController@postChecklistItem');
+            Route::get('/mgt/checklists/{id}', 'MgtController@getChecklistItems');
+            Route::put('/mgt/checklists/{id}', 'MgtController@putChecklistItem');
+            Route::post('/mgt/checklists/{id}/order', 'MgtController@postChecklistItemsOrder');
+            Route::delete('/mgt/checklists/{clid}/{id}', 'MgtController@deleteChecklistItem');
+            Route::post('/mgt/checklists/{clid}/{id}', 'MgtController@postChecklistItem');
 
-        // TMU ********************
-        Route::get('tmu/map/{fac}', 'TMUController@getMap');
-        Route::get('tmu/map/{fac}/dark', 'TMUController@getMapDark');
-        Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
-        Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
+            // TMU ********************
+            Route::get('tmu/map/{fac}', 'TMUController@getMap');
+            Route::get('tmu/map/{fac}/dark', 'TMUController@getMapDark');
+            Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
+            Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
 
 //
 // VATUSA Mgt Mail Function
 // dev.vatusa.net/mgt/mail/{route}
 //
-        Route::get('/mgt/mail', 'EmailMgtController@getIndex');
-        Route::get('/mgt/mail/broadcast', 'EmailMgtController@getBroadcast');
-        Route::post('/mgt/mail/broadcast', 'EmailMgtController@postBroadcast');
-        Route::get('/mgt/mail/conf', 'EmailMgtController@getConfig');
-        Route::post('/mgt/mail/conf', 'EmailMgtController@postConfig');
-        Route::get('/mgt/mail/account', 'EmailMgtController@getAccount');
-        Route::get('/mgt/mail/{cid}', 'EmailMgtController@getIndividual')->where('cid', '[0-9]+');
-        Route::get('/mgt/mail/get/{user}', 'EmailMgtController@getType');
-        Route::get('/mgt/mail/welcome', 'EmailMgtController@getWelcome');
-        Route::post('/mgt/mail/welcome', 'EmailMgtController@postWelcome');
-        Route::get('/mgt/mail/template', 'EmailMgtController@getTemplates');
-        Route::get('/mgt/mail/template/{template}/{action}', 'EmailMgtController@getTemplateAction');
-        Route::post('/mgt/mail/template/{template}', 'EmailMgtController@postTemplate');
-
+            Route::get('/mgt/mail', 'EmailMgtController@getIndex');
+            Route::get('/mgt/mail/broadcast', 'EmailMgtController@getBroadcast');
+            Route::post('/mgt/mail/broadcast', 'EmailMgtController@postBroadcast');
+            Route::get('/mgt/mail/conf', 'EmailMgtController@getConfig');
+            Route::post('/mgt/mail/conf', 'EmailMgtController@postConfig');
+            Route::get('/mgt/mail/account', 'EmailMgtController@getAccount');
+            Route::get('/mgt/mail/{cid}', 'EmailMgtController@getIndividual')->where('cid', '[0-9]+');
+            Route::get('/mgt/mail/get/{user}', 'EmailMgtController@getType');
+            Route::get('/mgt/mail/welcome', 'EmailMgtController@getWelcome');
+            Route::post('/mgt/mail/welcome', 'EmailMgtController@postWelcome');
+            Route::get('/mgt/mail/template', 'EmailMgtController@getTemplates');
+            Route::get('/mgt/mail/template/{template}/{action}', 'EmailMgtController@getTemplateAction');
+            Route::post('/mgt/mail/template/{template}', 'EmailMgtController@postTemplate');
+        });
 // Statistics
         Route::get('/stats', 'StatsController@getIndex');
         Route::get('/stats/details/{facility}', 'StatsController@getDetails');

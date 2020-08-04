@@ -76,7 +76,7 @@ class MgtController extends Controller
             }
             $trainingRecords = $user->facility == Auth::user()->facility || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
                 $trainingfac)->get() : [];
-            $canAddTR = RoleHelper::isTrainingStaff();
+            $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac, false);
 
             //Get INS at ARTCC
             $ins = ['ins' => [], 'mtr' => []];
@@ -926,7 +926,9 @@ class MgtController extends Controller
         }
 
         return response()->json(Auth::check() && $record->student_id != Auth::user()->cid &&
-            (RoleHelper::isFacilitySeniorStaff() ||
-                (RoleHelper::isTrainingStaff() && $record->instructor_id == Auth::user()->cid)));
+            !in_array($record->ots_status, [1, 2]) &&
+            (RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, Auth::user()->facility, false, false) ||
+                (RoleHelper::isTrainingStaff(Auth::user()->cid, true, $record->student->facility,
+                        false) && $record->instructor_id == Auth::user()->cid)));
     }
 }

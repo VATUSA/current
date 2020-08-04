@@ -265,7 +265,7 @@ $(function () {
       $('#e-training-movements').val(result.movements)
       $('#e-training-location').val(result.location)
       $('#e-training-instructor').html(result.instructor.fname + ' ' + result.instructor.lname)
-      // $('#e-training-notes').html(result.notes)
+      $('#e-ots-status-' + result.ots_status).parent().button('toggle')
 
       $('#e-training-datetime').datetimepicker({
         timepicker: true,
@@ -419,6 +419,7 @@ $(function () {
           duration    : $('#e-training-duration-hrs').val() + ':' + $('#e-training-duration-mins').val(),
           movements   : $('#e-training-movements').val(),
           location    : $('#e-training-location').val(),
+          ots_status  : $('#e-training-ots-grp').find('input[name="ots_status"]:checked').val(),
           notes       : tinyMCE.get('e-training-notes').getContent()
         }
 
@@ -430,7 +431,13 @@ $(function () {
     }).done(result => {
       btn.html('<span class=\'glyphicon glyphicon-ok\'></span> Submit').attr('disabled', false)
       if (result.status === 'OK')
-        swal('Success!', 'The training record has been successfully edited. ', 'success')
+        swal('Success!', 'The training record has been successfully edited. ', 'success').then(() => {
+          if($('#e-training-ots-grp').find('input[name="ots_status"]:checked').val() == 1 || $('#e-training-ots-grp').find('input[name="ots_status"]:checked').val() == 2) {
+            $('#e-training-submit').prop('disabled', true);
+            $('#tr-edit-delete').prop('disabled', true);
+            window.location.reload();
+          }
+        })
       else
         swal('Error!', 'Unable to edit training record. ' + result.msg, 'error')
     }).fail((xhr, status, error) => {
