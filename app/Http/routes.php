@@ -193,6 +193,7 @@ Route::group(['domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : 
         Route::get('/my/transfer', 'MyController@getTransfer');
         Route::post('/my/transfer/do', 'MyController@doTransfer');
         Route::get('/my/assignbasic', 'MyController@getAssignBasic');
+        Route::get('/my/discord/{mode}', 'MyController@linkDiscord');
 
 //
 // VATUSA Exam Function
