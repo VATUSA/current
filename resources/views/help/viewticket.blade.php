@@ -12,6 +12,8 @@
                     <a href="/help/ticket/search" class="btn btn-warning">Search Tickets</a>
                 </div>
             </div>
+
+            <hr>
         @endif
         <form class="form form-horizontal">
             <div class="row">
@@ -32,10 +34,10 @@
                                     @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
                                         <select id="tFacility" class="form-control">
                                             <option value="ZHQ">VATUSA HQ</option>
-                                            @foreach(\App\Facility::where('active', '1')->orWhere('id','ZAE')->orderBy('name')->get() as $f)
+                                            @foreach(\App\Facility::where('active', '1')->orWhere('id', 'ZAE')->orderBy('name')->get() as $f)
                                                 <option value="{{$f['id']}}"{{($f['id']==$ticket->facility)?" selected=\"true\"":""}}>{{$f['name']}}</option>
                                             @endforeach
-                                        </select> <b>* After changing, does not save without changing Assigned To.</b>
+                                        </select> <b>* After changing, does not save without changing "Assigned To" dropdown.</b>
                                     @else
                                         <p class="form-control-static">{{\App\Facility::find($ticket->facility)->name}}</p>
                                     @endif
@@ -201,34 +203,39 @@
 
     @if(\App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor())
         <script type="text/javascript">
+
             $('#tFacility').change(function () {
-                waitingDialog.show("Loading... make sure to click change \"Assigned To\" drop down to save!", {
+                // Show Waiting Dialog
+                waitingDialog.show("Loading... make sure to change \"Assigned To\" drop-down to save!", {
                     dialogsize: "sm",
                     progressType: "ogblue"
                 });
-                if ($('#tFacility').val() == "ZAE") {
-                    $('#tAssignTo').replaceOptions([
-                        {text: "!!!Change Me!!!", value: -1},
-                        {text: "VATUSA3", value: 0}
-                    ]);
-                } else {
-                    $('#tAssignTo').prop('disabled', 'disabled');
-                    $.ajax({
-                        method: "GET",
-                        url: '/ajax/help/staffc/' + $('#tFacility').val()
-                    }).done(function (r) {
-                        $('#tAssignTo').replaceOptions($.parseJSON(r));
-                        $('#tAssignTo').prop('disabled', false);
-                        waitingDialog.hide();
-                    });
-                }
+
+                $('#tAssignTo').prop('disabled', 'disabled');
+                $.ajax({
+                    method: "GET",
+                    url: '/ajax/help/staffc/' + $('#tFacility').val()
+                }).done(function (r) {
+                    $('#tAssignTo').replaceOptions($.parseJSON(r));
+                    $('#tAssignTo').prop('disabled', false);
+                    waitingDialog.hide();
+                });
             });
+
             $('#tAssignTo').change(function () {
                 if ($('#tassignto').val() == "-1") {
-                    bootbox.alert("You must change the assign to box from Change Me");
+                    // Show Error Alert
+                    bootbox.alert("You must change the \"Assigned To\" box to save!");
                     return;
                 }
-                waitingDialog.show("Saving", {dialogSize: "sm", progressType: "ogblue"});
+                
+                // Show Waiting Dialog
+                waitingDialog.show("Saving", {
+                    dialogSize: "sm", 
+                    progressType: "ogblue"
+                });
+
+                // Post Ticket Data
                 $.ajax({
                     method: "POST",
                     url: '/help/ticket/ajax/{{$ticket->id}}',
@@ -237,11 +244,15 @@
                     location.reload(true);
                 });
             });
+
             $('.btnNotes').click(function() {
+                // Show Waiting Dialog
                 waitingDialog.show("Saving...", {
                     dialogsize: 'sm',
                     progressType: 'ogblue'
                 });
+
+                // Post Ticket Data
                 $.ajax({
                     method: "POST",
                     url: '/help/ticket/ajax/{{$ticket->id}}',

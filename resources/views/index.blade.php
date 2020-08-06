@@ -21,8 +21,8 @@
                 <p>
                 VATUSA is a division of the <a href="http://www.vatsim.net/">VATSIM</a> North American (<a
                     href="http://vatna.org/">VATNA</a>) region comprising of almost all airspace operated by the real
-                world Federal Aviation Administration. The airspace comprises of 21 Air Route Traffic Control Centers
-                (contiguous US and Anchorage), 1 Control Facility (Honolulu Control Facility) and 1 CERAP (Guam CERAP, under management of HCF). All
+                world Federal Aviation Administration. The airspace comprises of 20 Air Route Traffic Control Centers
+                (contiguous US and Anchorage), 1 Control Facility (Pacific Control Facility) and 1 CERAP (Guam CERAP, under management of PCF). All
                 information contained within this website is designated for use with the VATSIM network and for flight
                 simulation purposes. Information is not intended nor should be used for
                 real world navigation and its use for real world navigation could be in violation of federal laws. This
@@ -42,7 +42,7 @@
                             @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
                                 <div class="text-center">
                                     <a href="{{ secure_url("/mgt/tmu#notices") }}">
-                                        <button class="btn btn-default"><i class="fa fa-pencil"></i>
+                                        <button class="btn btn-default"><i class="fa fa-pencil-alt"></i>
                                             Edit @if(!\App\Classes\RoleHelper::isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
                                             Notices
                                         </button>
@@ -139,7 +139,7 @@
           var html = ''
           $.each(data.news, function (i) {
             html = html + '<tr onClick="window.location=\'' + data.news[i].url + '\';" style="cursor: pointer">'
-            html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-text-o fa-2x"></i></td>'
+            html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
             html = html + '<td><p><strong>' + data.news[i].subject + '</strong><br><small>' + data.news[i].humandate + '</small></p></td></tr>'
           })
           $('#newsbody').html(html)
