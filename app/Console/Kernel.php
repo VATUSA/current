@@ -3,7 +3,8 @@
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
-class Kernel extends ConsoleKernel {
+class Kernel extends ConsoleKernel
+{
 
     /**
      * The Artisan commands provided by your application.
@@ -20,18 +21,21 @@ class Kernel extends ConsoleKernel {
         'App\Console\Commands\UpdateVATSIM',
         'App\Console\Commands\RoleSync',
         'App\Console\Commands\TransferEmails',
-        'App\Console\Commands\ExpireNotices'
+        'App\Console\Commands\ExpireNotices',
+        'App\Console\Commands\CERTCorrect'
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     *
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('CERTSync')->cron('30 23,11 * * *');
+        $schedule->command('CERTSync')->twiceDaily(11, 23);
+        $schedule->command('CERTSync', ['--all'])->weekly()->mondays()->at("00:00");
         $schedule->command('ULSTokens')->everyMinute();
         $schedule->command('UpdateVATSIM')->everyMinute();
         $schedule->command('ExamReassign')->hourly();

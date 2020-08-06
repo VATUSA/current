@@ -408,6 +408,8 @@ class RoleHelper
      * @param null|integer $cid
      * @param null|string  $facility
      *
+     * @param bool         $includeVATUSA
+     *
      * @return bool
      */
     public static function isInstructor($cid = null, $facility = null, bool $includeVATUSA = true)
@@ -415,25 +417,29 @@ class RoleHelper
         if (!Auth::check()) {
             return false;
         }
-        if (($cid == null || $cid == 0)) {
+        if (is_null($cid) || !$cid) {
             $cid = Auth::user()->cid;
+            $user = Auth::user();
+        }
+        else {
+            $user = User::find($cid);
         }
         if ($facility == null) {
-            $facility = Auth::user()->facility;
+            $facility = $user->facility;
         }
 
         // Check home controller, if no always assume no
-        if (!Auth::user()->flag_homecontroller) {
+        if (!$user->flag_homecontroller) {
             return false;
         }
 
-        // First check home facility and rating (excluding SUP)
-        if (Auth::user()->facility == $facility && Auth::user()->rating >= Helper::ratingIntFromShort("I1") && Auth::user()->rating < Helper::ratingIntFromShort("SUP")) {
+        // First check facility and rating (excluding SUP)
+        if ($user->facility == $facility && $user->rating >= Helper::ratingIntFromShort("I1") && $user->rating < Helper::ratingIntFromShort("SUP")) {
             return true;
         }
 
         //ADMs have INS Access
-        if (Auth::user()->rating == Helper::ratingIntFromShort("ADM")) {
+        if ($user->rating == Helper::ratingIntFromShort("ADM")) {
             return true;
         }
 
@@ -458,13 +464,11 @@ class RoleHelper
         if ($cid == null || $cid == 0) {
             $cid = Auth::user()->cid;
         }
-        if (!$facility) {
-            $facility = Auth::user()->facility;
-        }
         $user = User::find($cid);
-        if (!$user->flag_homecontroller) {
+        if (!$user || !$user->flag_homecontroller) {
             return false;
         }
+        $facility = $facility ?? $user->facility;
         if (!$user->facility()->active && $user->facility != "ZHQ") {
             return false;
         }
@@ -503,21 +507,62 @@ class RoleHelper
             $staff[] = ['cid' => $f->wm, 'name' => $f->wm()->fullname(), 'role' => "WM"];
         }
 
-        foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))->where('facility',
-            $facility)->orderBy('fname')->orderBy('lname')->get() as $user) {
-            if (!static::isFacilityStaff($user->cid, $facility)) {
-                $staff[] = ['cid' => $user->cid, 'name' => $user->fullname(), 'role' => 'INS'];
+        if ($facility != "ZAE") {
+            // Eloquent: I1s/I2s/I3s Listing (do not include SUPs/ADMs)
+            foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))
+                ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('SUP'))
+                ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('ADM'))
+                ->where('facility', $facility)
+                ->orderBy('fname')
+                ->orderBy('lname')
+                ->get() as $user) {
+                    if (!static::isFacilityStaff($user->cid, $facility)) {
+                        $staff[] = [
+                            'cid' => $user->cid,
+                            'name' => $user->fullname(),
+                            'role' => 'INS'
+                        ];
+                    }
+            }
+
+            // Eloquent: SUPs Tagged as Instructors
+            foreach (\App\Role::where('facility', $facility)->where('role', 'INS')->get() as $s) {
+                if (!static::isFacilityStaff($s->cid, $facility)) {
+                    $staff[] = [
+                        'cid' => $s->cid,
+                        'name' => $s->user->fullname(),
+                        'role' => 'INS'
+                    ];
+                }
             }
         }
 
         if ($getVATUSA && $facility == "ZHQ") {
-            foreach (\App\Role::where('facility', 'ZHQ')->where('role', 'LIKE', "US%")->orderBy("role")->get() as $r) {
-                $staff[] = [
-                    'cid'  => $r->cid,
-                    'name' => $r->user->fullname() . " (" . static::roleTitle($r->role) . ")",
-                    'role' => str_replace("US", "VATUSA", $r->role)
-                ];
+            // Eloquent: All VATUSA Staff
+            foreach (\App\Role::where('facility', 'ZHQ')
+                ->where('role', 'LIKE', "US%")
+                ->orderBy("role")
+                ->get() as $r) {
+                    $staff[] = [
+                        'cid'  => $r->cid,
+                        'name' => $r->user->fullname() . " (" . static::roleTitle($r->role) . ")",
+                        'role' => str_replace("US", "VATUSA", $r->role)
+                    ];
             }
+        }
+
+        if ($facility == "ZAE") {
+            // Eloquent: VATUSA Training Staff (%3 [e.g. 3/13])
+            foreach(\App\Role::where('facility', 'ZHQ')
+                ->where('role', 'LIKE', "%3")
+                ->orderBy("role")
+                ->get() as $v) {
+                    $staff[] = [
+                        'cid' => $v->cid,
+                        'name' => $v->user->fullname() . " (" . static::roleTitle($v->role) . ")",
+                        'role' => str_replace("US", "VATUSA", $v->role)
+                    ];
+                }
         }
 
         return $staff;

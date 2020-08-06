@@ -12,8 +12,8 @@
                 <ul id="cbtblocksortable" class="sortable">
                     @foreach($checklists as $b)
                         <li id="cl_{{$b->id}}">
-                            <i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteList({{$b->id}})"></i>&nbsp;&nbsp;
-                            <i class="fa fa-pencil text-info" onClick="renameList({{$b->id}})"></i>
+                            <i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteList({{$b->id}})"></i>&nbsp;&nbsp;
+                            <i class="fas fa-pencil-alt text-info" onClick="renameList({{$b->id}})"></i>
                             <a href="/mgt/checklists/{{$b->id}}"><span id="name_{{$b->id}}">{{$b->name}}</span></a></li>
                     @endforeach
                 </ul>
@@ -57,7 +57,7 @@
                 url: '/mgt/checklists',
                 type: 'PUT',
                 success: function(data) {
-                    $('#cbtblocksortable').append('<li id="cl_' + data + '"><i class="fa fa-arrows-v arrows"></i> <i class="fa fa-trash-o text-danger" onClick="deleteList(' + data + ')"></i>&nbsp;&nbsp;<i class="fa fa-pencil text-info" onClick="renameList(' + data + ')"></i> <a href="/mgt/checklists/' + data + '"><span id="name_' + data + '">New Training Checklist</span></a></li>');
+                    $('#cbtblocksortable').append('<li id="cl_' + data + '"><i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteList(' + data + ')"></i>&nbsp;&nbsp;<i class="fas fa-pencil-alt text-info" onClick="renameList(' + data + ')"></i> <a href="/mgt/checklists/' + data + '"><span id="name_' + data + '">New Training Checklist</span></a></li>');
                 }
             });
         }

@@ -97,7 +97,7 @@
                                                         <b>The last point must be the same as the first point to close
                                                             the
                                                             polygon.</b></p>
-                                                    <form id="boundaryForm" method="post"
+                                                    <form id="boundaryForm-{{$facility->id}}" method="post"
                                                           action="/mgt/tmu/{{$facility->id}}/coords">
                                                     <textarea class="form-control" name="coords" rows="10"
                                                               id="coordbox_{{$facility->id}}">{{$facility->coords}}</textarea><br>
@@ -162,10 +162,10 @@
                                                 <td>
                                                     <div>
                                                         <button class="btn btn-warning edit-notice"
-                                                                data-id="{{$notice->id}}"><i class="fa fa-pencil"></i>
+                                                                data-id="{{$notice->id}}"><i class="fas fa-pencil-alt"></i>
                                                         </button>
                                                         <button class="btn btn-danger remove-notice"
-                                                                data-id="{{ $notice->id }}"><i class="fa fa-remove"></i>
+                                                                data-id="{{ $notice->id }}"><i class="fas fa-times"></i>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -232,7 +232,7 @@
                                                 Your Notice should contain information regarding delays,
                                                 ground stops, routing, MIT, etc. Notices should <strong>not</strong>
                                                 include publically-accessible information such
-                                                as NOTAMs or weather. </p>
+                                                as NOTAMs or weather. <strong><em>Please check that there are no extra lines after your message. Remove all extra lines before submitting.</em></strong></p>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -367,7 +367,7 @@
                                                                 Your Notice should contain information regarding delays,
                                                                 ground stops, routing, MIT, etc. Notices should <strong>not</strong>
                                                                 include publically-accessible information such
-                                                                as NOTAMs or weather. </p>
+                                                                as NOTAMs or weather. <strong><em>Please check that there are no extra lines after your message. Remove all extra lines before submitting.</em></strong></p>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -487,7 +487,7 @@
           }).fail(function() {
               bootbox.alert("There was an error saving coordinates.  Please try again later.");
           });*/
-          $('#boundaryForm').submit()
+          $('#boundaryForm-' + fac).submit()
         })
       })
 
