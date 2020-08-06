@@ -21,15 +21,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 {
     use Authenticatable, CanResetPassword;
 
-    protected $table = 'controllers';
+    protected $table = "controllers";
     public $primaryKey = "cid";
     public $incrementing = false;
-    public $timestamps = ['created_at'];
-    protected $hidden = ['password', 'remember_token'];
+    public $timestamps = ["created_at", "updated_at"];
+    protected $hidden = ["password", "remember_token", "cert_update", "access_token", "refresh_token", "token_expires"];
 
     public function getDates()
     {
-        return ['created_at', 'updated_at', 'lastactivity'];
+        return ["created_at", "updated_at", "lastactivity"];
     }
 
     public function fullname()
@@ -229,6 +229,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility,
                 "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
         }
+        // if ($this->rating >= Helper::ratingIntFromShort("I1"))
+        // SMFHelper::createPost(7262, 82, "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility, "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
+    }
+
+    public function purge($alltables = false)
+    {
+        $this->delete();
+
+        //TODO: Purge from All Tables
     }
 
     public function transferEligible(&$checks = null)
@@ -291,9 +300,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
-        // S1-S3 within 90 check
+        // S1-C1 within 90 check
         $promotion = Promotions::where('cid', $this->cid)->where("to", "<=",
-            Helper::ratingIntFromShort("S3"))->where('created_at', '>=',
+            Helper::ratingIntFromShort("C1"))->where('created_at', '>=',
             \DB::raw('DATE(NOW() - INTERVAL 90 DAY)'))->first();
         if ($promotion == null) {
             $checks['promo'] = 1;

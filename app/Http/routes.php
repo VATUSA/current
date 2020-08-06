@@ -206,6 +206,7 @@ Route::group([
         Route::get('/my/transfer', 'MyController@getTransfer');
         Route::post('/my/transfer/do', 'MyController@doTransfer');
         Route::get('/my/assignbasic', 'MyController@getAssignBasic');
+        Route::get('/my/discord/{mode}', 'MyController@linkDiscord');
 
 //
 // VATUSA Exam Function
@@ -338,6 +339,12 @@ Route::group([
             Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
             Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
 
+
+        //iDENT App ***************
+        Route::get('mgt/app/push', 'AppController@getIndex');
+        Route::post('mgt/app/push', 'AppController@postPush');
+        Route::get('mgt/app/log', 'AppController@getLog');
+        Route::get('mgt/app/log', 'AppController@getPushLog');
 //
 // VATUSA Mgt Mail Function
 // dev.vatusa.net/mgt/mail/{route}

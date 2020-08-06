@@ -126,14 +126,14 @@ jQuery(document).ready(function ($) {
         className: 'privacy-confirm',
         buttons  : {
           cancel: {
-            label    : '<i class="fa fa-remove"></i> I do not agree, cancel login',
+            label    : '<i class="fas fa-times"></i> I do not agree, cancel login',
             className: 'btn-danger',
             callback : function () {
               //
             }
           },
           ok    : {
-            label    : '<i class="fa fa-sign-in"></i> Continue login',
+            label    : '<i class="fas fa-sign-in-alt"></i> Continue login',
             className: 'btn-success continue-login',
             callback : function () {
               if ($('#privacy-agree').is(':checked')) {

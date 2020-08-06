@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Classes\cPanelHelper;
+use App\Role;
 use Illuminate\Http\Request;
 use App\User;
 use App\Facility;
@@ -149,18 +150,19 @@ class EmailMgtController extends Controller
                 }
             } elseif ($rcpts == "VATUSA") {
                 $rcpts = "VATUSA Staff";
-                foreach (\App\Role::where('facility', 'ZHQ')->get() as $f) {
+                foreach (Role::where('facility', 'ZHQ')->get() as $f) {
                     if(EmailHelper::isOptedIn($f->cid)) $emails[] = Helper::emailFromCID($f->cid);
                 }
             } elseif ($rcpts == "INS") {
                 $rcpts = "Instructional staff";
-                foreach (User::get() as $u) {
-                    if ($u->rating >= Helper::ratingIntFromShort("I1")
-                        && $u->email && $u->flag_broadcastOptedIn) $emails[] = $u->email;
+                foreach (User::where('facility', 'NOT LIKE', 'ZZN')
+                             ->where('facility', 'NOT LIKE', 'ZAE')
+                             ->where('flag_broadcastOptedIn', true)->get() as $u) {
+                    if (RoleHelper::isInstructor($u->cid, $u->facility, false) && $u->email) $emails[] = $u->email;
                 }
             } elseif ($rcpts == "ACE") {
                 $rcpts = "ACE Team Members";
-                foreach (\App\Role::where('facility', 'ZHQ')->where('role', 'ACE')->get() as $f) {
+                foreach (Role::where('facility', 'ZHQ')->where('role', 'ACE')->get() as $f) {
                     if(EmailHelper::isOptedIn($f->cid)) $emails[] = Helper::emailFromCID($f->cid);
                 }
             } else {
