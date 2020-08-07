@@ -1671,22 +1671,33 @@ input.e-training-position, input.n-training-position {
 .training-duration, .training-movements {
     width: 80px;
 }
+
 span[id^="training-ots-exam-"] {
     font-size: 1em;
 }
+
 .ots-status-input-label {
-     -webkit-transition: all 0.2s ease;
-     -moz-transition: all 0.2s ease;
-     -o-transition: all 0.2s ease;
-     transition: all 0.2s ease;
- }
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
 
 .swal-button.btn-success:hover {
     background-color: #408340
 }
+
 .swal-button.btn-success {
     -webkit-transition: all 0.1s ease;
     -moz-transition: all 0.1s ease;
     -o-transition: all 0.1s ease;
     transition: all 0.1s ease;
+}
+
+.bold {
+    font-weight: bold;
+}
+input[name="position"] {
+    text-transform: uppercase;
+    width: 150px;
 }
