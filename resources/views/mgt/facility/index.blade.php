@@ -127,6 +127,7 @@
                                     <th>Name</th>
                                     <th>Rating</th>
                                     <th>Join Date</th>
+                                    <th>Last Promotion</th>
                                     <td class="text-right">Options</td>
                                 </tr>
                                 </thead>
@@ -390,6 +391,10 @@
             html += '</td>'
             var date = new Date(data[i].facility_join)
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
+            var last_promotion = data[i].last_promotion
+            if (last_promotion) var promotion_date = new Date(last_promotion)
+            if (promotion_date) html += '<td>' + (promotion_date.getMonth() + 1) + '/' + promotion_date.getDate() + '/' + promotion_date.getFullYear() + '</td>'
+            else html += '<td><span class="text-muted">N/A</span></td>'
             html += '<td class="text-right">'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isInstructor(\Auth::user()->cid, $fac))
               if (data[i].promotion_eligible == true) {
