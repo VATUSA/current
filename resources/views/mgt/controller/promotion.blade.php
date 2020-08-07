@@ -22,15 +22,15 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label" for="student">Student</label>
                                 <p class="col-sm-9 form-control-static" id="student">
-                                    {{$u->fname}} {{$u->lname}} ({{$u->cid}})
+                                    {{$user->fname}} {{$user->lname}} ({{$user->cid}})
                                 </p>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Rating</label>
                                 <p class="col-sm-9 form-control-static">
-                                    {{ \App\Classes\Helper::ratingShortFromInt($u->rating) }} <i
+                                    {{ \App\Classes\Helper::ratingShortFromInt($user->rating) }} <i
                                         class="fa fa-arrow-right text-success" style="padding:0 10px;"></i>
-                                    <strong>{{ \App\Classes\Helper::ratingShortFromInt($u->rating + 1) }}</strong>
+                                    <strong>{{ \App\Classes\Helper::ratingShortFromInt($user->rating + 1) }}</strong>
                                 </p>
                             </div>
                             <div class="form-group">
@@ -49,8 +49,9 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label" for="position">Exam Position</label>
                                 <div class="col-sm-9">
-                                    <input type="text" name="position" id="position" placeholder="Position (ABC_CTR)"
-                                           class="form-control" style="width:150px;" autocomplete="off">
+                                    <input type="text" name="position" id="position" placeholder="ABC_APP"
+                                           class="form-control" style="width:150px;"
+                                           autocomplete="off">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -89,67 +90,76 @@
                             position on the left to view the applicable OTS Evaluation Form.
                         </div>
                         <div class="list-group">
-                            <a class="list-group-item list-group-item list-group-item-success disabled" id="gnd">
-                                <h4 class="list-group-item-heading">Delivery and Ground Certification Statement<span
-                                        class="glyphicon glyphicon-share pull-right"></span></h4>
-                                <p class="list-group-item-text">I certify that via observations of the
-                                    student/developmental controller’s training that s/he meets the required standards
-                                    for Delivery/Ground certification as outlined in VATUSA Job Order 3120.4 (and
-                                    alphabetical revisions thereof).</p>
-                            </a>
-                            <a class="list-group-item list-group-item list-group-item-success disabled" id="twr">
-                                <h4 class="list-group-item-heading">S2 (Tower) Rating Review Form<span
-                                        class="glyphicon glyphicon-arrow-right pull-right"></span></h4>
-                                <p class="list-group-item-text">VATUSA Competency Review and Certification for Tower</p>
-                            </a>
-                            <a class="list-group-item list-group-item-success disabled" id="app">
-                                <h4 class="list-group-item-heading">S3 (Approach) Rating Review Form<span
-                                        class="glyphicon glyphicon-arrow-right pull-right"></span></h4>
-                                <p class="list-group-item-text">VATUSA Competency Review and Certification for
-                                    Approach</p>
-                            </a>
-                            <a class="list-group-item list-group-item list-group-item-success disabled" id="ctr">
-                                <h4 class="list-group-item-heading">C1 (Center) Rating Review Form<span
-                                        class="glyphicon glyphicon-arrow-right pull-right"></span></h4>
-                                <p class="list-group-item-text">VATUSA Competency Review and Certification for
-                                    Center</p>
-                            </a>
+                            @foreach($forms as $form)
+                                <a class="list-group-item list-group-item list-group-item-success eval-link disabled"
+                                   id="{{ strtolower($form->position) }}" data-id="{{ $form->id }}"
+                                   data-statement="{{ $form->is_statement }}" href="#">
+                                    <h4 class="list-group-item-heading">{{ $form->name }}<span
+                                            class="glyphicon glyphicon-{{$form->is_statement ? 'share' : 'arrow-right'}} pull-right"></span>
+                                    </h4>
+                                    <p class="list-group-item-text">{!! $form->description !!}</p>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    @push('scripts')
-        <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
-        <script type="text/javascript">
-          $(document).ready(function () {
-            /*$('[name=examiner]').autocomplete({
-              source   : '/ajax/cid',
-              minLength: 2,
-              select   : function (event, ui) {
-                $('[name=examiner]').val(ui.item.value)
+@endsection
+@section('scripts')
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        /*$('[name=examiner]').autocomplete({
+          source   : '/ajax/cid',
+          minLength: 2,
+          select   : function (event, ui) {
+            $('[name=examiner]').val(ui.item.value)
 
-                return false
-              }
-            })*/
+            return false
+          }
+        })*/
 
-            $('#exam-date').datetimepicker({
-              timepicker: false,
-              format    : 'Y-m-d',
-              mask      : true,
-              maxDate   : '+1970/01/01',
-              step      : 15
+        const jsDate = new Date(),
+              offset = jsDate.getUTCFullYear() - jsDate.getFullYear() + 1
+
+        $('#exam-date').datetimepicker({
+          timepicker: false,
+          format    : 'Y-m-d',
+          mask      : true,
+          maxDate   : '+1970/01/0' + offset,
+          step      : 15
+        })
+
+        $('#position').keyup(function () {
+          $(this).val($(this).val().toUpperCase())
+          $('.list-group-item:not(.disabled)').addClass('disabled')
+          let pos = $(this).val().split('_')
+          if (pos.length)
+            $('#' + pos.pop().toLowerCase()).removeClass('disabled')
+        })
+
+        $('.eval-link').click(function (e) {
+          e.preventDefault()
+          if ($(this).hasClass('disabled')) return
+          const link        = $(this),
+                id          = link.data('id'),
+                statement   = link.data('statement'),
+                description = link.find('p').html()
+          if (statement) {
+            return swal({
+              title: 'Delivery and Ground Certification Statement',
+              text : description,
+              icon : 'info'
             })
-
-            $('#position').keyup(function () {
-              $(this).val($(this).val().toUpperCase())
-              $('.list-group-item:not(.disabled)').addClass('disabled')
-              let pos = $(this).val().split('_')
-              if (pos.length)
-                $('#' + pos.pop().toLowerCase()).removeClass('disabled')
-            })
-          })
-        </script>
-    @endpush
+            //continue
+          }
+          Cookies.set('eval-pos', $('#position').val())
+          Cookies.set('eval-date', $('#exam-date').val())
+          window.location = 'eval';
+        })
+      })
+    </script>
 @endsection
