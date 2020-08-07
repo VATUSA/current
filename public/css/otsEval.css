@@ -1,0 +1,130 @@
+#ots-eval-table .result-cell, #ots-eval-table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.perfcat-cell {
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.result-cell.result-na {
+    color: #8c8c8c;
+    cursor: not-allowed;
+}
+
+.result-cell, input[type="radio"] {
+    cursor: pointer;
+}
+
+input[type="radio"]:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+table span {
+    cursor: default;
+}
+
+.result-cell.default-header {
+    border: none;
+}
+
+.default-header-label {
+    border-right: none;
+}
+
+.perfcat-label {
+    margin-left: 6pt;
+}
+
+.indicator-header:not(.result-header) {
+    font-weight: bold;
+}
+
+.indicator-res-header, .indicator-res-header div {
+    cursor: pointer;
+}
+
+.indicator-header-label {
+    margin-left: 6pt;
+}
+
+.indicator-item-count {
+    margin-left: 20px;
+    float: left;
+}
+
+.indicator-item-label {
+    padding-left: 6pt;
+    display: table-cell
+}
+
+.result-cell input {
+    box-shadow: none;
+    height: 28px;
+    width: 18px;
+}
+
+#ots-eval-header {
+    margin-bottom: 0;
+}
+
+#ots-eval-table {
+    margin-bottom: 0;
+}
+
+#eval-submit-table {
+    margin-top: 0;
+    border-top: 2px solid #ccc;
+}
+
+#ots-eval-header thead {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+#ots-eval-header > thead > tr {
+    background-color: #f9f9f9;
+}
+
+#ots-eval-header td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+#ots-eval-header #position, #ots-eval-header #exam-date {
+    text-align: center;
+    display: inline-block;
+}
+
+.table-cell-footer {
+    font-size: 0.78em;
+    color: #a0a0a0;
+}
+
+textarea#notes {
+    height: 100px;
+}
+
+#signature img {
+    top: 30px !important;
+    left: -25px;
+}
+
+#student-position {
+    margin-bottom: 7px;
+}
+
+.tableFloatingHeaderOriginal {
+    border-top: 2px solid #ccc;
+    background: white;
+}
+
+.perfcat-cell span {
+    position: sticky;
+    top: 50px;
+}

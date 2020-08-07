@@ -6,6 +6,8 @@ use App\Checklists;
 use App\Classes\Helper;
 use App\Classes\PromoHelper;
 use App\Classes\SMFHelper;
+use App\OTSEval;
+use App\OTSEvalForm;
 use App\Promotions;
 use App\Role;
 use App\SoloCert;
@@ -585,6 +587,8 @@ class MgtController extends Controller
     function getControllerPromote($cid)
     {
         $user = User::find($cid);
+        $forms = OTSEvalForm::active()->get();
+
         if (!$user) {
             return redirect('mgt/facility#mem')->with('error', 'User not found.');
         }
@@ -595,11 +599,20 @@ class MgtController extends Controller
             abort(403);
         }
 
+        if (!$forms) {
+            return redirect('mgt/facility#mem')->with('error',
+                'No evaluation forms found. Please try again later or contact VATUSA6.');
+        }
+        if ($forms->count() !== 4) {
+            return redirect('mgt/facility#mem')->with('error',
+                'Insufficient evaluation forms found. Please try again later or contact VATUSA6.');
+        }
+
         if (!$user->promotionEligible()) {
             return redirect('/mgt/facility#mem')->with('error', 'User is not eligible');
         }
 
-        return view('mgt.controller.promotion', ['u' => $user]);
+        return view('mgt.controller.promotion', compact('user', 'forms'));
     }
 
     function postControllerPromote(Request $request, $cid)
@@ -930,5 +943,28 @@ class MgtController extends Controller
             (RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, Auth::user()->facility, false, false) ||
                 (RoleHelper::isTrainingStaff(Auth::user()->cid, true, $record->student->facility,
                         false) && $record->instructor_id == Auth::user()->cid)));
+    }
+
+    public function getOTSEval(Request $request, int $cid, $form = null)
+    {
+        if (!Auth::check() || !RoleHelper::isInstructor()) {
+            abort(403);
+        }
+        $student = User::find($cid);
+        if (!$student) {
+            abort(404);
+        }
+        $form = $form ? OTSEvalForm::has('perfcats')->has('perfcats.indicators')->find($form)
+            : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
+                ->where('rating_id', $student->rating + 1)->first();
+        if (!$student || !$form) {
+            abort(404, "The OTS evaluation form is invalid.");
+        }
+        if ($form->rating_id !== $student->rating + 1) {
+            abort(400, "The controller is not eligible for that evaluation.");
+        }
+
+        return response()->view('mgt.controller.training.otsEval', compact('student', 'form'));
+
     }
 }
