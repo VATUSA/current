@@ -1037,11 +1037,12 @@ class MgtController extends Controller
         return response()->view('mgt.controller.training.otsEval', compact('student', 'form'));
 
     }
+
     public
-    function viewOTSEval (
+    function viewOTSEval(
         Request $request,
         int $cid,
-       int $eval
+        int $eval
     ) {
         $student = User::find($cid);
         if (!$student) {
@@ -1054,7 +1055,20 @@ class MgtController extends Controller
         if (!$student || !$eval) {
             abort(404, "The OTS evaluation form is invalid.");
         }
+        $attempt = Helper::numToOrdinalWord(OTSEval::where([
+            'student_id' => $eval->student_id,
+            ['exam_date', '<=', $eval->exam_date],
+            ['exam_position', 'like', '%' . explode('_', $eval->exam_position)[1]]
+        ])->count());
+        $recs = TrainingRecord::where([
+            'student_id' => $eval->student_id,
+            ['session_date', '<=', $eval->exam_date],
+            ['position', 'like', '%' . explode('_', $eval->exam_position)[1]],
+            'ots_status' => 2
+        ])->groupBy(['instructor_id'])->orderBy('session_date', 'desc')
+            ->get()->pluck('instructor_id', 'session_date');
 
-        return response()->view('mgt.controller.training.viewOtsEval', compact('student', 'eval'));
+        return response()->view('mgt.controller.training.viewOtsEval',
+            compact('student', 'eval', 'attempt', 'recs'));
     }
 }
