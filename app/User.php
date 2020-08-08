@@ -289,7 +289,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $promotion = Promotions::where('cid', $this->cid)->where([
              ['to',         '<=', Helper::ratingIntFromShort("C1")],
              ['to',         '>', 'from'],
-             ['[created_at', '>=', \DB::raw("DATE(NOW() - INTERVAL 90 DAY)")]
+             ['created_at', '>=', \DB::raw("DATE(NOW() - INTERVAL 90 DAY)")]
              ])->first();
         if ($promotion == null) {
             $checks['promo'] = 1;
