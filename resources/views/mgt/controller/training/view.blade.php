@@ -61,11 +61,11 @@
                         </tr>
                         <tr id="training-ots-exam">
                             <td>OTS Exam</td>
-                            <td><span class="label label-danger" id="training-ots-exam-fail"><span
+                            <td><span class="label label-danger" id="training-ots-exam-fail" rel="tooltip"><span
                                         class="glyphicon glyphicon-remove"></span> Fail</span>
                                 <span class="label label-info" id="training-ots-exam-rec"><span
                                         class="glyphicon glyphicon-info-sign"></span> Recommended</span>
-                                <span class="label label-success" id="training-ots-exam-pass"><span
+                                <span class="label label-success" id="training-ots-exam-pass" rel="tooltip"><span
                                         class="glyphicon glyphicon-ok"></span> Pass</span>
                             </td>
                         </tr>

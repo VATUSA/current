@@ -42,8 +42,10 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label" for="exam-date">Date of Exam (UTC)</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" name="date" id="exam-date" value="{{ date('Y-m-d') }}"
-                                           style="width:150px;" autocomplete="off">
+                                    <input class="form-control" name="date" id="exam-date"
+                                           value="{{ $dateOfExam ? $dateOfExam : date('Y-m-d') }}"
+                                           style="width:150px;" autocomplete="off" @if($dateOfExam) disabled
+                                           readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -51,7 +53,9 @@
                                 <div class="col-sm-9">
                                     <input type="text" name="position" id="position" placeholder="ABC_APP"
                                            class="form-control" style="width:150px;"
-                                           autocomplete="off">
+                                           value="{{ $examPosition ?? '' }}"
+                                           maxlength="7"
+                                           autocomplete="off" @if($examPosition) readonly disabled @endif>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -59,10 +63,22 @@
                                     <b>Training Record</b>
                                 </div>
                                 <p class="col-sm-9 form-control-static">
-                                    <span class="label label-danger" style="font-size:90%;" rel="tooltip"
-                                          title="There must be a training record present in the CTRS that is marked OTS Pass under the specified position."><span
-                                            class="glyphicon glyphicon-remove"></span> Does Not Exist</span>
-                                    <br>
+                                    @switch($trainingRecordStatus)
+                                        @case(1)
+                                        <span class="label label-success" style="font-size:90%;"><span
+                                                class="glyphicon glyphicon-ok"></span> Exists</span>
+                                        @break
+                                        @case(0)
+                                        <span class="label label-danger" style="font-size:90%;" rel="tooltip"
+                                              title="There must be a training record present in the CTRS that is marked OTS Pass under the specified position."><span
+                                                class="glyphicon glyphicon-remove"></span> Does Not Exist</span>
+                                        @break
+                                        @default
+                                        <span class="label label-default" style="font-size:90%;"><i
+                                                class="fas fa-times-circle"></i> Not Applicable</span>
+                                        <br>
+                                        @break
+                                    @endswitch
                                 </p>
                             </div>
                             <div class="form-group">
@@ -70,9 +86,26 @@
                                     <b>OTS Evaluation</b>
                                 </div>
                                 <p class="col-sm-9 form-control-static">
-                                    <span class="label label-danger" style="font-size:90%;" rel="tooltip"
-                                          title="The OTS evalulation form must be completely and correctly filled out on the right."><span
-                                            class="glyphicon glyphicon-remove"></span> Not Complete</span>
+                                    @switch($otsEvalStatus)
+                                        @case(-1)
+                                        <span class="label label-default" style="font-size:90%;"><i
+                                                class="fas fa-times-circle"></i> Not Applicable</span>
+                                        <br>
+                                        @break
+                                        @case(0)
+                                        <span class="label label-danger" style="font-size:90%;" rel="tooltip"
+                                              title="The OTS evalulation form must be completely and correctly filled out on the right."><span
+                                                class="glyphicon glyphicon-remove"></span> Not Complete</span>
+                                        @break
+                                        @case(1)
+                                        <span class="label label-success" style="font-size:90%;"><span
+                                                class="glyphicon glyphicon-ok"></span> Complete</span>
+                                        @break
+                                        @case(2)
+                                        <span class="label label-warning" style="font-size:90%;"><span
+                                                class="glyphicon glyphicon-remove"></span> Not Passed</span>
+                                        @break
+                                    @endswitch
                                 </p>
                             </div>
                             <div class="form-group">
@@ -91,11 +124,26 @@
                         </div>
                         <div class="list-group">
                             @foreach($forms as $form)
-                                <a class="list-group-item list-group-item list-group-item-success eval-link disabled"
+                                @php
+                                    $disableClass = "";
+                                     if(!$dateOfExam)
+                                         $disableClass = $form->rating_id == $user->rating + 1 ? 'temp-disabled disabled' : 'disabled';
+                                     else
+                                           $disableClass = $form->rating_id == $user->rating + 1 ? '' : 'disabled';
+                                @endphp
+                                <a class="list-group-item list-group-item list-group-item-{{ $dateOfExam ? 'success': 'info' }} eval-link {{ $disableClass }}"
                                    id="{{ strtolower($form->position) }}" data-id="{{ $form->id }}"
                                    data-statement="{{ $form->is_statement }}" href="#">
-                                    <h4 class="list-group-item-heading">{{ $form->name }}<span
-                                            class="glyphicon glyphicon-{{$form->is_statement ? 'share' : 'arrow-right'}} pull-right"></span>
+                                    <h4 class="list-group-item-heading">{{ $form->name }}
+                                        @if($dateOfExam && $form->rating_id == $user->rating + 1)
+                                            <span
+                                                class="glyphicon glyphicon-ok pull-right"></span>
+                                        @elseif($dateOfExam) <span
+                                            class="glyphicon glyphicon-remove pull-right"></span>
+                                        @else
+                                            <span
+                                                class="glyphicon glyphicon-{{$form->is_statement ? 'share' : 'arrow-right'}} pull-right"></span>
+                                        @endif
                                     </h4>
                                     <p class="list-group-item-text">{!! $form->description !!}</p>
                                 </a>
@@ -137,8 +185,10 @@
           $(this).val($(this).val().toUpperCase())
           $('.list-group-item:not(.disabled)').addClass('disabled')
           let pos = $(this).val().split('_')
-          if (pos.length)
-            $('#' + pos.pop().toLowerCase()).removeClass('disabled')
+          if (pos.length) {
+            pos = pos.pop()
+            if (pos !== '') $('#' + pos.toLowerCase() + '.temp-disabled').removeClass('disabled')
+          }
         })
 
         $('.eval-link').click(function (e) {
@@ -158,7 +208,7 @@
           }
           Cookies.set('eval-pos', $('#position').val())
           Cookies.set('eval-date', $('#exam-date').val())
-          window.location = 'eval';
+          window.location = 'eval{{ $dateOfExam ? "/$evalId/view" : ''}}'
         })
       })
     </script>
