@@ -40,7 +40,7 @@
                                                                 id="position" class="form-control" autocomplete="off">
                                 </p>
                                 <label class="table-cell-footer control-label"
-                                       for="position">Operation Position</label>
+                                       for="position">Exam Position</label>
                             </td>
                             <td>
                                 <p>

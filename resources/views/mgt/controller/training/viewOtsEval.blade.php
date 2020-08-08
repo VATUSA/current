@@ -30,7 +30,7 @@
                             </td>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="view-eval-header-body">
                         <tr>
                             <td><p id="student-name" class="form-control-static">{{ $student->fullname() }}
                                     ({{ $student->cid }})</p><label class="table-cell-footer control-label"
@@ -38,7 +38,7 @@
                             <td>
                                 <p id="student-position" class="form-control-static"> {{ $eval->exam_position }}</p>
                                 <label class="table-cell-footer control-label"
-                                       for="position">Operation Position</label>
+                                       for="position">Exam Position</label>
                             </td>
                             <td>
                                 <p class="form-control-static">

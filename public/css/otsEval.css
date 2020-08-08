@@ -171,3 +171,7 @@ textarea#notes {
 .indicator-comment-display {
     font-style: italic;
 }
+
+#view-eval-header-body #student-position {
+    margin-bottom: 0;
+}
