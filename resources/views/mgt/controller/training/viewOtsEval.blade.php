@@ -25,7 +25,7 @@
                     <table class="table table-bordered" id="ots-eval-header">
                         <thead>
                         <tr>
-                            <td colspan="4">
+                            <td colspan="5">
                                 OTS Evaluation: {{ $eval->form->name }}
                             </td>
                         </tr>
@@ -52,6 +52,11 @@
                                    class="form-control-static">{{ $eval->facility->name }}</p>
                                 <label class="table-cell-footer control-label"
                                        for="position">Facility</label></td>
+                            <td>
+                                <p id="ots-attempt"
+                                   class="form-control-static">{{ $attempt }}</p>
+                                <label class="table-cell-footer control-label"
+                                       for="position">Attempt</label></td>
                         </tr>
                         </tbody>
                     </table>
@@ -105,7 +110,7 @@
                                             <span class="indicator-header-count">{{ ++$headerCount }}.</span>
                                             <span class="indicator-header-label">{!! $indicator->label !!}
                                                 @if($indicator->result($eval->id) && $indicator->result($eval->id)->comment)
-                                                   <br> <span
+                                                    <br> <span
                                                         class="indicator-comment-display"
                                                         id="indicator-comment-display-{{ $indicator->id }}">{{ $indicator->result($eval->id)->comment }}</span>@endif</span>
                                             @if($indicator->help_text)
@@ -184,6 +189,22 @@
                                         <div class="col-sm-7">
                                             <p class="form-control-static">
                                                 @if($eval->notes){!! $eval->notes !!}
+                                                @else
+                                                    <em>None</em>
+                                                @endif
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="notes" class="col-sm-2 control-label text-center">Recommending
+                                            Parties</label>
+                                        <div class="col-sm-10">
+                                            <p class="form-control-static">
+                                                @if($recs->count())
+                                                    {!!  implode('<br> ', $recs->map(function($v, $k) {
+                                                            return \App\Classes\Helper::nameFromCID($v) . " ($v) on " .
+                                                                \Carbon\Carbon::createFromTimeString($k)->format('Y-m-d');
+                                                            })->all()) !!}
                                                 @else
                                                     <em>None</em>
                                                 @endif
