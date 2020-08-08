@@ -11,8 +11,8 @@ $factory->define(TrainingRecord::class, function (Faker $faker) {
         + $faker->boolean(5);
 
     return [
-        'student_id'    => 1275401,
-        'instructor_id' => 1275302,
+        'student_id'    => 1275302,
+        'instructor_id' => 1275401,
         'session_date'  => $faker->dateTimeThisDecade,
         'facility_id'   => 'ZSE',
         'position'      => $facilities[$faker->numberBetween(0, 4)],

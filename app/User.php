@@ -57,6 +57,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(TrainingRecord::class, 'instructor_id', 'cid');
     }
 
+    public function evaluations()
+    {
+        return $this->hasMany(OTSEval::class, 'student_id', 'cid');
+    }
+
+    public function evaluationsIns()
+    {
+        return $this->hasMany(OTSEval::class, 'instructor_id', 'cid');
+    }
+
     public function getPrimaryRole()
     {
         if ($this->facility()->atm == $this->cid) {

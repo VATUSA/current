@@ -82,11 +82,13 @@
                                     <td>{{ $record->instructor->fullname() }}</td>
                                     <td>{{ substr($record->duration, 0, 5) }}</td>
                                     <td class="alert-ignore">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <span
-                                                class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
-                                            &nbsp;
-                                        @endfor
+                                        @if(!is_null($record->score))
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span
+                                                    class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
+                                                &nbsp;
+                                            @endfor
+                                        @endif
                                     </td>
                                     <td class="alert-ignore">
                                         <div class="btn-group">
@@ -167,11 +169,13 @@
                                         <td>{{ $record->instructor->fullname() }}</td>
                                         <td>{{ substr($record->duration, 0, 5) }}</td>
                                         <td class="alert-ignore">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <span
-                                                    class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
-                                                &nbsp;
-                                            @endfor
+                                            @if(!is_null($record->score))
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <span
+                                                        class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
+                                                    &nbsp;
+                                                @endfor
+                                            @endif
                                         </td>
                                         <td class="alert-ignore">
                                             <div class="btn-group">

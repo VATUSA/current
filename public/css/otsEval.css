@@ -68,6 +68,10 @@ table span {
     width: 18px;
 }
 
+.result-na > i.fas {
+    margin-top: 3px;
+}
+
 #ots-eval-header {
     margin-bottom: 0;
 }
@@ -127,4 +131,43 @@ textarea#notes {
 .perfcat-cell span {
     position: sticky;
     top: 50px;
+}
+
+#scroll-control {
+    position: fixed;
+    z-index: 999;
+    right: 30px;
+    bottom: 30px;
+}
+
+.indicator-comment-cell {
+    vertical-align: middle !important;
+    text-align: center;
+    border-left: none !important;
+}
+
+.indicator-comment {
+    float: right;
+    display: inherit;
+}
+
+.indicator-comment > i.fas {
+    cursor: pointer;
+    margin-top: 3px;
+}
+
+.indicator-item, .indicator-header.result-header {
+    border-right: none !important;
+}
+
+.indicator-help-text {
+    margin-left: 3px;
+}
+
+#comment-input {
+    width: 330px;
+}
+
+.indicator-comment-display {
+    font-style: italic;
 }

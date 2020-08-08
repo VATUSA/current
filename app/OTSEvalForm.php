@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class OTSEvalForm extends Model
@@ -36,5 +37,15 @@ class OTSEvalForm extends Model
      */
     public function scopeActive($query) {
         return $query->where('active', 1);
+    }
+
+    /**
+     * Eager-load all form elements.
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithAll(Builder $query) {
+        return $query->with(['perfcats', 'perfcats.indicators', 'perfcats.indicators.results']);
     }
 }

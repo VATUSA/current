@@ -2,6 +2,8 @@
 
 use App\Classes\EmailHelper;
 use App\Classes\ExamHelper;
+use App\Classes\Helper;
+use App\Classes\RoleHelper;
 use App\Promotions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,12 +23,34 @@ class MyController
         $this->middleware('auth');
     }
 
-    public function getProfile()
+    public function getProfile(Request $request)
     {
         $checks = [];
         $eligible = Auth::user()->transferEligible($checks);
 
-        return view('my.profile', ['checks' => $checks, 'eligible' => $eligible]);
+        /** Training Records */
+        $trainingfac = $request->input('fac', null);
+        $trainingfaclist = Auth::user()->trainingRecords()->groupBy('facility_id')->get();
+
+        if (!$trainingfac) {
+            if ($trainingfaclist->count() == 1) {
+                $trainingfac = $trainingfaclist->first()->facility_id;
+                $trainingfacname = Helper::facShtLng($trainingfac);
+            } else {
+                $trainingfac = "ZAE";
+                $trainingfacname = "";
+            }
+        } else {
+            if (Facility::find($trainingfac)) {
+                $trainingfacname = Helper::facShtLng($trainingfac);
+            } else {
+                abort(500);
+            }
+        }
+        $trainingRecords = Auth::user()->trainingRecords()->where('facility_id',
+            $trainingfac)->get();
+
+        return view('my.profile', compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist'));
     }
 
     public function getAssignBasic()
@@ -195,6 +219,7 @@ class MyController
 
     public function linkDiscord($mode = "link")
     {
+        sleep(5);
         $provider = new Discord([
             'clientId'     => config('services.discord.client'),
             'clientSecret' => config('services.discord.secret'),

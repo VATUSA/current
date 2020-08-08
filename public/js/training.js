@@ -156,7 +156,7 @@ $(function () {
       url   : $.apiUrl() + '/v2/training/record/' + id,
       method: 'GET',
     }).done(result => {
-      btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>').attr('disabled', false)
+      btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>' + (!$('#canAdd').length ? ' View' : '')).attr('disabled', false)
 
       $.ajax({
         url: '/mgt/controller/ajax/canModifyRecord/' + id
@@ -180,11 +180,12 @@ $(function () {
       $('.training-student').html(result.student.fname + ' ' + result.student.lname)
       $('#training-artcc').html(result.facility.name)
       scoreStr = ''
-      for (let i = 1; i <= 5; i++) {
-        scoreStr += '<span class=\'glyphicon glyphicon-star'
-        scoreStr += i > result.score ? '-empty' : ''
-        scoreStr += '\'></span> &nbsp;'
-      }
+      if (!NaN(result.score))
+        for (let i = 1; i <= 5; i++) {
+          scoreStr += '<span class=\'glyphicon glyphicon-star'
+          scoreStr += i > result.score ? '-empty' : ''
+          scoreStr += '\'></span> &nbsp;'
+        }
       $('#training-score').html(scoreStr)
       $('#training-datetime').html(moment(result.session_date).format('dddd, MMMM Do YYYY, hh:mm'))
       let duration    = moment.duration(result.duration),
@@ -223,9 +224,21 @@ $(function () {
       switch (result.ots_status) {
         case 1:
           $('#training-ots-exam-pass').show()
+          if (result.ots_eval_id && $('#canAdd').length) $('#training-ots-exam-pass')
+            .attr('title', 'View OTS Evaluation').click(function () {
+              document.location = '/mgt/controller/' + result.student_id + '/eval/' + result.ots_eval_id + '/view'
+            })
+          else $('#training-ots-exam-pass')
+            .attr('title', '').off('click')
           break
         case 2:
           $('#training-ots-exam-fail').show()
+          if (result.ots_eval_id && $('#canAdd').length) $('#training-ots-exam-fail')
+            .attr('title', 'View OTS Evaluation').click(function () {
+              document.location = '/mgt/controller/' + result.student_id + '/eval/' + result.ots_eval_id + '/view'
+            })
+          else $('#training-ots-exam-fail')
+            .attr('title', '').off('click')
           break
         case 3:
           $('#training-ots-exam-rec').show()
@@ -237,7 +250,7 @@ $(function () {
       $('#view-training-record').modal('show')
     })
       .fail((xhr, status, error) => {
-        btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>').attr('disabled', false)
+        btn.html('<span class=\'glyphicon glyphicon-eye-open\'></span>' + (!$('#canAdd').length ? ' View' : '')).attr('disabled', false)
         swal('Error!', 'Unable to get training record. ' + error, 'error')
       })
   })
@@ -432,10 +445,10 @@ $(function () {
       btn.html('<span class=\'glyphicon glyphicon-ok\'></span> Submit').attr('disabled', false)
       if (result.status === 'OK')
         swal('Success!', 'The training record has been successfully edited. ', 'success').then(() => {
-          if($('#e-training-ots-grp').find('input[name="ots_status"]:checked').val() == 1 || $('#e-training-ots-grp').find('input[name="ots_status"]:checked').val() == 2) {
-            $('#e-training-submit').prop('disabled', true);
-            $('#tr-edit-delete').prop('disabled', true);
-            window.location.reload();
+          if ($('#e-training-ots-grp').find('input[name="ots_status"]:checked').val() == 1 || $('#e-training-ots-grp').find('input[name="ots_status"]:checked').val() == 2) {
+            $('#e-training-submit').prop('disabled', true)
+            $('#tr-edit-delete').prop('disabled', true)
+            window.location.reload()
           }
         })
       else
