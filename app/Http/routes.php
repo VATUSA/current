@@ -297,7 +297,8 @@ Route::group([
             Route::get('/mgt/controller/{cid}/promote', 'MgtController@getControllerPromote');
             Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
             Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
-            Route::get('/mgt/controller/{cid}/eval/{form?}', 'MgtController@getOTSEval');
+            Route::get('/mgt/controller/{cid}/eval/{form?}', 'MgtController@getOTSEval')->where('form', '[0-9]+');
+            Route::get('/mgt/controller/{cid}/eval/{form?}/view', 'MgtController@viewOTSEval')->where('form', '[0-9]+');
             Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
             Route::post('/mgt/controller/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
             Route::post('/mgt/controller/toggleInsRole', 'MgtController@toggleInsRole');

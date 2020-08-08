@@ -8,7 +8,11 @@
 @extends('layout')
 @section('title', 'OTS Evaluation')
 @section('content')
-    <div class="container">
+    <div id="scroll-control" class="btn-group btn-group-lg">
+        <button class="btn btn-default" id="scroll-top"><i class="fas fa-angle-double-up"></i></button>
+        <button class="btn btn-default" id="scroll-bottom"><i class="fas fa-angle-double-down"></i></button>
+    </div>
+    <div class="container" id="eval-outer-container">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
@@ -41,7 +45,8 @@
                             <td>
                                 <p>
                                     <input class="form-control" name="date" id="exam-date" value="{{ date('Y-m-d') }}"
-                                           style="width:150px;" autocomplete="off">
+                                           style="width:150px;" autocomplete="off" rel="tooltip"
+                                           title="Ensure that this date matches the date of the training record.">
                                 </p>
                                 <label class="table-cell-footer control-label"
                                        for="exam-date">Date of Exam (UTC)</label>
@@ -72,7 +77,7 @@
                         <thead>
                         <tr>
                             <th>Performance Category</th>
-                            <th>Performance Indicator</th>
+                            <th colspan="2">Performance Indicator</th>
                             <th class="indicator-res-header" data-value="0">
                                 <div rel="tooltip"
                                      title="Not Observed">NA
@@ -113,14 +118,44 @@
                                     @if($indicator->header_type > 0)
                                         @php $itemCount = 0; @endphp
                                         <td class="indicator-header @if($indicator->header_type == 2) result-header @endif
-                                        @if(in_array('bold',explode(',', $indicator->extra_options))) bold @endif">
+                                        @if(in_array('bold',explode(',', $indicator->extra_options))) bold @endif"
+                                            @if($indicator->header_type != 2) colspan="2" @endif>
                                             <span class="indicator-header-count">{{ ++$headerCount }}.</span>
-                                            <span class="indicator-header-label">{{ $indicator->label }}</span>
+                                            <span class="indicator-header-label">{!! $indicator->label !!}<span
+                                                    class="indicator-comment-display"
+                                                    id="indicator-comment-display-{{ $indicator->id }}"></span></span>
+                                            @if($indicator->help_text)
+                                                <span class="indicator-help-text" data-toggle="popover"
+                                                      title="Instructions" data-content="{{ $indicator->help_text }}"><i
+                                                        class="fas fa-question-circle"></i></span>
+                                    @endif
+                                    @if($indicator->header_type == 2)
+                                        <td class="indicator-comment-cell"><span class="indicator-comment" rel="tooltip"
+                                                                                 title="Add Comment"
+                                                                                 data-id="{{ $indicator->id }}"><i
+                                                    class="fas fa-plus-circle"></i></span>
                                         </td>
+                                    @endif
                                     @else
                                         <td class="indicator-item @if(in_array('bold',explode(',',$indicator->extra_options))) bold @endif">
                                             <div class="indicator-item-count">{{ chr(97 + $itemCount++) }}.</div>
-                                            <div class="indicator-item-label"><span>{{ $indicator->label }}</div>
+                                            <div class="indicator-item-label">
+                                                <span>{!! $indicator->label !!}</span>
+                                                <span class="indicator-comment-display"
+                                                      id="indicator-comment-display-{{ $indicator->id }}"></span>
+                                                @if($indicator->help_text)
+                                                    <span class="indicator-help-text" data-toggle="popover"
+                                                          title="Instructions"
+                                                          data-content="{{ $indicator->help_text }}"><i
+                                                            class="fas fa-question-circle"></i>
+                                                        </span>
+                                                @endif</div>
+                                        </td>
+                                        <td class="indicator-comment-cell"><span class="indicator-comment" rel="tooltip"
+                                                                                 id="indicator-comment-btn-{{ $indicator->id }}"
+                                                                                 title="Add Comment"
+                                                                                 data-id="{{ $indicator->id }}"><i
+                                                    class="fas fa-plus-circle"></i></span>
                                         </td>
                                     @endif
                                     @for($i = 0; $i < 4; $i++)
@@ -160,7 +195,7 @@
                                                     <i class="fas fa-check"></i> Pass
                                                 </label>
                                                 <label class="btn btn-default ots-status-input-label">
-                                                    <input type="radio" name="ots_status" id="ots-result-fail" value="2"
+                                                    <input type="radio" name="ots_status" id="ots-result-fail" value="0"
                                                            class="ots-status-input" autocomplete="off"><i
                                                         class="fas fa-times"></i> Fail
                                                 </label>
@@ -194,12 +229,23 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
+                                            <input type="hidden" name="form" id="form-id" value="{{ $form->id }}">
                                             <button type="submit" class="btn btn-success" id="submit-eval"><i
                                                     class="fas fa-check-double"></i> eSign and Submit
                                             </button>
                                             <button class="btn btn-warning resetForm" type="button"><i
                                                     class="fas fa-sync"></i> Reset Form
                                             </button>
+                                            <div class="alert alert-info" style="margin-top: 5px;">
+                                                <i class="fas fa-info-circle" style="display: table-cell"></i>
+                                                <p style="display: table-cell; padding-left: 5px;"> By submitting this form, you agree
+                                                    that you are the examining instructor and have conducted the OTS
+                                                    to the standards set forth by the VATUSA training staff and by
+                                                    your own ARTCC. You also agree that all data and selections are
+                                                    accurate to the best of your ability. <br><strong>Ensure that the
+                                                        exam date is accurate, in UTC time, and that it matches the
+                                                        related training record.</strong><br><strong class="text-danger">Once submitted, it
+                                                        cannot be modified or deleted.</strong></p></div>
                                         </div>
                                     </div>
                                 </form>
@@ -224,9 +270,57 @@
     <script src="https://unpkg.com/sticky-table-headers"></script>
     <script type="text/javascript">
       $(document).ready(function () {
-        window.onbeforeunload = function () {
-          return true
-        }
+        const samplePerformanceComments = ['Was not proficient on SRS for heavy aircraft',
+          'Cleared an aircraft to land at an uncontrolled field',
+          'Gave a vector below MVA',
+          'Gave a more-than 30 degree intercept for FAC',
+          'Loss of separation between two IFR aircraft',
+          'Invalid clearance for /A aircraft',
+          'Cleared aircraft to cross after another\'s same rwy takeoff clearance',
+          'Loss of same-runway separation']
+
+        storageSetup()
+        checkFilled()
+        $(window).click(function () {
+          checkFilled()
+        })
+
+        $('[data-toggle="popover"]').popover({trigger: 'hover'})
+
+        /* $('.indicator-comment').popover({
+           title    : 'Add Comment<br>rr',
+           html     : true,
+           placement: 'top',
+           content  : '<p id=\'indicator-comment-label\'><em></em></p><textarea class=\'form-control\' id=\'comment-input\' data-id=\'0\' placeholder=\'Performance comment...\'></textarea>',
+           trigger  : 'click',
+           container: 'body',
+           template : '<div class="popover" role="tooltip"><div class="arrow"></div><div class="comment-popover-title"><h3 class="popover-title"></h3><p class="help-block">Resize using the tool at the bottom right.</p></div><div class="popover-content"></div></div>'
+         }).on('show.bs.popover', function (e) {
+           $('.indicator-comment').tooltip('hide')
+         }).on('shown.bs.popover', function () {
+           setTimeout(function () {
+             const label = $('#indicator-comment-label > em')
+             label.html(window.localStorage.getItem('comment.label'))
+             let fontSize   = $(label).css('font-size'),
+                 lineHeight = Math.floor(parseInt(fontSize.replace('px', '')) * 1.5),
+                 popover    = $('.popover')
+             popover.css('top', parseInt(popover.css('top').replace('px', '')) - lineHeight)
+             console.log(popover.width() - 359)
+             //popover.css('left', parseInt(popover.css('left').replace('px', '')) - (popover.width() - 359))
+             $('#comment-input').attr('data-id', window.localStorage.getItem('comment.id'))
+               .val(fetchComment(window.localStorage.getItem('comment.id')))
+           }, 5)
+         }).click(function () {
+           $('.indicator-comment').not(this).popover('hide')
+           window.localStorage.setItem('comment.id', $(this).data('id'))
+           window.localStorage.setItem('comment.label', $(this).parent().siblings('.indicator-item, .indicator-header').find('.indicator-item-label, .indicator-header-label').ignore('.indicator-help-text').html())
+         })
+
+        $(document).on('keyup', '#comment-input', function () {
+          setComment($(this).data('id'), $(this).val())
+        })
+        */
+
         $('#ots-eval-table').stickyTableHeaders()
         const position = Cookies.get('eval-pos') ?? "_{{ $form->position }}".toUpperCase(),
               jsDate   = new Date(),
@@ -284,7 +378,7 @@
             case 1:
               parent.removeClass('btn-default').addClass('btn-success')
               break
-            case 2:
+            case 0:
               parent.removeClass('btn-default').addClass('btn-danger')
               break
             case 3:
@@ -305,7 +399,8 @@
                 date      = $('#exam-date').val(),
                 result    = parseInt($('input[name="ots_result"]:checked').val()),
                 notes     = $('#notes').val(),
-                signature = $('#signature').jSignature('getData', 'svgbase64').join(',')
+                signature = $('#signature').jSignature('getData', 'svgbase64').join(','),
+                form      = $('#form-id').val()
 
           if (!position || position.length !== 7 || !position.match(/^([A-Z0-9]{2,3})_(TWR|APP|CTR)$/))
             return swal('Invalid Position', 'The position field is invalid. Format: ABC_POS', 'error')
@@ -316,10 +411,11 @@
 
           let results = []
           $('input[name^="result"]:checked').each(function () {
-            const input = $(this),
-                  value = input.val(),
-                  id    = input.data('id')
-            results.push({id: id, value: value})
+            const input   = $(this),
+                  value   = input.val(),
+                  id      = input.data('id'),
+                  comment = fetchComment(id)
+            results.push({id: id, value: value, comment: comment})
           })
           if (results.length !== {{ $form->indicators()->where('header_type', '!=', 1)->count() }})
             return swal('Missing Fields', 'Some indicators do not have a result selected. All fields are required.', 'error')
@@ -327,18 +423,20 @@
           btn.html('<i class="fas fa-spinner fa-spin"></i> Submitting...').prop('disabled', true)
           $.post($.apiUrl() + "/v2/user/{{ $student->cid }}/training/otsEval",
             {
-              position: position,
-              date    : date,
-              result  : result,
-              notes   : notes,
-              signatur: signature,
-              results : results
+              form      : form,
+              position  : position,
+              date      : date,
+              result    : result,
+              notes     : notes,
+              signature : signature,
+              indicators: results
             },
             result => {
               btn.html('<i class="fas fa-check-double"></i> eSign and Submit').prop('disabled', false)
               if (result.status !== 'OK') {
                 return swal('Error!', 'Unable to submit OTS evaluation. ' + result.msg + 'Please try again later.', 'error')
               }
+              window.onbeforeunload = null
               swal({
                 title  : 'Success!',
                 text   : 'The OTS evaluation has been successfully submitted.',
@@ -364,9 +462,43 @@
               })
             }
           ).fail((xhr, status, error) => {
+            const msg = xhr.responseJSON.hasOwnProperty('msg') ? xhr.responseJSON.msg : ''
             btn.html('<i class="fas fa-check-double"></i> eSign and Submit').prop('disabled', false)
-            return swal('Error!', 'Unable to submit OTS evaluation. Please try again later.', 'error')
+            return swal('Error!', 'Unable to submit OTS evaluation. ' + msg + ' Please try again later.', 'error')
           })
+        })
+
+        $('#scroll-top').click(function () {
+          $('html, body').animate({scrollTop: 0}, 700)
+        })
+        $('#scroll-bottom').click(function () {
+          $('html, body').animate({scrollTop: $(document).height()}, 700)
+        })
+
+        $('.indicator-comment').click(function () {
+          $('.indicator-comment').tooltip('hide')
+          let btn = $(this),
+              id  = btn.data('id')
+          swal({
+            title  : 'Performance Comment',
+            icon   : 'info',
+            text   : $(this).parent().siblings('.indicator-item, .indicator-header').find('.indicator-item-label, .indicator-header-label').ignore('.indicator-help-text').ignore('#indicator-comment-display-' + id).text(),
+            content: {
+              element   : 'input',
+              attributes: {
+                placeholder: 'ex. ' +
+                  samplePerformanceComments[Math.floor(Math.random() * samplePerformanceComments.length)],
+                value      : fetchComment(id)
+              }
+            }
+          })
+            .then(comment => {
+              if (comment == null) return
+              comment = $('.swal-content__input').val()
+              if (comment.length > 255)
+                return swal('Error!', 'That comment is too long. Consider writing it in General Comments.', 'error')
+              setComment($(this).data('id'), comment)
+            })
         })
       })
 
@@ -400,6 +532,63 @@
               $('#signature').jSignature('reset')
             }
           })
+      }
+      const checkFilled = () => {
+        window.onbeforeunload = $('input[name^="result"]:checked').length ? function () {
+          return true
+        } : null
+      }
+      const fetchComment = id => {
+        const comments = JSON.parse(window.localStorage.getItem('comments'))
+        if (!comments.length) return ''
+
+        for (const key in comments) {
+          if (comments.hasOwnProperty(key) && comments[key].id === id) {
+            return comments[key].content
+          }
+        }
+        return ''
+      }
+
+      const setComment = (id, comment) => {
+        let comments = JSON.parse(window.localStorage.getItem('comments'))
+
+        if (!Object.keys(comments).length) {
+          //return window.localStorage.setItem('comments', JSON.stringify({id: id, content: comment}))
+        }
+
+        let exists = false,
+            arr    = []
+        for (const key in comments) {
+          if (comments.hasOwnProperty(key)) {
+            if (comments[key].id === id) {
+              comments[key].content = comment ?? ''
+              exists = true
+            }
+            arr.push(comments[key])
+          }
+        }
+        if (!exists) {
+          arr.push({id: id, content: comment})
+        }
+
+        window.localStorage.setItem('comments', JSON.stringify(arr))
+        if (comment.length) {
+          $('#indicator-comment-display-' + id).html('<br>' + comment)
+          $('#indicator-comment-btn-' + id).addClass('has-comment text-success').html('<i class="fas fa-edit"></i>')
+        } else {
+          $('#indicator-comment-display-' + id).html('')
+          $('#indicator-comment-btn-' + id).removeClass('has-comment text-success').html('<i class="fas fa-plus-circle"></i>')
+
+        }
+
+        console.log(window.localStorage)
+      }
+
+      const storageSetup = () => {
+        window.localStorage.removeItem('comment.id')
+        window.localStorage.removeItem('comment.label')
+        window.localStorage.setItem('comments', '{}')
       }
 
       const pad = n => {

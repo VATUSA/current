@@ -14,6 +14,7 @@ use App\SoloCert;
 use App\TrainingRecord;
 use App\Transfers;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\User;
 use App\Facility;
@@ -78,7 +79,8 @@ class MgtController extends Controller
             }
             $trainingRecords = $user->facility == Auth::user()->facility || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
                 $trainingfac)->get() : [];
-            $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac, false);
+            $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac,
+                    false) && $user->cid !== Auth::user()->cid;
 
             //Get INS at ARTCC
             $ins = ['ins' => [], 'mtr' => []];
@@ -612,7 +614,68 @@ class MgtController extends Controller
             return redirect('/mgt/facility#mem')->with('error', 'User is not eligible');
         }
 
-        return view('mgt.controller.promotion', compact('user', 'forms'));
+        $trainingRecordStatus = 0;
+        $otsEvalStatus = 0;
+
+        $dateOfExam = null;
+        $examPosition = null;
+        $evalId = null;
+
+        $evals = $user->evaluations;
+        $numPass = 0;
+        $numFail = 0;
+
+        if ($user->evaluations) {
+            foreach ($user->evaluations as $eval) {
+                if ($eval->form->rating_id == $user->rating + 1) {
+                    if ($eval->result) {
+                        $dateOfExam = $eval->exam_date;
+                        $examPosition = $eval->exam_position;
+                        $evalId = $eval->id;
+                        $numPass++;
+                    } else {
+                        $numFail++;
+                    }
+                }
+            }
+            if ($numPass) {
+                $otsEvalStatus = 1;
+            } elseif ($numFail) {
+                $otsEvalStatus = 2;
+            }
+        }
+
+        switch (Helper::ratingShortFromInt($user->rating + 1)) {
+            case 'S1':
+                $pos = "GND";
+                break;
+            case 'S2':
+                $pos = "TWR";
+                break;
+            case 'S3':
+                $pos = "APP";
+                break;
+            case 'C1':
+                $pos = "CTR";
+                break;
+            default:
+                $pos = "NA";
+                break;
+        }
+        if ($user->trainingRecords()->where([
+            ['position', 'like', "%$pos"],
+            'ots_status' => 1
+        ])->exists()) {
+            $trainingRecordStatus = 1;
+        }
+
+        if ($pos == "GND") {
+            $trainingRecordStatus = $otsEvalStatus = -1;
+        }
+
+        return view('mgt.controller.promotion',
+            compact('user', 'forms', 'trainingRecordStatus',
+                'otsEvalStatus', 'examPosition', 'dateOfExam', 'evalId'));
     }
 
     function postControllerPromote(Request $request, $cid)
@@ -931,8 +994,10 @@ class MgtController extends Controller
     }
 
 
-    public function ajaxCanModifyRecord($record)
-    {
+    public
+    function ajaxCanModifyRecord(
+        $record
+    ) {
         $record = TrainingRecord::find($record);
         if (!$record->count()) {
             return response()->json(false);
@@ -945,26 +1010,51 @@ class MgtController extends Controller
                         false) && $record->instructor_id == Auth::user()->cid)));
     }
 
-    public function getOTSEval(Request $request, int $cid, $form = null)
-    {
-        if (!Auth::check() || !RoleHelper::isInstructor()) {
-            abort(403);
-        }
+    public
+    function getOTSEval(
+        Request $request,
+        int $cid,
+        $form = null
+    ) {
         $student = User::find($cid);
         if (!$student) {
             abort(404);
         }
-        $form = $form ? OTSEvalForm::has('perfcats')->has('perfcats.indicators')->find($form)
+        if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility)) {
+            abort(403);
+        }
+        $form = $form ? OTSEvalForm::has('perfcats')
+            ->has('perfcats.indicators')->withAll()->find($form)
             : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
-                ->where('rating_id', $student->rating + 1)->first();
+                ->withAll()->where('rating_id', $student->rating + 1)->first();
         if (!$student || !$form) {
             abort(404, "The OTS evaluation form is invalid.");
         }
-        if ($form->rating_id !== $student->rating + 1) {
+        if ($form->rating_id !== $student->rating + 1 || !$student->promotionEligible()) {
             abort(400, "The controller is not eligible for that evaluation.");
         }
 
         return response()->view('mgt.controller.training.otsEval', compact('student', 'form'));
 
+    }
+    public
+    function viewOTSEval (
+        Request $request,
+        int $cid,
+       int $eval
+    ) {
+        $student = User::find($cid);
+        if (!$student) {
+            abort(404);
+        }
+        if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility)) {
+            abort(403);
+        }
+        $eval = OTSEval::withAll()->find($eval);
+        if (!$student || !$eval) {
+            abort(404, "The OTS evaluation form is invalid.");
+        }
+
+        return response()->view('mgt.controller.training.viewOtsEval', compact('student', 'eval'));
     }
 }

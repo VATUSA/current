@@ -2,10 +2,13 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class OTSEval extends Model
 {
+    protected $table = "ots_evals";
+
     public function trainingRecord()
     {
         return $this->belongsTo(TrainingRecord::class);
@@ -37,5 +40,15 @@ class OTSEval extends Model
     public function results()
     {
         return $this->hasMany(OTSEvalIndResult::class, 'eval_id');
+    }
+
+    /**
+     * Eager-load all form elements.
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithAll(Builder $query) {
+        return $query->with(['form', 'form.perfcats', 'form.perfcats.indicators', 'form.perfcats.indicators.results']);
     }
 }

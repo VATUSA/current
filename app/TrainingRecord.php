@@ -40,7 +40,7 @@ class TrainingRecord extends Model
 
     public function otsEval()
     {
-        return $this->hasOne(OTSEval::class);
+        return $this->hasOne(OTSEval::class, 'training_record_id','ots_eval_id');
         //Optional. No relationship if the eval is created independently.
         //On training record display, search for independent evals (denoted with *) by mapping
         //position to level (APP = S3).

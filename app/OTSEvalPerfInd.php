@@ -20,11 +20,16 @@ class OTSEvalPerfInd extends Model
 
     public function perfcat()
     {
-        return $this->belongsTo(OTSEvalPerfCat::class,'perf_cat_id');
+        return $this->belongsTo(OTSEvalPerfCat::class, 'perf_cat_id');
     }
 
     public function results()
     {
-        return $this->hasMany(OTSEvalIndResult::class,'perf_indicator_id');
+        return $this->hasMany(OTSEvalIndResult::class, 'perf_indicator_id');
+    }
+
+    public function result(int $formid)
+    {
+        return $this->results()->where('eval_id', $formid)->first();
     }
 }
