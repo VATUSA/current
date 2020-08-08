@@ -201,9 +201,9 @@ class RoleHelper
             return false;
         }
 
-        if ($user->facility == "ZHQ") {
+        /*if ($user->facility == "ZHQ") {
             return true;
-        }
+        }*/
 
         if (!$skipWebTeam) {
             if (Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "LIKE", "US%")->count() >= 1) {
