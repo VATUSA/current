@@ -200,6 +200,7 @@ Route::group([
 //
         Route::get('/my/exams', 'MyController@getExamIndex');
         Route::get('/my/profile', 'MyController@getProfile');
+        Route::post('/my/profile', 'MyController@getProfile');
         Route::post('/my/profile/toggleBroadcast', 'MyController@toggleBroadcastEmails');
         Route::get('/my/select', 'MyController@getSelect');
         Route::post('/my/select', 'MyController@postSelect');
@@ -300,6 +301,8 @@ Route::group([
             Route::get('/mgt/controller/{cid}/eval/{form?}', 'MgtController@getOTSEval')->where('form', '[0-9]+');
             Route::get('/mgt/controller/{cid}/eval/{form?}/view', 'MgtController@viewOTSEval')->where('form', '[0-9]+');
             Route::get('/mgt/facility/training/stats', 'MgtController@viewTrainingStatistics');
+            Route::get('/mgt/facility/training/evals', 'MgtController@viewEvals');
+            Route::post('/mgt/facility/training/evals', 'MgtController@viewEvals');
             Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
             Route::post('/mgt/controller/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
             Route::post('/mgt/controller/toggleInsRole', 'MgtController@toggleInsRole');

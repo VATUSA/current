@@ -37,8 +37,8 @@ class MyController
                 $trainingfac = $trainingfaclist->first()->facility_id;
                 $trainingfacname = Helper::facShtLng($trainingfac);
             } else {
-                $trainingfac = "ZAE";
-                $trainingfacname = "";
+                $trainingfac = Auth::user()->facility;
+                $trainingfacname = Auth::user()->facility()->name;
             }
         } else {
             if (Facility::find($trainingfac)) {

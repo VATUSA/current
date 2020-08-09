@@ -74,6 +74,13 @@ $(function () {
       }
     })
   }
+  $('.training-evals-list').DataTable({
+    responsive  : true,
+    autoWidth   : false,
+    lengthMenu  : [5, 10, 15, 25],
+    pageLength  : 10,
+    order       : [[0, 'desc']]
+  })
 
   $('.delete-tr').click(function () {
     let btn = $(this),
