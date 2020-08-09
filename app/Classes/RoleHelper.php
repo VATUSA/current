@@ -202,7 +202,7 @@ class RoleHelper
         }
 
         if ($user->facility == "ZHQ") {
-            return true;
+           // return true;
         }
 
         if (!$skipWebTeam) {
