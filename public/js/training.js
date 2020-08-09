@@ -20,37 +20,8 @@ $(function () {
           text     : '<span class=\'glyphicon glyphicon-plus\'></span> Add New Record',
           className: 'btn btn-success',
           action   : (e, dt, node, config) => {
-            let btn = $(this)
+            showTrainingRecordModal($(this))
             // $('#e-training-notes').html(result.notes)
-
-            $('#n-training-datetime').datetimepicker({
-              timepicker: true,
-              format    : 'Y-m-d H:i',
-              mask      : true,
-              maxDate   : '+1970/01/01',
-              step      : 15
-            })
-            tinymce.init({
-              selector                     : '#n-training-notes',
-              plugins                      : 'preview paste importcss searchreplace autolink autosave save visualblocks visualchars fullscreen image link media template table charmap hr nonbreaking toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap emoticons',
-              imagetools_cors_hosts        : ['picsum.photos'],
-              menubar                      : 'file edit view insert format tools table help',
-              toolbar                      : 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | charmap emoticons | fullscreen preview save | image media link',
-              toolbar_sticky               : false,
-              autosave_ask_before_unload   : true,
-              autosave_interval            : '30s',
-              autosave_prefix              : '{path}{query}-{id}-',
-              autosave_restore_when_empty  : false,
-              autosave_retention           : '2m',
-              image_advtab                 : true,
-              importcss_append             : true,
-              height                       : 600,
-              image_caption                : true,
-              noneditable_noneditable_class: 'mceNonEditable',
-              toolbar_mode                 : 'sliding',
-              contextmenu                  : 'link image imagetools table',
-            })
-            $('#new-training-record').modal('show')
           }
         }],
       pageLength  : 10,
@@ -517,3 +488,34 @@ $(function () {
     }
   })
 })
+
+const showTrainingRecordModal = btn => {
+  $('#n-training-datetime').datetimepicker({
+    timepicker: true,
+    format    : 'Y-m-d H:i',
+    mask      : true,
+    maxDate   : '+1970/01/01',
+    step      : 15
+  })
+  tinymce.init({
+    selector                     : '#n-training-notes',
+    plugins                      : 'preview paste importcss searchreplace autolink autosave save visualblocks visualchars fullscreen image link media template table charmap hr nonbreaking toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap emoticons',
+    imagetools_cors_hosts        : ['picsum.photos'],
+    menubar                      : 'file edit view insert format tools table help',
+    toolbar                      : 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | charmap emoticons | fullscreen preview save | image media link',
+    toolbar_sticky               : false,
+    autosave_ask_before_unload   : true,
+    autosave_interval            : '30s',
+    autosave_prefix              : '{path}{query}-{id}-',
+    autosave_restore_when_empty  : false,
+    autosave_retention           : '2m',
+    image_advtab                 : true,
+    importcss_append             : true,
+    height                       : 600,
+    image_caption                : true,
+    noneditable_noneditable_class: 'mceNonEditable',
+    toolbar_mode                 : 'sliding',
+    contextmenu                  : 'link image imagetools table',
+  })
+  $('#new-training-record').modal('show')
+}

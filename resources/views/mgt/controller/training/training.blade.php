@@ -19,6 +19,9 @@
                             <option value="{{ $fac->facility->id }}"
                                     @if($trainingfac == $fac->facility->id) selected @endif>{{ $fac->facility->name }}</option>
                         @endforeach
+                        @if(!$trainingfaclist->count())
+                            <option value="{{ $trainingfac }}" selected>{{ $trainingfacname }}</option>
+                        @endif
                     </select>
                 </div>
             </form>
@@ -120,14 +123,23 @@
                             @endforeach
                             </tbody>
                         </table>
-                    @elseif($trainingfaclist->count())
+                    @elseif($trainingfaclist->count() > 1)
                         <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
                             controller has records from multiple facilities. Please select a facility from the left.
                         </div>
                     @else
                         <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
                             controller has no training records.
+                            <br>
                         </div>
+                            @if($canAddTR)
+                                <div class="text-center">
+                                    <button class="btn btn-success" id="add-new-record"><span
+                                            class="glyphicon glyphicon-plus"></span> Add New
+                                        Record
+                                    </button>
+                                </div>
+                            @endif
                     @endif
                     <input type="hidden" id="cid" value="{{ $user->cid }}">
                     <input type="hidden" id="fac" value="{{ $trainingfac }}">
@@ -206,7 +218,7 @@
                                 @endforeach
                                 </tbody>
                             </table>
-                        @elseif($trainingfaclist->count())
+                        @elseif($trainingfaclist->count() > 1)
                             <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
                                 controller has records from multiple facilities. Please select a facility from the left.
                             </div>
@@ -214,7 +226,16 @@
                             <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
                                 controller has no training records.
                             </div>
-                        @endif </div>
+                            @if($canAddTR)
+                                <div class="text-center">
+                                    <button class="btn btn-success" id="add-new-record"><span
+                                            class="glyphicon glyphicon-plus"></span> Add New
+                                        Record
+                                    </button>
+                                </div>
+                            @endif
+                        @endif
+                    </div>
                 @endforeach
             </div>
         </div>

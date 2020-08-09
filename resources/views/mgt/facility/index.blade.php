@@ -5,45 +5,48 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    @if(!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
+                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
                         <select id="facmgt"
                                 class="mgt-sel">@foreach(\App\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f)
                                 <option name="{{$f->id}}"
                                         @if($f->id == $fac) selected @endif>{{$f->id}}</option> @endforeach</select>
-                        - @endif
-                    Facility Management
+                        - Facility Management
+                    @else Facility Management - {{ Auth::user()->facility()->name }} @endif
                 </h3>
             </div>
             <div class="panel-body">
                 <div>
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#dash" aria-controls="dash" role="tab"
-                                                                  data-toggle="tab">Dashboard</a></li>
+                                                                  data-toggle="tab"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab">Transfers</a>
+                            <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i class="fas fa-exchange-alt"></i> Transfers</a>
                             </li>
                         @endif
                         <li role="presentation"><a href="#mem" aria-controls="mem" role="tab"
-                                                   data-toggle="tab">Members</a></li>
+                                                   data-toggle="tab"><i class="fas fa-users"></i> Members</a></li>
+                        @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
+                            <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}" aria-controls="training"><i class="fas fa-chart-line"></i> Training</a></li>
+                        @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#uls" aria-controls="uls" role="tab" data-toggle="tab">Tech
+                            <li role="presentation"><a href="#uls" aria-controls="uls" role="tab" data-toggle="tab"><i class="fas fa-server"></i> Tech
                                     Conf</a>
                             </li>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#email" aria-controls="email" role="tab" data-toggle="tab">Email
+                            <li role="presentation"><a href="#email" aria-controls="email" role="tab" data-toggle="tab"><i class="fas fa-envelope"></i> Email
                                     Conf</a>
                             </li>
                             @if($facility->hosted_email_domain != "")
                                 <li role="presentation"><a href="#hosted" aria-controls="hosted" role="tab"
-                                                           data-toggle="tab">Hosted Email
+                                                           data-toggle="tab"><i class="fas fa-mail-bulk"></i> Hosted Email
                                         Conf</a>
                                 </li>
                             @endif
                         @endif
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <li role="presentation"><a href="#emailtemplates" aria-controls="emailtemplates" role="tab"
-                                                       data-toggle="tab">Email Templates</a></li>
+                                                       data-toggle="tab"><i class="fas fa-envelope-open-text"></i> Email Templates</a></li>
                     @endif
                     <!--<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>-->
                     </ul>
@@ -267,6 +270,11 @@
                                 </fieldset>
                             </div>
                         @endif
+                        @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, $fac))
+                            <div role="tabpanel" class="tab-pane" id="training">
+                                @include ('mgt.facility.training.training')
+                            </div>
+                        @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
                             <div role="tabpanel" class="tab-pane" id="email">
                                 <select class="form-control" id="facilityEmail">
@@ -295,7 +303,8 @@
 
                             <div role="tabpanel" class="tab-pane" id="hosted">
                                 <div id="ehloading">
-                                    <center><img src="/img/gears.gif"><br><br>Loading hosted emails table...</center>
+                                    <center><img src="/img/gears.gif"><br><br>Loading hosted emails table...
+                                    </center>
                                 </div>
                                 <table class="table table-bordered" id="ehtable" style="display: none;">
                                     <thead>
@@ -310,7 +319,8 @@
                                     <tr>
                                         <td><input class="form-control" type="test" id="nhemail"
                                                    placeholder="New Address (before @ only)"></td>
-                                        <td><input class="form-control" type="number" id="nhcid" placeholder="CERT ID">
+                                        <td><input class="form-control" type="number" id="nhcid"
+                                                   placeholder="CERT ID">
                                         </td>
                                         <td>
                                             <button class="btn btn-primary nhbtn">Add Account</button>
@@ -322,7 +332,8 @@
                         @endif
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <div role="tabpanel" class="tab-pane" id="emailtemplates">
-                                <div class="alert alert-info" style="margin-top: 5px;"><i class="fa fa-info-circle"></i>
+                                <div class="alert alert-info" style="margin-top: 5px;"><i
+                                        class="fa fa-info-circle"></i>
                                     This functionality is in development and has no effect on the actual email sent.
                                     Contact Data Services to change the email template.
                                 </div>
@@ -370,7 +381,7 @@
           $('.nav-tabs a[href=' + hash + ']').tab('show')
 
         $('.nav-tabs a').on('shown.bs.tab', function (e) {
-          history.pushState({}, '', e.target.hash);
+          history.pushState({}, '', e.target.hash)
         })
 
         $.ajax({
@@ -379,13 +390,13 @@
         }).success(function (data) {
           var html = ''
           $.each(data, function (i) {
-            if(data[i].cid == undefined) return;
+            if (data[i].cid == undefined) return
             html += '<tr><td>' + data[i].cid + '</td>'
-            html += "<td>"
+            html += '<td>'
             if (data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
             html += data[i].lname + ', ' + data[i].fname
             html += '</td>'
-            html += '<td data-text="' + data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(data[i].rating)) + '</span>' + data[i].rating_short;
+            html += '<td data-text="' + data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(data[i].rating)) + '</span>' + data[i].rating_short
             if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
             html += '</td>'
             var date = new Date(data[i].facility_join)
@@ -408,8 +419,8 @@
           $('#memtable').tablesorter()
         })
       })
-          @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac, false))
-          @if($facility->hosted_email_domain != "")
+      @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac, false))
+      @if($facility->hosted_email_domain != "")
       const loadHostedEmailTable = () => {
         $('#ehtable').hide()
         $('#ehloading').show()
