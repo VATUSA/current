@@ -9,6 +9,8 @@ class OTSEval extends Model
 {
     protected $table = "ots_evals";
 
+    protected $dates = ['created_at', 'updated_at', 'exam_date'];
+
     public function trainingRecord()
     {
         return $this->belongsTo(TrainingRecord::class);

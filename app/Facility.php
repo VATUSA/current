@@ -50,5 +50,9 @@ class Facility extends Model {
     public function returnPaths() {
         return $this->hasMany(ReturnPaths::class);
     }
+
+    public function evaluations() {
+        return $this->hasMany(OTSEval::class);
+    }
 }
 
