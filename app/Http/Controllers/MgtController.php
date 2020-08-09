@@ -22,6 +22,7 @@ use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
 use App\Classes\CertHelper;
 use Auth;
+use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
 
 class MgtController extends Controller
 {
@@ -1089,6 +1090,42 @@ class MgtController extends Controller
             $facility = Auth::user()->facility()->id;
         }
 
-        return view('mgt.training', compact('filterLevel', 'instructor', 'facility', 'region'));
+        return view('mgt.training.stats', compact('filterLevel', 'instructor', 'facility', 'region'));
+    }
+
+    public function viewEvals(Request $request)
+    {
+        if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
+            abort(403);
+        }
+
+        /** Training Records */
+        $trainingfac = $request->input('fac', null);
+        $facilities = Facility::where('active')->get();
+
+        if (!$trainingfac) {
+            if (RoleHelper::isVATUSAStaff()) {
+                $trainingfac = "";
+                $trainingfacname = "";
+            } else {
+                $trainingfac = Auth::user()->facility;
+                $trainingfacname = Auth::user()->facility()->name;
+            }
+        } else {
+            if (!RoleHelper::isVATUSAStaff()) {
+                abort(403);
+            }
+            if (Facility::find($trainingfac)) {
+                $trainingfacname = Helper::facShtLng($trainingfac);
+            } else {
+                abort(500);
+            }
+        }
+        $evals = Facility::find($trainingfac)->evaluations()->where('facility_id',
+            $trainingfac)->get();
+
+        return view('mgt.training.evals',
+            compact('evals', 'trainingfac', 'trainingfacname'));
+
     }
 }

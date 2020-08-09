@@ -104,7 +104,7 @@
                     @endforeach
                     </tbody>
                 </table>
-            @elseif($trainingfaclist->count())
+            @elseif($trainingfaclist->count() > 1)
                 <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> You have
                     records from multiple facilities. Please select a facility from the left.
                 </div>
@@ -178,7 +178,7 @@
                         @endforeach
                         </tbody>
                     </table>
-                @elseif($trainingfaclist->count())
+                @elseif($trainingfaclist->count() > 1)
                     <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span>
                         You have records from multiple facilities. Please select a facility from the
                         left.
