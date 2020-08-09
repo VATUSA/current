@@ -67,8 +67,8 @@ class MgtController extends Controller
                     $trainingfac = $trainingfaclist->first()->facility_id;
                     $trainingfacname = Helper::facShtLng($trainingfac);
                 } else {
-                    $trainingfac = "ZHQ";
-                    $trainingfacname = "";
+                    $trainingfac = $user->facility()->id;
+                    $trainingfacname = $user->facility()->name;
                 }
             } else {
                 if (Facility::find($trainingfac)) {
@@ -1070,5 +1070,25 @@ class MgtController extends Controller
 
         return response()->view('mgt.controller.training.viewOtsEval',
             compact('student', 'eval', 'attempt', 'recs'));
+    }
+
+    public function viewTrainingStatistics(Request $request)
+    {
+        if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
+            abort(403);
+        }
+
+        $filterLevel = !RoleHelper::isVATUSAStaff(); //0 = All Filters, 1 = ARTCC Only
+
+        $instructor = $request->input('instructor', null);
+        $facility = $request->input('facility', null);
+        $region = $request->input('region', null);
+
+        if ($filterLevel) {
+            $region = Auth::user()->facility()->region;
+            $facility = Auth::user()->facility()->id;
+        }
+
+        return view('mgt.training', compact('filterLevel', 'instructor', 'facility', 'region'));
     }
 }

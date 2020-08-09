@@ -1,15 +1,6 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic);
-
 body {
-    font-family: 'Lato', sans-serif;
-}
-
-head {
-
-}
-
-body {
-    font-family: 'Lato', sans-serif !important;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 400;
 }
 
 @media (max-width: 767px) {
@@ -1697,7 +1688,22 @@ span[id^="training-ots-exam-"] {
 .bold {
     font-weight: bold;
 }
+
 input[name="position"] {
     text-transform: uppercase;
     width: 150px;
+}
+
+.training-stat-static {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.training-stat-section-header {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.training-stat-section .row:not(:first-of-type) {
+    border-top: 2px solid #e6e6e6
 }
