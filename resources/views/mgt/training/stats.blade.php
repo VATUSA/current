@@ -8,7 +8,8 @@
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-heading"><h5 class="panel-title"><i class="fas fa-chart-line"></i> Training Statistics
-                    @if($filterLevel) - {{ \App\Classes\Helper::facShtLng($fac) }} @endif</h5>
+                    @if(!\App\Classes\RoleHelper::isVATUSAStaff())
+                        - {{ \App\Classes\Helper::facShtLng($facility) }} @endif</h5>
             </div>
             <div class="panel-body">
                 <ul class="nav nav-tabs" role="tablist">
@@ -37,7 +38,7 @@
                             <div class="col-md-4">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body training-stat-static">
-                                        5 hours, 30 minutes
+                                        {{ $totalTimeStr }}<br> {{ $totalSessions }} sessions
                                     </div>
                                     <div class="panel-footer">Total Session Time<br><em>last 30
                                             days</em></div>
@@ -46,16 +47,17 @@
                             <div class="col-md-4">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body training-stat-static">
-                                        95%;<br><span class="text-success">Pass: <strong>5</strong></span> |
-                                        <span class="text-danger">Fail: <strong>2</strong></span>
+                                        {{ $passRate }}%<br><span
+                                            class="text-success">Pass: <strong>{{ $numPass }}</strong></span> |
+                                        <span class="text-danger">Fail: <strong>{{ $numFail }}</strong></span>
                                     </div>
-                                    <div class="panel-footer">Pass Rate<br><em>last 30 days</em></div>
+                                    <div class="panel-footer">OTS Pass Rate<br><em>last 30 days</em></div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body training-stat-static">
-                                        6.5 hours<br>3.4 sessions
+                                        {{ $avgTimeStr }}<br>{{ $avgSessions }} sessions
                                     </div>
                                     <div class="panel-footer">Average Time and Sessions Per Week<br><em>last
                                             30
