@@ -14,6 +14,7 @@ use App\SoloCert;
 use App\TrainingRecord;
 use App\Transfers;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\User;
@@ -22,6 +23,7 @@ use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
 use App\Classes\CertHelper;
 use Auth;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
 
 class MgtController extends Controller
@@ -1079,22 +1081,71 @@ class MgtController extends Controller
             abort(403);
         }
 
-        $filterLevel = !RoleHelper::isVATUSAStaff(); //0 = All Filters, 1 = ARTCC Only
+        $globalAccess = RoleHelper::isVATUSAStaff();
 
         $instructor = $request->input('instructor', null);
         $facility = $request->input('facility', null);
         $region = $request->input('region', null);
+        $interval = $request->input('interval', 30);
 
-        if ($filterLevel) {
+        if (!$globalAccess) {
             $region = Auth::user()->facility()->region;
             $facility = Auth::user()->facility()->id;
         }
 
-        return view('mgt.training.stats', compact('filterLevel', 'instructor', 'facility', 'region'));
+        /** Summary */
+
+        //Total Session Time
+        $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
+        if ($region) {
+            $records = $records->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $records = $records->where('facility_id', $facility);
+        }
+
+        $totalTime = $records->sum(DB::raw('TIME_TO_SEC(duration)'));
+        $hours = floor($totalTime / 3600);
+        $minutes = floor(($totalTime / 60) % 60);
+        $totalTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+        $totalSessions = $records->count();
+
+        //Average Time and Sessions per Week
+        $avgTime = $records->selectRaw('SUM(TIME_TO_SEC(duration)) as total')
+            ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
+        $avgTime = array_sum($avgTime) / count($avgTime);
+
+        $hours = floor($avgTime / 3600);
+        $minutes = floor(($avgTime / 60) % 60);
+        $avgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+
+        $avgSessions = $records->selectRaw('COUNT(*) as total')
+            ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
+        $avgSessions = array_sum($avgSessions) / count($avgSessions);
+
+        //Pass Rate
+        $evals = OTSEval::where('exam_date', '>', Carbon::now()->subDays($interval));
+        if ($region) {
+            $evals = $evals->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $evals = $evals->where('facility_id', $facility);
+        }
+        $numEvals = $evals->count();
+        $numPass = $evals->where('result', 1)->count();
+        $numFail = $evals->count() - $numPass;
+        $passRate = round($numPass / $numEvals * 100);
+
+
+        return view('mgt.training.stats',
+            compact('instructor', 'facility', 'region', 'totalSessions', 'totalTimeStr', 'avgTimeStr', 'avgSessions', 'numPass',
+                'numFail', 'passRate'));
     }
 
-    public function viewEvals(Request $request)
-    {
+    public
+    function viewEvals(
+        Request $request
+    ) {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
