@@ -13,7 +13,7 @@ $factory->define(TrainingRecord::class, function (Faker $faker) {
     return [
         'student_id'    => 1275302,
         'instructor_id' => 1275401,
-        'session_date'  => $faker->dateTimeThisDecade,
+        'session_date'  => $faker->dateTimeThisMonth,
         'facility_id'   => 'ZSE',
         'position'      => $facilities[$faker->numberBetween(0, 4)],
         'duration'      => $faker->numberBetween(0, 4) . ":" . $faker->numberBetween(0, 59),
