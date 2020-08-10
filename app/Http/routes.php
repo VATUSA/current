@@ -141,8 +141,8 @@ Route::group([
 //
 //
 // #Viewer#
-        Route::group(['middleware' => 'auth'], function() {
-            Route::get('/cbt', 'CBTController@getIndex');
+        Route::get('/cbt', 'CBTController@getIndex');
+        Route::group(['middleware' => 'auth'], function () {
             Route::get('/cbt/{fac}', 'CBTController@getIndex')->where('fac', '[A-Z]{3}');
             Route::put('/cbt/{id}', 'CBTController@putIndex')->where('id', '[0-9]+');
 // #Editor#
@@ -163,13 +163,13 @@ Route::group([
             Route::post('/cbt/editor/ajax/chapter/{id}', 'CBTController@ajaxChapterModify')->where('id', '[0-9]+');
         });
 // Helpdesk
-        Route::get('/help', function() {
-           return Redirect::to('/help/kb');
+        Route::get('/help', function () {
+            return Redirect::to('/help/kb');
         });
         Route::get('/help/kb', 'HelpdeskController@getKBIndex');
         // KB Category
 
-        Route::group(['middleware' => 'auth'], function() {
+        Route::group(['middleware' => 'auth'], function () {
             Route::get('/help/kbe', 'HelpdeskController@getKBE');
             Route::delete('/help/kbe/{id}', 'HelpdeskController@deleteKBECategory');
             Route::put('/help/kbe', 'HelpdeskController@putKBECategory');
@@ -198,51 +198,51 @@ Route::group([
 // My VATUSA Function
 // dev.vatusa.net/my/{route}
 //
-        Route::get('/my/exams', 'MyController@getExamIndex');
-        Route::get('/my/profile', 'MyController@getProfile');
-        Route::post('/my/profile', 'MyController@getProfile');
-        Route::post('/my/profile/toggleBroadcast', 'MyController@toggleBroadcastEmails');
-        Route::get('/my/select', 'MyController@getSelect');
-        Route::post('/my/select', 'MyController@postSelect');
-        Route::get('/my/transfer', 'MyController@getTransfer');
-        Route::post('/my/transfer/do', 'MyController@doTransfer');
-        Route::get('/my/assignbasic', 'MyController@getAssignBasic');
-        Route::get('/my/discord/{mode}', 'MyController@linkDiscord');
+            Route::get('/my/exams', 'MyController@getExamIndex');
+            Route::get('/my/profile', 'MyController@getProfile');
+            Route::post('/my/profile', 'MyController@getProfile');
+            Route::post('/my/profile/toggleBroadcast', 'MyController@toggleBroadcastEmails');
+            Route::get('/my/select', 'MyController@getSelect');
+            Route::post('/my/select', 'MyController@postSelect');
+            Route::get('/my/transfer', 'MyController@getTransfer');
+            Route::post('/my/transfer/do', 'MyController@doTransfer');
+            Route::get('/my/assignbasic', 'MyController@getAssignBasic');
+            Route::get('/my/discord/{mode}', 'MyController@linkDiscord');
 
 //
 // VATUSA Exam Function
 // dev.vatusa.net/exam/{route}
 //
-        Route::get('/exam', 'ExamController@getIndex');
-        Route::get('/exam/assign', 'ExamController@getAssign');
-        Route::post('/exam/assign', 'ExamController@postAssign');
-        Route::get('/exam/{id}', 'ExamController@getTakeExam')->where('id', '[0-9]+');
-        Route::put('/exam/{id}', 'ExamController@putTakeExam')->where('id', '[0-9]+');
-        Route::get('/exam/delete/{id}', 'ExamController@getDeleteExam')->where('id', '[0-9]+');
+            Route::get('/exam', 'ExamController@getIndex');
+            Route::get('/exam/assign', 'ExamController@getAssign');
+            Route::post('/exam/assign', 'ExamController@postAssign');
+            Route::get('/exam/{id}', 'ExamController@getTakeExam')->where('id', '[0-9]+');
+            Route::put('/exam/{id}', 'ExamController@putTakeExam')->where('id', '[0-9]+');
+            Route::get('/exam/delete/{id}', 'ExamController@getDeleteExam')->where('id', '[0-9]+');
 // Editor
 // Create
-        Route::get('/exam/create', 'ExamController@getCreate');
-        Route::post('/exam/create', 'ExamController@postCreate');
+            Route::get('/exam/create', 'ExamController@getCreate');
+            Route::post('/exam/create', 'ExamController@postCreate');
 // Edit
-        Route::get('/exam/edit', 'ExamController@getEdit');
-        Route::post('/exam/edit', 'ExamController@editExam');
-        Route::get('/exam/edit/{id}', 'ExamController@editExam')->where('id', '[0-9]+');
-        Route::post('/exam/edit/{id}', 'ExamController@postEditExam')->where('id', '[0-9]+');
-        Route::get('/exam/edit/{examid}/{qid}', 'ExamController@getEditQuestion')->where('examid',
-            '[0-9]+')->where('qid', '[0-9]+');
-        Route::post('/exam/edit/{examid}/{qid}', 'ExamController@postEditQuestion')->where('examid',
-            '[0-9]+')->where('qid', '[0-9]+');
-        Route::delete('/exam/edit/{examid}/{qid}', 'ExamController@deleteQuestion')->where('examid',
-            '[0-9]+')->where('qid', '[0-9]+');
+            Route::get('/exam/edit', 'ExamController@getEdit');
+            Route::post('/exam/edit', 'ExamController@editExam');
+            Route::get('/exam/edit/{id}', 'ExamController@editExam')->where('id', '[0-9]+');
+            Route::post('/exam/edit/{id}', 'ExamController@postEditExam')->where('id', '[0-9]+');
+            Route::get('/exam/edit/{examid}/{qid}', 'ExamController@getEditQuestion')->where('examid',
+                '[0-9]+')->where('qid', '[0-9]+');
+            Route::post('/exam/edit/{examid}/{qid}', 'ExamController@postEditQuestion')->where('examid',
+                '[0-9]+')->where('qid', '[0-9]+');
+            Route::delete('/exam/edit/{examid}/{qid}', 'ExamController@deleteQuestion')->where('examid',
+                '[0-9]+')->where('qid', '[0-9]+');
 // View
-        Route::get('/exam/view', 'ExamController@getAssignments');
-        Route::get('/exam/view/{fac}', 'ExamController@getAssignments')->where('fac', '[A-Z]{3}');
-        Route::get('/exam/download/{id}', 'ExamController@getDownload')->where('id', '[0-9]+');
-        Route::delete('/exam/assignment/{id}', 'ExamController@deleteAssignment')->where('id', '[0-9]+');
-        Route::delete('/exam/reassignment/{id}', 'ExamController@deleteReassignment')->where('id', '[0-9]+');
+            Route::get('/exam/view', 'ExamController@getAssignments');
+            Route::get('/exam/view/{fac}', 'ExamController@getAssignments')->where('fac', '[A-Z]{3}');
+            Route::get('/exam/download/{id}', 'ExamController@getDownload')->where('id', '[0-9]+');
+            Route::delete('/exam/assignment/{id}', 'ExamController@deleteAssignment')->where('id', '[0-9]+');
+            Route::delete('/exam/reassignment/{id}', 'ExamController@deleteReassignment')->where('id', '[0-9]+');
 // Result
-        Route::get('/exam/result/{id}', 'ExamController@getResult');
-    });
+            Route::get('/exam/result/{id}', 'ExamController@getResult');
+        });
 //
 // VATUSA Info Function
 // dev.vatusa.net/info/{route}
@@ -346,11 +346,11 @@ Route::group([
             Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
 
 
-        //iDENT App ***************
-        Route::get('mgt/app/push', 'AppController@getIndex');
-        Route::post('mgt/app/push', 'AppController@postPush');
-        Route::get('mgt/app/log', 'AppController@getLog');
-        Route::get('mgt/app/log', 'AppController@getPushLog');
+            //iDENT App ***************
+            Route::get('mgt/app/push', 'AppController@getIndex');
+            Route::post('mgt/app/push', 'AppController@postPush');
+            Route::get('mgt/app/log', 'AppController@getLog');
+            Route::get('mgt/app/log', 'AppController@getPushLog');
 //
 // VATUSA Mgt Mail Function
 // dev.vatusa.net/mgt/mail/{route}
