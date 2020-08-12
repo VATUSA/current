@@ -74,6 +74,7 @@
                                     <thead>
                                     <tr>
                                         <th>Exam Date</th>
+                                        <th>Position</th>
                                         <th>Student</th>
                                         <th>Instructor</th>
                                         <th>Result</th>
@@ -88,6 +89,7 @@
                                             <td><span
                                                     class="hidden">{{$eval->exam_date->timestamp}}</span>{{ $eval->exam_date }}
                                             </td>
+                                            <td>{{ $eval->exam_position }}</td>
                                             <td>{{ $eval->student->fullname() }}</td>
                                             <td>{{ $eval->instructor->fullname() }}</td>
                                             <td>@if($eval->result) <i class="fas fa-check"></i> Pass @else <i
@@ -96,7 +98,7 @@
                                             <td><strong
                                                     class="text-info">{{ $eval->results()->where('result', 1)->count() }}</strong>/<strong
                                                     class="text-success">{{ $eval->results()->where('result', 2)->count() }}</strong>/<strong
-                                                    class="text-danger">{{ $eval->results()->where('result', 2)->count() }}</strong>
+                                                    class="text-danger">{{ $eval->results()->where('result', 3)->count() }}</strong>
                                             </td>
                                             <td>
                                                 <a href="{{ secure_url('/mgt/controller/' . $eval->student->cid . '/eval/' . $eval->id . '/view') }}"
@@ -136,6 +138,7 @@
                                         <thead>
                                         <tr>
                                             <th>Exam Date</th>
+                                            <th>Position</th>
                                             <th>Student</th>
                                             <th>Instructor</th>
                                             <th>Result</th>
@@ -150,6 +153,7 @@
                                                 <td><span
                                                         class="hidden">{{$eval->exam_date->timestamp}}</span>{{ $eval->exam_date }}
                                                 </td>
+                                                <td>{{ $eval->exam_position }}</td>
                                                 <td>{{ $eval->student->fullname() }}</td>
                                                 <td>{{ $eval->instructor->fullname() }}</td>
                                                 <td>@if($eval->result) <i class="fas fa-check"></i> Pass @else <i

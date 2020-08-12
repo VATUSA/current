@@ -79,7 +79,27 @@ $(function () {
     autoWidth   : false,
     lengthMenu  : [5, 10, 15, 25],
     pageLength  : 10,
-    order       : [[0, 'desc']]
+    order       : [[0, 'desc']],
+    columnDefs  : [{
+      visible: false,
+      targets: 1
+    }],
+    orderFixed  : [1, 'asc'],
+    drawCallback: function (settings) {
+      let api = this.api()
+      let rows = api.rows({page: 'current'}).nodes()
+      let last = null
+
+      api.column(1, {page: 'current'}).data().each(function (group, i) {
+        if (last !== group) {
+          $(rows).eq(i).before(
+            '<tr class="group"><td colspan="6"><strong>' + group + '</strong></td></tr>'
+          )
+
+          last = group
+        }
+      })
+    }
   })
 
   $('.delete-tr').click(function () {
