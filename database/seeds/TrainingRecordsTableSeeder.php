@@ -36,7 +36,7 @@ class TrainingRecordsTableSeeder extends Seeder
             }
         }
         foreach ($ins as $cid) {
-            for ($i = 0; $i < rand(2, 15); $i++) {
+            for ($i = 0; $i < rand(2, 4); $i++) {
                 User::find($cid)->trainingRecordsIns()->save(factory(TrainingRecord::class)->make());
             }
         }

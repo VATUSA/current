@@ -42,7 +42,7 @@
                             </td>
                             <td>
                                 <p class="form-control-static">
-                                    {{ $eval->exam_date }}
+                                    {{ $eval->exam_date->format('F jS, Y') }}
                                 </p>
                                 <label class="table-cell-footer control-label"
                                        for="exam-date">Date of Exam (UTC)</label>

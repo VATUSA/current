@@ -57,7 +57,11 @@ table span {
     float: left;
 }
 
-.indicator-item-label {
+.indicator-header-count {
+    float: left
+}
+
+.indicator-item-label, .indicator-header-label {
     padding-left: 6pt;
     display: table-cell
 }
@@ -170,6 +174,7 @@ textarea#notes {
 
 .indicator-comment-display {
     font-style: italic;
+    font-weight: normal !important;
 }
 
 #view-eval-header-body #student-position {
