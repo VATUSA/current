@@ -1667,7 +1667,7 @@ span[id^="training-ots-exam-"] {
     font-size: 1em;
 }
 
-.ots-status-input-label {
+.ots-status-input-label, .ots-charts-mode-input-label {
     -webkit-transition: all 0.2s ease;
     -moz-transition: all 0.2s ease;
     -o-transition: all 0.2s ease;
@@ -1703,7 +1703,11 @@ input[name="position"] {
     text-align: center;
     padding-bottom: 10px;
 }
-
-.training-stat-section .row:not(:first-of-type) {
-    border-top: 2px solid #e6e6e6
+.training-stat-block .panel-footer {
+    text-align: center;
+}
+.jqstooltip {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
 }

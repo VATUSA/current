@@ -1,15 +1,17 @@
 <?php namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class Facility extends Model {
+class Facility extends Model
+{
     protected $table = 'facilities';
     public $timestamps = false;
     public $incrementing = false;
 
     public function members()
     {
-        return $this->hasMany('App\User','facility', 'id');
+        return $this->hasMany('App\User', 'facility', 'id');
     }
 
     public function staffPosition($position)
@@ -47,12 +49,19 @@ class Facility extends Model {
         return $this->hasOne('App\User', 'cid', 'wm')->first();
     }
 
-    public function returnPaths() {
+    public function returnPaths()
+    {
         return $this->hasMany(ReturnPaths::class);
     }
 
-    public function evaluations() {
+    public function evaluations()
+    {
         return $this->hasMany(OTSEval::class);
+    }
+
+    public function scopeActive(Builder $query)
+    {
+        return $query->where('active', 1);
     }
 }
 

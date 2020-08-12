@@ -15,6 +15,7 @@ use App\TrainingRecord;
 use App\Transfers;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
+use Faker\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\User;
@@ -1095,20 +1096,26 @@ class MgtController extends Controller
 
         /** Summary */
 
+        $colors = [];
+
         //Total Session Time
         $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
         if ($region) {
-            $records = $records->whereIn('facility_id',
+            $records->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
         } elseif ($facility) {
-            $records = $records->where('facility_id', $facility);
+            $records->where('facility_id', $facility);
         }
 
         $totalTime = $records->sum(DB::raw('TIME_TO_SEC(duration)'));
         $hours = floor($totalTime / 3600);
         $minutes = floor(($totalTime / 60) % 60);
-        $totalTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
-        $totalSessions = $records->count();
+        if (!$hours) {
+            $sumTotalTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+        } else {
+            $sumTotalTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+        }
+        $sumTotalSessions = $records->count();
 
         //Average Time and Sessions per Week
         $avgTime = $records->selectRaw('SUM(TIME_TO_SEC(duration)) as total')
@@ -1117,11 +1124,21 @@ class MgtController extends Controller
 
         $hours = floor($avgTime / 3600);
         $minutes = floor(($avgTime / 60) % 60);
-        $avgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
-
-        $avgSessions = $records->selectRaw('COUNT(*) as total')
+        if (!$hours) {
+            $sumAvgTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+        } else {
+            $sumAvgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+        }
+        $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
+        if ($region) {
+            $records->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $records->where('facility_id', $facility);
+        }
+        $sumAvgSessions = $records->selectRaw('COUNT(*) AS total')
             ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
-        $avgSessions = array_sum($avgSessions) / count($avgSessions);
+        $sumAvgSessions = round(array_sum($sumAvgSessions) / count($sumAvgSessions), 2);
 
         //Pass Rate
         $evals = OTSEval::where('exam_date', '>', Carbon::now()->subDays($interval));
@@ -1131,15 +1148,290 @@ class MgtController extends Controller
         } elseif ($facility) {
             $evals = $evals->where('facility_id', $facility);
         }
-        $numEvals = $evals->count();
-        $numPass = $evals->where('result', 1)->count();
-        $numFail = $evals->count() - $numPass;
-        $passRate = round($numPass / $numEvals * 100);
+        $sumNumEvals = $evals->count();
+        $sumNumPass = $evals->where('result', 1)->count();
+        $sumNumFail = $evals->count() - $sumNumPass;
+        $sumPassRate = round($sumNumPass / $sumNumEvals * 100);
 
+        /** INS/MTR Activity */
+
+        //Hours per Month
+        $hoursPerMonthData = ['labels' => [], 'datasets' => []];
+        $datasets = [];
+        $hoursPerMonth = TrainingRecord::with(['instructor:cid,fname,lname'])->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, instructor_id, DATE_FORMAT(session_date, '%Y-%m') AS month");
+        if ($region) {
+            $hoursPerMonth = $hoursPerMonth->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $hoursPerMonth = $hoursPerMonth->where('facility_id', $facility);
+        }
+        $hoursPerMonth = $hoursPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
+            'month',
+            'instructor_id'
+        ])->orderBy('month', 'ASC');
+        //dd(str_replace_array('?', $hoursPerMonth->getBindings(), $hoursPerMonth->toSql()));
+        //dd($hoursPerMonth->get()->toArray());
+        foreach ($hoursPerMonth->get() as $data) {
+            if (!$data->instructor_id) {
+                continue;
+            }
+            $month = (new Carbon($data->month))->format('F');
+            if (!in_array($month, $hoursPerMonthData['labels'])) {
+                $hoursPerMonthData['labels'][] = $month;
+            }
+            if (!isset($datasets[$data->instructor->cid])) {
+                $datasets[$data->instructor->cid]['data'] = array();
+                $datasets[$data->instructor->cid]['label'] = $data->instructor->fullname();
+            }
+            $datasets[$data->instructor->cid]['data'][] = floor($data->sum / 3600);
+        }
+        foreach ($datasets as $k => $v) {
+            $colors[$k] = Factory::create()->hexColor;
+            $hoursPerMonthData['datasets'][] = [
+                'label'           => $v['label'],
+                'data'            => $v['data'],
+                'backgroundColor' => $colors[$k]
+            ];
+        }
+        //Time per Instructor
+        $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
+        if ($region) {
+            $records = $records->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $records = $records->where('facility_id', $facility);
+        }
+        $timePerInstructorData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
+        $timePerInstructor = $records->with(['instructor:cid,fname,lname'])->selectRaw('SUM(TIME_TO_SEC(duration)) AS total, instructor_id')
+            ->groupBy([DB::raw('instructor_id')]);
+        foreach ($timePerInstructor->get() as $time) {
+            if (!$time->instructor_id) {
+                continue;
+            }
+            $timePerInstructorData['labels'][] = $time->instructor->fullname();
+            $timePerInstructorData['datasets'][0]['data'][] = floor($time->total / 3600);
+            $timePerInstructorData['datasets'][0]['backgroundColor'][] = $colors[$time->instructor->cid] ?? Factory::create()->hexColor;
+        }
+
+        //Table Data
+        $ins = ['ins' => [], 'mtr' => []];
+        $insActivity = [];
+        $users = User::where('facility', 'ZSE')->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+            ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['ins'][] = [
+                    'cid'   => $user->cid,
+                    'sparkline' => $user->getTrainingActivitySparkline(),
+                    'name'  => $user->fullname(true),
+                    'since' => Promotions::where([
+                        'cid' => $user->cid,
+                        'to'  => $user->rating
+                    ])->orderBy('created_at', 'desc')
+                        ->first()->created_at->format('m/d/Y')
+                ];
+            }
+        }
+        $users = Role::where('facility', 'ZSE')->where('role', 'INS')->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['ins'][] = [
+                    'cid'   => $user->cid,
+                    'sparkline' => $user->user->getTrainingActivitySparkline(),
+                    'name'  => $user->user->fullname(true),
+                    'since' => $user->created_at->format('m/d/Y')
+                ];
+            }
+        }
+        $users = Role::where('facility', 'ZSE')->where('role', 'MTR')->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['mtr'][] = [
+                    'cid'   => $user->cid,
+                    'sparkline' => $user->user->getTrainingActivitySparkline(),
+                    'name'  => $user->user->fullname(true),
+                    'since' => $user->created_at->format('m/d/Y')
+                ];
+            }
+        }
+
+        foreach ($ins as $k => $v) {
+            usort($ins[$k], function ($a, $b) {
+                return strcmp($a['name'], $b['name']);
+            });
+        }
+
+        $i = 0;
+        foreach ($ins as $type => $v) {
+            foreach ($v as $staff) {
+                $insActivity[$i]['name'] = $staff['name'];
+                $insActivity[$i]['sparkline'] = $staff['sparkline'];
+                $insActivity[$i]['role'] = strtoupper($type);
+                $insActivity[$i]['since'] = $staff['since'];
+                for ($k = 30; $k <= 90; $k += 30) {
+                    $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($k))
+                        ->where('instructor_id', $staff['cid']);
+                    if ($region) {
+                        $records->whereIn('facility_id',
+                            Facility::where('region', $region)->get()->pluck('id')->all());
+                    } elseif ($facility) {
+                        $records->where('facility_id', $facility);
+                    }
+                    $avgTime = $records->selectRaw('SUM(TIME_TO_SEC(duration)) as total')
+                        ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
+                    if (!count($avgTime)) {
+                        $avgTimeStr = "<em>No Sessions</em>";
+                    } else {
+                        $avgTime = array_sum($avgTime) / count($avgTime);
+
+                        $hours = floor($avgTime / 3600);
+                        $minutes = floor(($avgTime / 60) % 60);
+                        if (!$hours) {
+                            $avgTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+                        } else {
+                            $avgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+                        }
+                    }
+                    $insActivity[$i]['avgTime'][$k] = $avgTimeStr;
+
+                    $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($k))
+                        ->where('instructor_id', $staff['cid']);
+                    if ($region) {
+                        $records->whereIn('facility_id',
+                            Facility::where('region', $region)->get()->pluck('id')->all());
+                    } elseif ($facility) {
+                        $records->where('facility_id', $facility);
+                    }
+                    $avgSessions = $records->selectRaw('COUNT(*) AS total')
+                        ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
+                    if (!count($avgSessions)) {
+                        $avgSessions = "<em>No Sessions</em>";
+                    } else {
+                        $avgSessions = round(array_sum($avgSessions) / count($avgSessions), 2);
+                    }
+
+                    $insActivity[$i]['avgSessions'][$k] = $avgSessions;
+
+                    /*$records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($k))
+                        ->where('instructor_id', $staff['cid']);
+                    if ($region) {
+                        $records->whereIn('facility_id',
+                            Facility::where('region', $region)->get()->pluck('id')->all());
+                    } elseif ($facility) {
+                        $records->where('facility_id', $facility);
+                    }
+
+                    $insActivity[$i]['numSessions'][$k] = $records->count();*/
+                }
+                $i++;
+            }
+        }
+
+        /** OTS Evaluations */
+
+        //Evals Conducted per Month
+        $colors = [];
+        $evalsPerMonthData = ['labels' => [], 'datasets' => []];
+        $datasets = [];
+        $evalsPerMonth = OTSEval::with('form:id,name')->selectRaw("COUNT(*) AS total, form_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
+        if ($region) {
+            $evalsPerMonth->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $evalsPerMonth->where('facility_id', $facility);
+        }
+        if ($instructor) {
+            $evalsPerMonth->where('instructor_id', $instructor);
+        }
+        $evalsPerMonth->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
+            'month',
+            'form_id'
+        ])->orderBy('month', 'ASC');
+        //dd(str_replace_array('?', $hoursPerMonth->getBindings(), $hoursPerMonth->toSql()));
+        //dd($hoursPerMonth->get()->toArray());
+        foreach ($evalsPerMonth->get() as $data) {
+            if (!$data->form_id) {
+                continue;
+            }
+            $month = (new Carbon($data->month))->format('F');
+            if (!in_array($month, $evalsPerMonthData['labels'])) {
+                $evalsPerMonthData['labels'][] = $month;
+            }
+            if (!isset($datasets[$data->form->id])) {
+                $datasets[$data->form->id]['data'] = array();
+                $datasets[$data->form->id]['label'] = $data->form->name;
+            }
+            $datasets[$data->form->id]['data'][] = $data->total;
+        }
+        foreach ($datasets as $k => $v) {
+            $colors[$k] = Factory::create()->hexColor;
+            $evalsPerMonthData['datasets'][] = [
+                'label'           => $v['label'],
+                'data'            => $v['data'],
+                'backgroundColor' => $colors[$k]
+            ];
+        }
+
+        //Completed Evaluations per Form
+        $evals = OTSEval::where('exam_date', '>', Carbon::now()->subDays($interval));
+        if ($region) {
+            $evals->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $evals->where('facility_id', $facility);
+        }
+        $evalsPerFormData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
+        $evalsPerForm = $evals->with(['form:id,name'])->selectRaw('COUNT(*) AS total, form_id')
+            ->groupBy([DB::raw('form_id')]);
+        foreach ($evalsPerForm->get() as $eval) {
+            if (!$eval->form_id) {
+                continue;
+            }
+            $evalsPerFormData['labels'][] = $eval->form->name;
+            $evalsPerFormData['datasets'][0]['data'][] = $eval->total;
+            $evalsPerFormData['datasets'][0]['backgroundColor'][] = $colors[$eval->form_id] ?? Factory::create()->hexColor;
+        }
+
+        //Table Data
+        $evalFormsTable = [];
+        $i = 0;
+        $evalForms = OTSEvalForm::active()->where('is_statement', 0)->orderBy('rating_id')->get();
+        foreach ($evalForms as $form) {
+            $evalFormsTable[$i]['name'] = $form->name;
+            $evalFormsTable[$i]['id'] = $form->id;
+            $evalFormsTable[$i]['sparkline'] = $form->getStatSparkline($region, $facility);
+
+            for ($k = 30; $k <= 90; $k += 30) {
+                $completed = $form->evaluations()->where('exam_date', '>', Carbon::now()->subDays($k));
+                if ($region) {
+                    $completed->whereIn('facility_id',
+                        Facility::where('region', $region)->get()->pluck('id')->all());
+                } elseif ($facility) {
+                    $completed->where('facility_id', $facility);
+                }
+                $numConducted = $completed->count();
+                if (!$numConducted) {
+                    $passRate = '<em>N/A</em>';
+                    $numPass = $numFail = 0;
+                } else {
+                    $numPass = $completed->where('result', 1)->count();
+                    $numFail = $numConducted - $numPass;
+                    $passRate = floor($numPass / $numConducted * 100);
+                }
+                $evalFormsTable[$i]['passRate'][$k] = $passRate;
+                $evalFormsTable[$i]['numPass'][$k] = $numPass;
+                $evalFormsTable[$i]['numFail'][$k] = $numFail;
+                $evalFormsTable[$i]['numConducted'][$k] = $numConducted;
+            }
+            $i++;
+        }
 
         return view('mgt.training.stats',
-            compact('instructor', 'facility', 'region', 'totalSessions', 'totalTimeStr', 'avgTimeStr', 'avgSessions', 'numPass',
-                'numFail', 'passRate'));
+            compact('instructor', 'facility', 'region',
+                'sumTotalSessions', 'sumTotalTimeStr', 'sumAvgTimeStr', 'sumAvgSessions',
+                'sumNumPass', 'sumNumFail', 'sumPassRate',
+                'hoursPerMonthData', 'timePerInstructorData', 'insActivity',
+                'evalsPerMonthData', 'evalsPerFormData', 'evalFormsTable'));
     }
 
     public
@@ -1152,7 +1444,7 @@ class MgtController extends Controller
 
         /** Training Records */
         $trainingfac = $request->input('fac', null);
-        $facilities = Facility::where('active')->get();
+        $facilities = Facility::active()->get();
 
         if (!$trainingfac) {
             if (RoleHelper::isVATUSAStaff()) {
@@ -1172,11 +1464,10 @@ class MgtController extends Controller
                 abort(500);
             }
         }
-        $evals = Facility::find($trainingfac)->evaluations()->where('facility_id',
-            $trainingfac)->get();
+        $evals = $trainingfac ? Facility::find($trainingfac)->evaluations()->where('facility_id',
+            $trainingfac)->get() : [];
 
         return view('mgt.training.evals',
-            compact('evals', 'trainingfac', 'trainingfacname'));
-
+            compact('evals', 'trainingfac', 'trainingfacname', 'facilities'));
     }
 }

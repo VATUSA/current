@@ -16,6 +16,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use \Auth;
+use Illuminate\Support\Facades\DB;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
@@ -32,9 +33,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return ["created_at", "updated_at", "lastactivity"];
     }
 
-    public function fullname()
+    public function fullname($lf = false)
     {
-        return $this->fname . " " . $this->lname;
+        return $lf ? $this->lname . ", " . $this->fname : $this->fname . " " . $this->lname;
     }
 
     public function facility()
@@ -485,6 +486,21 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return false;
+    }
+
+    public function getTrainingActivitySparkline()
+    {
+        $vals = [];
+        for ($i = 10; $i >= 0; $i--) {
+            $vals[] = $this->trainingRecordsIns()->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, DATE_FORMAT(session_date, '%Y-%U') AS week")
+                    ->where(DB::raw("DATE_FORMAT(session_date, '%Y-%U')"), '=',
+                        Carbon::now()->subWeeks($i)->format('Y-W'))->groupBy(['week'])->orderBy('week',
+                        'ASC')->pluck('sum')->map(function ($v) {
+                        return floor($v / 3600);
+                    })->pop() ?? 0;
+        }
+
+        return implode(",", $vals);
     }
 }
 
