@@ -38,7 +38,7 @@
                             <div class="col-md-4">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body training-stat-static">
-                                        {{ $totalTimeStr }}<br> {{ $totalSessions }} sessions
+                                        {{ $sumTotalTimeStr }}<br> {{ $sumTotalSessions }} sessions
                                     </div>
                                     <div class="panel-footer">Total Session Time<br><em>last 30
                                             days</em></div>
@@ -47,9 +47,9 @@
                             <div class="col-md-4">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body training-stat-static">
-                                        {{ $passRate }}%<br><span
-                                            class="text-success">Pass: <strong>{{ $numPass }}</strong></span> |
-                                        <span class="text-danger">Fail: <strong>{{ $numFail }}</strong></span>
+                                        {{ $sumPassRate }}%<br><span
+                                            class="text-success">Pass: <strong>{{ $sumNumPass }}</strong></span> |
+                                        <span class="text-danger">Fail: <strong>{{ $sumNumFail }}</strong></span>
                                     </div>
                                     <div class="panel-footer">OTS Pass Rate<br><em>last 30 days</em></div>
                                 </div>
@@ -57,7 +57,7 @@
                             <div class="col-md-4">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body training-stat-static">
-                                        {{ $avgTimeStr }}<br>{{ $avgSessions }} sessions
+                                        {{ $sumAvgTimeStr }}<br>{{ $sumAvgSessions }} sessions
                                     </div>
                                     <div class="panel-footer">Average Time and Sessions Per Week<br><em>last
                                             30
@@ -74,18 +74,18 @@
                         <!-- Pie: Instructor Time Distribution (period) -->
                         <!--Table: INS, MTRS: Training Time, Avg Session Time, Sessions Conducted -->
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-7">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
                                         <canvas id="stacked-1"></canvas>
                                     </div>
-                                    <div class="panel-footer">Hours per Month</div>
+                                    <div class="panel-footer">Hours per Month<br><em>Last 6 months</em></div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
-                                        <canvas id="pie-1"></canvas>
+                                        <canvas id="pie-1" height="220px"></canvas>
                                     </div>
                                     <div class="panel-footer">Time per Instructor<br><em>last 30
                                             days</em></div>
@@ -98,36 +98,72 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Role</th>
-                                    <th>Training Time</th>
-                                    <th>Avg. Session Time</th>
-                                    <th>Sessions Conducted</th>
+                                    <th>INS/MTR Since</th>
+                                    <th>Avg. Hours / Week</th>
+                                    <th>Avg. Sessions Conducted / Week</th>
                                 </tr>
                                 </thead>
+                                <tbody>
+                                @foreach($insActivity as $ins)
+                                    <tr>
+                                        <td>{{ $ins['name'] }} <span class="sparkline"
+                                                                     values="{{ $ins['sparkline'] }}"></span></td>
+                                        <td>{{ $ins['role'] === "INS" ? "Instructors" : "Mentors" }}</td>
+                                        <td>{{ $ins['since'] }}</td>
+                                        <td>
+                                            @php $c = 0; @endphp
+                                            @foreach ($ins['avgTime'] as $i => $v)
+                                                <strong>Last {{ $i }} days:</strong> {!! $v !!}
+                                                @if(++$c != count($ins['avgTime'])) <br>@endif
+                                            @endforeach
+                                        </td>
+                                        <td>@php $c = 0; @endphp
+                                            @foreach ($ins['avgSessions'] as $i => $v)
+                                                <strong>Last {{ $i }} days:</strong> {!! $v !!}
+                                                @if(++$c != count($ins['avgSessions'])) <br>@endif
+                                            @endforeach</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
                             </table>
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane training-stat-section" id="evals">
                         <h3 class="training-stat-section-header"><i class="fas fa-check-double"></i> OTS
                             Evaluations</h3>
+                        <br>
+                        <div class="training-stat-section-header"> Charts Mode:
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-info active ots-charts-mode-input-label">
+                                    <input type="radio" name="mode" value="1"
+                                           autocomplete="off" class="ots-charts-mode" checked>
+                                    By Form
+                                </label>
+                                <label class="btn btn-default ots-status-input-label">
+                                    <input type="radio" name="mode" value="2"
+                                           class="ots-charts-mode" autocomplete="off">By Instructor
+                                </label>
+                            </div>
+                        </div>
                         <!-- Stacked Bar (by INS): Evals Conducted Per Month -->
                         <!--Pass Rate <br> # Passed # Failed (period)-->
                         <!-- Pie: # Conducted  by Form (period) -->
                         <!-- Table: Eval Forms:Pass Rate, Num Pass, Num Fail, Num Conducted, Button (Itemized Stats) -->
                         <!-- Table: OTS Evaluations: Date, Form Name, Student, Instructor, Result, # C/S/U (text in colors), Button (View) -->
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="panel panel-default">
-                                    <div class="panel-body training-stat-block">
+                            <div class="col-md-7">
+                                <div class="panel panel-default training-stat-block">
+                                    <div class="panel-body ">
                                         <canvas id="stacked-2"></canvas>
                                     </div>
-                                    <div class="panel-footer">Evaluations Conducted per Month<br><em></em>
+                                    <div class="panel-footer">Evaluations Conducted per Month<br><em>last 6 months</em>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
-                                        <canvas id="pie-2"></canvas>
+                                        <canvas id="pie-2" height="220px"></canvas>
                                     </div>
                                     <div class="panel-footer">Completed Evaluations per Form<br><em>last 30
                                             days</em></div>
@@ -146,21 +182,46 @@
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
+                                <tbody>
+                                @foreach($evalFormsTable as $form)
+                                    <tr>
+                                        <td>{{ $form['name'] }} @if(strlen($form['sparkline']))<span
+                                                class="sparkline-tri"
+                                                values="{{ $form['sparkline'] }}"></span> @endif</td>
+                                        <td>@php $c = 0; @endphp
+                                            @foreach ($form['passRate'] as $i => $v)
+                                                <strong>Last {{ $i }} days:</strong> {!! $v !!}%
+                                                @if(++$c != count($form['passRate'])) <br>@endif
+                                            @endforeach</td>
+                                        <td>@php $c = 0; @endphp
+                                            @foreach ($form['numPass'] as $i => $v)
+                                                <strong>Last {{ $i }} days:</strong> <span
+                                                    class="text-success">{!! $v !!}</span>/<span
+                                                    class="text-danger">{!! $form['numFail'][$i] !!}</span>
+                                                @if(++$c != count($form['numPass'])) <br>@endif
+                                            @endforeach</td>
+                                        <td>@php $c = 0; @endphp
+                                            @foreach ($form['numConducted'] as $i => $v)
+                                                <strong>Last {{ $i }} days:</strong> {!! $v !!}
+                                                @if(++$c != count($form['numConducted'])) <br>@endif
+                                            @endforeach</td>
+                                        <td>
+                                            <a href="{{ secure_url("mgt/facility/training/eval/" . $form['id'] . "/stats") }}">
+                                                <button class="btn btn-primary"><i class="fas fa-bullseye"></i> Itemized
+                                                </button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
                             </table>
-                            <h4 class="training-stat-section-header">Completed OTS Evaluations</h4>
-                            <table class="table table-striped" id="completed-evals">
-                                <thead>
-                                <tr>
-                                    <th>Exam Date</th>
-                                    <th>Form Name</th>
-                                    <th>Student</th>
-                                    <th>Instructor</th>
-                                    <th>Result</th>
-                                    <th>C/S/U</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                            </table>
+                            <div class="row text-center">
+                                <a href="{{ secure_url("/mgt/facility/training/evals") }}">
+                                    <button class="btn btn-success"><i class="fas fa-external-link-alt"></i> View
+                                        Completed Evaluations
+                                    </button>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane training-stat-section" id="records">
@@ -169,23 +230,23 @@
                         <!-- Pie: Position Distribution (period) -->
                         <!-- Avg. Sessions and Hours Per Week -->
                         <!-- Stacked Bar (By Postion): Records Completed Per Month -->
-                        <!-- Table: Training Records -->
+                        <!-- Table: Training Records Table and sidebar -->
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-7">
+                                <div class="panel panel-default training-stat-block">
+                                    <div class="panel-body">
+                                        <canvas id="pie-3"></canvas>
+                                    </div>
+                                    <div class="panel-footer">Records per Month<br><em>last 6 months</em></div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
                                         <canvas id="stacked-3"></canvas>
                                     </div>
                                     <div class="panel-footer">Records per Type<br><em>last 30 days</em>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="panel panel-default training-stat-block">
-                                    <div class="panel-body">
-                                        <canvas id="pie-3"></canvas>
-                                    </div>
-                                    <div class="panel-footer">Records per Month</div>
                                 </div>
                             </div>
                         </div>
@@ -200,13 +261,24 @@
     </div>
 @endsection
 @push('scripts')
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="{{ secure_asset("js/jquery.sparkline.js") }}"></script>
     <script type="text/javascript">
       $(function () {
         if (document.location.hash)
           $('.nav-tabs li:not(.disabled) a[href=' + document.location.hash + ']').tab('show')
 
         $('.nav-tabs a').on('shown.bs.tab', function (e) {
+          $('.sparkline').sparkline('html', {enableTagOptions: true})
+          $('.sparkline-tri').sparkline('html', {
+            type               : 'tristate',
+            tooltipFormat      : ' <span style="color: @{{color}}">&#9679;</span> @{{value:result}}</span>',
+            tooltipValueLookups: {result: {'-1': 'Fail', '1': 'Pass'}}
+          })
+          $.sparkline_display_visible()
           history.pushState({}, '', e.target.hash)
         })
         $('#pos-types li a').click(function (e) {
@@ -215,6 +287,110 @@
           $('#training-content div[role="tabpanel"]#' + target).show()
           $('#training-content div[role="tabpanel"]:not(#' + target + ')').hide()
         })
+
+        $('.sparkline').sparkline('html', {enableTagOptions: true, disableHiddenCheck: true})
+        $('.sparkline-tri').sparkline('html', {
+          type               : 'tristate',
+          tooltipFormat      : ' <span style="color: @{{color}}">&#9679;</span> @{{value:result}}</span>',
+          tooltipValueLookups: {result: {'-1': 'Fail', '1': 'Pass'}}
+        })
+        //INS/MTR Activity
+        const stacked1 = new Chart($('#stacked-1'), {
+          type   : 'bar',
+          data   : {!! json_encode($hoursPerMonthData) !!},
+          options: {
+            scales: {
+              xAxes: [{
+                stacked: true
+              }],
+              yAxes: [{
+                stacked: true,
+                ticks  : {
+                  min: 0
+                }
+              }]
+            }
+            //axes stacked
+          }
+        })
+        const pie1 = new Chart($('#pie-1'), {
+          type   : 'pie',
+          data   : {!! json_encode($timePerInstructorData) !!},
+          options: {
+            legend: {
+              position: 'right'
+            }
+          }
+        })
+        $('#training-staff-list').DataTable({
+          responsive  : true,
+          autoWidth   : false,
+          lengthMenu  : [5, 10, 15, 25],
+          pageLength  : 5,
+          columnDefs  : [{
+            visible: false,
+            targets: 1
+          }],
+          order       : [0, 'desc'],
+          orderFixed  : [1, 'asc'],
+          drawCallback: function (settings) {
+            let api = this.api()
+            let rows = api.rows({page: 'current'}).nodes()
+            let last = null
+
+            api.column(1, {page: 'current'}).data().each(function (group, i) {
+              if (last !== group) {
+                $(rows).eq(i).before(
+                  '<tr class="group"><td colspan="6"><strong>' + group + '</strong></td></tr>'
+                )
+
+                last = group
+              }
+            })
+          }
+        })
+
+        //OTS Evalutations
+        const stacked2 = new Chart($('#stacked-2'), {
+          type   : 'bar',
+          data   : {!! json_encode($evalsPerMonthData) !!},
+          options: {
+            scales: {
+              xAxes: [{
+                stacked: true
+              }],
+              yAxes: [{
+                stacked: true,
+                ticks  : {
+                  min: 0
+                }
+              }]
+            }
+            //axes stacked
+          }
+        })
+        const pie2 = new Chart($('#pie-2'), {
+          type   : 'pie',
+          data   : {!! json_encode($evalsPerFormData) !!},
+          options: {
+            legend: {
+              position: 'right'
+            }
+          }
+        })
+        $('.ots-charts-mode').change(function () {
+          $('.ots-charts-mode').parent().attr('class', 'btn btn-default ots-charts-mode-input-label')
+          let parent = $(this).parent()
+          switch (parseInt($(this).val())) {
+            case 1:
+              parent.removeClass('btn-default').addClass('btn-info')
+              break
+            case 2:
+              parent.removeClass('btn-default').addClass('btn-success')
+              break
+          }
+        })
+
       })
     </script>
 @endpush
