@@ -21,10 +21,24 @@
                                 <label for="tng-artcc-select">ARTCC:</label>
                                 <select class="form-control" id="tng-artcc-select" autocomplete="off" name="fac">
                                     <option value="" @if(!$trainingfac) selected @endif>-- Select One --</option>
-                                    @foreach($facilities as $fac)
-                                        <option value="{{ $fac->id }}"
-                                                @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                    @endforeach
+                                    <optgroup label="Western Region">
+                                        @foreach($facilities->filter(function($fac) { return $fac->region == 7; }) as $fac)
+                                            <option value="{{ $fac->id }}"
+                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                    <optgroup label="Southern Region">
+                                        @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
+                                            <option value="{{ $fac->id }}"
+                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                    <optgroup label="Northeastern Region">
+                                        @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
+                                            <option value="{{ $fac->id }}"
+                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                        @endforeach
+                                    </optgroup>
                                 </select>
                             </div>
                         </form>
@@ -51,7 +65,11 @@
                         <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
                         @php $postypes = ['twr', 'app', 'ctr']; @endphp
                         <div role="tabpanel" class="tab-pane active" id="all">
-                            @if($evals->count())
+                            @if(!$trainingfac)
+                                <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> Please
+                                    select a facility.
+                                </div>
+                            @elseif($evals->count())
                                 <table class="training-evals-list table table-striped" id="training-records-all">
                                     <thead>
                                     <tr>
@@ -104,7 +122,11 @@
                         @foreach($postypes as $postype)
                             <div role="tabpanel" class="tab-pane"
                                  id="{{strtolower($postype)}}">
-                                @if($evals->count())
+                                @if(!$trainingfac)
+                                    <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span>
+                                        Please select a facility.
+                                    </div>
+                                @elseif($evals->count())
                                     @php $records = $evals->filter(function($eval) use ($postype) {
                                                                     return $eval->form->position === $postype;
                                                                     });

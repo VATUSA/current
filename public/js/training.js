@@ -158,7 +158,7 @@ $(function () {
       $('.training-student').html(result.student.fname + ' ' + result.student.lname)
       $('#training-artcc').html(result.facility.name)
       scoreStr = ''
-      if (!NaN(result.score))
+      if (!isNaN(result.score))
         for (let i = 1; i <= 5; i++) {
           scoreStr += '<span class=\'glyphicon glyphicon-star'
           scoreStr += i > result.score ? '-empty' : ''
