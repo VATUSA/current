@@ -414,7 +414,7 @@ class RoleHelper
      */
     public static function isInstructor($cid = null, $facility = null, bool $includeVATUSA = true)
     {
-        if (!Auth::check()) {
+        if (!Auth::check() && !($cid || $facility)) {
             return false;
         }
         if (is_null($cid) || !$cid) {
