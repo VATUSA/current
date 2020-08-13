@@ -101,7 +101,7 @@
                                                     class="text-danger">{{ $eval->results()->where('result', 3)->count() }}</strong>
                                             </td>
                                             <td>
-                                                <a href="{{ secure_url('/mgt/controller/' . $eval->student->cid . '/eval/' . $eval->id . '/view') }}"
+                                                <a href="{{ secure_url('/mgt/facility/training/eval/' . $eval->id . '/view') }}"
                                                    target="_blank">
                                                     <button class="btn btn-primary"><span
                                                             class="glyphicon glyphicon-eye-open"></span>
@@ -165,7 +165,7 @@
                                                         class="text-danger">{{ $eval->results()->where('result', 3)->count() }}</strong>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ secure_url('/mgt/controller/' . $eval->student->cid . '/eval/' . $eval->id . '/view') }}"
+                                                    <a href="{{ secure_url('/mgt/facility/training/eval/' . $eval->id . '/view') }}"
                                                        target="_blank">
                                                         <button class="btn btn-primary"><span
                                                                 class="glyphicon glyphicon-eye-open"></span>

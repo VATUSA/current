@@ -73,6 +73,33 @@ $(function () {
         })
       }
     })
+    $('.fac-training-records-list').DataTable({
+      responsive  : true,
+      autoWidth   : false,
+      lengthMenu  : [5, 10, 15, 25],
+      pageLength  : 10,
+      columnDefs  : [{
+        visible: false,
+        targets: 6
+      }],
+      order       : [[0, 'desc']],
+      orderFixed      : [[6, 'asc']],
+      drawCallback: function (settings) {
+        let api = this.api()
+        let rows = api.rows({page: 'current'}).nodes()
+        let last = null
+
+        api.column(6, {page: 'current'}).data().each(function (group, i) {
+          if (last !== group) {
+            $(rows).eq(i).before(
+              '<tr class="group"><td colspan="6"><strong>' + group + '</strong></td></tr>'
+            )
+
+            last = group
+          }
+        })
+      }
+    })
   }
   $('.training-evals-list').DataTable({
     responsive  : true,
@@ -102,7 +129,7 @@ $(function () {
     }
   })
 
-  $('.delete-tr').click(function () {
+  $(document).on('click', '.delete-tr', function () {
     let btn = $(this),
         id  = btn.data('id'),
         tr  = btn.parents('tr')
@@ -144,7 +171,7 @@ $(function () {
       })
 
   })
-  $('.view-tr').click(function () {
+  $(document).on('click', '.view-tr', function () {
     let btn = $(this),
         id  = btn.data('id')
 
@@ -252,7 +279,7 @@ $(function () {
         swal('Error!', 'Unable to get training record. ' + error, 'error')
       })
   })
-  $('.edit-tr').click(function () {
+  $(document).on('click', '.edit-tr', function () {
     let btn = $(this),
         id  = btn.data('id')
 

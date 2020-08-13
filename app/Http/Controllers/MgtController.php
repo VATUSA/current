@@ -1045,19 +1045,15 @@ class MgtController extends Controller
     public
     function viewOTSEval(
         Request $request,
-        int $cid,
         int $eval
     ) {
-        $student = User::find($cid);
-        if (!$student) {
-            abort(404);
+        $eval = OTSEval::withAll()->find($eval);
+        if (!$eval) {
+            abort(404, "The OTS evaluation form is invalid.");
         }
+        $student = $eval->student;
         if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility)) {
             abort(403);
-        }
-        $eval = OTSEval::withAll()->find($eval);
-        if (!$student || !$eval) {
-            abort(404, "The OTS evaluation form is invalid.");
         }
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
             'student_id' => $eval->student_id,
@@ -1155,6 +1151,53 @@ class MgtController extends Controller
 
         /** INS/MTR Activity */
 
+        //INS/MTR List
+        $ins = ['ins' => [], 'mtr' => []];
+        $insActivity = [];
+        $users = User::where('facility', 'ZSE')->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+            ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['ins'][] = [
+                    'cid'       => $user->cid,
+                    'sparkline' => $user->getTrainingActivitySparkline(),
+                    'name'      => $user->fullname(true),
+                    'since'     => Promotions::where([
+                        'cid' => $user->cid,
+                        'to'  => $user->rating
+                    ])->orderBy('created_at', 'desc')
+                        ->first()->created_at->format('m/d/Y')
+                ];
+            }
+        }
+        $users = Role::where('facility', 'ZSE')->where('role', 'INS')->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['ins'][] = [
+                    'cid'       => $user->cid,
+                    'sparkline' => $user->user->getTrainingActivitySparkline(),
+                    'name'      => $user->user->fullname(true),
+                    'since'     => $user->created_at->format('m/d/Y')
+                ];
+            }
+        }
+        $users = Role::where('facility', 'ZSE')->where('role', 'MTR')->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['mtr'][] = [
+                    'cid'       => $user->cid,
+                    'sparkline' => $user->user->getTrainingActivitySparkline(),
+                    'name'      => $user->user->fullname(true),
+                    'since'     => $user->created_at->format('m/d/Y')
+                ];
+            }
+        }
+        foreach ($ins as $k => $v) {
+            usort($ins[$k], function ($a, $b) {
+                return strcmp($a['name'], $b['name']);
+            });
+        }
+
         //Hours per Month
         $hoursPerMonthData = ['labels' => [], 'datasets' => []];
         $datasets = [];
@@ -1165,15 +1208,32 @@ class MgtController extends Controller
         } elseif ($facility) {
             $hoursPerMonth = $hoursPerMonth->where('facility_id', $facility);
         }
-        $hoursPerMonth = $hoursPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
+        $hoursPerMonth = $hoursPerMonth->where('session_date', '>',
+            Carbon::now()->subMonths(6))->whereRaw("DATE_FORMAT(session_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
             'month',
             'instructor_id'
         ])->orderBy('month', 'ASC');
         //dd(str_replace_array('?', $hoursPerMonth->getBindings(), $hoursPerMonth->toSql()));
         //dd($hoursPerMonth->get()->toArray());
+        $cids = [];
+        $allIns = $hoursPerMonth->pluck('instructor_id')->unique()->all();
+        $currMonth = Carbon::now()->subMonths(6)->format('Y-m');
         foreach ($hoursPerMonth->get() as $data) {
             if (!$data->instructor_id) {
                 continue;
+            }
+            if ($currMonth != $data->month) {
+                //Find 0s
+                for ($i = 0; $i < count($allIns); $i++) {
+                    if (!in_array($allIns[$i], $cids)) {
+                        if (!isset($datasets[$data->instructor->cid])) {
+                            $datasets[$allIns[$i]]['label'] = Helper::nameFromCID($allIns[$i]);
+                        }
+                        $datasets[$allIns[$i]]['data'][] = 0;
+                    }
+                }
+                $cids = [];
+                $currMonth = $data->month;
             }
             $month = (new Carbon($data->month))->format('F');
             if (!in_array($month, $hoursPerMonthData['labels'])) {
@@ -1184,6 +1244,7 @@ class MgtController extends Controller
                 $datasets[$data->instructor->cid]['label'] = $data->instructor->fullname();
             }
             $datasets[$data->instructor->cid]['data'][] = floor($data->sum / 3600);
+            $cids[] = $data->instructor->cid;
         }
         foreach ($datasets as $k => $v) {
             $colors[$k] = Factory::create()->hexColor;
@@ -1203,7 +1264,7 @@ class MgtController extends Controller
         }
         $timePerInstructorData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
         $timePerInstructor = $records->with(['instructor:cid,fname,lname'])->selectRaw('SUM(TIME_TO_SEC(duration)) AS total, instructor_id')
-            ->groupBy([DB::raw('instructor_id')]);
+            ->groupBy(['instructor_id']);
         foreach ($timePerInstructor->get() as $time) {
             if (!$time->instructor_id) {
                 continue;
@@ -1214,53 +1275,6 @@ class MgtController extends Controller
         }
 
         //Table Data
-        $ins = ['ins' => [], 'mtr' => []];
-        $insActivity = [];
-        $users = User::where('facility', 'ZSE')->where('rating', '>=', Helper::ratingIntFromShort("I1"))
-            ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $ins['ins'][] = [
-                    'cid'   => $user->cid,
-                    'sparkline' => $user->getTrainingActivitySparkline(),
-                    'name'  => $user->fullname(true),
-                    'since' => Promotions::where([
-                        'cid' => $user->cid,
-                        'to'  => $user->rating
-                    ])->orderBy('created_at', 'desc')
-                        ->first()->created_at->format('m/d/Y')
-                ];
-            }
-        }
-        $users = Role::where('facility', 'ZSE')->where('role', 'INS')->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $ins['ins'][] = [
-                    'cid'   => $user->cid,
-                    'sparkline' => $user->user->getTrainingActivitySparkline(),
-                    'name'  => $user->user->fullname(true),
-                    'since' => $user->created_at->format('m/d/Y')
-                ];
-            }
-        }
-        $users = Role::where('facility', 'ZSE')->where('role', 'MTR')->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $ins['mtr'][] = [
-                    'cid'   => $user->cid,
-                    'sparkline' => $user->user->getTrainingActivitySparkline(),
-                    'name'  => $user->user->fullname(true),
-                    'since' => $user->created_at->format('m/d/Y')
-                ];
-            }
-        }
-
-        foreach ($ins as $k => $v) {
-            usort($ins[$k], function ($a, $b) {
-                return strcmp($a['name'], $b['name']);
-            });
-        }
-
         $i = 0;
         foreach ($ins as $type => $v) {
             foreach ($v as $staff) {
@@ -1343,7 +1357,8 @@ class MgtController extends Controller
         if ($instructor) {
             $evalsPerMonth->where('instructor_id', $instructor);
         }
-        $evalsPerMonth->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
+        $evalsPerMonth->where('exam_date', '>',
+            Carbon::now()->subMonths(6))->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
             'month',
             'form_id'
         ])->orderBy('month', 'ASC');
@@ -1425,13 +1440,180 @@ class MgtController extends Controller
             }
             $i++;
         }
+        //Evals Conducted per Month - INS
+        $colors = [];
+        $evalsPerMonthDataIns = ['labels' => [], 'datasets' => []];
+        $datasets = [];
+        $evalsPerMonth = OTSEval::with('instructor:cid,fname,lname')->selectRaw("COUNT(instructor_id) AS total, instructor_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
+        if ($region) {
+            $evalsPerMonth->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $evalsPerMonth->where('facility_id', $facility);
+        }
+        $evalsPerMonth->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
+            'month',
+            'instructor_id'
+        ])->orderBy('month', 'ASC');
+        // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
+        //dd($hoursPerMonth->get()->toArray());
+        $currMonth = Carbon::now()->subMonths(6)->format('Y-m');
+        $cids = [];
+        $allIns = $evalsPerMonth->pluck('instructor_id')->unique()->all();
+        foreach ($evalsPerMonth->get() as $data) {
+            if (!$data->instructor_id) {
+                continue;
+            }
+            if ($currMonth != $data->month) {
+                //Find 0s
+                for ($i = 0; $i < count($allIns); $i++) {
+                    if (!in_array($allIns[$i], $cids)) {
+                        if (!isset($datasets[$data->instructor->cid])) {
+                            $datasets[$allIns[$i]]['label'] = Helper::nameFromCID($allIns[$i]);
+                        }
+                        $datasets[$allIns[$i]]['data'][] = 0;
+                    }
+                }
+                $cids = [];
+                $currMonth = $data->month;
+            }
+            $month = (new Carbon($data->month))->format('F');
+            if (!in_array($month, $evalsPerMonthDataIns['labels'])) {
+                $evalsPerMonthDataIns['labels'][] = $month;
+            }
+            if (!isset($datasets[$data->instructor->cid])) {
+                $datasets[$data->instructor->cid]['data'] = array();
+                $datasets[$data->instructor->cid]['label'] = $data->instructor->fullname();
+            }
+            $datasets[$data->instructor->cid]['data'][] = $data->total;
+            $cids[] = $data->instructor->cid;
+        }
+        foreach ($datasets as $k => $v) {
+            $colors[$k] = Factory::create()->hexColor;
+            $evalsPerMonthDataIns['datasets'][] = [
+                'label'           => $v['label'],
+                'data'            => $v['data'],
+                'backgroundColor' => $colors[$k]
+            ];
+        }
+
+        //Completed Evaluations per Form - INS
+        $evals = OTSEval::where('exam_date', '>', Carbon::now()->subDays($interval));
+        if ($region) {
+            $evals->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $evals->where('facility_id', $facility);
+        }
+        $evalsPerFormDataIns = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
+        $evalsPerForm = $evals->with(['instructor:cid,fname,lname'])->selectRaw('COUNT(*) AS total, instructor_id')
+            ->groupBy(['instructor_id']);
+        foreach ($evalsPerForm->get() as $eval) {
+            if (!$eval->instructor_id) {
+                continue;
+            }
+            $evalsPerFormDataIns['labels'][] = $eval->instructor->fullname();
+            $evalsPerFormDataIns['datasets'][0]['data'][] = $eval->total;
+            $evalsPerFormDataIns['datasets'][0]['backgroundColor'][] = $colors[$eval->instructor->cid] ?? Factory::create()->hexColor;
+        }
+
+
+        /** Training Records */
+        $colors = [];
+        $recordsPerMonthData = ['labels' => [], 'datasets' => []];
+        $datasets = [];
+        $recordsPerMonth = TrainingRecord::selectRaw("COUNT(*) AS total, position, DATE_FORMAT(session_date, '%Y-%m') AS month");
+        if ($region) {
+            $recordsPerMonth->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $recordsPerMonth->where('facility_id', $facility);
+        }
+        $recordsPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
+            'month',
+            'position'
+        ])->orderBy('month', 'ASC');
+        // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
+        //dd($hoursPerMonth->get()->toArray());
+        $currMonth = Carbon::now()->subMonths(6)->format('Y-m');
+        $positions = [];
+        $allPositions = $recordsPerMonth->pluck('position')->unique()->all();
+
+        foreach ($recordsPerMonth->get() as $data) {
+            if (!$data->position) {
+                continue;
+            }
+            if ($currMonth != $data->month) {
+                //Find 0s
+                for ($i = 0; $i < count($allPositions); $i++) {
+                    if (!in_array($allPositions[$i], $positions)) {
+                        if (!isset($datasets[$allPositions[$i]])) {
+                            $datasets[$allPositions[$i]]['label'] = $allPositions[$i];
+                        }
+                        $datasets[$allPositions[$i]]['data'][] = 0;
+                    }
+                }
+                $positions = [];
+                $currMonth = $data->month;
+            }
+            $month = (new Carbon($data->month))->format('F');
+            if (!in_array($month, $recordsPerMonthData['labels'])) {
+                $recordsPerMonthData['labels'][] = $month;
+            }
+            if (!isset($datasets[$data->position])) {
+                $datasets[$data->position]['data'] = array();
+                $datasets[$data->position]['label'] = $data->position;
+            }
+            $datasets[$data->position]['data'][] = $data->total;
+            $positions[] = $data->position;
+        }
+        foreach ($datasets as $k => $v) {
+            $colors[$k] = Factory::create()->hexColor;
+            $recordsPerMonthData['datasets'][] = [
+                'label'       => $v['label'],
+                'data'        => $v['data'],
+                'borderColor' => $colors[$k]
+            ];
+        }
+
+        //Records per Type
+        $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
+        if ($region) {
+            $records->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $records->where('facility_id', $facility);
+        }
+        $recordsPerTypeData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
+        $recordsPerType = $records->selectRaw('COUNT(*) AS total, position')
+            ->groupBy(['position']);
+        foreach ($recordsPerType->get() as $record) {
+            if (!$record->total) {
+                continue;
+            }
+            $recordsPerTypeData['labels'][] = $record->position;
+            $recordsPerTypeData['datasets'][0]['data'][] = $record->total;
+            $recordsPerTypeData['datasets'][0]['backgroundColor'][] = $colors[$record->position] ?? Factory::create()->hexColor;
+        }
+
+        //TableData
+        $trainingRecords = TrainingRecord::with(['instructor:cid,fname,lname', 'student:cid,fname,lname']);
+        if ($region) {
+            $records->whereIn('facility_id',
+                Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $records->where('facility_id', $facility);
+        }
+        $trainingRecords = $trainingRecords->get();
 
         return view('mgt.training.stats',
             compact('instructor', 'facility', 'region',
                 'sumTotalSessions', 'sumTotalTimeStr', 'sumAvgTimeStr', 'sumAvgSessions',
                 'sumNumPass', 'sumNumFail', 'sumPassRate',
                 'hoursPerMonthData', 'timePerInstructorData', 'insActivity',
-                'evalsPerMonthData', 'evalsPerFormData', 'evalFormsTable'));
+                'evalsPerMonthData', 'evalsPerFormData', 'evalsPerFormDataIns',
+                'evalsPerMonthDataIns', 'evalFormsTable',
+                'recordsPerTypeData', 'recordsPerMonthData', 'trainingRecords'));
     }
 
     public
@@ -1469,5 +1651,139 @@ class MgtController extends Controller
 
         return view('mgt.training.evals',
             compact('evals', 'trainingfac', 'trainingfacname', 'facilities'));
+    }
+
+    public function viewOTSEvalStatistics(
+        Request $request,
+        int $form
+    ) {
+        $eval = OTSEvalForm::withAll()->find($form);
+        if (!$eval) {
+            abort(404, "The OTS evaluation form is invalid.");
+        }
+
+        $instructor = $request->input('instructor', null);
+        $facility = $request->input('facility', Auth::user()->facility);
+        $interval = $request->input('interval', 15); //Last num of tests
+        if (!RoleHelper::isInstructor(Auth::user()->cid, $facility)) {
+            abort(403);
+        }
+
+        $hasGlobalAccess = RoleHelper::isVATUSAStaff();
+
+        //Chart 1: Stacked Line, Num Pass and Fails per Month
+        $colors = ['rgb(255, 99, 132)', 'rgb(75, 192, 192)'];
+        $numPassFailsData = ['labels' => [], 'datasets' => []];
+        $datasets = [];
+        $numPassFails = OTSEval::selectRaw("COUNT(*) AS total, result, DATE_FORMAT(session_date, '%Y-%m') AS month");
+        if ($facility) {
+            $numPassFails->where('facility_id', $facility);
+        }
+        if ($instructor) {
+            $numPassFails->where('instructor_id', $instructor);
+        }
+        $numPassFails = $numPassFails->where('form_id', $form)->where('session_date', '>',
+            Carbon::now()->subMonths(6))->whereRaw("DATE_FORMAT(session_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
+            'month',
+            'result'
+        ])->orderBy('month', 'ASC');
+        //dd(str_replace_array('?', $hoursPerMonth->getBindings(), $hoursPerMonth->toSql()));
+        //dd($hoursPerMonth->get()->toArray());
+        $results = [];
+        $allResults = [0, 1];
+        $currMonth = Carbon::now()->subMonths(6)->format('Y-m');
+        foreach ($numPassFails->get() as $data) {
+            if (!$data->total) {
+                continue;
+            }
+            if ($currMonth != $data->month) {
+                //Find 0s
+                for ($i = 0; $i < count($allResults); $i++) {
+                    if (!in_array($allResults[$i], $results)) {
+                        if (!isset($datasets[$data->result])) {
+                            $datasets[$data->result]['label'] = $data->result ? 'Pass' : 'Fail';
+                        }
+                        $datasets[$data->result]['data'][] = 0;
+                    }
+                }
+                $results = [];
+                $currMonth = $data->month;
+            }
+            $month = (new Carbon($data->month))->format('F');
+            if (!in_array($month, $numPassFailsData['labels'])) {
+                $numPassFailsData['labels'][] = $month;
+            }
+            if (!isset($datasets[$data->result])) {
+                $datasets[$data->result]['data'] = array();
+                $datasets[$data->result]['label'] = $data->result ? 'Pass' : 'Fail';
+            }
+            $datasets[$data->result]['data'][] = $data->total;
+        }
+        foreach ($datasets as $k => $v) {
+            $numPassFailsData['datasets'][] = [
+                'label'           => $v['label'],
+                'data'            => $v['data'],
+                'backgroundColor' => $colors[$k]
+            ];
+        }
+
+        //Chart 2: Stacked Bar, Number of Evaluations by INS per Month
+        $colors = [];
+        $evalsPerMonthDataIns = ['labels' => [], 'datasets' => []];
+        $datasets = [];
+        $evalsPerMonth = OTSEval::with('instructor:cid,fname,lname')->selectRaw("COUNT(instructor_id) AS total, instructor_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
+        if ($facility) {
+            $evalsPerMonth->where('facility_id', $facility);
+        }
+        $evalsPerMonth->where('form_id',
+            $form)->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
+            'month',
+            'instructor_id'
+        ])->orderBy('month', 'ASC');
+        // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
+        //dd($hoursPerMonth->get()->toArray());
+        $currMonth = Carbon::now()->subMonths(6)->format('Y-m');
+        $cids = [];
+        $allIns = $evalsPerMonth->pluck('instructor_id')->unique()->all();
+        foreach ($evalsPerMonth->get() as $data) {
+            if (!$data->instructor_id) {
+                continue;
+            }
+            if ($currMonth != $data->month) {
+                //Find 0s
+                for ($i = 0; $i < count($allIns); $i++) {
+                    if (!in_array($allIns[$i], $cids)) {
+                        if (!isset($datasets[$data->instructor->cid])) {
+                            $datasets[$allIns[$i]]['label'] = Helper::nameFromCID($allIns[$i]);
+                        }
+                        $datasets[$allIns[$i]]['data'][] = 0;
+                    }
+                }
+                $cids = [];
+                $currMonth = $data->month;
+            }
+            $month = (new Carbon($data->month))->format('F');
+            if (!in_array($month, $evalsPerMonthDataIns['labels'])) {
+                $evalsPerMonthDataIns['labels'][] = $month;
+            }
+            if (!isset($datasets[$data->instructor->cid])) {
+                $datasets[$data->instructor->cid]['data'] = array();
+                $datasets[$data->instructor->cid]['label'] = $data->instructor->fullname();
+            }
+            $datasets[$data->instructor->cid]['data'][] = $data->total;
+            $cids[] = $data->instructor->cid;
+        }
+        foreach ($datasets as $k => $v) {
+            $evalsPerMonthDataIns['datasets'][] = [
+                'label'           => $v['label'],
+                'data'            => $v['data'],
+                'backgroundColor' => Factory::create()->hexColor
+            ];
+        }
+        //Table: INS Name (SL: Pass/Fail last 15 num of tests), Num Passes (30/60/90), Num Fails (30/60/90)
+        $tableData = [];
+        foreach ($allIns as $ins) {
+
+        }
     }
 }
