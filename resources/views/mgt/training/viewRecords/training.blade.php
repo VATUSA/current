@@ -3,22 +3,8 @@
           href="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.css"/>
     <link rel="stylesheet" type="text/css" href="{{ secure_asset("datetimepicker/datetimepicker.css") }}">
 @endpush
-@include('my.training.view')
+@include('mgt.training.viewRecords.view')
 <div class="col-md-3" style="border-right: 1px solid #ccc;">
-    <form class="form-inline" action="{{ Request::url() }}#training" method="POST"
-          id="training-artcc-select-form">
-        <div class="form-group">
-            <label for="tng-artcc-select">ARTCC:</label>
-            <select class="form-control" id="tng-artcc-select" autocomplete="off" name="fac">
-                <option value="" @if(!$trainingfac) selected @endif>-- Select One --</option>
-                @foreach($trainingfaclist as $fac)
-                    <option value="{{ $fac->facility->id }}"
-                            @if($trainingfac == $fac->facility->id) selected @endif>{{ $fac->facility->name }}</option>
-                @endforeach
-            </select>
-        </div>
-    </form>
-    <BR>
     <ul class="nav nav-pills nav-stacked" role="tablist" id="pos-types">
         <li role="presentation" class="active"><a href="#training" data-controls="all" aria-controls="all"
                                                   role="tab"
@@ -48,17 +34,17 @@
         <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
         @php $postypes = ['OTS', 'DEL', 'GND', 'TWR', 'APP', 'CTR']; @endphp
         <div role="tabpanel" class="tab-pane active" id="all">
-            @if($trainingRecords->count() && $trainingfaclist->count())
-                <table class="training-records-list table table-striped" id="training-records-all">
+            @if($trainingRecords->count())
+                <table class="fac-training-records-list table table-striped" id="training-records-all">
                     <thead>
                     <tr>
                         <th>Date</th>
                         <th>Position</th>
-                        <th>Instructor</th>
+                        <th>Student</th>
                         <th>Duration</th>
                         <th class="alert-ignore">Progress</th>
                         <th class="alert-ignore">Actions</th>
-                        <th class="alert-ignore">Location</th>
+                        <th class="alert-ignore">Instructor</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -75,7 +61,7 @@
                                     class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
                             </td>
                             <td>{{ $record->position }}</td>
-                            <td>{{ $record->instructor->fullname() }}</td>
+                            <td>{{ $record->student->fullname() }}</td>
                             <td>{{ substr($record->duration, 0, 5) }}</td>
                             <td class="alert-ignore">
                                 @if(!is_null($record->score))
@@ -94,46 +80,36 @@
                                     </button>
                                 </div>
                             </td>
-                            <td>@switch($record->location)
-                                    @case(0) Classroom @break
-                                    @case(1) Live @break
-                                    @case(2) Sweatbox @break
-                                @endswitch
-                            </td>
+                            <td>{{ $record->instructor->fullname() }} </td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
-            @elseif($trainingfaclist->count() > 1)
-                <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> You have
-                    records from multiple facilities. Please select a facility from the left.
-                </div>
             @else
-                <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> You have no
+                <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> There are no
                     training records.
                 </div>
             @endif
-            <input type="hidden" id="fac" value="{{ $trainingfac }}">
         </div>
         @foreach($postypes as $postype)
             <div role="tabpanel" class="tab-pane"
                  id="{{strtolower($postype)}}">
-                @if($trainingRecords->count() && $trainingfaclist->count())
+                @if($trainingRecords->count() )
                     @php $records = $trainingRecords->filter(function($record) use ($postype) {
                                                                     return $postype == "OTS" ? in_array($record->ots_status, [1,2]) : preg_match("/$postype\$/", $record->position);
                                                                     })
                     @endphp
-                    <table class="training-records-list table table-striped"
+                    <table class="fac-training-records-list table table-striped"
                            id="training-records-{{$postype}}">
                         <thead>
                         <tr>
                             <th>Date</th>
                             <th>Position</th>
-                            <th>Instructor</th>
+                            <th>Student</th>
                             <th>Duration</th>
                             <th class="alert-ignore">Progress</th>
                             <th class="alert-ignore">Actions</th>
-                            <th class="alert-ignore">Location</th>
+                            <th class="alert-ignore">Instructor</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -150,7 +126,7 @@
                                         class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
                                 </td>
                                 <td>{{ $record->position }}</td>
-                                <td>{{ $record->instructor->fullname() }}</td>
+                                <td>{{ $record->student->fullname() }}</td>
                                 <td>{{ substr($record->duration, 0, 5) }}</td>
                                 <td class="alert-ignore">
                                     @if(!is_null($record->score))
@@ -165,27 +141,18 @@
                                     <div class="btn-group">
                                         <button class="btn btn-primary view-tr"
                                                 data-id="{{ $record->id }}"><span
-                                                class="glyphicon glyphicon-eye-open"></span> View</button>
+                                                class="glyphicon glyphicon-eye-open"></span> View
+                                        </button>
                                     </div>
                                 </td>
-                                <td>@switch($record->location)
-                                        @case(0) Classroom @break
-                                        @case(1) Live @break
-                                        @case(2) Sweatbox @break
-                                    @endswitch
-                                </td>
+                                <td>{{ $record->instructor->fullname() }}</td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
-                @elseif($trainingfaclist->count() > 1)
-                    <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span>
-                        You have records from multiple facilities. Please select a facility from the
-                        left.
-                    </div>
                 @else
                     <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span>
-                        You have no training records.
+                        There are no training records.
                     </div>
                 @endif </div>
         @endforeach

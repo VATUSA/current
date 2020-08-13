@@ -299,7 +299,8 @@ Route::group([
             Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
             Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
             Route::get('/mgt/controller/{cid}/eval/{form?}', 'MgtController@getOTSEval')->where('form', '[0-9]+');
-            Route::get('/mgt/controller/{cid}/eval/{form?}/view', 'MgtController@viewOTSEval')->where('form', '[0-9]+');
+            Route::get('/mgt/facility/training/eval/{form?}/view', 'MgtController@viewOTSEval')->where('form', '[0-9]+');
+            Route::get('/mgt/facility/training/eval/{form?}/stats', 'MgtController@viewOTSEvalStatistics')->where('form', '[0-9]+');
             Route::get('/mgt/facility/training/stats', 'MgtController@viewTrainingStatistics');
             Route::get('/mgt/facility/training/evals', 'MgtController@viewEvals');
             Route::post('/mgt/facility/training/evals', 'MgtController@viewEvals');

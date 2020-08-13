@@ -153,7 +153,7 @@
                         <div class="row">
                             <div class="col-md-7">
                                 <div class="panel panel-default training-stat-block">
-                                    <div class="panel-body ">
+                                    <div class="panel-body">
                                         <canvas id="stacked-2"></canvas>
                                     </div>
                                     <div class="panel-footer">Evaluations Conducted per Month<br><em>last 6 months</em>
@@ -165,7 +165,8 @@
                                     <div class="panel-body">
                                         <canvas id="pie-2" height="220px"></canvas>
                                     </div>
-                                    <div class="panel-footer">Completed Evaluations per Form<br><em>last 30
+                                    <div class="panel-footer">Completed Evaluations per <span
+                                            id="ots-mode">Form</span><br><em>last 30
                                             days</em></div>
                                 </div>
                             </div>
@@ -229,13 +230,13 @@
                             Records</h3>
                         <!-- Pie: Position Distribution (period) -->
                         <!-- Avg. Sessions and Hours Per Week -->
-                        <!-- Stacked Bar (By Postion): Records Completed Per Month -->
+                        <!-- Stacked Line (By Postion): Records Completed Per Month -->
                         <!-- Table: Training Records Table and sidebar -->
                         <div class="row">
                             <div class="col-md-7">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
-                                        <canvas id="pie-3"></canvas>
+                                        <canvas id="line-1"></canvas>
                                     </div>
                                     <div class="panel-footer">Records per Month<br><em>last 6 months</em></div>
                                 </div>
@@ -243,7 +244,7 @@
                             <div class="col-md-5">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
-                                        <canvas id="stacked-3"></canvas>
+                                        <canvas id="pie-3" height="220px"></canvas>
                                     </div>
                                     <div class="panel-footer">Records per Type<br><em>last 30 days</em>
                                     </div>
@@ -251,7 +252,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            Training Records Table
+                            @include('mgt.training.viewRecords.training')
                         </div>
                     </div>
                 </div>
@@ -279,6 +280,7 @@
             tooltipValueLookups: {result: {'-1': 'Fail', '1': 'Pass'}}
           })
           $.sparkline_display_visible()
+          renderCharts()
           history.pushState({}, '', e.target.hash)
         })
         $('#pos-types li a').click(function (e) {
@@ -294,32 +296,148 @@
           tooltipFormat      : ' <span style="color: @{{color}}">&#9679;</span> @{{value:result}}</span>',
           tooltipValueLookups: {result: {'-1': 'Fail', '1': 'Pass'}}
         })
-        //INS/MTR Activity
-        const stacked1 = new Chart($('#stacked-1'), {
-          type   : 'bar',
-          data   : {!! json_encode($hoursPerMonthData) !!},
-          options: {
-            scales: {
-              xAxes: [{
-                stacked: true
-              }],
-              yAxes: [{
-                stacked: true,
-                ticks  : {
-                  min: 0
-                }
-              }]
-            }
-            //axes stacked
+
+        let stacked1 = {}, stacked2 = {}, pie1 = {}, pie2 = {}, pie3 = {}, line1 = {}
+        const renderCharts = () => {
+          if (typeof stacked1.destroy === 'function') {
+            stacked1.destroy()
+            stacked2.destroy()
+            pie1.destroy()
+            pie2.destroy()
+            pie3.destroy()
+            line1.destroy()
           }
-        })
-        const pie1 = new Chart($('#pie-1'), {
-          type   : 'pie',
-          data   : {!! json_encode($timePerInstructorData) !!},
-          options: {
-            legend: {
-              position: 'right'
+
+          //INS/MTR Activity
+          stacked1 = new Chart($('#stacked-1'), {
+            type   : 'bar',
+            data   : {!! json_encode($hoursPerMonthData) !!},
+            options: {
+              scales: {
+                xAxes: [{
+                  stacked: true
+                }],
+                yAxes: [{
+                  stacked: true,
+                  ticks  : {
+                    min: 0
+                  }
+                }]
+              }
+              //axes stacked
             }
+          })
+          pie1 = new Chart($('#pie-1'), {
+            type   : 'pie',
+            data   : {!! json_encode($timePerInstructorData) !!},
+            options: {
+              legend: {
+                position: 'right'
+              }
+            }
+          })
+
+          //OTS Evalutations
+          renderOtsEvalCharts(1)
+
+          //Training Records
+          line1 = new Chart($('#line-1'), {
+            type   : 'line',
+            data   : {!! json_encode($recordsPerMonthData) !!},
+            options: {
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    stacked: false,
+                    min    : 0
+                  }
+                }]
+              }
+            }
+          })
+          pie3 = new Chart($('#pie-3'), {
+            type   : 'pie',
+            data   : {!! json_encode($recordsPerTypeData) !!},
+            options: {
+              legend: {
+                position: 'right'
+              }
+            }
+          })
+
+        }
+        const renderOtsEvalCharts = mode => {
+          if (typeof stacked2.destroy === 'function') {
+            stacked2.destroy()
+            pie2.destroy()
+          }
+          if (mode == 1) {
+            stacked2 = new Chart($('#stacked-2'), {
+              type   : 'bar',
+              data   : {!! json_encode($evalsPerMonthData) !!},
+              options: {
+                scales: {
+                  xAxes: [{
+                    stacked: true
+                  }],
+                  yAxes: [{
+                    stacked: true,
+                    ticks  : {
+                      min: 0
+                    }
+                  }]
+                }
+                //axes stacked
+              }
+            })
+            pie2 = new Chart($('#pie-2'), {
+              type: 'pie',
+              data: {!! json_encode($evalsPerFormData) !!}
+            })
+          } else {
+            stacked2 = new Chart($('#stacked-2'), {
+              type   : 'bar',
+              data   : {!! json_encode($evalsPerMonthDataIns) !!},
+              options: {
+                scales: {
+                  xAxes: [{
+                    stacked: true
+                  }],
+                  yAxes: [{
+                    stacked: true,
+                    ticks  : {
+                      min: 0
+                    }
+                  }]
+                }
+                //axes stacked
+              }
+            })
+            pie2 = new Chart($('#pie-2'), {
+              type   : 'pie',
+              data   : {!! json_encode($evalsPerFormDataIns) !!},
+              options: {
+                legend: {
+                  position: 'right'
+                }
+              }
+            })
+          }
+        }
+        $('.ots-charts-mode').change(function () {
+          $('.ots-charts-mode').parent().attr('class', 'btn btn-default ots-charts-mode-input-label')
+          let parent = $(this).parent()
+          switch (parseInt($(this).val())) {
+            case 1:
+              parent.removeClass('btn-default').addClass('btn-info')
+              $('#ots-mode').text('form')
+              renderOtsEvalCharts(1)
+              break
+            case 2:
+              parent.removeClass('btn-default').addClass('btn-success')
+              $('#ots-mode').text('Instructor')
+              renderOtsEvalCharts(2)
+              break
           }
         })
         $('#training-staff-list').DataTable({
@@ -349,48 +467,7 @@
             })
           }
         })
-
-        //OTS Evalutations
-        const stacked2 = new Chart($('#stacked-2'), {
-          type   : 'bar',
-          data   : {!! json_encode($evalsPerMonthData) !!},
-          options: {
-            scales: {
-              xAxes: [{
-                stacked: true
-              }],
-              yAxes: [{
-                stacked: true,
-                ticks  : {
-                  min: 0
-                }
-              }]
-            }
-            //axes stacked
-          }
-        })
-        const pie2 = new Chart($('#pie-2'), {
-          type   : 'pie',
-          data   : {!! json_encode($evalsPerFormData) !!},
-          options: {
-            legend: {
-              position: 'right'
-            }
-          }
-        })
-        $('.ots-charts-mode').change(function () {
-          $('.ots-charts-mode').parent().attr('class', 'btn btn-default ots-charts-mode-input-label')
-          let parent = $(this).parent()
-          switch (parseInt($(this).val())) {
-            case 1:
-              parent.removeClass('btn-default').addClass('btn-info')
-              break
-            case 2:
-              parent.removeClass('btn-default').addClass('btn-success')
-              break
-          }
-        })
-
+        renderCharts()
       })
     </script>
 @endpush

@@ -47,10 +47,11 @@ class MyController
                 abort(500);
             }
         }
-        $trainingRecords = Auth::user()->trainingRecords()->where('facility_id',
+        $trainingRecords = Auth::user()->trainingRecords()->with('instructor:cid,fname,lname')->where('facility_id',
             $trainingfac)->get();
 
-        return view('my.profile', compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist'));
+        return view('my.profile',
+            compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist'));
     }
 
     public function getAssignBasic()
