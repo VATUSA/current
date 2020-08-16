@@ -42,6 +42,11 @@
                         <td><a href="/docs/GO-41520.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
+                        <td>GO 61720 &mdash; C3 Senior Controller Program</td>
+                        <td>08/16/2020</td>
+                        <td><a href="/docs/GO-61720.pdf" target="_blank">view</a></td>
+                    </tr>
+                    <tr>
                         <td>Chain of Command Flow Chart</td>
                         <td>August 2020</td>
                         <!--<td><a href="/docs/orgchart-new.png" target="_blank">view</a></td>-->
