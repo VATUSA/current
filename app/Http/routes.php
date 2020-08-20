@@ -302,6 +302,7 @@ Route::group([
             Route::get('/mgt/facility/training/eval/{form?}/view', 'MgtController@viewOTSEval')->where('form', '[0-9]+');
             Route::get('/mgt/facility/training/eval/{form?}/stats', 'MgtController@viewOTSEvalStatistics')->where('form', '[0-9]+');
             Route::get('/mgt/facility/training/stats', 'MgtController@viewTrainingStatistics');
+            Route::post('/mgt/facility/training/stats', 'MgtController@viewTrainingStatistics');
             Route::get('/mgt/facility/training/evals', 'MgtController@viewEvals');
             Route::post('/mgt/facility/training/evals', 'MgtController@viewEvals');
             Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
