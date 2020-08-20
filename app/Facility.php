@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Classes\Helper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -62,6 +63,46 @@ class Facility extends Model
     public function scopeActive(Builder $query)
     {
         return $query->where('active', 1);
+    }
+
+    public static function getFacTrainingStaff($facility)
+    {
+        $ins = ['ins' => [], 'mtr' => []];
+        $users = User::where('facility', $facility)->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+            ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['ins'][] = [
+                    'cid'  => $user->cid,
+                    'name' => $user->fullname()
+                ];
+            }
+        }
+        $users = Role::where('facility', $facility)->where('role', 'INS')->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['ins'][] = [
+                    'cid'  => $user->cid,
+                    'name' => $user->user->fullname()
+                ];
+            }
+        }
+        $users = Role::where('facility', $facility)->where('role', 'MTR')->get();
+        if ($users) {
+            foreach ($users as $user) {
+                $ins['mtr'][] = [
+                    'cid'  => $user->cid,
+                    'name' => $user->user->fullname()
+                ];
+            }
+        }
+        foreach ($ins as $k => $v) {
+            usort($ins[$k], function ($a, $b) {
+                return strcmp($a['name'], $b['name']);
+            });
+        }
+
+        return $ins;
     }
 }
 

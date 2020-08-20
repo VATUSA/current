@@ -7,23 +7,61 @@
 @section('content')
     <div class="container">
         <div class="panel panel-default">
-            <div class="panel-heading"><h5 class="panel-title"><i class="fas fa-chart-line"></i> Training Statistics
+            <div class="panel-heading">
+                <h5 class="panel-title"><i class="fas fa-chart-line"></i> Training Statistics
                     @if(!\App\Classes\RoleHelper::isVATUSAStaff())
-                        - {{ \App\Classes\Helper::facShtLng($facility) }} @endif</h5>
+                        - {{ \App\Classes\Helper::facShtLng($facility) }}
+                    @else -
+                    <form class="form-inline" action="{{ Request::url() }}#training" method="POST"
+                          id="training-artcc-select-form" style="display: inline;">
+                        <div class="form-group">
+                            <select class="form-control" id="tng-artcc-select" autocomplete="off" name="facility">
+                                <option value="0" @if(!$facility) selected @endif>All Facilities</option>
+                                <optgroup label="Western Region">
+                                    @foreach($facilities->filter(function($fac) { return $fac->region == 7; }) as $fac)
+                                        <option value="{{ $fac->id }}"
+                                                @if($facility == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                    @endforeach
+                                </optgroup>
+                                <optgroup label="Southern Region">
+                                    @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
+                                        <option value="{{ $fac->id }}"
+                                                @if($facility == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                    @endforeach
+                                </optgroup>
+                                <optgroup label="Northeastern Region">
+                                    @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
+                                        <option value="{{ $fac->id }}"
+                                                @if($facility == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                    @endforeach
+                                </optgroup>
+                            </select>
+                        </div>
+                    </form> @endif</h5>
             </div>
             <div class="panel-body">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
                                                               data-toggle="tab"><i class="fas fa-home"></i> Summary</a>
                     </li>
-                    <li role="presentation"><a href="#activity" aria-controls="activity" role="tab"
-                                               data-toggle="tab"><i class="fas fa-users"></i> INS/MTR
+                    <li role="presentation"
+                        @if($facility && empty($timePerInstructorData['datasets']['data'])) class="disabled"
+                        rel="tooltip" title="No data in last 30 days" @endif><a href="#activity"
+                                                                                aria-controls="activity" role="tab"
+                                                                                @if(!($facility && empty($timePerInstructorData['datasets']['data']))) data-toggle="tab" @endif><i
+                                class="fas fa-users"></i> INS/MTR
                             Activity</a></li>
-                    <li role="presentation"><a href="#evals" aria-controls="evals" role="tab"
-                                               data-toggle="tab"><i class="fas fa-check-double"></i> OTS
+                    <li role="presentation"
+                        @if($facility && empty($evalsPerFormData['datasets']['data'])) class="disabled" rel="tooltip"
+                        title="No data in last 30 days" @endif><a href="#evals" aria-controls="evals" role="tab"
+                                                                  @if(!($facility && empty($timePerInstructorData['datasets']['data']))) data-toggle="tab" @endif><i
+                                class="fas fa-check-double"></i>
+                            OTS
                             Evaluations</a></li>
-                    <li role="presentation"><a href="#records" aria-controls="records" role="tab"
-                                               data-toggle="tab"><i
+                    <li role="presentation"
+                        @if($facility && empty($recordsPerTypeData['datasets']['data'])) class="disabled" rel="tooltip"
+                        title="No data in last 30 days" @endif><a href="#records" aria-controls="records" role="tab"
+                                                                  @if(!($facility && empty($timePerInstructorData['datasets']['data']))) data-toggle="tab" @endif><i
                                 class="fa fa-list"></i> Training
                             Records</a></li>
                 </ul>
@@ -74,7 +112,7 @@
                         <!-- Pie: Instructor Time Distribution (period) -->
                         <!--Table: INS, MTRS: Training Time, Avg Session Time, Sessions Conducted -->
                         <div class="row">
-                            <div class="col-md-7">
+                            <div class="col-md-7" @if(!$facility) style="float: none; margin:0 auto;" @endif>
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
                                         <canvas id="stacked-1"></canvas>
@@ -82,15 +120,17 @@
                                     <div class="panel-footer">Hours per Month<br><em>Last 6 months</em></div>
                                 </div>
                             </div>
-                            <div class="col-md-5">
-                                <div class="panel panel-default training-stat-block">
-                                    <div class="panel-body">
-                                        <canvas id="pie-1" height="220px"></canvas>
+                            @if($facility)
+                                <div class="col-md-5">
+                                    <div class="panel panel-default training-stat-block">
+                                        <div class="panel-body">
+                                            <canvas id="pie-1" height="220px"></canvas>
+                                        </div>
+                                        <div class="panel-footer">Time per Instructor<br><em>last 30
+                                                days</em></div>
                                     </div>
-                                    <div class="panel-footer">Time per Instructor<br><em>last 30
-                                            days</em></div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                         <div class="row">
                             <table class="table table-striped" id="training-staff-list">
@@ -131,21 +171,23 @@
                     <div role="tabpanel" class="tab-pane training-stat-section" id="evals">
                         <h3 class="training-stat-section-header"><i class="fas fa-check-double"></i> OTS
                             Evaluations</h3>
-                        <br>
-                        <div class="training-stat-section-header"> Charts Mode:
-                            <div class="btn-group" data-toggle="buttons">
-                                <label class="btn btn-info active ots-charts-mode-input-label">
-                                    <input type="radio" name="mode" value="1"
-                                           autocomplete="off" class="ots-charts-mode" checked>
-                                    By Form
-                                </label>
-                                <label class="btn btn-default ots-status-input-label">
-                                    <input type="radio" name="mode" value="2"
-                                           class="ots-charts-mode" autocomplete="off">By Instructor
-                                </label>
+                        @if($facility)
+                            <br>
+                            <div class="training-stat-section-header"> Charts Mode:
+                                <div class="btn-group" data-toggle="buttons">
+                                    <label class="btn btn-info active ots-charts-mode-input-label">
+                                        <input type="radio" name="mode" value="1"
+                                               autocomplete="off" class="ots-charts-mode" checked>
+                                        By Form
+                                    </label>
+                                    <label class="btn btn-default ots-status-input-label">
+                                        <input type="radio" name="mode" value="2"
+                                               class="ots-charts-mode" autocomplete="off">By Instructor
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Stacked Bar (by INS): Evals Conducted Per Month -->
+                    @endif
+                    <!-- Stacked Bar (by INS): Evals Conducted Per Month -->
                         <!--Pass Rate <br> # Passed # Failed (period)-->
                         <!-- Pie: # Conducted  by Form (period) -->
                         <!-- Table: Eval Forms:Pass Rate, Num Pass, Num Fail, Num Conducted, Button (Itemized Stats) -->
@@ -233,7 +275,7 @@
                         <!-- Stacked Line (By Postion): Records Completed Per Month -->
                         <!-- Table: Training Records Table and sidebar -->
                         <div class="row">
-                            <div class="col-md-7">
+                            <div class="col-md-7" @if(!$facility) style="float: none; margin: 0 auto;" @endif>
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
                                         <canvas id="line-1"></canvas>
@@ -241,15 +283,17 @@
                                     <div class="panel-footer">Records per Month<br><em>last 6 months</em></div>
                                 </div>
                             </div>
-                            <div class="col-md-5">
-                                <div class="panel panel-default training-stat-block">
-                                    <div class="panel-body">
-                                        <canvas id="pie-3" height="220px"></canvas>
-                                    </div>
-                                    <div class="panel-footer">Records per Type<br><em>last 30 days</em>
+                            @if($facility)
+                                <div class="col-md-5">
+                                    <div class="panel panel-default training-stat-block">
+                                        <div class="panel-body">
+                                            <canvas id="pie-3" height="220px"></canvas>
+                                        </div>
+                                        <div class="panel-footer">Records per Type<br><em>last 30 days</em>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                         <div class="row">
                             @include('mgt.training.viewRecords.training')
@@ -449,7 +493,7 @@
             visible: false,
             targets: 1
           }],
-          order       : [0, 'desc'],
+          order       : [0, 'asc'],
           orderFixed  : [1, 'asc'],
           drawCallback: function (settings) {
             let api = this.api()
