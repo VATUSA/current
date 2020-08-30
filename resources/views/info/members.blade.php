@@ -77,6 +77,18 @@
                                     <td><a href="mailto:vatusa5@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
                                 <tr>
+                                    <td>VATUSA15</td>
+                                    <td>{{\App\Classes\RoleHelper::getNameFromRole("US15")}}</td>
+                                    <td>{{\App\Classes\RoleHelper::roleTitle("US15")}}</td>
+                                    <td><a href="mailto:vatusa5@vatusa.net"><i class="fa fa-envelope"></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>VATUSA25</td>
+                                    <td>Jeremy Peterson</td>
+                                    <td>National Operations Manager</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
                                     <td>VATUSA6</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US6")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US6")}}</td>
