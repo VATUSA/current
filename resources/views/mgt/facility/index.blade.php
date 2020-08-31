@@ -270,11 +270,6 @@
                                 </fieldset>
                             </div>
                         @endif
-                        @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, $fac))
-                            <div role="tabpanel" class="tab-pane" id="training">
-                                @include ('mgt.facility.training.training')
-                            </div>
-                        @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
                             <div role="tabpanel" class="tab-pane" id="email">
                                 <select class="form-control" id="facilityEmail">

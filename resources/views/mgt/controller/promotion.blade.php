@@ -110,9 +110,9 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-3 col-sm-offset-3">
-                                    <button type="submit" class="btn btn-success btn-block" style="width:150px;"
-                                            disabled><span
-                                            class="glyphicon glyphicon-ok"></span> Submit
+                                    <button type="button" id="submit-promotion" class="btn btn-success btn-block"
+                                            style="width:150px;"
+                                            @if(!($otsEvalStatus == 1 && $trainingRecordStatus == 1)) disabled @endif><i class="fas fa-check"></i> Promote
                                     </button>
                                 </div>
                             </div>
@@ -200,15 +200,50 @@
                 description = link.find('p').html()
           if (statement) {
             return swal({
-              title: 'Delivery and Ground Certification Statement',
-              text : description,
-              icon : 'info'
+              title  : 'Delivery and Ground Certification Statement',
+              text   : description,
+              icon   : 'info',
+              buttons: {
+                confirm: {
+                  text     : 'eSign and Certify',
+                  className: 'btn-success'
+                }
+              }
+            }).then(r => {
+              if (r) {
+                swal('DEL/GND Certification Complete', 'You may now proceed with the promotion.', 'success')
+                $('#submit-promotion').attr('disabled', false)
+                $('a.list-group-item[data-id="' + id + '"]').removeClass('list-group-item-info disabled').addClass('list-group-item-success')
+                  .find('span.glyphicon').removeClass('glyphicon-share').addClass('glyphicon-ok')
+              }
             })
-            //continue
           }
           Cookies.set('eval-pos', $('#position').val())
           Cookies.set('eval-date', $('#exam-date').val())
           window.location = 'eval{{ $dateOfExam ? "/$evalId/view" : ''}}'
+        })
+
+        $('#submit-promotion').click(function (e) {
+          let btn = $(this)
+          btn.attr('disabled', true).html('<i class="fas fa-spin fa-spinner"></i> Promoting...')
+          e.preventDefault()
+          $.post($.apiUrl() + "/v2/user/{{ $user->cid }}/rating", {
+            cid     : {{ $user->cid }},
+            rating  : {{ $user->rating + 1 }},
+            examDate: $('#exam-date').val(),
+            position: $('#position').val()
+          }, result => {
+            btn.attr('disabled', false).html('<i class="fas fa-check"></i> Promote')
+            if (result.hasOwnProperty('status') && result.status === 'OK') {
+              return swal('Success!', 'The controller has been promoted.', 'success').then(() => {
+                return window.location = '{{ secure_url('/mgt/facility') }}'
+              })
+            } else
+              return swal('Error!', 'The controller was not promoted. ' + result.msg, 'error')
+          }).fail(_ => {
+            btn.attr('disabled', false).html('<i class="fas fa-check"></i> Promote')
+            return swal('Error!', 'The controller was not promoted. Please try again later.', 'error')
+          })
         })
       })
     </script>

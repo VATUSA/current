@@ -508,7 +508,7 @@ $(function () {
     }).done(result => {
       btn.html('<span class=\'glyphicon glyphicon-ok\'></span> Submit').attr('disabled', false)
       if (result.status === 'OK')
-        swal('Success!', 'The training record has been successfully created. ', 'success')
+        swal('Success!', 'The training record has been successfully created. ', 'success').then(() => location.reload())
       else
         swal('Error!', 'Unable to create training record. ' + result.msg, 'error')
     }).fail((xhr, status, error) => {
@@ -540,6 +540,10 @@ $(function () {
         parent.removeClass('btn-default').addClass('btn-info')
         break
     }
+  })
+
+  $('#add-new-record').click(function() {
+    showTrainingRecordModal($(this));
   })
 })
 
