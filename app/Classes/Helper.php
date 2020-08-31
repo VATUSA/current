@@ -19,6 +19,22 @@ class Helper
         return $version;
     }
 
+    public static function apiUrl()
+    {
+        switch (app()->environment()) {
+            case "prod":
+            case "production":
+                return "https://api.vatusa.net";
+            case "livedev":
+            case "staging":
+                return "https://api.dev.vatusa.net";
+            case "dev":
+            case "devel":
+            default:
+                return "https://api.vatusa.devel";
+        }
+    }
+
     public static function nameFromCID($cid, $retCID = 0)
     {
         $ud = User::where('cid', $cid)->count();
