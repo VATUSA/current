@@ -45,23 +45,23 @@
                                                               data-toggle="tab"><i class="fas fa-home"></i> Summary</a>
                     </li>
                     <li role="presentation"
-                        @if($facility && empty($timePerInstructorData['datasets']['data'])) class="disabled"
+                        @if($facility && empty($timePerInstructorData['datasets'][0]['data'])) class="disabled"
                         rel="tooltip" title="No data in last 30 days" @endif><a href="#activity"
                                                                                 aria-controls="activity" role="tab"
-                                                                                @if(!($facility && empty($timePerInstructorData['datasets']['data']))) data-toggle="tab" @endif><i
+                                                                                @if(!($facility && empty($timePerInstructorData['datasets'][0]['data']))) data-toggle="tab" @endif><i
                                 class="fas fa-users"></i> INS/MTR
                             Activity</a></li>
                     <li role="presentation"
-                        @if($facility && empty($evalsPerFormData['datasets']['data'])) class="disabled" rel="tooltip"
+                        @if($facility && empty($evalsPerFormData['datasets'][0]['data'])) class="disabled" rel="tooltip"
                         title="No data in last 30 days" @endif><a href="#evals" aria-controls="evals" role="tab"
-                                                                  @if(!($facility && empty($timePerInstructorData['datasets']['data']))) data-toggle="tab" @endif><i
+                                                                  @if(!($facility && empty($evalsPerFormData['datasets'][0]['data']))) data-toggle="tab" @endif><i
                                 class="fas fa-check-double"></i>
                             OTS
                             Evaluations</a></li>
                     <li role="presentation"
-                        @if($facility && empty($recordsPerTypeData['datasets']['data'])) class="disabled" rel="tooltip"
+                        @if($facility && empty($recordsPerTypeData['datasets'][0]['data'])) class="disabled" rel="tooltip"
                         title="No data in last 30 days" @endif><a href="#records" aria-controls="records" role="tab"
-                                                                  @if(!($facility && empty($timePerInstructorData['datasets']['data']))) data-toggle="tab" @endif><i
+                                                                  @if(!($facility && empty($recordsPerTypeData['datasets'][0]['data']))) data-toggle="tab" @endif><i
                                 class="fa fa-list"></i> Training
                             Records</a></li>
                 </ul>
@@ -509,6 +509,8 @@
                 last = group
               }
             })
+            $('.sparkline:not(:has(canvas))').sparkline('html', {enableTagOptions: true})
+            $.sparkline_display_visible()
           }
         })
         renderCharts()

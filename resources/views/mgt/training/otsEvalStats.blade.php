@@ -6,7 +6,7 @@
 @endpush
 
 @extends('layout')
-@section('title', 'OTS Evaluation')
+@section('title', 'OTS Evaluation Statistics')
 @section('content')
     <div id="scroll-control" class="btn-group btn-group-lg">
         <button class="btn btn-default" id="scroll-top"><i class="fas fa-angle-double-up"></i></button>
@@ -25,7 +25,7 @@
                     <table class="table table-bordered" id="ots-eval-header">
                         <thead>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="3">
                                 OTS Evaluation: {{ $form->name }}
                             </td>
                         </tr>
@@ -35,36 +35,44 @@
                             <td>
                                 <canvas id="line-1" height="220px"></canvas>
                             </td>
-                            <td>
-                                <canvas id="bar-1" height="220px"></canvas>
+                            <td @if(!$facility) colspan="2" @endif>
+                                <canvas id="stacked-1" height="220px"></canvas>
                             </td>
-                            <td>
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>Instructor</th>
-                                        <th>Num Passes (30/60/90 days)</th>
-                                        <th>Num Fails (30/60/90 days)</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($tableData as $data)
+                            @if($facility)
+                                <td>
+                                    <table class="table table-striped">
+                                        <thead>
                                         <tr>
-                                            <td>{{ $data['name'] }} <span class="sparline-tri"
-                                                                          values="{{ $data['sparkline'] }}"></span></td>
-                                            <td><span class="text-success">{{ $data['numPasses'][30] }}</span>/
-                                                <span class="text-success">{{ $data['numPasses'][60] }}</span>/
-                                                <span class="text-success">{{ $data['numPasses'][90] }}</span>
-                                            </td>
-                                            <td><span class="text-danger">{{ $data['numFails'][30] }}</span>/
-                                                <span class="text-danger">{{ $data['numFails'][60] }}</span>/
-                                                <span class="text-danger">{{ $data['numFails'][90] }}</span>
-                                            </td>
+                                            <th>Instructor</th>
+                                            <th>Num Passes/Fails</th>
                                         </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                            </td>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($tableData as $data)
+                                            <tr>
+                                                <td>{{ $data['name'] }} <span class="sparkline-tri"
+                                                                              values="{{ $data['sparkline'] }}"></span>
+                                                </td>
+                                                <td><span class="text-success" rel="tooltip"
+                                                          title="Past 30 days">{{ $data['numPasses'][30] }}</span>/
+                                                    <span class="text-success" rel="tooltip"
+                                                          title="Past 60 days">{{ $data['numPasses'][60] }}</span>/
+                                                    <span class="text-success" rel="tooltip"
+                                                          title="Past 90 days">{{ $data['numPasses'][90] }}</span>
+                                                    <br>
+                                                    <span class="text-danger" rel="tooltip"
+                                                          title="Past 30 days">{{ $data['numFails'][30] }}</span>/
+                                                    <span class="text-danger" rel="tooltip"
+                                                          title="Past 60 days">{{ $data['numFails'][60] }}</span>/
+                                                    <span class="text-danger" rel="tooltip"
+                                                          title="Past 90 days">{{ $data['numFails'][90] }}</span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </td>
+                            @endif
                         </tr>
                         <tr>
                             <td>
@@ -76,24 +84,24 @@
                                         <div class="form-group">
                                             <select class="form-control" id="tng-artcc-select" autocomplete="off"
                                                     name="facility">
-                                                <option value="" @if(!$trainingfac) selected @endif>-- Select One --
+                                                <option value="" @if(!$facility) selected @endif>All Facilities
                                                 </option>
                                                 <optgroup label="Western Region">
                                                     @foreach($facilities->filter(function($fac) { return $fac->region == 7; }) as $fac)
                                                         <option value="{{ $fac->id }}"
-                                                                @if($facility->id == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                                                @if($facility && $facility->id == $fac->id) selected @endif>{{ $fac->name }}</option>
                                                     @endforeach
                                                 </optgroup>
                                                 <optgroup label="Southern Region">
                                                     @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
                                                         <option value="{{ $fac->id }}"
-                                                                @if($fac->id == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                                                @if($facility && $facility->id == $fac->id) selected @endif>{{ $fac->name }}</option>
                                                     @endforeach
                                                 </optgroup>
                                                 <optgroup label="Northeastern Region">
                                                     @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
                                                         <option value="{{ $fac->id }}"
-                                                                @if($fac->id == $fac->id) selected @endif>{{ $fac->name }}</option>
+                                                                @if($facility && $facility->id == $fac->id) selected @endif>{{ $fac->name }}</option>
                                                     @endforeach
                                                 </optgroup>
                                             </select>
@@ -107,17 +115,19 @@
                                 <p id="student-position">
                                 <form class="form-inline" action="{{ Request::url() }}" method="POST"
                                       id="training-instructor-select-form">
-                                    <input type="hidden" name="facility" value="{{ $facility }}">
-                                    <select class="form-control" id="instructor-select" name="instructor">
+                                    <input type="hidden" name="facility" value="{{ $facility->id ?? ""}}">
+                                    <select class="form-control" id="instructor-select" name="instructor"
+                                            @if(!$facility) disabled @endif>
                                         @if($facility)
                                             <option value="">All Instructors</option>
                                             @foreach($allIns as $ins)
-                                                <option value="{{ $ins }}" @if($instructor == $ins) selected @endif>
-                                                    {{ \App\Classes\Helper::nameFromCID($ins) }}
+                                                <option value="{{ $ins['cid'] }}"
+                                                        @if($instructor == $ins['cid']) selected @endif>
+                                                    {{ $ins['name'] }}
                                                 </option>
                                             @endforeach
                                         @else
-                                            <option value="" selected disabled>-- Select Facility --</option>
+                                            <option value="" selected>-- Select Facility --</option>
                                         @endif
                                     </select>
                                 </form>
@@ -127,10 +137,15 @@
                             </td>
                             <td>
                                 <p>
-                                    <input class="form-control" name="interval" id="exam-interval"
+                                <form class="form-inline" action="{{ Request::url() }}" method="POST"
+                                      id="exam-interval-select-form">
+                                    <input type="hidden" name="facility" value="{{ $facility->id ?? "" }}">
+                                    <input type="hidden" name="instructor" value="{{ $instructor }}">
+                                    <input class="form-control text-center" name="interval" id="exam-interval"
                                            value="{{ $interval }}"
                                            style="width:100px;" autocomplete="off" rel="tooltip"
                                            title="This number dictates the amount of exams that are used in calculating itemized statistics.">
+                                </form>
                                 </p>
                                 <label class="table-cell-footer control-label"
                                        for="exam-interval">Itemized Exam Interval</label>
@@ -186,43 +201,34 @@
                                         @if(in_array('bold',explode(',', $indicator->extra_options))) bold @endif"
                                             @if($indicator->header_type != 2) colspan="2" @endif>
                                             <span class="indicator-header-count">{{ ++$headerCount }}.</span>
-                                            <span class="indicator-header-label">{!! $indicator->label !!}<span
-                                                    class="indicator-comment-display"
-                                                    id="indicator-comment-display-{{ $indicator->id }}"></span></span>
-                                            @if($indicator->help_text)
-                                                <span class="indicator-help-text" data-toggle="popover"
-                                                      title="Instructions" data-content="{{ $indicator->help_text }}"><i
-                                                        class="fas fa-question-circle"></i></span>
-                                    @endif
-                                    @if($indicator->header_type == 2)
-                                        <td class="indicator-comment-cell"><span class="indicator-comment" rel="tooltip"
-                                                                                 title="Add Comment"
-                                                                                 data-id="{{ $indicator->id }}"><i
-                                                    class="fas fa-plus-circle"></i></span>
-                                        </td>
-                                    @endif
+                                            <span class="indicator-header-label">{!! $indicator->label !!}
+                                                @if($indicator->help_text)
+                                                    <span class="indicator-help-text" data-toggle="popover"
+                                                          title="Instructions"
+                                                          data-content="{{ $indicator->help_text }}"><i
+                                                            class="fas fa-question-circle"></i></span>
+                                                @endif</span>
+                                        @if($indicator->header_type == 2)
+                                            <td class="indicator-comment-cell">&nbsp;</td>
+                                        @endif
                                     @else
                                         <td class="indicator-item @if(in_array('bold',explode(',',$indicator->extra_options))) bold @endif">
                                             <div class="indicator-item-count">{{ chr(97 + $itemCount++) }}.</div>
                                             <div class="indicator-item-label">
                                                 <span>{!! $indicator->label !!}</span>
-                                                <span class="indicator-comment-display"
-                                                      id="indicator-comment-display-{{ $indicator->id }}"></span>
                                                 @if($indicator->help_text)
                                                     <span class="indicator-help-text" data-toggle="popover"
                                                           title="Instructions"
                                                           data-content="{{ $indicator->help_text }}"><i
                                                             class="fas fa-question-circle"></i>
                                                         </span>
-                                                @endif</div>
+                                                @endif
+                                            </div>
                                         </td>
-                                        <td class="indicator-comment-cell"><span class="indicator-comment" rel="tooltip"
-                                                                                 id="indicator-comment-btn-{{ $indicator->id }}"
-                                                                                 title="Add Comment"
-                                                                                 data-id="{{ $indicator->id }}"><i
-                                                    class="fas fa-plus-circle"></i></span>
-                                        </td>
+                                        <td class="indicator-comment-cell">&nbsp;</td>
                                     @endif
+                                    @php $colors = ['', 'info', 'success', 'danger']; @endphp
+                                    @if($indicator->header_type != 1) @php $percents = \App\OTSEvalIndResult::getPercentages($indicator->id,$facility->id ?? null,$instructor,$interval); @endphp @endif
                                     @for($i = 0; $i < 4; $i++)
                                         @if($indicator->header_type == 1)
                                             <td class="result-cell result-na default-header">&nbsp;</td>
@@ -231,93 +237,13 @@
                                             || $i == 3 && !$indicator->can_unsat)
                                                 <td class="result-cell result-na"><i class="fas fa-times"></i></td>
                                             @else
-                                                <td class="result-cell"><input type="radio"
-                                                                               name="result-{{ $indicator->id }}"
-                                                                               data-id="{{ $indicator->id }}"
-                                                                               class="form-control result-input"
-                                                                               value="{{ $i }}" required
-                                                                               autocomplete="off"></td>
+                                                <td class="result-cell text-{{ $colors[$i] }}">{{ $percents[$i] }}</td>
                                             @endif
                                         @endif
                                     @endfor
                                 </tr>
                             @endforeach
                         @endforeach
-                        </tbody>
-                    </table>
-                    <table id="eval-submit-table" class="table table-striped table-bordered">
-                        <tbody>
-                        <tr>
-                            <td>
-                                <form class="form-horizontal">
-                                    <div class="form-group">
-                                        <label for="result" class="col-sm-2 control-label">Exam Result</label>
-                                        <div class="col-sm-10">
-                                            <div class="btn-group" data-toggle="buttons" id="result">
-                                                <label class="btn btn-success active ots-status-input-label">
-                                                    <input type="radio" name="ots_result" id="ots-result-pass" value="1"
-                                                           autocomplete="off" class="ots-status-input" checked>
-                                                    <i class="fas fa-check"></i> Pass
-                                                </label>
-                                                <label class="btn btn-default ots-status-input-label">
-                                                    <input type="radio" name="ots_status" id="ots-result-fail" value="0"
-                                                           class="ots-status-input" autocomplete="off"><i
-                                                        class="fas fa-times"></i> Fail
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group text-center">
-                                        <label for="notes" class="col-sm-2 control-label">Evaluation Notes</label>
-                                        <div class="col-sm-10">
-                                            <textarea class="form-control" id="notes" name="notes"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="notes" class="col-sm-2 control-label text-center">Examiner</label>
-                                        <div class="col-sm-10">
-                                            <p class="form-control-static">{{ Auth::user()->fullname() }}
-                                                ({{ Auth::user()->cid }})</p>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="notes" class="col-sm-2 control-label">eSignature</label>
-                                        <div class="col-sm-10">
-                                            <div id="signature"></div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="notes" class="col-sm-2 control-label">Current Date/Time</label>
-                                        <div class="col-sm-10">
-                                            <p class="form-control-static" id="currtime"></p>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <input type="hidden" name="form" id="form-id" value="{{ $form->id }}">
-                                            <button type="submit" class="btn btn-success" id="submit-eval"><i
-                                                    class="fas fa-check-double"></i> eSign and Submit
-                                            </button>
-                                            <button class="btn btn-warning resetForm" type="button"><i
-                                                    class="fas fa-sync"></i> Reset Form
-                                            </button>
-                                            <div class="alert alert-info" style="margin-top: 5px;">
-                                                <i class="fas fa-info-circle" style="display: table-cell"></i>
-                                                <p style="display: table-cell; padding-left: 5px;"> By submitting this
-                                                    form, you agree
-                                                    that you are the examining instructor and have conducted the OTS
-                                                    to the standards set forth by the VATUSA training staff and by
-                                                    your own ARTCC. You also agree that all data and selections are
-                                                    accurate to the best of your ability. <br><strong>Ensure that the
-                                                        exam date is accurate, in UTC time, and that it matches the
-                                                        related training record.</strong><br><strong
-                                                        class="text-danger">Once submitted, it
-                                                        cannot be modified or deleted.</strong></p></div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </td>
-                        </tr>
                         </tbody>
                     </table>
                 </article>
@@ -339,20 +265,13 @@
     <script src="{{ secure_asset("js/jquery.sparkline.js") }}"></script>
     <script type="text/javascript">
       $(document).ready(function () {
-
         $('[data-toggle="popover"]').popover({trigger: 'hover'})
 
         $('#ots-eval-table').stickyTableHeaders()
 
-        $('#position').val(position)
-
-        $('.indicator-res-header').click(function () {
-          let val = $(this).data('value')
-          $('#ots-eval-table').find('input[type="radio"][value="' + val + '"]').prop('checked', true).change()
-        })
-          .mouseenter(function () {
-            $(this).find('div').tooltip('show')
-          }).mouseleave(function () {
+        $('.indicator-res-header').mouseenter(function () {
+          $(this).find('div').tooltip('show')
+        }).mouseleave(function () {
           $(this).find('div').tooltip('hide')
         })
 
@@ -362,11 +281,61 @@
         $('#scroll-bottom').click(function () {
           $('html, body').animate({scrollTop: $(document).height()}, 700)
         })
+
         $('.sparkline-tri').sparkline('html', {
           type               : 'tristate',
           tooltipFormat      : ' <span style="color: @{{color}}">&#9679;</span> @{{value:result}}</span>',
           tooltipValueLookups: {result: {'-1': 'Fail', '1': 'Pass'}}
         })
+
+        const stacked1 = new Chart($('#stacked-1'), {
+          type   : '{{ !$facility || $instructor ? 'bar' : 'line' }}',
+          data   : {!! json_encode($evalsPerMonthDataIns) !!},
+          options: {
+            scales                  : {
+              xAxes: [{
+                stacked: true
+              }],
+              yAxes: [{
+                stacked: true,
+                ticks  : {
+                  min: 0
+                }
+              }]
+            },
+              @if($instructor) title: {
+                display: true,
+                text   : 'Filter: {{ \App\Classes\Helper::nameFromCID($instructor) }}'
+              } @endif
+          }
+        })
+        const line1 = new Chart($('#line-1'), {
+          type   : 'line',
+          data   : {!! json_encode($numPassFailsData) !!},
+          options: {
+            scales                  : {
+              yAxes: [{
+                ticks: {
+                  stacked: false,
+                  min    : 0
+                }
+              }]
+            },
+              @if($instructor) title: {
+                display: true,
+                text   : 'Filter: {{ \App\Classes\Helper::nameFromCID($instructor) }}'
+              } @endif
+          }
+        })
+      })
+      $('#tng-artcc-select').change(function () {
+        $('#training-artcc-select-form').submit()
+      })
+      $('#instructor-select').change(function () {
+        $('#training-instructor-select-form').submit()
+      })
+      $('#exam-interval').blur(function () {
+        if ($(this).val() && $(this).val() != {{ $interval }} && parseInt($(this).val())) $('#exam-interval-select-form').submit()
       })
     </script>
 @endsection
