@@ -618,64 +618,7 @@ class MgtController extends Controller
             return redirect('/mgt/facility#mem')->with('error', 'User is not eligible');
         }
 
-        $trainingRecordStatus = 0;
-        $otsEvalStatus = 0;
-
-        $dateOfExam = null;
-        $examPosition = null;
-        $evalId = null;
-
-        $evals = $user->evaluations;
-        $numPass = 0;
-        $numFail = 0;
-
-        if ($user->evaluations) {
-            foreach ($user->evaluations as $eval) {
-                if ($eval->form->rating_id == $user->rating + 1) {
-                    if ($eval->result) {
-                        $dateOfExam = $eval->exam_date;
-                        $examPosition = $eval->exam_position;
-                        $evalId = $eval->id;
-                        $numPass++;
-                    } else {
-                        $numFail++;
-                    }
-                }
-            }
-            if ($numPass) {
-                $otsEvalStatus = 1;
-            } elseif ($numFail) {
-                $otsEvalStatus = 2;
-            }
-        }
-
-        switch (Helper::ratingShortFromInt($user->rating + 1)) {
-            case 'S1':
-                $pos = "GND";
-                break;
-            case 'S2':
-                $pos = "TWR";
-                break;
-            case 'S3':
-                $pos = "APP";
-                break;
-            case 'C1':
-                $pos = "CTR";
-                break;
-            default:
-                $pos = "NA";
-                break;
-        }
-        if ($user->trainingRecords()->where([
-            ['position', 'like', "%$pos"],
-            'ots_status' => 1
-        ])->exists()) {
-            $trainingRecordStatus = 1;
-        }
-
-        if ($pos == "GND") {
-            $trainingRecordStatus = $otsEvalStatus = -1;
-        }
+        $user->checkPromotionCriteria($trainingRecordStatus, $otsEvalStatus, $examPosition, $dateOfExam, $evalId);
 
         return view('mgt.controller.promotion',
             compact('user', 'forms', 'trainingRecordStatus',
@@ -1220,9 +1163,9 @@ class MgtController extends Controller
         $hoursPerMonthData = ['labels' => [], 'datasets' => []];
         $datasets = [];
         $allIns = Facility::getFacTrainingStaff($facility);
-        for ($i = 6; $i > 0; $i--) {
-            $month = Carbon::now()->subMonths($i)->format('Y-m');
-            $hoursPerMonthData['labels'][] = Carbon::now()->subMonths($i)->format('F');
+        for ($i = 6; $i >= 0; $i--) {
+            $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
+            $hoursPerMonthData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
 
             $hoursPerMonth = TrainingRecord::with(['instructor:cid,fname,lname'])->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, instructor_id, DATE_FORMAT(session_date, '%Y-%m') AS month");
             if ($region) {
@@ -1232,7 +1175,7 @@ class MgtController extends Controller
                 $hoursPerMonth = $hoursPerMonth->where('facility_id', $facility);
             }
             $hoursPerMonth = $hoursPerMonth->where('session_date', '>',
-                Carbon::now()->subMonths(6))->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->groupBy([
+                Carbon::parse('first day of this month')->subMonths(6))->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->groupBy([
                 'month',
                 'instructor_id'
             ])->orderBy('month', 'ASC')->get();
@@ -1359,36 +1302,29 @@ class MgtController extends Controller
         $colors = [];
         $evalsPerMonthData = ['labels' => [], 'datasets' => []];
         $datasets = [];
-        $evalsPerMonth = OTSEval::with('form:id,name')->selectRaw("COUNT(*) AS total, form_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
-        if ($region) {
-            $evalsPerMonth->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
-            $evalsPerMonth->where('facility_id', $facility);
-        }
-        if ($instructor) {
-            $evalsPerMonth->where('instructor_id', $instructor);
-        }
-        $evalsPerMonth->where('exam_date', '>',
-            Carbon::now()->subMonths(6))->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
-            'month',
-            'form_id'
-        ])->orderBy('month', 'ASC');
-        //dd(str_replace_array('?', $hoursPerMonth->getBindings(), $hoursPerMonth->toSql()));
-        //dd($hoursPerMonth->get()->toArray());
-        foreach ($evalsPerMonth->get() as $data) {
-            if (!$data->form_id) {
-                continue;
+
+        for ($i = 6; $i >= 0; $i--) {
+            $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
+            $evalsPerMonthData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
+
+            $evalsPerMonth = OTSEval::with('form:id,name')->selectRaw("form_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
+            if ($region) {
+                $evalsPerMonth->whereIn('facility_id',
+                    Facility::where('region', $region)->get()->pluck('id')->all());
+            } elseif ($facility) {
+                $evalsPerMonth->where('facility_id', $facility);
             }
-            $month = (new Carbon($data->month))->format('F');
-            if (!in_array($month, $evalsPerMonthData['labels'])) {
-                $evalsPerMonthData['labels'][] = $month;
+            if ($instructor) {
+                $evalsPerMonth->where('instructor_id', $instructor);
             }
-            if (!isset($datasets[$data->form->id])) {
-                $datasets[$data->form->id]['data'] = array();
-                $datasets[$data->form->id]['label'] = $data->form->name;
+            $evalsPerMonth = $evalsPerMonth->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') = '$month'")->get();
+            $k = 0;
+            foreach (OTSEvalForm::active()->noStatements()->get() as $form) {
+                $datasets[$k]['data'][] = $evalsPerMonth->filter(function ($e) use ($form) {
+                    return $e->form->id == $form->id;
+                })->count();
+                $datasets[$k++]['label'] = $form->name;
             }
-            $datasets[$data->form->id]['data'][] = $data->total;
         }
         foreach ($datasets as $k => $v) {
             $colors[$k] = Factory::create()->hexColor;
@@ -1422,7 +1358,7 @@ class MgtController extends Controller
         //Table Data
         $evalFormsTable = [];
         $i = 0;
-        $evalForms = OTSEvalForm::active()->where('is_statement', 0)->orderBy('rating_id')->get();
+        $evalForms = OTSEvalForm::active()->noStatements()->orderBy('rating_id')->get();
         foreach ($evalForms as $form) {
             $evalFormsTable[$i]['name'] = $form->name;
             $evalFormsTable[$i]['id'] = $form->id;
@@ -1458,9 +1394,9 @@ class MgtController extends Controller
         if ($facility) {
             $colors = [];
             $datasets = [];
-            for ($i = 6; $i > 0; $i--) {
-                $month = Carbon::now()->subMonths($i)->format('Y-m');
-                $evalsPerMonthDataIns['labels'][] = Carbon::now()->subMonths($i)->format('F');
+            for ($i = 6; $i >= 0; $i--) {
+                $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
+                $evalsPerMonthDataIns['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
 
                 $evalsPerMonth = OTSEval::with('instructor:cid,fname,lname')->selectRaw("instructor_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
                 if ($region) {
@@ -1536,9 +1472,9 @@ class MgtController extends Controller
         }
         $recordsPerMonth->whereRaw("session_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)")->orderBy('month', 'ASC');
         $allPos = $recordsPerMonth->get()->pluck('position')->unique()->all();
-        for ($i = 6; $i > 0; $i--) {
-            $month = Carbon::now()->subMonths($i)->format('Y-m');
-            $recordsPerMonthData['labels'][] = Carbon::now()->subMonths($i)->format('F');
+        for ($i = 6; $i >= 0; $i--) {
+            $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
+            $recordsPerMonthData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
 
             $recordsPerMonth = TrainingRecord::selectRaw("position, DATE_FORMAT(session_date, '%Y-%m') AS month");
             if ($region) {
@@ -1659,30 +1595,33 @@ class MgtController extends Controller
         $instructor = $request->input('instructor', null);
         $facility = $request->input('facility', null);
         $facilities = Facility::active()->get();
-        $interval = $request->input('interval', 15); //Last num of tests
-        if (!RoleHelper::isInstructor(Auth::user()->cid, $facility)) {
+        $interval = intval($request->input('interval', 15)); //Last num of tests
+        if (!$interval) {
+            abort(400);
+        }
+        if (!RoleHelper::isInstructor(Auth::user()->cid,
+                $facility) || ($instructor && !RoleHelper::isInstructor($instructor, $facility))) {
             abort(403);
         }
 
         $hasGlobalAccess = RoleHelper::isVATUSAStaff();
         if (!$hasGlobalAccess) {
-            $facility = Auth::user()->facility;
+            $facility = Auth::user()->facilityObj;
         } elseif ($facility) {
             $facility = Facility::find($facility);
             if (!$facility) {
                 abort(404, "Facility not found.");
             }
         }
-        $facility = Facility::find('ZSE');
 
         //Chart 1: Stacked Line, Num Pass and Fails per Month
         $colors = ['rgb(255, 99, 132)', 'rgb(75, 192, 192)'];
         $numPassFailsData = ['labels' => [], 'datasets' => []];
         $datasets = [];
 
-        for ($i = 6; $i > 0; $i--) {
-            $month = Carbon::now()->subMonths($i)->format('Y-m');
-            $numPassFailsData['labels'][] = Carbon::now()->subMonths($i)->format('F');
+        for ($i = 6; $i >= 0; $i--) {
+            $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
+            $numPassFailsData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
             $numPassFails = OTSEval::selectRaw("result, DATE_FORMAT(exam_date, '%Y-%m') as month")->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') = '$month'");
             if ($facility) {
                 $numPassFails->where('facility_id', $facility->id);
@@ -1714,12 +1653,13 @@ class MgtController extends Controller
         }
 
         //Chart 2: Stacked Bar, Number of Evaluations by INS per Month
-        $allIns = Facility::getFacTrainingStaff($facility->id)['ins'];
         $evalsPerMonthDataIns = ['labels' => [], 'datasets' => []];
+        $allIns = [];
         $datasets = [];
-        for ($i = 6; $i > 0; $i--) {
-            $month = Carbon::now()->subMonths($i)->format('Y-m');
-            $evalsPerMonthDataIns['labels'][] = Carbon::now()->subMonths($i)->format('F');
+        $allIns = $facility ? Facility::getFacTrainingStaff($facility->id)['ins'] : [];
+        for ($i = 6; $i >= 0; $i--) {
+            $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
+            $evalsPerMonthDataIns['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
 
             $evalsPerMonth = OTSEval::selectRaw("DATE_FORMAT(exam_date, '%Y-%m') AS month, instructor_id");
             if ($facility) {
@@ -1727,7 +1667,7 @@ class MgtController extends Controller
             }
             $evalsPerMonth = $evalsPerMonth->where('form_id',
                 $form->id)->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') = '$month'")->orderBy('month', 'ASC')->get();
-            if ($facility) {
+            if ($facility && !$instructor) {
                 foreach ($allIns as $ins) {
                     // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
                     //dd($hoursPerMonth->get()->toArray());
@@ -1739,14 +1679,16 @@ class MgtController extends Controller
                 }
             } else {
                 $datasets[0]['label'] = "Total";
-                $datasets[0]['data'][] = $evalsPerMonth->count();
+                $datasets[0]['data'][] = $instructor ? $evalsPerMonth->filter(function ($e) use ($instructor) {
+                    return $e->instructor_id == $instructor;
+                })->count() : $evalsPerMonth->count();
             }
         }
         foreach ($datasets as $k => $v) {
             $evalsPerMonthDataIns['datasets'][] = [
-                'label'                                        => $v['label'],
-                'data'                                         => $v['data'],
-                !$facility ? 'borderColor' : 'backgroundColor' => Factory::create()->hexColor
+                'label'                                                       => $v['label'],
+                'data'                                                        => $v['data'],
+                $facility && !$instructor ? 'borderColor' : 'backgroundColor' => Factory::create()->hexColor
             ];
         }
         //Table: INS Name (SL: Pass/Fail last 15 num of tests), Num Passes (30/60/90), Num Fails (30/60/90)
@@ -1781,7 +1723,7 @@ class MgtController extends Controller
             }
         }
 
-        return view('mgt.training.otsEvalStats-1',
+        return view('mgt.training.otsEvalStats',
             compact('form', 'instructor', 'facilities', 'interval', 'facility',
                 'numPassFailsData', 'evalsPerMonthDataIns', 'allIns', 'tableData', 'hasGlobalAccess'));
     }

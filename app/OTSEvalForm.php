@@ -54,7 +54,7 @@ class OTSEvalForm extends Model
     }
 
     /**
-     * Scope  to only include active forms.
+     * Scope to only include active forms.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
@@ -63,6 +63,17 @@ class OTSEvalForm extends Model
     public function scopeActive($query)
     {
         return $query->where('active', 1);
+    }
+
+    /**
+     * Scope to only include non-statements.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeNoStatements($query) {
+        return $query->where('is_statement', 0);
     }
 
     /**
