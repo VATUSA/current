@@ -23,7 +23,7 @@
     <![endif]-->
     <script type="text/javascript">
       //Custom jQuery Elements
-      $.apiUrl = () => ("{{ ((env('APP_ENV', 'prod') == 'prod') ? "https://api.vatusa.net" : "https://api.vatusa.devel") }}")
+      $.apiUrl = () => ("{{ \App\Classes\Helper::apiUrl() }}")
       $.fn.ignore = function (sel) {
         return this.clone().find(sel || '>*').remove().end()
       }
