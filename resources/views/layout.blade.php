@@ -431,10 +431,10 @@
         </div>
     @endif
 </div>
-@if(env('APP_ENV') == 'dev')
+@if(env('APP_ENV', 'dev') != 'prod')
     <div class="container">
         <div class="alert alert-danger">
-            <strong>WARNING</strong> This is a development environment!!! While live, it does feature beta/alpha
+            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> This is a development environment!!! While live, it does feature beta/alpha
             software that may not be functioning.
         </div>
     </div>
