@@ -113,7 +113,7 @@ Route::group(['domain' => 'api.vatusa.net', 'middleware' => 'api'], function () 
 });
 
 Route::group([
-    'domain'     => ((env('APP_ENV') == 'dev') ? 'www.vatusa.devel' : ((env('APP_ENV') == 'alpha') ? 'alpha' : 'www') . '.vatusa.net'),
+    'domain'     => str_replace(['https://', 'http://'], '', \App\Classes\Helper::mainUrl()),
     'middleware' => ['smf', 'csrf', 'lastactivity']
 ], function () {
     Route::get('/login', 'AuthController@getLogin');
