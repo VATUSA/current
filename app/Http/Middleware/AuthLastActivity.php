@@ -25,7 +25,9 @@ class AuthLastActivity
 
             if (app()->environment("livedev") && !RoleHelper::isVATUSAStaff($user->cid) && !in_array($user->cid,
                     explode(',', env("LIVEDEV_CIDS", "")))) {
-                return redirect()->to('/logout');
+                \Auth::logout();
+
+                return redirect("/")->with('error', 'You are not authorized to access the live development website.');
             }
         }
 
