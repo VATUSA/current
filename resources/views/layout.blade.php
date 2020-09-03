@@ -270,7 +270,7 @@
                                 @endif
                                 <li role="separator" class="divider"></li>
                                 <li>
-                                    <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : "//login.vatusa.net/?logout" }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                    <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                                 </li>
                             </ul>
                         </li>
