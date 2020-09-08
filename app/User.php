@@ -440,6 +440,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return ($f) ? Carbon::createFromTimestamp($f->last_login)->diffInDays(null) : "Unknown";
     }
 
+    public function lastPromotion()
+    {
+        return Promotions::where('cid', $this->cid)->orderBy('created_at', 'DESC')->first()->created_at;
+    }
+
     public function isActive()
     {
         $website = false;

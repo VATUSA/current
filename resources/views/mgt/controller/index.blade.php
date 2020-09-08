@@ -211,6 +211,8 @@
                                             </li>
                                         @endif
                                         <br>
+                                        <li>Last promoted {{ $u->lastPromotion() }}</li>
+                                        <br>
                                         <li>Last Activity Forum: {{$u->lastActivityForum()}} days ago</li>
                                         <li>Last Activity Website: {{$u->lastActivityWebsite()}} days ago</li>
                                         <br>
