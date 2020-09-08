@@ -351,11 +351,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function selectionEligible()
     {
-        // If user is in VATUSA, is in Academy, and does not need basic exam.
-        if ($this->flag_homecontroller == 1 && $this->facility == "ZAE" && !$this->flag_needbasic) {
-            return true;
-        } else {
+        if ($this->flag_homecontroller == 0) {
             return false;
+        }
+
+        if ($this->facility == "ZAE" && !$this->flag_needbasic && Transfers::where('cid', $this->cid)->where('to',
+                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->count() < 1) //        if($this->facility == "ZAE")
+        {
+            return true;
         }
     }
 
