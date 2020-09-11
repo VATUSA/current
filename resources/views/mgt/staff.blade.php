@@ -92,7 +92,7 @@
                                 "<button onClick=\"deleteStaff('US15')\" class=\"btn btn-danger\">Vacate</button>"
                                 :"<button onClick=\"assignStaff('US15')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
-                        <tr>E
+                        <tr>
                             <td>VATUSA25</td>
                             <td>{{\App\Classes\RoleHelper::getNameFromRole("US25")}}</td>
                             <td>{{\App\Classes\RoleHelper::roleTitle("US25")}}</td>
