@@ -33,7 +33,7 @@
                     </tr>
                     <tr>
                         <td>GO 32020.1 &mdash; Temporary Suspension of Live Events</td>
-                        <td>07/28/2020</td>
+                        <td>09/07/2020</td>
                         <td><a href="/docs/GO-320201.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
