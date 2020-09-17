@@ -9,7 +9,6 @@
 		"laravelcollective/html": "^5.3.0",
 		"guzzlehttp/guzzle": "^6.2",
 		"barryvdh/laravel-cors": "^0.10.0",
-		"fideloper/proxy": "~3.3",
 		"predis/predis": "^1.1",
         "ext-simplexml": "*",
 		"sentry/sentry-laravel": "1.7.0",
