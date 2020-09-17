@@ -79,7 +79,7 @@
                                 <p id="student-facility"
                                    @if(!$hasGlobalAccess) class="form-control-static" @endif>
                                 @if(!$hasGlobalAccess) {{ $facility->name }} @else
-                                    <form class="form-inline" action="{{ Request::url() }}" method="POST"
+                                    <form class="form-inline" action="{{ secure_url("mgt/facility/training/eval/{$form->id}/stats") }}" method="POST"
                                           id="training-artcc-select-form">
                                         <div class="form-group">
                                             <select class="form-control" id="tng-artcc-select" autocomplete="off"
@@ -113,7 +113,7 @@
                                            for="tng-artcc-select">Facility</label></td>
                             <td>
                                 <p id="student-position">
-                                <form class="form-inline" action="{{ Request::url() }}" method="POST"
+                                <form class="form-inline" action="{{ secure_url("mgt/facility/training/eval/{$form->id}/stats") }}" method="POST"
                                       id="training-instructor-select-form">
                                     <input type="hidden" name="facility" value="{{ $facility->id ?? ""}}">
                                     <select class="form-control" id="instructor-select" name="instructor"
@@ -137,7 +137,7 @@
                             </td>
                             <td>
                                 <p>
-                                <form class="form-inline" action="{{ Request::url() }}" method="POST"
+                                <form class="form-inline" action="{{ secure_url("mgt/facility/training/eval/{$form->id}/stats") }}" method="POST"
                                       id="exam-interval-select-form">
                                     <input type="hidden" name="facility" value="{{ $facility->id ?? "" }}">
                                     <input type="hidden" name="instructor" value="{{ $instructor }}">

@@ -9,7 +9,7 @@
     <div class="panel-heading"><h3 class="panel-title">Training Records</h3></div>
     <div class="panel-body">
         <div class="col-md-3" style="border-right: 1px solid #ccc;">
-            <form class="form-inline" action="{{ Request::url() }}#training" method="POST"
+            <form class="form-inline" action="{{ secure_url("mgt/controller/$cid") }}#training" method="POST"
                   id="training-artcc-select-form">
                 <div class="form-group">
                     <label for="tng-artcc-select">ARTCC:</label>
