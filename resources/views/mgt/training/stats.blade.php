@@ -12,7 +12,8 @@
                     @if(!\App\Classes\RoleHelper::isVATUSAStaff())
                         - {{ \App\Classes\Helper::facShtLng($facility) }}
                     @else -
-                    <form class="form-inline" action="{{ Request::url() }}#training" method="POST"
+                    <form class="form-inline" action="{{ secure_url("mgt/facility/training/stats") }}#training"
+                          method="POST"
                           id="training-artcc-select-form" style="display: inline;">
                         <div class="form-group">
                             <select class="form-control" id="tng-artcc-select" autocomplete="off" name="facility">
@@ -59,7 +60,8 @@
                             OTS
                             Evaluations</a></li>
                     <li role="presentation"
-                        @if($facility && empty($recordsPerTypeData['datasets'][0]['data'])) class="disabled" rel="tooltip"
+                        @if($facility && empty($recordsPerTypeData['datasets'][0]['data'])) class="disabled"
+                        rel="tooltip"
                         title="No data in last 30 days" @endif><a href="#records" aria-controls="records" role="tab"
                                                                   @if(!($facility && empty($recordsPerTypeData['datasets'][0]['data']))) data-toggle="tab" @endif><i
                                 class="fa fa-list"></i> Training
@@ -85,7 +87,8 @@
                             <div class="col-md-4">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body training-stat-static">
-                                        {{ $sumPassRate }}%<br><span
+                                        @if(!$sumNumPass && !$sumNumFail) <em>No OTS
+                                            Evaluations</em> @else {{ $sumPassRate }}% @endif<br><span
                                             class="text-success">Pass: <strong>{{ $sumNumPass }}</strong></span> |
                                         <span class="text-danger">Fail: <strong>{{ $sumNumFail }}</strong></span>
                                     </div>

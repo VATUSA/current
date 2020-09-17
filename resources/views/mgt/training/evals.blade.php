@@ -15,7 +15,7 @@
             <div class="panel-body">
                 <div class="col-md-3" style="border-right: 1px solid #ccc;">
                     @if(\App\Classes\RoleHelper::isVATUSAStaff())
-                        <form class="form-inline" action="{{ Request::url() }}#training" method="POST"
+                        <form class="form-inline" action="{{ secure_url("/mgt/facility/training/evals") }}" method="POST"
                               id="training-artcc-select-form">
                             <div class="form-group">
                                 <label for="tng-artcc-select">ARTCC:</label>
