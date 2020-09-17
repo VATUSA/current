@@ -512,7 +512,7 @@
                 last = group
               }
             })
-            $('.sparkline:not(:has(canvas))').sparkline('html', {enableTagOptions: true})
+            $('.sparkline:not(:has(canvas))').sparkline('html', {enableTagOptions: true, disableHiddenCheck: true})
             $.sparkline_display_visible()
           }
         })
