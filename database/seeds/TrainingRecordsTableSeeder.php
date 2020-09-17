@@ -15,29 +15,32 @@ class TrainingRecordsTableSeeder extends Seeder
      */
     public function run()
     {
-        $ins = [];
-        $users = User::where('facility', 'ZSE')->where('rating', '>=', Helper::ratingIntFromShort("I1"))
-            ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $ins[] = $user->cid;
+        $facilities = \App\Facility::active()->get();
+        foreach($facilities->pluck('id') as $fac) {
+            $ins = [];
+            $users = User::where('facility', $fac)->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+                ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
+            if ($users) {
+                foreach ($users as $user) {
+                    $ins[] = $user->cid;
+                }
             }
-        }
-        $users = Role::where('facility', 'ZSE')->where('role', 'INS')->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $ins[] = $user->cid;
+            $users = Role::where('facility', $fac)->where('role', 'INS')->get();
+            if ($users) {
+                foreach ($users as $user) {
+                    $ins[] = $user->cid;
+                }
             }
-        }
-        $users = Role::where('facility', 'ZSE')->where('role', 'MTR')->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $ins[] = $user->cid;
+            $users = Role::where('facility', $fac)->where('role', 'MTR')->get();
+            if ($users) {
+                foreach ($users as $user) {
+                    $ins[] = $user->cid;
+                }
             }
-        }
-        foreach ($ins as $cid) {
-            for ($i = 0; $i < rand(2, 4); $i++) {
-                User::find($cid)->trainingRecordsIns()->save(factory(TrainingRecord::class)->make());
+            foreach ($ins as $cid) {
+                for ($i = 0; $i < rand(2, 4); $i++) {
+                    User::find($cid)->trainingRecordsIns()->save(factory(TrainingRecord::class)->make(['facility_id'=> $fac]));
+                }
             }
         }
     }
