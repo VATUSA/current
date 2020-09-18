@@ -1,7 +1,8 @@
 <?php namespace App\Classes;
 
-use App\Helpers\RatingHelper;
+use App\Actions;
 use App\User;
+use Auth;
 
 class CertHelper
 {
@@ -35,9 +36,9 @@ class CertHelper
                 $user->rating = $newRating;
                 $user->save();
 
-                $action = new \App\Actions();
+                $action = new Actions();
                 $action->to = $cid;
-                $action->log = "Rating set to " . \App\Classes\Helper::ratingShortFromInt($newRating) . " by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ")";
+                $action->log = "Rating set to " . Helper::ratingShortFromInt($newRating) . " by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ")";
                 $action->save();
             }
 
@@ -63,9 +64,9 @@ class CertHelper
             $user->rating = $newRating;
             $user->save();
 
-            $action = new \App\Actions();
+            $action = new Actions();
             $action->to = $cid;
-            $action->log = "Rating set to " . \App\Classes\Helper::ratingShortFromInt($newRating) . " by " . \Auth::user()->fullname() . " (" . \Auth::user()->cid . ")";
+            $action->log = "Rating set to " . Helper::ratingShortFromInt($newRating) . " by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ")";
             $action->save();
         }
 
