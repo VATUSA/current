@@ -52,10 +52,8 @@
                                                                                 @if(!($facility && empty($timePerInstructorData['datasets'][0]['data']))) data-toggle="tab" @endif><i
                                 class="fas fa-users"></i> INS/MTR
                             Activity</a></li>
-                    <li role="presentation"
-                        @if($facility && empty($evalsPerFormData['datasets'][0]['data'])) class="disabled" rel="tooltip"
-                        title="No data in last 30 days" @endif><a href="#evals" aria-controls="evals" role="tab"
-                                                                  @if(!($facility && empty($evalsPerFormData['datasets'][0]['data']))) data-toggle="tab" @endif><i
+                    <li role="presentation"><a href="#evals" aria-controls="evals" role="tab"
+                                               data-toggle="tab"><i
                                 class="fas fa-check-double"></i>
                             OTS
                             Evaluations</a></li>
@@ -195,27 +193,32 @@
                         <!-- Pie: # Conducted  by Form (period) -->
                         <!-- Table: Eval Forms:Pass Rate, Num Pass, Num Fail, Num Conducted, Button (Itemized Stats) -->
                         <!-- Table: OTS Evaluations: Date, Form Name, Student, Instructor, Result, # C/S/U (text in colors), Button (View) -->
+
                         <div class="row">
                             <div class="col-md-7">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body">
                                         <canvas id="stacked-2"></canvas>
                                     </div>
-                                    <div class="panel-footer">Evaluations Conducted per Month<br><em>last 6 months</em>
+                                    <div class="panel-footer">Evaluations Conducted per Month<br><em>last 6
+                                            months</em>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-5">
-                                <div class="panel panel-default training-stat-block">
-                                    <div class="panel-body">
-                                        <canvas id="pie-2" height="220px"></canvas>
+                            @if(!empty($evalsPerFormData['datasets'][0]['data']))
+                                <div class="col-md-5">
+                                    <div class="panel panel-default training-stat-block">
+                                        <div class="panel-body">
+                                            <canvas id="pie-2" height="220px"></canvas>
+                                        </div>
+                                        <div class="panel-footer">Completed Evaluations per <span
+                                                id="ots-mode">Form</span><br><em>last 30
+                                                days</em></div>
                                     </div>
-                                    <div class="panel-footer">Completed Evaluations per <span
-                                            id="ots-mode">Form</span><br><em>last 30
-                                            days</em></div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
+
                         <div class="row">
                             <h4 class="training-stat-section-header">Evaluation Forms</h4>
                             <table class="table table-striped" id="eval-forms">
