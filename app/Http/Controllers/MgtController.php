@@ -952,9 +952,9 @@ class MgtController extends Controller
 
         return response()->json(Auth::check() && $record->student_id != Auth::user()->cid &&
             !in_array($record->ots_status, [1, 2]) &&
-            (RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, Auth::user()->facility, false, false) ||
+            (RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $record->student->facility, false, false) ||
                 (RoleHelper::isTrainingStaff(Auth::user()->cid, true, $record->student->facility,
-                        false) && $record->instructor_id == Auth::user()->cid)));
+                        false && $record->instructor_id == Auth::user()->cid))));
     }
 
     public
