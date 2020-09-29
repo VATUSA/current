@@ -272,6 +272,7 @@
                                 <td><label for="n-training-datetime">Date and Time (UTC)</label></td>
                                 <td><input class="form-control training-datetime" type="text" name="session_date"
                                            id="n-training-datetime"
+                                           placeholder="____-__-__ __:__"
                                            required autocomplete="off"></td>
                             </tr>
                             <tr>
