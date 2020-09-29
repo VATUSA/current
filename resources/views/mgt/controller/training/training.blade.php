@@ -98,11 +98,12 @@
                                             <button class="btn btn-primary view-tr"
                                                     data-id="{{ $record->id }}"><span
                                                     class="glyphicon glyphicon-eye-open"></span></button>
-                                            @php $canModify = \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac, false, false) ||
-                                                                  (\App\Classes\RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac, false)
+                                            @php $canModify = \App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $trainingfac) ||
+                                                                  (\App\Classes\RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac)
                                                                    && $record->instructor_id == Auth::user()->cid);
+                                                 $ownRecord = $record->student_id == Auth::user()->cid;
                                                  $canEditDelete = !in_array($record->ots_status, [1, 2]); @endphp
-                                            @if($canModify && $canEditDelete)
+                                            @if($canModify && $canEditDelete && !$ownRecord)
                                                 <button class="btn btn-warning edit-tr"
                                                         data-id="{{ $record->id }}"><span
                                                         class="glyphicon glyphicon-pencil"></span>

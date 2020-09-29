@@ -1703,11 +1703,17 @@ input[name="position"] {
     text-align: center;
     padding-bottom: 10px;
 }
+
 .training-stat-block .panel-footer {
     text-align: center;
 }
+
 .jqstooltip {
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
+}
+
+#v-modify-group {
+    display: none;
 }
