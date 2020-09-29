@@ -321,9 +321,14 @@
       $(function () {
         if (document.location.hash)
           $('.nav-tabs li:not(.disabled) a[href=' + document.location.hash + ']').tab('show')
-
+        $('.sparkline').sparkline('html', {enableTagOptions: true, disableHiddenCheck: true})
+        $('.sparkline-tri').sparkline('html', {
+          type               : 'tristate',
+          tooltipFormat      : ' <span style="color: @{{color}}">&#9679;</span> @{{value:result}}</span>',
+          tooltipValueLookups: {result: {'-1': 'Fail', '1': 'Pass'}}
+        })
         $('.nav-tabs a').on('shown.bs.tab', function (e) {
-          $('.sparkline').sparkline('html', {enableTagOptions: true})
+          $('.sparkline').sparkline('html', {enableTagOptions: true, disableHiddenCheck: true})
           $('.sparkline-tri').sparkline('html', {
             type               : 'tristate',
             tooltipFormat      : ' <span style="color: @{{color}}">&#9679;</span> @{{value:result}}</span>',
@@ -338,13 +343,6 @@
           let target = $(this).data('controls')
           $('#training-content div[role="tabpanel"]#' + target).show()
           $('#training-content div[role="tabpanel"]:not(#' + target + ')').hide()
-        })
-
-        $('.sparkline').sparkline('html', {enableTagOptions: true, disableHiddenCheck: true})
-        $('.sparkline-tri').sparkline('html', {
-          type               : 'tristate',
-          tooltipFormat      : ' <span style="color: @{{color}}">&#9679;</span> @{{value:result}}</span>',
-          tooltipValueLookups: {result: {'-1': 'Fail', '1': 'Pass'}}
         })
 
         let stacked1 = {}, stacked2 = {}, pie1 = {}, pie2 = {}, pie3 = {}, line1 = {}
@@ -515,7 +513,12 @@
                 last = group
               }
             })
-            $('.sparkline:not(:has(canvas))').sparkline('html', {enableTagOptions: true, disableHiddenCheck: true})
+            $('.sparkline').sparkline('html', {enableTagOptions: true, disableHiddenCheck: true})
+            $('.sparkline-tri').sparkline('html', {
+              type               : 'tristate',
+              tooltipFormat      : ' <span style="color: @{{color}}">&#9679;</span> @{{value:result}}</span>',
+              tooltipValueLookups: {result: {'-1': 'Fail', '1': 'Pass'}}
+            })
             $.sparkline_display_visible()
           }
         })
