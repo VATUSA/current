@@ -952,9 +952,9 @@ class MgtController extends Controller
 
         return response()->json(Auth::check() && $record->student_id != Auth::user()->cid &&
             !in_array($record->ots_status, [1, 2]) &&
-            (RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $record->student->facility, false, false) ||
-                (RoleHelper::isTrainingStaff(Auth::user()->cid, true, $record->student->facility,
-                        false && $record->instructor_id == Auth::user()->cid))));
+            (RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $record->facility) ||
+                (RoleHelper::isTrainingStaff(Auth::user()->cid, true, $record->facility)
+                    && $record->instructor_id == Auth::user()->cid)));
     }
 
     public
@@ -1030,10 +1030,9 @@ class MgtController extends Controller
         $facilities = Facility::active()->get();
 
         if (!$globalAccess) {
-            $region = Auth::user()->facility()->region;
-            $facility = Auth::user()->facility()->id;
+            $region = Auth::user()->facilityObj->region;
+            $facility = Auth::user()->facilityObj->id;
         }
-        // $facility = 'ZSE';
 
         /** Summary */
 
