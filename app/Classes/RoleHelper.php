@@ -296,6 +296,9 @@ class RoleHelper
         if ($facility == null) {
             $facility = \Auth::user()->facility;
         }
+        if($facility instanceof Facility) {
+            $facility = $facility->id;
+        }
 
         if (static::isVATUSAStaff($cid) && $includeVATUSA) {
             return true;
