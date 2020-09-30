@@ -1663,6 +1663,10 @@ input.e-training-position, input.n-training-position {
     width: 80px;
 }
 
+.training-instructor {
+    width: 340px;
+}
+
 span[id^="training-ots-exam-"] {
     font-size: 1em;
 }
@@ -1716,4 +1720,16 @@ input[name="position"] {
 
 #v-modify-group {
     display: none;
+}
+
+.vctr {
+    vertical-align: middle !important;
+}
+
+.ots-exam-warning {
+    display: none;
+}
+
+span[id^="training-"], span[class^="training-"], td[id^="training-"] span {
+    cursor: default;
 }

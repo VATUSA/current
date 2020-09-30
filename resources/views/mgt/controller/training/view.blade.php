@@ -216,6 +216,12 @@
                     </form>
                 </div>
                 <div class="modal-footer">
+                    <div class="alert alert-warning ots-exam-warning" style="text-align: center !important;"><i
+                            class="fas fa-exclamation-triangle"></i> <strong>Warning!</strong> This record is an OTS
+                        exam and will not be able to be edited or deleted. <br>If a mistake is made, you must contact a
+                        VATUSA staff member to make modifications.
+                    </div>
+
                     <button type="button" class="btn btn-success" data-id="" id="e-training-submit"><span
                             class="glyphicon glyphicon-ok"></span> Submit
                     </button>
@@ -242,7 +248,7 @@
                         <table id="new-tr-layout" class="table table-striped table-responsive tr-modal-layout">
                             <tbody>
                             <tr>
-                                <td><label for="n-training-position">Position</label></td>
+                                <td class="vctr"><label for="n-training-position">Position</label></td>
                                 <td><p class="form-control-static" id="n-training-artcc">{{ $trainingfacname }}</p> -
                                     <input
                                         class="form-control n-training-position training-position"
@@ -254,7 +260,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label for="e-training-score">Progress</label></td>
+                                <td class="vctr"><label for="e-training-score">Progress</label></td>
                                 <td>
                                     <select class="form-control training-score" name="score" id="n-training-score"
                                             required
@@ -269,31 +275,33 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label for="n-training-datetime">Date and Time (UTC)</label></td>
+                                <td class="vctr"><label for="n-training-datetime">Date and Time (UTC)</label></td>
                                 <td><input class="form-control training-datetime" type="text" name="session_date"
                                            id="n-training-datetime"
                                            placeholder="____-__-__ __:__"
                                            required autocomplete="off"></td>
                             </tr>
                             <tr>
-                                <td><label for="n-training-duration-hrs">Duration</label></td>
+                                <td class="vctr"><label for="n-training-duration-hrs">Duration</label></td>
                                 <td><input class="form-control training-duration" type="number" name="duration-hours"
-                                           id="n-training-duration-hrs" min="0" autocomplete="off">:<input
+                                           id="n-training-duration-hrs" min="0" autocomplete="off"
+                                           placeholder="1">:<input
                                         class="form-control training-duration" type="number"
                                         name="duration-mins"
+                                        placeholder="30"
                                         id="n-training-duration-mins" step="15" min="0" max="45" autocomplete="off">
                                 </td>
                             </tr>
                             <tr>
-                                <td><label for="n-training-movements">Number of Movements</label></td>
+                                <td class="vctr"><label for="n-training-movements">Number of Movements</label></td>
                                 <td><input class="form-control training-movements" type="number" name="movements"
                                            id="n-training-movements"
-                                           placeholder="ex. 8"
+                                           placeholder="15"
                                            required autocomplete="off">
                                 </td>
                             </tr>
                             <tr>
-                                <td><label for="n-training-location">Location</label></td>
+                                <td class="vctr"><label for="n-training-location">Location</label></td>
                                 <td><select class="form-control training-location" name="location"
                                             id="n-training-location" required
                                             autocomplete="off">
@@ -305,17 +313,19 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label for="n-training-instructor">Instructor/Mentor</label></td>
+                                <td class="vctr"><label for="n-training-instructor">Instructor/Mentor</label></td>
                                 <td>
-                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, Auth::user()->facility, false, false))
-                                        <select class="form-control" name="instructor" id="n-training-instructor"
+                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, Auth::user()->facility))
+                                        <select class="form-control training-instructor" name="instructor"
+                                                id="n-training-instructor"
                                                 required
                                                 autocomplete="off">
                                             <option value="">-- Select One --</option>
                                             @foreach($ins as $type => $users)
                                                 <optgroup label="{{ $type === "ins" ? "Instructors" : "Mentors" }}">
                                                     @foreach($users as $cid => $name)
-                                                        <option value="{{ $cid }}">{{ $name }}</option>
+                                                        <option value="{{ $cid }}"
+                                                                @if($cid == Auth::user()->cid) selected @endif>{{ $name }}</option>
                                                     @endforeach
                                                 </optgroup>
                                             @endforeach
@@ -326,7 +336,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label for="e-training-ots-grp">OTS Exam</label></td>
+                                <td class="vctr"><label for="e-training-ots-grp">OTS Exam</label></td>
                                 <td>
                                     <div class="btn-group" data-toggle="buttons" id="n-training-ots-grp">
                                         <label class="btn btn-default active ots-status-input-label">
@@ -335,17 +345,17 @@
                                             No OTS
                                         </label>
                                         <label class="btn btn-default ots-status-input-label">
-                                            <input type="radio" name="options" id="n-ots-status-1" value="1"
+                                            <input type="radio" name="ots_status" id="n-ots-status-1" value="1"
                                                    class="ots-status-input" autocomplete="off"><span
                                                 class="glyphicon glyphicon-ok"></span> Pass
                                         </label>
                                         <label class="btn btn-default ots-status-input-label">
-                                            <input type="radio" name="options" id="n-ots-status-2" value="2"
+                                            <input type="radio" name="ots_status" id="n-ots-status-2" value="2"
                                                    class="ots-status-input" autocomplete="off"><span
                                                 class="glyphicon glyphicon-remove"></span> Fail
                                         </label>
                                         <label class="btn btn-default ots-status-input-label">
-                                            <input type="radio" name="options" id="n-ots-status-3" value="3"
+                                            <input type="radio" name="ots_status" id="n-ots-status-3" value="3"
                                                    class="ots-status-input" autocomplete="off"><span
                                                 class="glyphicon glyphicon-info-sign"></span> Recommend
                                         </label>
@@ -365,6 +375,11 @@
                     </form>
                 </div>
                 <div class="modal-footer">
+                    <div class="alert alert-warning ots-exam-warning" style="text-align: center !important;"><i
+                            class="fas fa-exclamation-triangle"></i> <strong>Warning!</strong> This record is an OTS
+                        exam and will not be able to be edited or deleted. <br>If a mistake is made, you must contact a
+                        VATUSA staff member to make modifications.
+                    </div>
                     <button type="button" class="btn btn-success" data-id="" id="n-training-submit"><span
                             class="glyphicon glyphicon-ok"></span> Submit
                     </button>
