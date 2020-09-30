@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <div class="text-center">
+                  <!--  <div class="text-center">
                         <div class="btn-group" id="v-modify-group" style="margin-bottom: 8px;">
                             <button class="btn btn-warning" id="tr-view-edit" data-id=""><span
                                     class="glyphicon glyphicon-pencil"></span> Edit
@@ -19,7 +19,7 @@
                                     class="glyphicon glyphicon-remove"></span> Delete
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                     <table class="table table-striped table-responsive training-info">
                         <tbody>
                         <tr>
