@@ -37,11 +37,6 @@
                         <td><a href="/docs/GO-320201.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
-                        <td>GO 41520 &mdash; Temporary Suspension of Visitor Applications</td>
-                        <td>07/28/2020</td>
-                        <td><a href="/docs/GO-41520.pdf" target="_blank">view</a></td>
-                    </tr>
-                    <tr>
                         <td>GO 61720 &mdash; C3 Senior Controller Program</td>
                         <td>08/16/2020</td>
                         <td><a href="/docs/GO-61720.pdf" target="_blank">view</a></td>
