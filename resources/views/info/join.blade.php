@@ -70,7 +70,7 @@
                 <ul>
                     <li>If your VATSIM membership has lapsed (become inactive), you will need to reactivate your VATSIM membership <em>before</em>
                         you can reactivate your membership with VATUSA. You can do so <a
-                            href="https://cert.vatsim.net/vatsimnet/statcheck.html">here</a>.
+                            href="https://my.vatsim.net/reactivate">here</a>.
                     </li>
                     <li>If you are returning from an absence of 6 months or less, you may have been removed from your home ARTCC. Request a transfer to initiate the rejoin process.</li>
                     <li><strong>It can take up to 24 hours for new, reactivated, or transfers to be processed and sent
