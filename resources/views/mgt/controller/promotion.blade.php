@@ -60,7 +60,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-3 control-label">
-                                    <b>Training Record</b>
+                                    <b>Training Record</b><br><em>Temporarily Waived</em>
                                 </div>
                                 <p class="col-sm-9 form-control-static">
                                     @switch($trainingRecordStatus)
@@ -83,7 +83,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-3 control-label">
-                                    <b>OTS Evaluation</b>
+                                    <b>OTS Evaluation</b><br><em>Temporarily Waived</em>
                                 </div>
                                 <p class="col-sm-9 form-control-static">
                                     @switch($otsEvalStatus)
@@ -112,7 +112,8 @@
                                 <div class="col-sm-3 col-sm-offset-3">
                                     <button type="button" id="submit-promotion" class="btn btn-success btn-block"
                                             style="width:150px;"
-                                            @if(!($otsEvalStatus == 1 && $trainingRecordStatus == 1)) disabled @endif><i class="fas fa-check"></i> Promote
+                                            {{-- @if(true || !($otsEvalStatus == 1 && $trainingRecordStatus == 1)) disabled @endif --}} disabled>
+                                        <i class="fas fa-check"></i> Promote
                                     </button>
                                 </div>
                             </div>
@@ -185,10 +186,14 @@
           $(this).val($(this).val().toUpperCase())
           $('.list-group-item:not(.disabled)').addClass('disabled')
           let pos = $(this).val().split('_')
-          if (pos.length) {
+          if (pos.length === 2 && pos[0].length === pos[1].length && pos[0].length === 3) {
             pos = pos.pop()
-            if (pos !== '') $('#' + pos.toLowerCase() + '.temp-disabled').removeClass('disabled')
-          }
+            if (pos !== '') {
+              $('#submit-promotion').attr('disabled', false)
+              $('#' + pos.toLowerCase() + '.temp-disabled').removeClass('disabled')
+            } else $('#submit-promotion').attr('disabled', true)
+          } else
+            $('#submit-promotion').attr('disabled', true)
         })
 
         $('.eval-link').click(function (e) {
@@ -242,7 +247,7 @@
               return swal('Error!', 'The controller was not promoted. ' + result.msg, 'error')
           }).fail(_ => {
             btn.attr('disabled', false).html('<i class="fas fa-check"></i> Promote')
-            return swal('Error!', 'The controller was not promoted. Please try again later.', 'error')
+            return swal('Error!', 'The controller was not promoted. Please ensure all fields and requirements are completed or try again later.', 'error')
           })
         })
       })
