@@ -165,8 +165,8 @@ textarea#notes {
 }
 
 .indicator-help-text {
-    display: table-cell;
-    padding-left: 3px;
+    /*display: table-cell;*/
+    padding-left: 2px;
 }
 
 #comment-input {
