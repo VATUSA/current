@@ -200,7 +200,7 @@ class RoleHelper
         if ($user == null) {
             return false;
         }
-
+      
         /*if ($user->facility == "ZHQ") {
             return true;
         }*/
@@ -285,7 +285,7 @@ class RoleHelper
         return false;
     }
 
-    public static function isFacilitySeniorStaff($cid = null, $facility = null, $isApi = false)
+    public static function isFacilitySeniorStaff($cid = null, $facility = null, $isApi = false, bool $includeVATUSA = true)
     {
         if (!\Auth::check() && !$isApi) {
             return false;
@@ -296,8 +296,11 @@ class RoleHelper
         if ($facility == null) {
             $facility = \Auth::user()->facility;
         }
+        if($facility instanceof Facility) {
+            $facility = $facility->id;
+        }
 
-        if (static::isVATUSAStaff($cid)) {
+        if (static::isVATUSAStaff($cid) && $includeVATUSA) {
             return true;
         }
 
@@ -408,13 +411,13 @@ class RoleHelper
      * @param null|integer $cid
      * @param null|string  $facility
      *
-     * @param bool         $includeVATUSAStaff
+     * @param bool         $includeVATUSA
      *
      * @return bool
      */
-    public static function isInstructor($cid = null, $facility = null, $includeVATUSAStaff = true)
+    public static function isInstructor($cid = null, $facility = null, bool $includeVATUSA = true)
     {
-        if (!Auth::check()) {
+        if (!Auth::check() && !($cid || $facility)) {
             return false;
         }
         if (is_null($cid) || !$cid) {
@@ -449,14 +452,14 @@ class RoleHelper
         }
 
         // Check for VATUSA staff, global access.
-        if ($includeVATUSAStaff && RoleHelper::isVATUSAStaff($cid)) {
+        if (static::isVATUSAStaff($cid) && $includeVATUSA) {
             return true;
         }
 
         return false;
     }
 
-    public static function isMentor($cid = null)
+    public static function isMentor($cid = null, $facility = null)
     {
         if (!Auth::check()) {
             return false;
@@ -465,14 +468,15 @@ class RoleHelper
             $cid = Auth::user()->cid;
         }
         $user = User::find($cid);
-        if (!$user->flag_homecontroller) {
+        if (!$user || !$user->flag_homecontroller) {
             return false;
         }
+        $facility = $facility ?? $user->facility;
         if (!$user->facility()->active && $user->facility != "ZHQ") {
             return false;
         }
 
-        if (Role::where("cid", $cid)->where("facility", $user->facility)->where("role", "MTR")->count()) {
+        if (Role::where("cid", $cid)->where("facility", $facility)->where("role", "MTR")->count()) {
             return true;
         }
 
@@ -625,5 +629,11 @@ class RoleHelper
     public static function validRoles()
     {
         return ['MENTOR', 'INS'];
+    }
+
+    public static function isTrainingStaff($cid = null, bool $includeMentor = true, $facility = null, bool $includeVATUSA = true)
+    {
+        return ($includeMentor && self::isMentor($cid, $facility)) || self::isInstructor($cid, $facility, $includeVATUSA) || self::isFacilitySeniorStaff($cid,
+                $facility,false, $includeVATUSA);
     }
 }

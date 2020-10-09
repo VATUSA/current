@@ -28,9 +28,11 @@ script:
   - docker-compose build --no-cache
 
 after_success:
-- if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+- if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ];
+  then docker tag vatusa/www vatusa/www:latest;
   docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; docker push vatusa/www:latest;
   fi
-- if [ "$TRAVIS_BRANCH" == "dev" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+- if [ "$TRAVIS_BRANCH" == "dev" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ];
+  then docker tag vatusa/www vatusa/www:devel;
   docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; docker push vatusa/www:devel;
   fi
