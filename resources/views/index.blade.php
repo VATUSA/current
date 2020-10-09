@@ -1,6 +1,7 @@
 @extends('layout')
 @section('title', 'Welcome')
 @section('content')
+    @if(!empty($banners) && !empty($ids))
     <div class="c-wrapper">
         <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner" role="listbox">
@@ -14,6 +15,7 @@
             </div>
         </div>
     </div>
+    @endif
     <div class="container" id="home-container">
         <br>
         <div class="row">

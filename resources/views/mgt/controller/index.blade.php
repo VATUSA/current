@@ -3,6 +3,13 @@
 
 @section('scripts')
     <script>
+      if (document.location.hash)
+        $('.nav-tabs li:not(.disabled) a[href=' + document.location.hash + ']').tab('show')
+
+      $('.nav-tabs a').on('shown.bs.tab', function (e) {
+        history.pushState({}, '', e.target.hash);
+      })
+
       $('.delete-log').click(function (e) {
         e.preventDefault()
 
@@ -69,7 +76,7 @@
         $.ajax({
           type: 'POST',
           url : "{{ secure_url("/mgt/controller/toggleStaffPrevent") }}",
-          data: {cid: "{{ $u->cid }}"}
+          data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
           if (result === '1') {
@@ -97,7 +104,7 @@
         $.ajax({
           type: 'POST',
           url : "{{ secure_url("/mgt/controller/toggleInsRole") }}",
-          data: {cid: "{{ $u->cid }}"}
+          data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
           if (result === '1') {
@@ -126,12 +133,12 @@
 @section('content')
     <div class="container">
         <div
-            class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $u->flag_preventStaffAssign) ? "warning" : "default"}}"
+            class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
             id="user-info-panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <div class="row">
-                        <div class="col-md-8" style="font-size: 16pt;">{{$u->fname}} {{$u->lname}} - {{$u->cid}}</div>
+                        <div class="col-md-8" style="font-size: 16pt;">{{$user->fname}} {{$user->lname}} - {{$user->cid}}</div>
                         <form class="form-inline">
                             <div class="col-md-4 text-right form-group">
                                 <input type="text" id="cidsearch" class="form-control" placeholder="CID">
@@ -152,8 +159,12 @@
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Exams</a></li>
                     @endif
-                    <li role="presentation"><a href="#training" data-controls="training" role="tab"
-                                               data-toggle="tab">Training</a></li>
+                    @php $canViewTraining = $user->facility == Auth::user()->facility || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
+                    <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
+                        title="Not a home controller at your ARTCC" @endif><a href="#training"
+                                                                              @if($canViewTraining) data-controls="training"
+                                                                              role="tab"
+                                                                              data-toggle="tab" @endif>Training</a></li>
                     <li role="presentation"><a href="#cbt" data-controls="cbt" role="tab"
                                                data-toggle="tab">CBT Progress</a></li>
                     @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
@@ -174,19 +185,19 @@
                             <div class="row">
                                 <div class="col-md-4">@endif
                                     <ol style="font-size: 110%;list-style-type: none;">
-                                        <li><strong>{{$u->fname}} {{$u->lname}}</strong></li>
+                                        <li><strong>{{$user->fname}} {{$user->lname}}</strong></li>
                                         @if(\App\Classes\RoleHelper::isVATUSAStaff() ||
                                             \App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                            <li>{{$u->email}} &nbsp; <a href="mailto:{{$u->email}}"><i
+                                            <li>{{$user->email}} &nbsp; <a href="mailto:{{$user->email}}"><i
                                                         class="fa fa-envelope text-primary"
                                                         style="font-size:80%"></i></a>
                                             </li>
                                         @else
-                                            <li>[Email Private] <a href="/mgt/mail/{{$u->cid}}"><i
+                                            <li>[Email Private] <a href="/mgt/mail/{{$user->cid}}"><i
                                                         class="fa fa-envelope text-primary"></i></a></li>
                                         @endif
                                         <li>
-                                            @if($u->flag_broadcastOptedIn)
+                                            @if($user->flag_broadcastOptedIn)
                                                 <p class="text-success"><i class="fa fa-check"></i> Receiving Broadcast
                                                     Emails</p>
                                             @else
@@ -197,28 +208,28 @@
                                             @endif
 
                                         </li>
-                                        <li>{{$u->urating->short}} - {{$u->urating->long}}</li>
-                                        <li>{{$u->facility}}
-                                            - {{\App\Classes\Helper::facShtLng($u->facility)}}</li>
-                                        <li>Member of {{$u->facility}} since {{ $u->facility_join }}</li>
-                                        @if(!str_contains($u->urating->long, "Instructor"))
+                                        <li>{{$user->urating->short}} - {{$user->urating->long}}</li>
+                                        <li>{{$user->facility}}
+                                            - {{\App\Classes\Helper::facShtLng($user->facility)}}</li>
+                                        <li>Member of {{$user->facility}} since {{ $user->facility_join }}</li>
+                                        @if(!str_contains($user->urating->long, "Instructor"))
                                             <li>Mentor?
-                                                @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $u->facility))
-                                                    <a href="/mgt/controller/{{$u->cid}}/mentor">{{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}</a>
+                                                @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $user->facility))
+                                                    <a href="/mgt/controller/{{$user->cid}}/mentor">{{(\App\Classes\RoleHelper::isMentor($user->cid))?"Yes":"No"}}</a>
                                                 @else
-                                                    {{(\App\Classes\RoleHelper::isMentor($u->cid))?"Yes":"No"}}
+                                                    {{(\App\Classes\RoleHelper::isMentor($user->cid))?"Yes":"No"}}
                                                 @endif
                                             </li>
                                         @endif
                                         <br>
-                                        <li>Last Activity Forum: {{$u->lastActivityForum()}} days ago</li>
-                                        <li>Last Activity Website: {{$u->lastActivityWebsite()}} days ago</li>
+                                        <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
+                                        <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
                                         <li>Needs Basic ATC Exam?
                                             @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                                <a href="/mgt/controller/{{$u->cid}}/togglebasic">
+                                                <a href="/mgt/controller/{{$user->cid}}/togglebasic">
                                                     @endif
-                                                    @if ($u->flag_needbasic)
+                                                    @if ($user->flag_needbasic)
                                                         Yes
                                                     @else
                                                         No
@@ -229,7 +240,7 @@
                                         </li>
                                         <br>
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
-                                            $u->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $u->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                            $user->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
                                             <li>Rating Change
                                                 <select id="ratingchange">
                                                     <option value="{{\App\Classes\Helper::ratingIntFromShort("C1")}}">C1
@@ -263,7 +274,7 @@
                                               $('#ratingchangebtn').click(function () {
                                                 $('#ratingchangespan').html('Saving...')
                                                 $.ajax({
-                                                  url : '/mgt/controller/{{$u->cid}}/rating',
+                                                  url : '/mgt/controller/{{$user->cid}}/rating',
                                                   type: 'POST',
                                                   data: {rating: $('#ratingchange').val()}
                                                 }).success(function () {
@@ -350,7 +361,7 @@
                                             </td>
                                         </tr>
                                         </thead>
-                                        @foreach (\App\Promotions::where('cid', $u->cid)->orderby('created_at', 'desc')->get() as $promo)
+                                        @foreach (\App\Promotions::where('cid', $user->cid)->orderby('created_at', 'desc')->get() as $promo)
                                             <tr style="text-align: center">
                                                 <td style="width:30%">{!! $promo->created_at->format('m/d/Y') !!}
                                                     <br><em>{{ \App\Classes\Helper::nameFromCID($promo->grantor) }}</em>
@@ -379,7 +390,7 @@
                                             </td>
                                         </tr>
                                         </thead>
-                                        @foreach(\App\Transfers::where('cid', $u->cid)->orderby('id', 'desc')->get() as $t)
+                                        @foreach(\App\Transfers::where('cid', $user->cid)->orderby('id', 'desc')->get() as $t)
                                             <tr style="text-align: center">
                                                 <td>{{substr($t->updated_at, 0,10)}}</td>
                                                 <td><strong>{{$t->from}}</strong></td>
@@ -397,8 +408,8 @@
                                             <tr>
                                                 <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
                                                             id="waivertogglei"
-                                                            class="fa {{(($u->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
-                                                    <a href="/mgt/err?cid={{$u->cid}}">Submit TR</a>
+                                                            class="fa {{(($user->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
+                                                    <a href="/mgt/err?cid={{$user->cid}}">Submit TR</a>
                                                 </td>
                                             </tr>
                                         @endif
@@ -415,7 +426,7 @@
                                 </div>
                                 <div class="panel-body">
                                     <table class="table table-striped">
-                                        @foreach(\App\ExamResults::where('cid',$u->cid)->orderBy('date', 'DESC')->get() as $res)
+                                        @foreach(\App\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
                                             <tr style="text-align: center">
                                                 <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
                                                 <td style="width: 70%; text-align: left"><a
@@ -430,7 +441,7 @@
                             </div>
                         </div>
                     @endif
-                    <div class="tab-pane" role="tabpanel" id="training">Coming soon</div>
+                    <div class="tab-pane" role="tabpanel" id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
                     <div class="tab-pane" role="tabpanel" id="cbt">
                         <h3>CBT Results</h3>
                         <div class="panel-group" id="accordion">
@@ -455,7 +466,7 @@
                                                 <tr>
                                                     <td>{{$chapter->name}}</td>
                                                     <td>
-                                                        @if(\App\Classes\CBTHelper::isComplete($chapter->id, $u->cid))
+                                                        @if(\App\Classes\CBTHelper::isComplete($chapter->id, $user->cid))
                                                             <i class="text-success fa fa-check"></i>
                                                         @else
                                                             <i class="text-danger fa fa-times"></i>
@@ -494,7 +505,7 @@
                                     <form class="form-horizontal" action="{{secure_url("/mgt/action/add")}}"
                                           method="POST">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="hidden" name="to" value="{{ $u->cid }}">
+                                        <input type="hidden" name="to" value="{{ $user->cid }}">
                                         <input type="hidden" name="from" value="{{ Auth::user()->cid }}">
                                         <div class="form-group">
                                             <label class="col-sm-2 control-label">Add a Log Entry</label>
@@ -513,7 +524,7 @@
                                     </form>
                                     <hr>
                                     <table class="table table-striped">
-                                        @foreach(\App\Actions::where('to', $u->cid)->orderby('id', 'desc')->get() as $a)
+                                        @foreach(\App\Actions::where('to', $user->cid)->orderby('id', 'desc')->get() as $a)
                                             <tr id="log-{{ $a->id }}">
                                                 <td style="width:10%"><strong>{{substr($a->created_at, 0,10)}}</strong>
                                                 </td>
@@ -552,7 +563,7 @@
                                     <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
                                     <div class="col-sm-10">
                                     <span id="toggleStaffPrevent" style="font-size:1.8em;">
-                                        <i class="toggle-icon fa fa-toggle-{{ $u->flag_preventStaffAssign ? "on text-danger" : "off text-info"}} "></i>
+                                        <i class="toggle-icon fa fa-toggle-{{ $user->flag_preventStaffAssign ? "on text-danger" : "off text-info"}} "></i>
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
                                         <p class="help-block">This will prevent the controller from being assigned a
@@ -561,12 +572,12 @@
                                             assign him or her a role.</p>
                                     </div>
                                 </div>
-                                @if($u->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                @if($user->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Instructor</label>
                                         <div class="col-sm-10">
                                         <span id="toggleInsRole" style="font-size:1.8em;">
-                                            <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::isInstructor($u->cid, $u->facility) ? "on text-success" : "off text-danger"}} "></i>
+                                            <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::isInstructor($user->cid, $user->facility) ? "on text-success" : "off text-danger"}} "></i>
                                             <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                         </span>
                                             <p class="help-block">This will grant the supervisor Instructor
@@ -579,7 +590,7 @@
                                     <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
                                     <div class="col-sm-10">
                                         <p class="form-control-static" style="cursor:default;">
-                                            @if($u->flag_preventStaffAssign) <strong style="color:#e72828">Yes</strong>
+                                            @if($user->flag_preventStaffAssign) <strong style="color:#e72828">Yes</strong>
                                             @else <strong style="color:green">No</strong>
                                             @endif
                                         </p>
@@ -588,7 +599,7 @@
                                             assign him or her a role.</p>
                                     </div>
                                 </div>
-                                @if($u->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                @if($user->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Instructor</label>
                                         <div class="col-sm-10">
@@ -620,7 +631,7 @@
 
       $('#waiverToggle').click(function () {
         $.ajax({
-          url : '/mgt/controller/{{$u->cid}}/transferwaiver',
+          url : '/mgt/controller/{{$user->cid}}/transferwaiver',
           type: 'GET'
         }).success(function (data) {
           if (data == '1') {

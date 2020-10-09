@@ -71,6 +71,10 @@ $.ajaxSetup({
 $(function () {
   $('[data-toggle=\'tooltip\']').tooltip()
   $('[rel=\'tooltip\']').tooltip()
+  $('.modal').on('shown.bs.modal', function() {
+    $('[data-toggle=\'tooltip\']').tooltip('destroy').tooltip()
+    $('[rel=\'tooltip\']').tooltip('destroy').tooltip()
+  });
   $('.dropdown-menu')
     .mouseenter(function () {
       $(this).parent('li').addClass('active')

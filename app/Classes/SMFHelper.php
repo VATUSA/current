@@ -33,6 +33,10 @@ class SMFHelper
 
     public static function setPermissions($cid)
     {
+        if (in_array(app()->environment(), ["livedev", "dev", "devel"])) {
+            return true;
+        }
+
         $role = "";
         $addl = "";
         $grp = "";
