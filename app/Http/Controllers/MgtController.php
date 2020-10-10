@@ -1524,13 +1524,13 @@ class MgtController extends Controller
             $recordsPerTypeData['datasets'][0]['backgroundColor'][] = $colors[$record->position] ?? Factory::create()->hexColor;
         }
 
-        //TableData
+        //Table Data
         $trainingRecords = TrainingRecord::with(['instructor:cid,fname,lname', 'student:cid,fname,lname']);
         if ($region) {
-            $records->whereIn('facility_id',
+            $trainingRecords->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
         } elseif ($facility) {
-            $records->where('facility_id', $facility);
+            $trainingRecords->where('facility_id', $facility);
         }
         $trainingRecords = $trainingRecords->get();
 
