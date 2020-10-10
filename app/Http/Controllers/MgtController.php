@@ -1024,12 +1024,12 @@ class MgtController extends Controller
 
         $instructor = $request->input('instructor', null);
         $facility = $request->input('facility', null);
-        $region = $request->input('region', null);
+        //$region = $request->input('region', null);
+        $region = null;
         $interval = $request->input('interval', 30);
         $facilities = Facility::active()->get();
 
         if (!$globalAccess) {
-            $region = Auth::user()->facilityObj->region;
             $facility = Auth::user()->facilityObj->id;
         }
 
