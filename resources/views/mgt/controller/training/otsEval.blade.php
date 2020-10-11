@@ -36,7 +36,7 @@
                                     ({{ $student->cid }})</p><label class="table-cell-footer control-label"
                                                                     for="position">Student Name & CID</label></td>
                             <td>
-                                <p id="student-position"><input type="text" maxlength="7" name="position"
+                                <p id="student-position"><input type="text" maxlength="11" name="position"
                                                                 id="position" class="form-control" autocomplete="off">
                                 </p>
                                 <label class="table-cell-footer control-label"

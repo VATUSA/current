@@ -977,7 +977,7 @@ class MgtController extends Controller
             abort(404, "The OTS evaluation form is invalid.");
         }
         if ($form->rating_id !== $student->rating + 1 || !$student->promotionEligible()) {
-            abort(400, "The controller is not eligible for that evaluation.");
+            return redirect('/mgt/facility#mem')->with('error', 'The controller is not eligible for that evaluation.');
         }
 
         return response()->view('mgt.controller.training.otsEval', compact('student', 'form'));

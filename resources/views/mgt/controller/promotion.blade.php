@@ -43,7 +43,7 @@
                                 <label class="col-sm-3 control-label" for="exam-date">Date of Exam (UTC)</label>
                                 <div class="col-sm-9">
                                     <input class="form-control" name="date" id="exam-date"
-                                           value="{{ $dateOfExam ? $dateOfExam : date('Y-m-d') }}"
+                                           value="{{ $dateOfExam ? explode(' ', $dateOfExam)[0] : date('Y-m-d') }}"
                                            style="width:150px;" autocomplete="off" @if($dateOfExam) disabled
                                            readonly @endif>
                                 </div>
@@ -54,7 +54,7 @@
                                     <input type="text" name="position" id="position" placeholder="ABC_APP"
                                            class="form-control" style="width:150px;"
                                            value="{{ $examPosition ?? '' }}"
-                                           maxlength="7"
+                                           maxlength="11"
                                            autocomplete="off" @if($examPosition) readonly disabled @endif>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                                         @break
                                         @case(0)
                                         <span class="label label-danger" style="font-size:90%;" rel="tooltip"
-                                              title="There must be a training record present in the CTRS that is marked OTS Pass under the specified position."><span
+                                              title="There must be a training record present in the CTRS that is marked OTS Pass under the specified position." onclick="window.open('/mgt/controller/{{ $user->cid }}#training', 'blank')"><span
                                                 class="glyphicon glyphicon-remove"></span> Does Not Exist</span>
                                         @break
                                         @default
@@ -186,7 +186,7 @@
           $(this).val($(this).val().toUpperCase())
           $('.list-group-item:not(.disabled)').addClass('disabled')
           let pos = $(this).val().split('_')
-          if (pos.length === 2 && pos[0].length === pos[1].length && pos[0].length === 3) {
+          if ((pos.length === 2 || pos.length === 3) && (pos.length >= 2 && pos[pos.length - 1].length === 3)) {
             pos = pos.pop()
             if (pos !== '') {
               $('#submit-promotion').attr('disabled', false)
