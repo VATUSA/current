@@ -112,7 +112,7 @@
                                 <div class="col-sm-3 col-sm-offset-3">
                                     <button type="button" id="submit-promotion" class="btn btn-success btn-block"
                                             style="width:150px;"
-                                             @if(!($otsEvalStatus == 1 && $trainingRecordStatus == 1)) disabled @endif>
+                                             @if(!($otsEvalStatus == 1 /* && $trainingRecordStatus == 1*/)) disabled @endif>
                                         <i class="fas fa-check"></i> Promote
                                     </button>
                                 </div>
