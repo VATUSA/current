@@ -112,14 +112,14 @@
                                 <div class="col-sm-3 col-sm-offset-3">
                                     <button type="button" id="submit-promotion" class="btn btn-success btn-block"
                                             style="width:150px;"
-                                            {{-- @if(true || !($otsEvalStatus == 1 && $trainingRecordStatus == 1)) disabled @endif --}} disabled>
+                                             @if(!($otsEvalStatus == 1 && $trainingRecordStatus == 1)) disabled @endif>
                                         <i class="fas fa-check"></i> Promote
                                     </button>
                                 </div>
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-6" style="position: absolute;left: 40%;width: 40%;">
+                    <div class="col-md-6" style="position: absolute;left: 40%;width: 40%; max-width: 800px">
                         <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> Enter the
                             position on the left to view the applicable OTS Evaluation Form.
                         </div>

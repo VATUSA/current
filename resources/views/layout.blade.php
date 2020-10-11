@@ -11,7 +11,7 @@
     <link href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
-    <link href="/css/vatusa-v2.3.css" rel="stylesheet">
+    <link href="{{ mix('css/vatusa.css') }}" rel="stylesheet">
     @stack('styles')
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
