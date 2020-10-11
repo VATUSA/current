@@ -259,6 +259,12 @@ Route::group([
             return view('info.privacy');
         });
 
+        // TMU ********************
+        Route::get('tmu/map/{fac}', 'TMUController@getMap');
+        Route::get('tmu/map/{fac}/dark', 'TMUController@getMapDark');
+        Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
+        Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
+
 //
 // VATUSA Mgt Facility Function
 // dev.vatusa.net/mgt/facility/{route}
@@ -341,12 +347,6 @@ Route::group([
             Route::post('/mgt/checklists/{id}/order', 'MgtController@postChecklistItemsOrder');
             Route::delete('/mgt/checklists/{clid}/{id}', 'MgtController@deleteChecklistItem');
             Route::post('/mgt/checklists/{clid}/{id}', 'MgtController@postChecklistItem');
-
-            // TMU ********************
-            Route::get('tmu/map/{fac}', 'TMUController@getMap');
-            Route::get('tmu/map/{fac}/dark', 'TMUController@getMapDark');
-            Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
-            Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
 
 
             //iDENT App ***************
