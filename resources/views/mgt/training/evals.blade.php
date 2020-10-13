@@ -34,7 +34,7 @@
                                         @endforeach
                                     </optgroup>
                                     <optgroup label="Northeastern Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
+                                        @foreach($facilities->filter(function($fac) { return $fac->region == 9; }) as $fac)
                                             <option value="{{ $fac->id }}"
                                                     @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
                                         @endforeach
