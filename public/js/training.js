@@ -314,7 +314,7 @@ $(function () {
         timepicker: true,
         format    : 'Y-m-d H:i',
         mask      : true,
-        maxDate   : '+1970/01/01',
+        maxDate   : '+1970/01/02',
         step      : 15
       })
 
@@ -594,7 +594,7 @@ const showTrainingRecordModal = btn => {
     timepicker: true,
     format    : 'Y-m-d H:i',
     mask      : true,
-    maxDate   : '+1970/01/01',
+    maxDate   : '+1970/01/02',
     step      : 15
   })
   tinymce.init({
