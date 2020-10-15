@@ -458,7 +458,7 @@ $(function () {
         id       = btn.data('id'),
         formData = {
           position    : $('#e-training-position').val(),
-          progress    : $('#e-training-score').val(),
+          score       : $('#e-training-score').val(),
           session_date: $('#e-training-datetime').val(),
           duration    : $('#e-training-duration-hrs').val() + ':' + $('#e-training-duration-mins').val(),
           movements   : $('#e-training-movements').val(),
