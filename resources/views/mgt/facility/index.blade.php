@@ -684,7 +684,7 @@
             $.ajax({
               url   : $.apiUrl() + '/v2/facility/{{$fac}}/ulsReturns/' + id,
               method: 'PUT',
-              data  : {url: url}
+              data  : {url: newUrl}
             }).done(() => {
               waitingDialog.hide()
               $('#path-' + id).find('.rp-url').text(newUrl)
