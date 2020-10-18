@@ -16,6 +16,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use \Auth;
+use Illuminate\Support\Facades\DB;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
@@ -32,19 +33,43 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return ["created_at", "updated_at", "lastactivity"];
     }
 
-    public function fullname()
+    public function fullname($lf = false)
     {
-        return $this->fname . " " . $this->lname;
+        return $lf ? $this->lname . ", " . $this->fname : $this->fname . " " . $this->lname;
     }
 
     public function facility()
     {
         return $this->belongsTo('App\Facility', 'facility')->first();
     }
+    public function facilityObj()
+    {
+        return $this->belongsTo('App\Facility', 'facility');
+    }
 
     public function urating()
     {
         return $this->hasOne('\App\Rating', 'id', 'rating');
+    }
+
+    public function trainingRecords()
+    {
+        return $this->hasMany(TrainingRecord::class, 'student_id', 'cid');
+    }
+
+    public function trainingRecordsIns()
+    {
+        return $this->hasMany(TrainingRecord::class, 'instructor_id', 'cid');
+    }
+
+    public function evaluations()
+    {
+        return $this->hasMany(OTSEval::class, 'student_id', 'cid');
+    }
+
+    public function evaluationsIns()
+    {
+        return $this->hasMany(OTSEval::class, 'instructor_id', 'cid');
     }
 
     public function getPrimaryRole()
@@ -214,6 +239,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $t->actiontext = $msg;
         $t->save();
 
+        if ($this->rating >= Helper::ratingIntFromShort("I1")) {
+            SMFHelper::createPost(7262, 82,
+                "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility,
+                "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
+        }
         // if ($this->rating >= Helper::ratingIntFromShort("I1"))
         // SMFHelper::createPost(7262, 82, "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility, "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
     }
@@ -285,10 +315,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
-        // S1-S3 within 90 check
-        $promotion = Promotions::where('cid', $this->cid)->where("to", "<=",
-            Helper::ratingIntFromShort("S3"))->where('created_at', '>=',
-            \DB::raw('DATE(NOW() - INTERVAL 90 DAY)'))->first();
+        // S1-C1 within 90 check
+        $promotion = Promotions::where('cid', $this->cid)->where([
+             ['to',         '<=', Helper::ratingIntFromShort("C1")],
+             ['to',         '>', 'from'],
+             ['created_at', '>=', \DB::raw("DATE(NOW() - INTERVAL 90 DAY)")]
+             ])->first();
         if ($promotion == null) {
             $checks['promo'] = 1;
         } else {
@@ -465,6 +497,83 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return false;
+    }
+
+    public function getTrainingActivitySparkline()
+    {
+        $vals = [];
+        for ($i = 10; $i >= 0; $i--) {
+            $vals[] = $this->trainingRecordsIns()->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, DATE_FORMAT(session_date, '%Y-%U') AS week")
+                    ->where(DB::raw("DATE_FORMAT(session_date, '%Y-%U')"), '=',
+                        Carbon::now()->subWeeks($i)->format('Y-W'))->groupBy(['week'])->orderBy('week',
+                        'ASC')->pluck('sum')->map(function ($v) {
+                        return floor($v / 3600);
+                    })->pop() ?? 0;
+        }
+
+        return implode(",", $vals);
+    }
+
+    public function checkPromotionCriteria(&$trainingRecordStatus, &$otsEvalStatus, &$examPosition, &$dateOfExam, &$evalId)
+    {
+        $trainingRecordStatus = 0;
+        $otsEvalStatus = 0;
+
+        $dateOfExam = null;
+        $examPosition = null;
+        $evalId = null;
+
+        $evals = $this->evaluations;
+        $numPass = 0;
+        $numFail = 0;
+
+        if ($evals) {
+            foreach ($evals as $eval) {
+                if ($eval->form->rating_id == $this->rating + 1) {
+                    if ($eval->result) {
+                        $dateOfExam = $eval->exam_date;
+                        $examPosition = $eval->exam_position;
+                        $evalId = $eval->id;
+                        $numPass++;
+                    } else {
+                        $numFail++;
+                    }
+                }
+            }
+            if ($numPass) {
+                $otsEvalStatus = 1;
+            } elseif ($numFail) {
+                $otsEvalStatus = 2;
+            }
+        }
+
+        switch (Helper::ratingShortFromInt($this->rating + 1)) {
+            case 'S1':
+                $pos = "GND";
+                break;
+            case 'S2':
+                $pos = "TWR";
+                break;
+            case 'S3':
+                $pos = "APP";
+                break;
+            case 'C1':
+                $pos = "CTR";
+                break;
+            default:
+                $pos = "NA";
+                break;
+        }
+        if ($this->trainingRecords()->where([
+            ['position', 'like', "%$pos"],
+            'ots_status' => 1
+        ])->exists()) {
+            $trainingRecordStatus = 1;
+        }
+
+        if ($pos == "GND") {
+            $trainingRecordStatus = $otsEvalStatus = -1;
+        }
     }
 }
 

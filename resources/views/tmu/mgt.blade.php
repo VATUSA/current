@@ -162,10 +162,10 @@
                                                 <td>
                                                     <div>
                                                         <button class="btn btn-warning edit-notice"
-                                                                data-id="{{$notice->id}}"><i class="fa fa-pencil"></i>
+                                                                data-id="{{$notice->id}}"><i class="fas fa-pencil-alt"></i>
                                                         </button>
                                                         <button class="btn btn-danger remove-notice"
-                                                                data-id="{{ $notice->id }}"><i class="fa fa-remove"></i>
+                                                                data-id="{{ $notice->id }}"><i class="fas fa-times"></i>
                                                         </button>
                                                     </div>
                                                 </td>

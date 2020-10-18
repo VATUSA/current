@@ -341,7 +341,12 @@ class HelpDeskController
                         }
                     }
                     elseif ($ticket->facility == "ZAE") {
-                        $emails[] = "vatusa3@vatusa.net";
+                        // Find Specific ZAE Member
+                        $user = Role::where('facility', 'ZHQ')
+                            ->where('role', 'LIKE', "%3")
+                            ->where('cid', $request->input("assign"));
+
+                        $emails[] = $user->email;
                     }
                     else {
                         $fac = Facility::find($ticket->facility);

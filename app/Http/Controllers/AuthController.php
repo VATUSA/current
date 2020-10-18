@@ -23,7 +23,7 @@ class AuthController extends Controller
     /**
      * Show the application welcome screen to the user.
      *
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function getLogin()
     {
@@ -38,7 +38,7 @@ class AuthController extends Controller
             //Otherwise, normal redirect to home
             $return = request()->has('agreed') ? "agreed" : env('LOGIN_ENV');
 
-            return redirect()->guest('https://login.vatusa.net/?' . $return);
+            return redirect()->guest(app()->environment("livedev") ? 'https://login.dev.vatusa.net/?' . $return : 'https://login.vatusa.net/?' . $return);
         } else {
             SMFHelper::setPermissions(Auth::user()->cid);
         }
