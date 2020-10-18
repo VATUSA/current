@@ -1,15 +1,6 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic);
-
 body {
-    font-family: 'Lato', sans-serif;
-}
-
-head {
-
-}
-
-body {
-    font-family: 'Lato', sans-serif !important;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 400;
 }
 
 @media (max-width: 767px) {
@@ -1636,4 +1627,109 @@ tr.no-hover:hover {
 #home-container div.row:not(#bulletins) {
     width: 100%;
     margin: 0 auto;
+}
+
+#pos-types li a:hover {
+    cursor: pointer;
+}
+
+.training-info td:not(:last-child):first-child {
+    font-weight: bold;
+    text-align: right;
+    border-right: 2px solid #ddd;
+}
+
+.training-info tr:last-child {
+    background-color: #f9f9f9 !important;
+}
+
+.training-info tr:last-child td {
+    border-width: 3px;
+}
+
+form > table.tr-modal-layout input, form > table.tr-modal-layout .form-control-static {
+    display: inline;
+}
+
+input.e-training-position, input.n-training-position {
+    width: 150px;
+}
+
+.training-score, .training-datetime, .training-location {
+    width: 200px;
+}
+
+.training-duration, .training-movements {
+    width: 80px;
+}
+
+.training-instructor {
+    width: 340px;
+}
+
+span[id^="training-ots-exam-"] {
+    font-size: 1em;
+}
+
+.ots-status-input-label, .ots-charts-mode-input-label {
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.swal-button.btn-success:hover {
+    background-color: #408340
+}
+
+.swal-button.btn-success {
+    -webkit-transition: all 0.1s ease;
+    -moz-transition: all 0.1s ease;
+    -o-transition: all 0.1s ease;
+    transition: all 0.1s ease;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+input[name="position"] {
+    text-transform: uppercase;
+    width: 150px;
+}
+
+.training-stat-static {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.training-stat-section-header {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.training-stat-block .panel-footer {
+    text-align: center;
+}
+
+.jqstooltip {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+#v-modify-group {
+    display: none;
+}
+
+.vctr {
+    vertical-align: middle !important;
+}
+
+.ots-exam-warning {
+    display: none;
+}
+
+span[id^="training-"], span[class^="training-"], td[id^="training-"] span {
+    cursor: default;
 }

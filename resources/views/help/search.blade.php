@@ -11,6 +11,8 @@
                     <a href="/help/ticket/search" class="btn btn-warning">Search Tickets</a>
                 </div>
             </div>
+
+            <hr>
         @endif
         <div class="panel panel-default">
             <div class="panel-heading">

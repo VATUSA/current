@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
+use App\TrainingRecord;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AJAXController
@@ -18,8 +21,8 @@ class AJAXController
         $news = [];
         foreach ($results as $result) {
             $item = [
-                'id' => $result->id_topic,
-                'date' => $result->poster_time,
+                'id'      => $result->id_topic,
+                'date'    => $result->poster_time,
                 'subject' => $result->subject
             ];
             $news[] = $item;
@@ -36,9 +39,9 @@ class AJAXController
         $events = [];
         foreach ($results as $result) {
             $item = [
-                'id' => $result->id_topic,
+                'id'    => $result->id_topic,
                 'title' => $result->title,
-                'date' => $result->eventdate
+                'date'  => $result->eventdate
             ];
             $events[] = $item;
         }
@@ -54,6 +57,7 @@ class AJAXController
             foreach ($users as $user) {
                 $json[] = ['label' => $user->cid . " - " . $user->fname . " " . $user->lname, 'value' => $user->cid];
             }
+
             return response()->json($json);
         } else {
             abort(500);
@@ -66,11 +70,11 @@ class AJAXController
 
         $ret = [];
 
-        $ret[] = [ 'text' => "!!! CHANGE ME !!!", 'value' => -1 ];
+        $ret[] = [ 'text' => "Notice: Assign Member To Save", 'value' => -1 ];
         $ret[] = [ 'text' => "Unassigned", 'value' => 0 ];
 
-        foreach($staff as $s) {
-            $ret[] = [ 'text' => $s['role'] . ": " . $s['name'], 'value' => $s['cid'] ];
+        foreach ($staff as $s) {
+            $ret[] = ['text' => $s['role'] . ": " . $s['name'], 'value' => $s['cid']];
         }
 
         echo json_encode($ret, JSON_HEX_APOS);
@@ -82,10 +86,10 @@ class AJAXController
 
         $ret = [];
 
-        $ret[] = [ 'text' => "Unassigned", 'value' => 0 ];
+        $ret[] = ['text' => "Unassigned", 'value' => 0];
 
-        foreach($staff as $s) {
-            $ret[] = [ 'text' => $s['role'] . ": " . $s['name'], 'value' => $s['cid'] ];
+        foreach ($staff as $s) {
+            $ret[] = ['text' => $s['role'] . ": " . $s['name'], 'value' => $s['cid']];
         }
 
         echo json_encode($ret, JSON_HEX_APOS);
