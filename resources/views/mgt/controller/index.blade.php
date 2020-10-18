@@ -3,14 +3,14 @@
 
 @section('scripts')
     <script>
-        if (document.location.hash)
-            $('.nav-tabs li:not(.disabled) a[href=' + document.location.hash + ']').tab('show')
+      if (document.location.hash)
+        $('.nav-tabs li:not(.disabled) a[href=' + document.location.hash + ']').tab('show')
 
-        $('.nav-tabs a').on('shown.bs.tab', function (e) {
-            history.pushState({}, '', e.target.hash);
-        })
+      $('.nav-tabs a').on('shown.bs.tab', function (e) {
+        history.pushState({}, '', e.target.hash);
+      })
 
-        $('.delete-log').click(function (e) {
+      $('.delete-log').click(function (e) {
         e.preventDefault()
 
         let a       = $(this),
@@ -274,7 +274,7 @@
                                               $('#ratingchangebtn').click(function () {
                                                 $('#ratingchangespan').html('Saving...')
                                                 $.ajax({
-                                                    url : '/mgt/controller/{{$user->cid}}/rating',
+                                                  url : '/mgt/controller/{{$user->cid}}/rating',
                                                   type: 'POST',
                                                   data: {rating: $('#ratingchange').val()}
                                                 }).success(function () {
@@ -524,7 +524,7 @@
                                     </form>
                                     <hr>
                                     <table class="table table-striped">
-                                        @foreach(\App\Actions::where('to', $u->cid)->orderby('id', 'desc')->get() as $a)
+                                        @foreach(\App\Actions::where('to', $user->cid)->orderby('id', 'desc')->get() as $a)
                                             <tr id="log-{{ $a->id }}">
                                                 <td style="width:10%"><strong>{{substr($a->created_at, 0,10)}}</strong>
                                                 </td>
@@ -541,7 +541,7 @@
                                                            href="#"
                                                            data-action="{{ secure_url('mgt/deleteActionLog/'.$a->id) }}"
                                                            class="text-danger delete-log"><i
-                                                                class="fa fa-remove"></i></a>
+                                                                class="fa fa-times"></i></a>
                                                         <i class="spinner-icon fa fa-spinner fa-spin"
                                                            style="display:none;"></i>
 
