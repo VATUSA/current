@@ -209,6 +209,8 @@
 
                                         </li>
                                         <li>{{$user->urating->short}} - {{$user->urating->long}}</li>
+                                        <li>Last promoted {{$user->lastPromotion()}}</li>
+                                        <br>
                                         <li>{{$user->facility}}
                                             - {{\App\Classes\Helper::facShtLng($user->facility)}}</li>
                                         <li>Member of {{$user->facility}} since {{ $user->facility_join }}</li>
