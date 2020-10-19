@@ -23,8 +23,10 @@
                             <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i class="fas fa-exchange-alt"></i> Transfers</a>
                             </li>
                         @endif
-                        <li role="presentation"><a href="#mem" aria-controls="mem" role="tab"
-                                                   data-toggle="tab"><i class="fas fa-users"></i> Members</a></li>
+                        <li role="presentation"><a href="#hroster" aria-controls="hroster" role="tab"
+                                                   data-toggle="tab"><i class="fas fa-users"></i> Home Roster</a></li>
+                        <li role="presentation"><a href="#vroster" aria-controls="vroster" role="tab"
+                                                   data-toggle="tab"><i class="fas fa-door-open"></i> Visiting Roster</a></li>
                         @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
                             <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}" aria-controls="training"><i class="fas fa-chart-line"></i> Training</a></li>
                         @endif
@@ -118,11 +120,11 @@
                                 </table>
                             </div>
                         @endif
-                        <div role="tabpanel" class="tab-pane" id="mem">
-                            <div id="memloading">
-                                <center><img src="/img/gears.gif"><br><br>Loading members table...</center>
+                        <div role="tabpanel" class="tab-pane" id="hroster">
+                            <div id="hrosterloading">
+                                <center><img src="/img/gears.gif"><br><br>Loading home roster...</center>
                             </div>
-                            <table class="table table-hover table-condensed tablesorter" id="memtable"
+                            <table class="table table-hover table-condensed tablesorter" id="hrostertable"
                                    style="display: none;">
                                 <thead>
                                 <tr>
@@ -134,7 +136,32 @@
                                     <td class="text-right">Options</td>
                                 </tr>
                                 </thead>
-                                <tbody id="memtablebody">
+                                <tbody id="hrostertablebody">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="vroster">
+                            <br>
+                            <div class="text-center">
+                                <button class="btn btn-success" onclick="addVisitor()"><i class="fa fa-plus"></i> Add Visitor</button>
+                            </div>
+                            <br>
+                            <div id="vrosterloading">
+                                <center><img src="/img/gears.gif"><br><br>Loading visiting roster...</center>
+                            </div>
+                            <table class="table table-hover table-condensed tablesorter" id="vrostertable"
+                                   style="display: none;">
+                                <thead>
+                                <tr>
+                                    <th>CID</th>
+                                    <th>Name</th>
+                                    <th>Rating</th>
+                                    <th>Home Facility</th>
+                                    <th>Date Added</th>
+                                    <td class="text-right">Options</td>
+                                </tr>
+                                </thead>
+                                <tbody id="vrostertablebody">
                                 </tbody>
                             </table>
                         </div>
@@ -381,7 +408,7 @@
         })
 
         $.ajax({
-          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster',
+          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/home',
           type: 'GET'
         }).success(function (data) {
           var html = ''
@@ -413,10 +440,41 @@
               @endif
                 html += '</td></tr>'
           })
-          $('#memtablebody').html(html)
-          $('#memtable').toggle()
-          $('#memloading').toggle()
-          $('#memtable').tablesorter()
+          $('#hrostertablebody').html(html)
+          $('#hrostertable').toggle()
+          $('#hrosterloading').toggle()
+          $('#hrostertable').tablesorter()
+        })
+
+        $.ajax({
+          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/visit',
+          type: 'GET'
+        }).success(function (data) {
+          var html = ''
+          $.each(data, function (i) {
+            if (data[i].cid == undefined) return
+            html += '<tr><td>' + data[i].cid + '</td>'
+            html += '<td>'
+            if (data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
+            html += data[i].lname + ', ' + data[i].fname
+            html += '</td>'
+            html += '<td data-text="' + data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(data[i].rating)) + '</span>' + data[i].rating_short
+            if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
+            html += '</td>'
+            html += '<td>' + data[i].facility + '</td>'
+            var date = new Date(data[i].facility_join)
+            html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
+            html += '<td class="text-right">'
+                html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
+              @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
+                html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
+              @endif
+                html += '</td></tr>'
+          })
+          $('#vrostertablebody').html(html)
+          $('#vrostertable').toggle()
+          $('#vrosterloading').toggle()
+          $('#vrostertable').tablesorter()
         })
       })
       @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac, false))
@@ -797,6 +855,46 @@
               data: {'reason': result}
             }).success(function () {
               location.reload(true)
+            }).error(error => {
+                waitingDialog.hide()
+                bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
+            })
+          }
+        })
+      }
+
+      function deleteVisitor (cid) {
+        bootbox.prompt('Reason for delete:', function (result) {
+          if (result === null) {
+            return
+          } else {
+            $.ajax({
+              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
+              type: 'DELETE',
+              data: {'reason': result}
+            }).success(function () {
+              location.reload(true)
+            }).error(error => {
+                waitingDialog.hide()
+                bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
+            })
+          }
+        })
+      }
+
+      function addVisitor () {
+        bootbox.prompt('Select user to add:', function (result) {
+          if (result === null || isNaN(result)) {
+            return
+          } else {
+            $.ajax({
+              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + result,
+              type: 'POST',
+            }).success(function () {
+              location.reload(true)
+            }).error(error => {
+              waitingDialog.hide()
+              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
             })
           }
         })
