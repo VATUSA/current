@@ -7,6 +7,7 @@ use DateTime;
 use DateInterval;
 use App\Actions;
 use App\Facility;
+use App\Visit;
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use Illuminate\Auth\Authenticatable;
@@ -70,6 +71,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function evaluationsIns()
     {
         return $this->hasMany(OTSEval::class, 'instructor_id', 'cid');
+    }
+
+    public function visits()
+    {
+        return $this->hasMany(Visit::class, 'cid', 'cid');
     }
 
     public function getPrimaryRole()
