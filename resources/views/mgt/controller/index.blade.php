@@ -230,10 +230,10 @@
                                                 <li>{{$visit->fac->id}} - {{$visit->fac->name}}</li>
                                             @endforeach
                                             <br>
-                                            <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
-                                            <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
-                                            <br>
                                         @endif
+                                        <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
+                                        <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
+                                        <br>
                                         <li>Needs Basic ATC Exam?
                                             @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 <a href="/mgt/controller/{{$user->cid}}/togglebasic">
