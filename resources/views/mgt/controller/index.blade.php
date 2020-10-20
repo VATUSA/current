@@ -224,9 +224,16 @@
                                             </li>
                                         @endif
                                         <br>
-                                        <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
-                                        <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
-                                        <br>
+                                        @if ($user->visits()->exists())
+                                            <li>Visiting:</li>
+                                            @foreach ($user->visits()->get() as $visit)
+                                                <li>{{$visit->fac->id}} - {{$visit->fac->name}}</li>
+                                            @endforeach
+                                            <br>
+                                            <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
+                                            <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
+                                            <br>
+                                        @endif
                                         <li>Needs Basic ATC Exam?
                                             @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 <a href="/mgt/controller/{{$user->cid}}/togglebasic">
