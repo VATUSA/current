@@ -46,7 +46,7 @@
             lookup: [],
             onSelect: (suggestion) => {
                 $('#cidsearch').val(suggestion.data);
-                $('#controllerForm').submit();
+                $('#cidsearchbtn').click();
             }
         });
         var prevVal = '';
