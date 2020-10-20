@@ -209,7 +209,7 @@
 
                                         </li>
                                         <li>{{$user->urating->short}} - {{$user->urating->long}}</li>
-                                        <li>Last promoted {{$user->lastPromotion()}}</li>
+                                        <li>Last promoted {{$user->lastPromotion()->created_at ?? 'never.'}}</li>
                                         <br>
                                         <li>{{$user->facility}}
                                             - {{\App\Classes\Helper::facShtLng($user->facility)}}</li>
