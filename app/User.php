@@ -477,7 +477,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function lastPromotion()
     {
-        return Promotions::where('cid', $this->cid)->orderBy('created_at', 'DESC')->first()->created_at;
+        return $this->hasMany(Promotions::class, 'cid', 'cid')->latest()->first();
     }
 
     public function isActive()
