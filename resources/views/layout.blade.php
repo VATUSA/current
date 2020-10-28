@@ -96,21 +96,35 @@
                             <li class="dropdown-header"><h5
                                     style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5>
                             </li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 4])->orderby('name', 'ASC')->get() as $f)
+                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
+                            @endforeach
+                            <li class="nav-divider"></li>
+                            <li class="dropdown-header"><h5
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">South Central Region</h5>
+                            </li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
+                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
+                            @endforeach
+                            <li class="nav-divider"></li>
+                            <li class="dropdown-header"><h5
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Midwestern Region</h5>
+                            </li>
+                            @foreach(\App\Facility::where(['active' => 1, 'region' => 6])->orderby('name', 'ASC')->get() as $f)
+                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
+                            @endforeach
+                            <li class="nav-divider"></li>
+                            <li class="dropdown-header"><h5
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern Region</h5>
+                            </li>
                             @foreach(\App\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southern Region</h5>
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southeastern Region</h5>
                             </li>
                             @foreach(\App\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
-                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
-                            @endforeach
-                            <li class="nav-divider"></li>
-                            <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern
-                                    Region</h5></li>
-                            @foreach(\App\Facility::where(['active' => 1, 'region' => 9])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                         </ul>
@@ -257,7 +271,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{secure_url('my/profile')}}"><i class="fas fa-id-badge"></i> Profile</a></li>
                                 @if(!Auth::user()->selectionEligible() && !Auth::user()->transferEligible())
-                                    <li><a href="/my/profile"><i class="fas fa-quesiton-circle"></i> Why can I not join a facility?</a></li>
+                                    <li><a href="/my/profile"><i class="fas fa-question-circle"></i> Why can I not join a facility?</a></li>
                                 @endif
                                 @if(Auth::user()->facility()->active || Auth::user()->facility == "ZHQ" || (Auth::user()->transferEligible() && !Auth::user()->selectionEligible()))
                                     <li><a href="{{secure_url('my/transfer')}}"><i class="fas fa-exchange-alt"></i> Transfer Request</a></li>

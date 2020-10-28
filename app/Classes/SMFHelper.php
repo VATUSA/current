@@ -79,7 +79,7 @@ class SMFHelper
         if (RoleHelper::isVATUSAStaff($cid, true, true)) {
             $grp = static::findGroup("VATUSA Staff");
             $role = "";
-            if (in_array($user->getPrimaryRole(), ['1', '2', '6'])) {
+            if (in_array($user->getPrimaryRole(), [1, 2, 12])) {
                 $role = "Administrator";
             }
         }

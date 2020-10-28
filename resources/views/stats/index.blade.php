@@ -28,7 +28,7 @@
                             <table border="0" style="width:100%;" class="table table-responsive">
                                 <tr>
                                     <td colspan="8">Total Active Members</td>
-                                    <td>{{$controllersCount['ZAE'] + $regions[7] + $regions[8] + $regions[9]}}</td>
+                                    <td>{{$controllersCount['ZAE'] + $regions[4] + $regions[5] + $regions[6] + $regions[7]+ + $regions[8]}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="8">Academy Assigned</td>
@@ -36,13 +36,13 @@
                                 </tr>
                                 <tr>
                                     <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Western
-                                        Region (USA7)
+                                        Region (USA4)
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us7==null)?"Vacant":$us7->user()->first()->fullname()}}</td>
-                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[7]}}</td>
+                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us4==null)?"Vacant":$us4->user()->first()->fullname()}}</td>
+                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[4]}}</td>
                                 </tr>
                                 <tr style="background: #cccccc">
                                     <td>FacID</td>
@@ -69,14 +69,14 @@
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">
-                                        Southern Region (USA8)
+                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">South Central
+                                        Region (USA5)
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us8==null)?"Vacant":$us8->user()->first()->fullname()}}</td>
-                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[8]}}</td>
+                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us5==null)?"Vacant":$us5->user()->first()->fullname()}}</td>
+                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[5]}}</td>
                                 </tr>
                                 <tr style="background: #cccccc">
                                     <td>FacID</td>
@@ -89,7 +89,7 @@
                                     <td>Transfers</td>
                                     <td>Total</td>
                                 </tr>
-                                @foreach ($south as $fac)
+                                @foreach ($southcentral as $fac)
                                     <tr>
                                         <td>{{$fac->id}}</td>
                                         <td>{{$atms[$fac->id]}}</td>
@@ -103,14 +103,46 @@
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">
-                                        Northeastern Region (USA9)
+                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Midwestern Region (USA6)
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us9==null)?"Vacant":$us9->user()->first()->fullname()}}</td>
-                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[9]}}</td>
+                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us6==null)?"Vacant":$us6->user()->first()->fullname()}}</td>
+                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[6]}}</td>
+                                </tr>
+                                <tr style="background: #cccccc">
+                                    <td width="14%">FacID</td>
+                                    <td width="13%">ATM</td>
+                                    <td width="13%">DATM</td>
+                                    <td width="13%">TA</td>
+                                    <td width="13%">EC</td>
+                                    <td width="13%">FE</td>
+                                    <td width="13%">WM</td>
+                                    <td width="2%">Transfers</td>
+                                    <td width="3%">Total</td>
+                                </tr>
+                                @foreach ($midwest as $fac)
+                                    <tr>
+                                        <td>{{$fac->id}}</td>
+                                        <td>{{$atms[$fac->id]}}</td>
+                                        <td>{{$datms[$fac->id]}}</td>
+                                        <td>{{$tas[$fac->id]}}</td>
+                                        <td>{{$ecs[$fac->id]}}</td>
+                                        <td>{{$fes[$fac->id]}}</td>
+                                        <td>{{$wms[$fac->id]}}</td>
+                                        <td>{{$transfersPending[$fac->id]}}</td>
+                                        <td>{{$controllersCount[$fac->id]}}</td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Northeastern Region (USA7)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"
+                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us7==null)?"Vacant":$us7->user()->first()->fullname()}}</td>
+                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[7]}}</td>
                                 </tr>
                                 <tr style="background: #cccccc">
                                     <td width="14%">FacID</td>
@@ -136,6 +168,40 @@
                                         <td>{{$controllersCount[$fac->id]}}</td>
                                     </tr>
                                 @endforeach
+                                <tr>
+                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Southeastern Region (USA8)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8"
+                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us8==null)?"Vacant":$us8->user()->first()->fullname()}}</td>
+                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[8]}}</td>
+                                </tr>
+                                <tr style="background: #cccccc">
+                                    <td width="14%">FacID</td>
+                                    <td width="13%">ATM</td>
+                                    <td width="13%">DATM</td>
+                                    <td width="13%">TA</td>
+                                    <td width="13%">EC</td>
+                                    <td width="13%">FE</td>
+                                    <td width="13%">WM</td>
+                                    <td width="2%">Transfers</td>
+                                    <td width="3%">Total</td>
+                                </tr>
+                                @foreach ($southeast as $fac)
+                                    <tr>
+                                        <td>{{$fac->id}}</td>
+                                        <td>{{$atms[$fac->id]}}</td>
+                                        <td>{{$datms[$fac->id]}}</td>
+                                        <td>{{$tas[$fac->id]}}</td>
+                                        <td>{{$ecs[$fac->id]}}</td>
+                                        <td>{{$fes[$fac->id]}}</td>
+                                        <td>{{$wms[$fac->id]}}</td>
+                                        <td>{{$transfersPending[$fac->id]}}</td>
+                                        <td>{{$controllersCount[$fac->id]}}</td>
+                                    </tr>
+                                @endforeach
+
                             </table>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="details"><br>
