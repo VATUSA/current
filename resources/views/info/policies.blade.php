@@ -42,10 +42,9 @@
                         <td><a href="/docs/GO-61720.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
-                        <td>Chain of Command Flow Chart</td>
-                        <td>August 2020</td>
-                        <!--<td><a href="/docs/orgchart-new.png" target="_blank">view</a></td>-->
-                        <td><em rel="tooltip" title="Policy is a Work In Progress">WIP</em></td>
+                        <td>VATUSA Organizational Chart</td>
+                        <td>11/01/2020</td>
+                        <td><a href="/docs/orgchart.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr class="no-hover">
                         <td colspan="3"><strong>Training Administration</strong></td>
