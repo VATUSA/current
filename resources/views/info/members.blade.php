@@ -18,6 +18,12 @@
                     </ul>
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="staff">
+                            <div class="text-center">
+                                <a href="/docs/orgchart.pdf" target="_blank">
+                                    <button class="btn btn-success" style="margin: 10px 0;"><i
+                                            class="fas fa-sitemap"></i> VATUSA Organizational Chart
+                                    </button>
+                                </a></div>
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
