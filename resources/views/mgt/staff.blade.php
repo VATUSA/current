@@ -29,14 +29,6 @@
                                 :"<button onClick=\"assignStaff('US1')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         <tr>
-                            <td>VATUSA12</td>
-                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US12")}}</td>
-                            <td>{{\App\Classes\RoleHelper::roleTitle("US12")}}</td>
-                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US12")!="Vacant")?
-                                "<button onClick=\"deleteStaff('US12')\" class=\"btn btn-danger\">Vacate</button>"
-                                :"<button onClick=\"assignStaff('US12')\" class=\"btn btn-success\">Assign</button>")!!}</td>
-                        </tr>
-                        <tr>
                             <td>VATUSA2</td>
                             <td>{{\App\Classes\RoleHelper::getNameFromRole("US2")}}</td>
                             <td>{{\App\Classes\RoleHelper::roleTitle("US2")}}</td>
@@ -53,14 +45,6 @@
                                 :"<button onClick=\"assignStaff('US3')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         <tr>
-                            <td>VATUSA13</td>
-                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US13")}}</td>
-                            <td>{{\App\Classes\RoleHelper::roleTitle("US13")}}</td>
-                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US13")!="Vacant")?
-                                "<button onClick=\"deleteStaff('US13')\" class=\"btn btn-danger\">Vacate</button>"
-                                :"<button onClick=\"assignStaff('US13')\" class=\"btn btn-success\">Assign</button>")!!}</td>
-                        </tr>
-                        <tr>
                             <td>VATUSA4</td>
                             <td>{{\App\Classes\RoleHelper::getNameFromRole("US4")}}</td>
                             <td>{{\App\Classes\RoleHelper::roleTitle("US4")}}</td>
@@ -69,36 +53,12 @@
                                 :"<button onClick=\"assignStaff('US4')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         <tr>
-                            <td>VATUSA14</td>
-                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US14")}}</td>
-                            <td>{{\App\Classes\RoleHelper::roleTitle("US14")}}</td>
-                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US14")!="Vacant")?
-                                "<button onClick=\"deleteStaff('US14')\" class=\"btn btn-danger\">Vacate</button>"
-                                :"<button onClick=\"assignStaff('US14')\" class=\"btn btn-success\">Assign</button>")!!}</td>
-                        </tr>
-                        <tr>
                             <td>VATUSA5</td>
                             <td>{{\App\Classes\RoleHelper::getNameFromRole("US5")}}</td>
                             <td>{{\App\Classes\RoleHelper::roleTitle("US5")}}</td>
                             <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US5")!="Vacant")?
                                 "<button onClick=\"deleteStaff('US5')\" class=\"btn btn-danger\">Vacate</button>"
                                 :"<button onClick=\"assignStaff('US5')\" class=\"btn btn-success\">Assign</button>")!!}</td>
-                        </tr>
-                        <tr>
-                            <td>VATUSA15</td>
-                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US15")}}</td>
-                            <td>{{\App\Classes\RoleHelper::roleTitle("US15")}}</td>
-                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US15")!="Vacant")?
-                                "<button onClick=\"deleteStaff('US15')\" class=\"btn btn-danger\">Vacate</button>"
-                                :"<button onClick=\"assignStaff('US15')\" class=\"btn btn-success\">Assign</button>")!!}</td>
-                        </tr>
-                        <tr>
-                            <td>VATUSA25</td>
-                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US25")}}</td>
-                            <td>{{\App\Classes\RoleHelper::roleTitle("US25")}}</td>
-                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US25")!="Vacant")?
-                                "<button onClick=\"deleteStaff('US25')\" class=\"btn btn-danger\">Vacate</button>"
-                                :"<button onClick=\"assignStaff('US25')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         <tr>
                             <td>VATUSA6</td>
@@ -147,6 +107,30 @@
                             <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US11")!="Vacant")?
                                 "<button onClick=\"deleteStaff('US11')\" class=\"btn btn-danger\">Vacate</button>"
                                 :"<button onClick=\"assignStaff('US11')\" class=\"btn btn-success\">Assign</button>")!!}</td>
+                        </tr>
+                        <tr>
+                            <td>VATUSA12</td>
+                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US12")}}</td>
+                            <td>{{\App\Classes\RoleHelper::roleTitle("US12")}}</td>
+                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US12")!="Vacant")?
+                                "<button onClick=\"deleteStaff('US12')\" class=\"btn btn-danger\">Vacate</button>"
+                                :"<button onClick=\"assignStaff('US12')\" class=\"btn btn-success\">Assign</button>")!!}</td>
+                        </tr>
+                        <tr>
+                            <td>VATUSA13</td>
+                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US13")}}</td>
+                            <td>{{\App\Classes\RoleHelper::roleTitle("US13")}}</td>
+                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US13")!="Vacant")?
+                                "<button onClick=\"deleteStaff('US13')\" class=\"btn btn-danger\">Vacate</button>"
+                                :"<button onClick=\"assignStaff('US13')\" class=\"btn btn-success\">Assign</button>")!!}</td>
+                        </tr>
+                        <tr>
+                            <td>VATUSA14</td>
+                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US14")}}</td>
+                            <td>{{\App\Classes\RoleHelper::roleTitle("US14")}}</td>
+                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US14")!="Vacant")?
+                                "<button onClick=\"deleteStaff('US14')\" class=\"btn btn-danger\">Vacate</button>"
+                                :"<button onClick=\"assignStaff('US14')\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -123,14 +123,18 @@ class StatsController
     public function getIndex()
     {
         $zae = Facility::where('id', 'ZAE')->get();
-        $west = Facility::where('active', 1)->where('region', 7)->orderBy('name')->get();
-        $south = Facility::where('active', 1)->where('region', 8)->orderBy('name')->get();
-        $northeast = Facility::where('active', 1)->where('region', 9)->orderBy('name')->get();
+        $west = Facility::where('active', 1)->where('region', 4)->orderBy('name')->get();
+        $southcentral = Facility::where('active', 1)->where('region', 5)->orderBy('name')->get();
+        $midwest = Facility::where('active', 1)->where('region', 6)->orderBy('name')->get();
+        $northeast = Facility::where('active', 1)->where('region', 7)->orderBy('name')->get();
+        $southeast = Facility::where('active', 1)->where('region', 8)->orderBy('name')->get();
         $facilities = Facility::where('active', 1)->orWhere('id', 'ZAE')->get();
+        $us4 = Role::where('facility', 'ZHQ')->where('role', 'US4')->first();
+        $us5 = Role::where('facility', 'ZHQ')->where('role', 'US5')->first();
+        $us6 = Role::where('facility', 'ZHQ')->where('role', 'US6')->first();
         $us7 = Role::where('facility', 'ZHQ')->where('role', 'US7')->first();
         $us8 = Role::where('facility', 'ZHQ')->where('role', 'US8')->first();
-        $us9 = Role::where('facility', 'ZHQ')->where('role', 'US9')->first();
-        $regions[0] = $regions[8] = $regions[7] = $regions[9] = 0;
+        $regions[0] = $regions[4] = $regions[5] = $regions[6] = $regions[7] = $regions[8] = 0;
         foreach ($facilities as $facility) {
             $transfersPending[$facility->id] = Transfers::where('to', $facility->id)->where('status', 0)->count();
             $controllersCount[$facility->id] = User::where('facility', $facility->id)->count();
@@ -166,24 +170,11 @@ class StatsController
                 $wms[$facility->id] = $facility->wm()->fullname();
             }
         }
-
-        return view('stats.index', [
-            'zae' => $zae,
-            'west' => $west,
-            'south' => $south,
-            'northeast' => $northeast,
-            'us7' => $us7,
-            'us8' => $us8,
-            'us9' => $us9,
-            'transfersPending' => $transfersPending,
-            'controllersCount' => $controllersCount,
-            'atms' => $atms,
-            'datms' => $datms,
-            'tas' => $tas,
-            'ecs' => $ecs,
-            'fes' => $fes,
-            'wms' => $wms,
-            'regions' => $regions
-        ]);
+        return view('stats.index', compact('zae',
+            'west', 'southcentral', 'midwest', 'northeast', 'southeast',
+            'us4', 'us5','us6','us7','us8',
+            'transfersPending','controllersCount',
+            'atms','datms','tas','ecs','fes','wms',
+            'regions'));
     }
 }

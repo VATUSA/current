@@ -136,7 +136,7 @@
                         </div>
                             @if($canAddTR)
                                 <div class="text-center">
-                                    <button class="btn btn-success" id="add-new-record"><span
+                                    <button class="btn btn-success add-new-record"><span
                                             class="glyphicon glyphicon-plus"></span> Add New
                                         Record
                                     </button>
@@ -230,7 +230,7 @@
                             </div>
                             @if($canAddTR)
                                 <div class="text-center">
-                                    <button class="btn btn-success" id="add-new-record"><span
+                                    <button class="btn btn-success add-new-record"><span
                                             class="glyphicon glyphicon-plus"></span> Add New
                                         Record
                                     </button>
