@@ -43,6 +43,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->belongsTo('App\Facility', 'facility')->first();
     }
+
     public function facilityObj()
     {
         return $this->belongsTo('App\Facility', 'facility');
@@ -99,32 +100,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return "WM";
         }
 
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US1")) {
-            return "1";
-        }
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US2")) {
-            return "2";
-        }
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US3")) {
-            return "3";
-        }
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US4")) {
-            return "4";
-        }
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US5")) {
-            return "5";
-        }
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US6")) {
-            return "6";
-        }
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US7")) {
-            return "7";
-        }
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US8")) {
-            return "8";
-        }
-        if (RoleHelper::hasRole($this->cid, "ZHQ", "US9")) {
-            return "9";
+        for ($i = 1; $i <= 14; $i++) {
+            if (RoleHelper::hasRole($this->cid, "ZHQ", "US$i")) {
+                return $i;
+            }
         }
 
         return false;
@@ -323,10 +302,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         // S1-C1 within 90 check
         $promotion = Promotions::where('cid', $this->cid)->where([
-             ['to',         '<=', Helper::ratingIntFromShort("C1")],
-             ['to',         '>', 'from'],
-             ['created_at', '>=', \DB::raw("DATE(NOW() - INTERVAL 90 DAY)")]
-             ])->first();
+            ['to', '<=', Helper::ratingIntFromShort("C1")],
+            ['to', '>', 'from'],
+            ['created_at', '>=', \DB::raw("DATE(NOW() - INTERVAL 90 DAY)")]
+        ])->first();
         if ($promotion == null) {
             $checks['promo'] = 1;
         } else {
@@ -520,8 +499,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return implode(",", $vals);
     }
 
-    public function checkPromotionCriteria(&$trainingRecordStatus, &$otsEvalStatus, &$examPosition, &$dateOfExam, &$evalId)
-    {
+    public function checkPromotionCriteria(
+        &$trainingRecordStatus,
+        &$otsEvalStatus,
+        &$examPosition,
+        &$dateOfExam,
+        &$evalId
+    ) {
         $trainingRecordStatus = 0;
         $otsEvalStatus = 0;
 

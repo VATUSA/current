@@ -584,7 +584,7 @@ $(function () {
     }
   })
 
-  $('#add-new-record').click(function () {
+  $('.add-new-record').click(function () {
     showTrainingRecordModal($(this))
   })
 })

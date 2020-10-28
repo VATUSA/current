@@ -195,7 +195,7 @@
                                                     <i class="fas fa-check"></i> Pass
                                                 </label>
                                                 <label class="btn btn-default ots-status-input-label">
-                                                    <input type="radio" name="ots_status" id="ots-result-fail" value="0"
+                                                    <input type="radio" name="ots_result" id="ots-result-fail" value="0"
                                                            class="ots-status-input" autocomplete="off"><i
                                                         class="fas fa-times"></i> Fail
                                                 </label>
