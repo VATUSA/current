@@ -3,6 +3,7 @@
 use App\Actions;
 use App\ChecklistData;
 use App\Checklists;
+use App\Classes\cPanelHelper;
 use App\Classes\Helper;
 use App\Classes\PromoHelper;
 use App\Classes\SMFHelper;
@@ -83,7 +84,8 @@ class MgtController extends Controller
             }
             $trainingRecords = $user->facility == Auth::user()->facility || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
                 $trainingfac)->get() : [];
-            $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac) && $user->cid !== Auth::user()->cid;
+            $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
+                    $trainingfac) && $user->cid !== Auth::user()->cid;
 
             //Get INS at ARTCC
             $ins = ['ins' => [], 'mtr' => []];
@@ -371,6 +373,13 @@ class MgtController extends Controller
             $log->log = "Removed from role '" . RoleHelper::roleTitle($role) . "' by " . Auth::user()->fullname();
             $log->save();
             $r->delete();
+
+            //Delete Email
+            EmailHelper::setForward('vat' . str_replace('us', 'usa', $r) . '@vatusa.net', 'vatusa2@vatusa.net');
+
+            /*foreach($previous as $email) {
+                EmailHelper::deleteEmail($email);
+            }*/
             SMFHelper::setPermissions($log->to);
         }
     }
@@ -398,6 +407,20 @@ class MgtController extends Controller
         $nrole->facility = "ZHQ";
         $nrole->created_at = \Carbon\Carbon::now();
         $nrole->save();
+
+        //Add Email
+        /*
+        $previous = EmailHelper::forwardDestination('vat' . str_replace('us', 'usa', $role).'@vatusa.net');
+        
+        foreach($previous as $email) {
+            EmailHelper::deleteEmail($email);
+        }
+        */
+        $user = User::find($cid);
+        $email = strtolower(substr($user->fname, 0, 1) . "." . $user->lname) . "@vatusa.net";
+        EmailHelper::addEmail($email, env('APP_KEY'));
+        EmailHelper::setForward('vat' . str_replace('us', 'usa', $role) . '@vatusa.net', $email);
+
 
         $log = new Actions();
         $log->to = $cid;
