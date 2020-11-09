@@ -56,17 +56,28 @@ class MyController
 
     public function getAssignBasic()
     {
-        if (Auth::user()->flag_needbasic) {
-            if (!ExamHelper::isAssigned(Auth::user()->cid, BASIC_EXAM, true)) {
-                ExamHelper::assign(Auth::user()->cid, BASIC_EXAM, 0, 14);
 
-                return redirect('/exam/0')->with('success', "Basic exam assigned");
-            } else {
-                return redirect('/exam/0')->with('error', "The exam is already assigned or waiting for reassignment");
-            }
+        $basic_exam = 7;
+
+        if (ExamHelper::hasResults(Auth::user()->cid, $basic_exam)) {
+            User::find(Auth::user()->cid)->toggleBasic();
+
+            return redirect('/my/profile')->with('error', "The exam has been already assigned and completed.");
         } else {
-            return redirect('/my/profile')->with('error', "You are not eligible for the Basic ATC Exam");
+            if (Auth::user()->flag_needbasic) {
+                if (!ExamHelper::isAssigned(Auth::user()->cid, $basic_exam, true)) {
+                    ExamHelper::assign(Auth::user()->cid, $basic_exam, 0, 14);
+    
+                    return redirect('/exam/0')->with('success', "Basic exam assigned");
+                } else {
+                    return redirect('/exam/0')->with('error', "The exam is already assigned or waiting for reassignment");
+                }
+            } else {
+                return redirect('/my/profile')->with('error', "You are not eligible for the Basic ATC Exam");
+            }
         }
+
+
     }
 
     public function getSelect()

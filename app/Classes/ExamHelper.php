@@ -5,12 +5,11 @@ use App\ExamAssignment;
 use App\ExamQuestions;
 use App\Exam;
 use App\Actions;
+use App\ExamResults;
 use App\TrainingBlock;
 use DB;
 use DateTime;
 use Auth;
-
-define("BASIC_EXAM", 7);
 
 class ExamHelper
 {
@@ -30,7 +29,7 @@ class ExamHelper
         if ($incl_reassign)
             $ras = DB::table("exam_reassignments")->where("exam_id", $exam)->where("cid", $cid)->count();
 
-        return (($as >= 1) || ($ras >= 1)) ? true : false;
+        return (($as > 0) || ($ras > 0)) ? true : false;
     }
 
     /**
@@ -152,5 +151,25 @@ class ExamHelper
         }
 
         return true;
+    }
+
+    /**
+     * Check if exam has results and is passed.
+     *
+     * @param $cid
+     * @param $exam
+     * @return bool
+     */
+    public static function hasResults($cid, $exam)
+    {
+        $exists = 0;
+
+        $exists = DB::table("exam_results")->where("exam_id", $exam)->where("cid", $cid)->where('passed', 1)->count();
+
+        if ($exists > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
