@@ -127,6 +127,62 @@
           $('#ratingchange-warning').show()
         else $('#ratingchange-warning').hide()
       })
+
+      $('#toggleMentor').click(function() {
+
+        let url = '{{ secure_url("/mgt/controller/$user->cid/mentor") }}';
+
+        swal({
+            title: 'Toggle Mentor Status',
+            text: 'Are you sure you want to toggle mentor status for {{$user->fname}} {{$user->lname}}?',
+            icon: 'warning',
+            buttons: {
+                cancel: {
+                    text: 'No, cancel',
+                    visible: true
+                },
+                confirm: {
+                    text: 'Yes, toggle',
+                    closeModal: false
+                }
+            }
+
+        }).then(result => {
+            if (result) {
+                window.location.replace(url);
+            }
+        });
+
+      });
+
+      $('#toggleBasic').click(function() {
+
+        let url = '{{ secure_url("/mgt/controller/$user->cid/togglebasic") }}';
+
+        swal({
+            title: 'Toggle Basic ATC Exam',
+            text: 'Are you sure you want to toggle the "Basic ATC Exam" flag for {{$user->fname}} {{$user->lname}}?',
+            icon: 'warning',
+            buttons: {
+                cancel: {
+                    text: 'No, cancel',
+                    visible: true
+                },
+                confirm: {
+                    text: 'Yes, toggle',
+                    closeModal: false
+                }
+            }
+
+        }).then(result => {
+            if (result) {
+                window.location.replace(url);
+            }
+        });
+
+      });
+
+
     </script>
 @endsection
 
@@ -215,7 +271,8 @@
                                         @if(!str_contains($user->urating->long, "Instructor"))
                                             <li>Mentor?
                                                 @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $user->facility))
-                                                    <a href="/mgt/controller/{{$user->cid}}/mentor">{{(\App\Classes\RoleHelper::isMentor($user->cid))?"Yes":"No"}}</a>
+                                                    <span id="toggleMentor"><i
+                                                        class="fa {{((\App\Classes\Rolehelper::isMentor($user->cid)=='Yes')?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
                                                 @else
                                                     {{(\App\Classes\RoleHelper::isMentor($user->cid))?"Yes":"No"}}
                                                 @endif
@@ -226,17 +283,23 @@
                                         <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
                                         <li>Needs Basic ATC Exam?
+
                                             @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                                <a href="/mgt/controller/{{$user->cid}}/togglebasic">
-                                                    @endif
+
+                                            <span id="toggleBasic"><i
+                                                        class="fa {{(($user->flag_needbasic==true)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
+
+                                            @endif
+
+                                            @if (!(\App\CLasses\RoleHelper::isVATUSAStaff()))
                                                     @if ($user->flag_needbasic)
                                                         Yes
                                                     @else
                                                         No
                                                     @endif
-                                                    @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 </a>
                                             @endif
+
                                         </li>
                                         <br>
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
