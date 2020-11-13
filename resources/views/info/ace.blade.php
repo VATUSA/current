@@ -10,7 +10,7 @@
             </div>
             <div class="panel-body">
                 <strong>What is the ACE Team?</strong>
-                <p>The VATUSA Advanced Controller for Events (ACE) Team is a group of highly skilled advanced controllers who have volunteered to make themselves available for assisting USA Facilities with event staffing. Each member represents the best of VATUSA controlling ability and are exceptional controllers. Facilities in need of the ACE Team should contact VATUSA5 to schedule the team for an event.</p>
+                <p>The VATUSA Advanced Controller for Events (ACE) Team is a group of highly skilled advanced controllers who have volunteered to make themselves available for assisting USA Facilities with event staffing. Each member represents the best of VATUSA controlling ability and are exceptional controllers. Facilities in need of the ACE Team should contact the VATUSA Command Center Manager (VATUSA9) to schedule the team for an event.</p>
                 <hr>
                 <table class="table table-hover">
                     <thead>
