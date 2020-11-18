@@ -34,8 +34,8 @@
                     <form action="/mgt/solo" id="add-solo-form">
                         <input type="hidden" name="_token" value="{{csrf_token()}}">
                         <tr>
-                            <td colspan="2"><input type="text" name="cid" placeholder="CID" class="form-control"
-                                                   style="width:110px;"></td>
+                            <td colspan="2"><input type="text" name="cid" id="cidsearch" placeholder="CID or Last Name" class="form-control"
+                                                   style="width:200px;"></td>
                             <td><input type="text" name="position" placeholder="Position" class="form-control"
                                        style="width:150px"></td>
                             <td><input type="date" name="expDate" placeholder="Expiration (YYYY-MM-DD)"
@@ -83,6 +83,31 @@
               swal('Error!', 'Unable to add solo endorsement. ' + result.responseJSON.msg, 'error')
             })
         })
+
+        $('#cidsearch').devbridgeAutocomplete({
+          lookup: [],
+          onSelect: (suggestion) => {
+              $('#cidsearch').val(suggestion.data);
+          }
+      });
+      var prevVal = '';
+      $('#cidsearch').on('change keydown keyup paste', function() {
+          let newVal = $(this).val();
+          if (newVal.length === 4 && newVal !== prevVal) {
+              let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
+              prevVal = newVal;
+              $.get($.apiUrl() + url + newVal)
+              .success((data) => {
+                  $('#cidsearch').devbridgeAutocomplete().setOptions({
+                      lookup: $.map(data, (item) => {
+                          return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
+                      })
+                  });
+                  $('#cidsearch').focus();
+              });
+          }
+      });
+
       })
     </script>
 @endsection

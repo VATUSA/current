@@ -143,7 +143,7 @@
                         <div role="tabpanel" class="tab-pane" id="vroster">
                             <br>
                             <div class="text-center">
-                                <button class="btn btn-success" onclick="addVisitor()"><i class="fa fa-plus"></i> Add Visitor</button>
+                                <button class="btn btn-success" data-toggle="modal" data-target="#addVisitorModal"><i class="fa fa-plus"></i> Add Visitor</button>
                             </div>
                             <br>
                             <div id="vrosterloading">
@@ -391,6 +391,35 @@
             </div>
         </div>
     </div>
+
+    <!-- Add Visitor Modal -->
+    <div class="modal fade" id="addVisitorModal" tabindex="-1" role="dialog" aria-labelledby="addVisitorModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addVisitorModalTitle">Add Visitor</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <label for="cid">CID or Last Name:</label>
+                    <input type="text" name="cid" class="form-control" id="cidsearch">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="addButton" class="btn btn-sm btn-success">Add</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>    
+
     <script>
       $(document).ready(function () {
         $.post('{{ secure_url("/mgt/ajax/staff/$fac") }}', function (data) {
@@ -882,23 +911,45 @@
         })
       }
 
-      function addVisitor () {
-        bootbox.prompt('Select user to add:', function (result) {
-          if (result === null || isNaN(result)) {
-            return
-          } else {
-            $.ajax({
-              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + result,
-              type: 'POST',
-            }).success(function () {
-              location.reload(true)
-            }).error(error => {
-              waitingDialog.hide()
-              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
-            })
+      $('#addButton').click(function () {
+          // Setting Values
+          var cid = $('#cidsearch').val();
+
+          $.ajax({
+              url: $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
+              type: "POST",
+          }).success(function(res) { 
+              location.reload(true);
+          }).error(function() { 
+              alert("Error occurred");
+          });
+      });
+
+      $('#cidsearch').devbridgeAutocomplete({
+          lookup: [],
+          onSelect: (suggestion) => {
+              $('#cidsearch').val(suggestion.data);
           }
-        })
-      }
+      });
+
+      var prevVal = '';
+
+      $('#cidsearch').on('change keydown keyup paste', function() {
+          let newVal = $(this).val();
+          if (newVal.length === 4 && newVal !== prevVal) {
+              let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
+              prevVal = newVal;
+              $.get($.apiUrl() + url + newVal)
+              .success((data) => {
+                  $('#cidsearch').devbridgeAutocomplete().setOptions({
+                      lookup: $.map(data, (item) => {
+                          return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
+                      })
+                  });
+                  $('#cidsearch').focus();
+              });
+          }
+      });
 
       function posDel (val) {
         var val_lng
