@@ -12,9 +12,9 @@
                 <form class="form-horizontal" action="{{secure_url("/mgt/err")}}" method="POST">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">CID</label>
+                        <label class="col-sm-2 control-label">CID or Last Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="cid" value="{{$cid}}" placeholder="CID">
+                            <input type="text" class="form-control" name="cid" value="{{ $cid }}" id="cidsearch">
                         </div>
                     </div>
                     <div class="form-group">
@@ -42,4 +42,32 @@
             </div>
         </div>
     </div>
+
+    <script type="text/javascript">
+        $('#cidsearch').devbridgeAutocomplete({
+            lookup: [],
+            onSelect: (suggestion) => {
+                $('#cidsearch').val(suggestion.data);
+            }
+        });
+
+        var prevVal = '';
+
+        $('#cidsearch').on('change keydown keyup paste', function() {
+            let newVal = $(this).val();
+            if (newVal.length === 4 && newVal !== prevVal) {
+                let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
+                prevVal = newVal;
+                $.get($.apiUrl() + url + newVal)
+                .success((data) => {
+                    $('#cidsearch').devbridgeAutocomplete().setOptions({
+                        lookup: $.map(data, (item) => {
+                            return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
+                        })
+                    });
+                    $('#cidsearch').focus();
+                });
+            }
+        });
+    </script>
 @stop

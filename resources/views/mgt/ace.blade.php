@@ -26,8 +26,10 @@
                                     </div>
                                 @endif
                             @endif
-                            <label for="cid">Add Controller:</label> <input type="text" name="cid"
-                                                                            class="form-control">
+
+                            <label for="cid">Add Controller:</label> 
+                            <input type="text" name="cid" id="cidsearch" class="form-control" placeholder="CID or Last Name">
+
                             <button type="submit" class="btn btn-info">Add</button>
                         </form>
                         <table class="table table-striped">
@@ -53,5 +55,29 @@
           if (result === true) window.location = '/mgt/ace/delete/' + cid
         })
       }
+
+      $('#cidsearch').devbridgeAutocomplete({
+          lookup: [],
+          onSelect: (suggestion) => {
+              $('#cidsearch').val(suggestion.data);
+          }
+      });
+      var prevVal = '';
+      $('#cidsearch').on('change keydown keyup paste', function() {
+          let newVal = $(this).val();
+          if (newVal.length === 4 && newVal !== prevVal) {
+              let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
+              prevVal = newVal;
+              $.get($.apiUrl() + url + newVal)
+              .success((data) => {
+                  $('#cidsearch').devbridgeAutocomplete().setOptions({
+                      lookup: $.map(data, (item) => {
+                          return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
+                      })
+                  });
+                  $('#cidsearch').focus();
+              });
+          }
+      });
     </script>
 @stop
