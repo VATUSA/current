@@ -18,35 +18,43 @@
                 <div>
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#dash" aria-controls="dash" role="tab"
-                                                                  data-toggle="tab"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                                                  data-toggle="tab"><i
+                                    class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i class="fas fa-exchange-alt"></i> Transfers</a>
+                            <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i
+                                        class="fas fa-exchange-alt"></i> Transfers</a>
                             </li>
                         @endif
                         <li role="presentation"><a href="#mem" aria-controls="mem" role="tab"
                                                    data-toggle="tab"><i class="fas fa-users"></i> Members</a></li>
                         @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
-                            <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}" aria-controls="training"><i class="fas fa-chart-line"></i> Training</a></li>
+                            <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}"
+                                                       aria-controls="training"><i class="fas fa-chart-line"></i>
+                                    Training</a></li>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#uls" aria-controls="uls" role="tab" data-toggle="tab"><i class="fas fa-server"></i> Tech
+                            <li role="presentation"><a href="#uls" aria-controls="uls" role="tab" data-toggle="tab"><i
+                                        class="fas fa-server"></i> Tech
                                     Conf</a>
                             </li>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#email" aria-controls="email" role="tab" data-toggle="tab"><i class="fas fa-envelope"></i> Email
+                            <li role="presentation"><a href="#email" aria-controls="email" role="tab" data-toggle="tab"><i
+                                        class="fas fa-envelope"></i> Email
                                     Conf</a>
                             </li>
                             @if($facility->hosted_email_domain != "")
                                 <li role="presentation"><a href="#hosted" aria-controls="hosted" role="tab"
-                                                           data-toggle="tab"><i class="fas fa-mail-bulk"></i> Hosted Email
+                                                           data-toggle="tab"><i class="fas fa-mail-bulk"></i> Hosted
+                                        Email
                                         Conf</a>
                                 </li>
                             @endif
                         @endif
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <li role="presentation"><a href="#emailtemplates" aria-controls="emailtemplates" role="tab"
-                                                       data-toggle="tab"><i class="fas fa-envelope-open-text"></i> Email Templates</a></li>
+                                                       data-toggle="tab"><i class="fas fa-envelope-open-text"></i> Email
+                                    Templates</a></li>
                     @endif
                     <!--<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>-->
                     </ul>
@@ -96,7 +104,7 @@
                                             <td>{{$user->fname}} {{$user->lname}}</td>
                                             <td>{{$user->urating->short}}</td>
                                             @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                                                <td><a href="/mgt/controller/{{$t->cid}}"><i
+                                                <td><a href="/mgt/controller/{{$t->cid}}" target="_blank"><i
                                                             class="fa fa-search"></i></a> &nbsp; <a href="#"
                                                                                                     onClick="appvTrans({{$t->id}})"><i
                                                             class="fa fa-check"></i></a> &nbsp; <a href="#"
@@ -363,6 +371,7 @@
             </div>
         </div>
     </div>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
       $(document).ready(function () {
         $.post('{{ secure_url("/mgt/ajax/staff/$fac") }}', function (data) {
@@ -757,44 +766,84 @@
       }
 
       function appvTrans (id) {
-        bootbox.confirm('Confirm approval?', function (result) {
-          if (result) {
-            $.post('{{ secure_url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
-              bootbox.alert(data)
-              window.refresh()
-              location.reload(true)
-            })
-          }
+        swal({
+          title     : 'Approving Transfer',
+          text      : 'Are you sure you want to approve this transfer? This can only be undone by VATUSA Staff.',
+          icon      : 'warning',
+          buttons   : true,
+          dangerMode: true,
         })
+          .then(r => {
+            if (r) {
+              $.post('{{ secure_url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
+                if (data == 1)
+                  swal('Success!', 'The transfer has been successfully approved.', 'success').then(_ => location.reload())
+                else
+                  swal('Error!', 'The transfer could not be approved. It may have already been processed.', 'error')
+              }).error(_ => {
+                swal('Error!', 'The transfer could not be approved. A server error has occurred.', 'error')
+              })
+            } else {
+              return null
+            }
+          })
       }
 
       function rejTrans (id) {
-        bootbox.prompt('Reason for rejection:', function (result) {
-          if (result === null) {
-          } else {
-            $.post('{{ secure_url('/mgt/ajax/transfers/2') }}', {id: id, reason: result}, function (data) {
-              bootbox.alert(data)
-              window.refresh()
-              location.reload(true)
-            })
-          }
+        swal({
+          title     : 'Rejecting Transfer',
+          text      : 'Are you sure you want to reject this transfer? This can only be undone by VATUSA Staff.',
+          icon      : 'warning',
+          content   : {
+            element   : 'input',
+            attributes: {
+              placeholder: 'Reason for rejection...'
+            }
+          },
+          buttons   : true,
+          dangerMode: true,
         })
+          .then((r) => {
+            if (r) {
+              $.post('{{ secure_url('/mgt/ajax/transfers/2') }}', {id: id, reason: r}, function (data) {
+                if (data == 1)
+                  swal('Success!', 'The transfer has been successfully rejected.', 'success').then(_ => location.reload())
+                else
+                  swal('Error!', 'The transfer could not be rejected. It may have already been processed.', 'error')
+              }).error(_ => {
+                swal('Error!', 'The transfer could not be rejected. A server error has occurred.', 'error')
+              })
+            }
+          })
       }
 
       function deleteController (cid) {
-        bootbox.prompt('Reason for delete:', function (result) {
-          if (result === null) {
-            return
-          } else {
-            $.ajax({
-              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/' + cid,
-              type: 'DELETE',
-              data: {'reason': result}
-            }).success(function () {
-              location.reload(true)
-            })
-          }
+        swal({
+          title     : 'Deleting Controller',
+          text      : 'Are you sure you want to delete this controller? This can only be undone by VATUSA Staff.',
+          icon      : 'warning',
+          content   : {
+            element   : 'input',
+            attributes: {
+              placeholder: 'Reason for deletion...'
+            }
+          },
+          buttons   : true,
+          dangerMode: true,
         })
+          .then((r) => {
+            if (r) {
+              $.ajax({
+                url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/' + cid,
+                type: 'DELETE',
+                data: {'reason': r}
+              }).success(function () {
+                swal('Success!', 'The controller has been deleted.', 'success').then(_ => location.reload(true))
+              }).error(_ => {
+                swal('Error!', 'Unable to delete controller. A server error has occurred.', 'error')
+              })
+            }
+          })
       }
 
       function posDel (val) {
@@ -819,16 +868,30 @@
             val_lng = 'WM'
             break
         }
-        bootbox.confirm('Confirm vacancy of ' + val_lng + ' ?', function (result) {
-          if (result) {
-            $.post("{{secure_url('mgt/ajax/del/position/'.$fac)}}", {pos: val}, function (data) {
-              bootbox.alert(data)
-              $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                $('#staff-table').html(data)
-              })
-            })
-          }
+        swal({
+          title     : 'Vacating ' + val_lng + ' Position',
+          text      : 'Are you sure you want to vacate this position?',
+          icon      : 'warning',
+          buttons   : true,
+          dangerMode: true,
         })
+          .then(r => {
+            if (r) {
+              $.post("{{secure_url('mgt/ajax/del/position/'.$fac)}}", {pos: val}, function (data) {
+                  if (data == 1) {
+                    swal('Success!', 'The ' + val_lng + ' position has been successfully vacated.', 'success')
+                    $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
+                      $('#staff-table').html(data)
+                    })
+                  } else {
+                    swal('Error!', 'Unable to vacate the posititon.', 'error')
+                  }
+                }
+              ).error(_ => swal('Error!', 'Unable to vacate the posititon. A server error has occurred.', 'error'))
+            } else {
+              return null
+            }
+          })
       }
 
       function posEdit (val) {
