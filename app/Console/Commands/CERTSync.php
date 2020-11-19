@@ -236,7 +236,7 @@ class CERTSync extends Command
     public function handleApi()
     {
         $start = microtime(true);
-        // \DB::table("controllers")->update(["cert_update" => 0]);
+         \DB::table("controllers")->update(["cert_update" => 0]);
         $log = ['deletes' => [], 'purges' => [], 'suspends' => []];
 
         $users = $this->option("all") ? User::all() : User::where('facility', '!=', 'ZZN');
@@ -247,7 +247,7 @@ class CERTSync extends Command
 
             try {
                 $i++;
-                $response = $this->guzzle->get("https://api.vatsim.net/api/ratings/{$user->cid}/");
+                $response = $this->guzzle->get("https://api.vatsim.net/api/ratings/{$user->cid}");
             } catch (RequestException $e) {
                 if ($e->hasResponse()) {
                     if ($e->getResponse()->getStatusCode() == 404) {
@@ -262,7 +262,6 @@ class CERTSync extends Command
                         continue;
                     }
                 }
-                $error = true;
                 $this->error(\GuzzleHttp\Psr7\str($e->getRequest()) . "\n" . \GuzzleHttp\Psr7\str($e->getResponse()));
                 $this->line("Error after $i");
                 continue;
@@ -274,7 +273,6 @@ class CERTSync extends Command
                 //Transfer Out
                 $log['deletes'][] = $user->cid;
                 $this->line("Deleting " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (" . Helper::ratingShortFromInt($user->rating) . ")");
-
             }
             if ($apiUser['rating'] < 0 && $apiUser['division'] === "USA") {
                 //Suspended or Inactive
@@ -300,6 +298,8 @@ class CERTSync extends Command
 
             exit;
         }
+        
+        $this->line("User collection complete. Processing deletions.");
 
         foreach ($log['deletes'] as $cid) {
             $delUser = User::find($cid);
@@ -317,10 +317,10 @@ class CERTSync extends Command
             $delUser->save();
             $this->checkDeleted($delUser);
 
-            $log = new Actions();
+            /*$log = new Actions();
             $log->to = $delUser->cid;
             $log->log = "User suspended or inactive, removing from division";
-            $log->save();
+            $log->save();*/
 
             $this->line("Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (Suspended)");
             $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (Suspended)";
