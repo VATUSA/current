@@ -3,7 +3,7 @@
 @section('content')
     Dear {{$name}},<br><br>
 
-    This email is to inform you that you have been removed from the {{$facility}} facility by {{$by}}.<br>
+    This email is to inform you that you have been removed from your facility by {{$by}}.<br>
     <br>
     The following is the reason for your removal: <br><br><em>{{$msg}}</em>
 
