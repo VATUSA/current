@@ -5,7 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmailConfig extends Model
 {
-    protected $connection = "email";
     public $timestamps = false;
     protected $primaryKey = "address";
     public $incrementing = false;

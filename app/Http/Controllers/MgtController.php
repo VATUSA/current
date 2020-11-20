@@ -370,12 +370,12 @@ class MgtController extends Controller
         foreach ($roles as $r) {
             $log = new Actions();
             $log->to = $r->cid;
-            $log->log = "Removed from role '" . RoleHelper::roleTitle($role) . "' by " . Auth::user()->fullname();
+            $log->log = "Removed from role '" . $r->title . "' by " . Auth::user()->fullname();
             $log->save();
             $r->delete();
 
             //Delete Email
-            EmailHelper::setForward('vat' . str_replace('us', 'usa', $r) . '@vatusa.net', 'vatusa2@vatusa.net');
+            EmailHelper::setForward('vat' . str_replace('us', 'usa', strtolower($r->role)) . '@vatusa.net', 'vatusa2@vatusa.net');
 
             /*foreach($previous as $email) {
                 EmailHelper::deleteEmail($email);

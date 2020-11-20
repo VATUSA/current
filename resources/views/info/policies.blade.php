@@ -42,6 +42,16 @@
                         <td><a href="/docs/GO-61720.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
+                        <td>7210.35A &mdash; VATUSA Air Traffic Control System Command Center</td>
+                        <td>08/16/2020</td>
+                        <td><a href="/docs/7210.35A.pdf" target="_blank">view</a></td>
+                    </tr>
+                    <tr>
+                        <td>7210.351 &mdash; VATUSA Authorized Command Center Callsigns</td>
+                        <td>08/16/2020</td>
+                        <td><a href="/docs/7210.351.pdf" target="_blank">view</a></td>
+                    </tr>
+                    <tr>
                         <td>VATUSA Organizational Chart</td>
                         <td>11/01/2020</td>
                         <td><a href="/docs/orgchart.pdf" target="_blank">view</a></td>
