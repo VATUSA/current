@@ -1,8 +1,6 @@
-[Internal Email]<br>
-<br>
-User: {{$fname}} {{$lname}} ({{$cid}})<br>
-Transfer To: {{$to}}<br>
-Transfer From: {{$from}}<br>
-Action: Accepted<br>
-<br>
-User will receive welcome email shortly.
+@extends('emails.layout')
+@section('title','Transfer Accepted')
+@section('content')
+    <p>A transfer request for {{$fname}} {{$lname}} ({{$cid}}) from {{ $from }} to {{ $to }} as been
+        <strong>accepted</strong>.<br>
+@endsection
