@@ -236,7 +236,7 @@ class CERTSync extends Command
     public function handleApi()
     {
         $start = microtime(true);
-         \DB::table("controllers")->update(["cert_update" => 0]);
+        \DB::table("controllers")->update(["cert_update" => 0]);
         $log = ['deletes' => [], 'purges' => [], 'suspends' => []];
 
         $users = $this->option("all") ? User::all() : User::where('facility', '!=', 'ZZN');
@@ -252,11 +252,11 @@ class CERTSync extends Command
                 if ($e->hasResponse()) {
                     if ($e->getResponse()->getStatusCode() == 404) {
                         if (!$isHome) {
-                            $this->log[] = "Non-member {$user->fullname()} ({$user->cid}) no longer exists in VATSIM database. Deleting.";
-                            $this->line("Non-member {$user->fullname()} ({$user->cid}) no longer exists in VATSIM database. Deleting.");
+                            $this->log[] = "Purging Non-member {$user->fullname()} ({$user->cid}).";
+                            $this->line("Purging Non-member {$user->fullname()} ({$user->cid}).");
                         } else {
-                            $this->log[] = "Home controller {$user->fullname()} ({$user->cid}) no longer exists in VATSIM database. Deleting.";
-                            $this->line("Home controller {$user->fullname()} ({$user->cid}) no longer exists in VATSIM database. Deleting.");
+                            $this->log[] = "Purging home controller {$user->fullname()} ({$user->cid}) ({$user->facilityObj->id}).";
+                            $this->line("Purging Home controller {$user->fullname()} ({$user->cid}) ({$user->facilityObj->id}).");
                         }
                         $log['purges'][] = $user->cid;
                         continue;
@@ -271,12 +271,12 @@ class CERTSync extends Command
 
             if ($apiUser['division'] !== "USA" && $isHome) {
                 //Transfer Out
+                $this->line("Deleting " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (" . Helper::ratingShortFromInt($user->rating) . ") from {$user->facilityObj->id}");
                 $log['deletes'][] = $user->cid;
-                $this->line("Deleting " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (" . Helper::ratingShortFromInt($user->rating) . ")");
             }
             if ($apiUser['rating'] < 0 && $apiUser['division'] === "USA") {
                 //Suspended or Inactive
-                $this->line("Deleting " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (SUS/INAC)");
+                $this->line("Deleting " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (SUS/INAC) from {$user->facilityObj->id}");
                 $log['suspends'][] = $user->cid;
             }
 
@@ -292,26 +292,29 @@ class CERTSync extends Command
             $count += count($type);
         }
 
-        if ($count > 500) {
-            $this->log[] = "More than 500 records are going to be deleted... possible error. Aborting.";
-            $this->error("More than 500 records are going to be deleted... possible error. Aborting.");
+        if ($count > 800) {
+            $this->log[] = "More than 800 records are going to be deleted... possible error. Aborting.";
+            $this->error("More than 800 records are going to be deleted... possible error. Aborting.");
 
+            EmailHelper::sendEmail("vatusa12@vatusa.net", "CERTSync Error", "emails.logsend", ['log' => $this->log]);
             exit;
         }
-        
+
         $this->line("User collection complete. Processing deletions.");
 
         foreach ($log['deletes'] as $cid) {
             $delUser = User::find($cid);
+            $facility = $delUser->facilityObj->id;
             $delUser->removeFromFacility("Automated", "Left division", "ZZN");
             $delUser->flag_homecontroller = 0;
             $delUser->save();
             $this->checkDeleted($delUser);
-            $this->line("Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . Helper::ratingShortFromInt($delUser->rating) . ")");
-            $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . Helper::ratingShortFromInt($delUser->rating) . ")";
+            $this->line("Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . Helper::ratingShortFromInt($delUser->rating) . ") from $facility");
+            $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . Helper::ratingShortFromInt($delUser->rating) . ") from $facility";
         }
         foreach ($log['suspends'] as $cid) {
             $delUser = User::find($cid);
+            $facility = $delUser->facilityObj->id;
             $delUser->removeFromFacility("Automated", "Suspended/Inactive", "ZZN");
             $delUser->flag_homecontroller = 0;
             $delUser->save();
@@ -322,13 +325,14 @@ class CERTSync extends Command
             $log->log = "User suspended or inactive, removing from division";
             $log->save();*/
 
-            $this->line("Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (Suspended)");
-            $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (Suspended)";
+            $this->line("Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (Suspended) from $facility");
+            $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (Suspended) from $facility";
         }
         foreach ($log['purges'] as $cid) {
             $purgeUser = User::find($cid);
-            $this->line("Purged " . $purgeUser->fname . " " . $purgeUser->lname . " (" . $purgeUser->cid . ") (" . Helper::ratingShortFromInt($purgeUser->rating) . ")");
-            $this->log[] = "Purged " . $purgeUser->fname . " " . $purgeUser->lname . " (" . $purgeUser->cid . ") (" . Helper::ratingShortFromInt($purgeUser->rating) . ")";
+            $facility = $purgeUser->facilityObj->id;
+            $this->line("Purged " . $purgeUser->fname . " " . $purgeUser->lname . " (" . $purgeUser->cid . ") (" . Helper::ratingShortFromInt($purgeUser->rating) . ") from $facility");
+            $this->log[] = "Purged " . $purgeUser->fname . " " . $purgeUser->lname . " (" . $purgeUser->cid . ") (" . Helper::ratingShortFromInt($purgeUser->rating) . ") from $facility";
             $purgeUser->purge();
         }
 
@@ -344,8 +348,10 @@ class CERTSync extends Command
         EmailHelper::sendEmail([
             "vatusa1@vatusa.net",
             "vatusa2@vatusa.net",
-            // "vatusa6@vatusa.net",
+            //"vatusa12@vatusa.net",
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
+
+        $this->info("Completed in " . (microtime(true) - $start) . " seconds.");
     }
 
     public function checkDeleted($user)
