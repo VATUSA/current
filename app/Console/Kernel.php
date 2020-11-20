@@ -35,8 +35,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //$schedule->command('CERTSync')->twiceDaily(11, 23);
-        //$schedule->command('CERTSync', ['--all'])->weekly()->mondays()->at("00:00");
+        $schedule->command('CERTSync')->twiceDaily(11, 23);
+        $schedule->command('CERTSync', ['--all'])->weekly()->mondays()->at("00:00");
         $schedule->command('ULSTokens')->everyMinute();
         $schedule->command('UpdateVATSIM')->everyMinute();
         $schedule->command('ExamReassign')->hourly();

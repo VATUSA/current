@@ -184,7 +184,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 [
                     'name'        => $this->fname . " " . $this->lname,
                     'facility'    => $this->facname,
-                    'by'          => Helper::nameFromCID($by),
+                    'by'          => $by === "Automated" ? $by : Helper::nameFromCID($by),
                     'msg'         => $msg,
                     'facid'       => $facility,
                     'region'      => $region,
@@ -229,7 +229,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function purge($alltables = false)
     {
-        $this->delete();
+        //$this->delete();
 
         //TODO: Purge from All Tables
     }
