@@ -4,7 +4,7 @@
     Hello {{ $student_name }},
     <br><br>
     This email is to inform you that you have been assigned exam <em>{{ $exam_name }}</em> by instructor {{ $instructor_name }}.  You have
-    until {{ $end_date }} US Pacific Time to complete the examination before it expires.
+    until {{ $end_date }} US Central Time to complete the examination before it expires.
     <br><br>
     <table class="button success float-center" align="center" style="border-collapse: collapse; border-spacing: 0; float: none; padding: 0; text-align: center; vertical-align: top; width: auto;">
         <tbody>

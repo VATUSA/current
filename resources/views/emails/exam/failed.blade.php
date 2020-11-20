@@ -9,7 +9,7 @@
     Score: {{ $correct }}/{{ $possible }} ({{$score}}%)
     <br><br>
     @if($reassign > 0)
-        Your exam will be reassigned in {{$reassign}} days.
+        Your exam will be reassigned in {{$reassign}} day(s).
     @else
         Your exam will be reassigned by your training staff.
     @endif
