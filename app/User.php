@@ -17,6 +17,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use \Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
@@ -188,7 +189,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     'msg'         => $msg,
                     'facid'       => $facility,
                     'region'      => $region,
-                    'obsInactive' => $this->rating == 1 && str_contains($msg,
+                    'obsInactive' => $this->rating == 1 && Str::contains($msg,
                             ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
             );
