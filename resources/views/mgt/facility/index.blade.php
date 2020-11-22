@@ -418,7 +418,36 @@
                 
             </div>
         </div>
-    </div>    
+    </div>
+
+    <!-- Staff Assignment Modal -->
+    <div class="modal fade" id="assignStaffModal" tabindex="-1" role="dialog" aria-labelledby="assignStaffModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignStaffModalTitle">Assigning new <span id="staffPosition"></span> for {{ $fac }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <label for="cid">CID or Last Name:</label>
+                    <input type="text" name="cid" class="form-control" id="staffcidsearch">
+                    <input type="number" name="pos" id="staffInt" hidden>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="confirmAssignStaff" class="btn btn-sm btn-success">Add</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <script>
       $(document).ready(function () {
@@ -931,22 +960,28 @@
               $('#cidsearch').val(suggestion.data);
           }
       });
+      $('#staffcidsearch').devbridgeAutocomplete({
+          lookup: [],
+          onSelect: (suggestion) => {
+              $('#staffcidsearch').val(suggestion.data);
+          }
+      });
 
       var prevVal = '';
 
-      $('#cidsearch').on('change keydown keyup paste', function() {
+      $('#cidsearch, #staffcidsearch').on('change keydown keyup paste', function() {
           let newVal = $(this).val();
           if (newVal.length === 4 && newVal !== prevVal) {
               let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
               prevVal = newVal;
               $.get($.apiUrl() + url + newVal)
               .success((data) => {
-                  $('#cidsearch').devbridgeAutocomplete().setOptions({
+                  $(this).devbridgeAutocomplete().setOptions({
                       lookup: $.map(data, (item) => {
                           return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
                       })
                   });
-                  $('#cidsearch').focus();
+                  $(this).focus();
               });
           }
       });
@@ -973,7 +1008,7 @@
             val_lng = 'WM'
             break
         }
-        bootbox.confirm('Confirm vacancy of ' + val_lng + ' ?', function (result) {
+        bootbox.confirm('Confirm vacancy of ' + val_lng + '?', function (result) {
           if (result) {
             $.post("{{secure_url('mgt/ajax/del/position/'.$fac)}}", {pos: val}, function (data) {
               bootbox.alert(data)
@@ -986,87 +1021,44 @@
       }
 
       function posEdit (val) {
+        var val_lng
         switch (val) {
           case 1:
-            bootbox.prompt('Enter new CID for ATM', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/1')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'ATM'
             break
           case 2:
-            bootbox.prompt('Enter new CID for DATM', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/2')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'DATM'
             break
           case 3:
-            bootbox.prompt('Enter new CID for TA', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/3')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'TA'
             break
           case 4:
-            bootbox.prompt('Enter new CID for EC', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/4')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'EC'
             break
           case 5:
-            bootbox.prompt('Enter new CID for FE', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/5')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'FE'
             break
           case 6:
-            bootbox.prompt('Enter new CID for WM', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/6')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
-
+            val_lng = 'WM'
             break
         }
+        prevVal = ''
+        $('#assignStaffModal #staffcidsearch').devbridgeAutocomplete().setOptions({lookup: []})
+        $('#assignStaffModal #staffcidsearch').val('')
+        $('#assignStaffModal #staffPosition').text(val_lng)
+        $('#assignStaffModal #staffInt').val(val)
+        $('#assignStaffModal').modal('show')
+        $('#confirmAssignStaff').click(function() {
+            $.post("{{secure_url('mgt/ajax/position/'.$fac)}}/" + val, {
+                cid: $('#assignStaffModal #staffcidsearch').val()
+            }, function(data) {
+                bootbox.alert(data)
+                $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
+                    $('#staff-table').html(data)
+                })
+            })
+            $('#assignStaffModal').modal('hide')
+        })
       }
         @endif
     </script>
