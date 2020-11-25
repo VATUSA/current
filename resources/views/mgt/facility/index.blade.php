@@ -18,37 +18,46 @@
                 <div>
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#dash" aria-controls="dash" role="tab"
-                                                                  data-toggle="tab"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                                                  data-toggle="tab"><i
+                                    class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i class="fas fa-exchange-alt"></i> Transfers</a>
+                            <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i
+                                        class="fas fa-exchange-alt"></i> Transfers</a>
                             </li>
                         @endif
                         <li role="presentation"><a href="#hroster" aria-controls="hroster" role="tab"
                                                    data-toggle="tab"><i class="fas fa-users"></i> Home Roster</a></li>
                         <li role="presentation"><a href="#vroster" aria-controls="vroster" role="tab"
-                                                   data-toggle="tab"><i class="fas fa-door-open"></i> Visiting Roster</a></li>
+                                                   data-toggle="tab"><i class="fas fa-door-open"></i> Visiting
+                                Roster</a></li>
                         @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
-                            <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}" aria-controls="training"><i class="fas fa-chart-line"></i> Training</a></li>
+                            <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}"
+                                                       aria-controls="training"><i class="fas fa-chart-line"></i>
+                                    Training</a></li>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#uls" aria-controls="uls" role="tab" data-toggle="tab"><i class="fas fa-server"></i> Tech
+                            <li role="presentation"><a href="#uls" aria-controls="uls" role="tab" data-toggle="tab"><i
+                                        class="fas fa-server"></i> Tech
                                     Conf</a>
                             </li>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#email" aria-controls="email" role="tab" data-toggle="tab"><i class="fas fa-envelope"></i> Email
+                            <li role="presentation"><a href="#email" aria-controls="email" role="tab" data-toggle="tab"><i
+                                        class="fas fa-envelope"></i> Email
                                     Conf</a>
                             </li>
                             @if($facility->hosted_email_domain != "")
                                 <li role="presentation"><a href="#hosted" aria-controls="hosted" role="tab"
-                                                           data-toggle="tab"><i class="fas fa-mail-bulk"></i> Hosted Email
+                                                           data-toggle="tab"><i class="fas fa-mail-bulk"></i> Hosted
+                                        Email
                                         Conf</a>
                                 </li>
                             @endif
                         @endif
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <li role="presentation"><a href="#emailtemplates" aria-controls="emailtemplates" role="tab"
-                                                       data-toggle="tab"><i class="fas fa-envelope-open-text"></i> Email Templates</a></li>
+                                                       data-toggle="tab"><i class="fas fa-envelope-open-text"></i> Email
+                                    Templates</a></li>
                     @endif
                     <!--<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>-->
                     </ul>
@@ -142,9 +151,14 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="vroster">
                             <br>
-                            <div class="text-center">
-                                <button class="btn btn-success" data-toggle="modal" data-target="#addVisitorModal"><i class="fa fa-plus"></i> Add Visitor</button>
-                            </div>
+                            @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+                                <div class="text-center">
+                                    <button class="btn btn-success" data-toggle="modal" data-target="#addVisitorModal">
+                                        <i
+                                            class="fa fa-plus"></i> Add Visitor
+                                    </button>
+                                </div>
+                            @endif
                             <br>
                             <div id="vrosterloading">
                                 <center><img src="/img/gears.gif"><br><br>Loading visiting roster...</center>
@@ -393,40 +407,44 @@
     </div>
 
     <!-- Add Visitor Modal -->
-    <div class="modal fade" id="addVisitorModal" tabindex="-1" role="dialog" aria-labelledby="addVisitorModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
+    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+        <div class="modal fade" id="addVisitorModal" tabindex="-1" role="dialog" aria-labelledby="addVisitorModalTitle"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
 
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addVisitorModalTitle">Add Visitor</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title" id="addVisitorModalTitle">Add Visitor</h5>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <label for="cid">CID or Last Name:</label>
+                        <input type="text" name="cid" class="form-control" id="cidsearch">
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="addButton" class="btn btn-sm btn-success">Add</button>
+                    </div>
+
                 </div>
-
-                <div class="modal-body">
-
-                    <label for="cid">CID or Last Name:</label>
-                    <input type="text" name="cid" class="form-control" id="cidsearch">
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="addButton" class="btn btn-sm btn-success">Add</button>
-                </div>
-                
             </div>
         </div>
-    </div>
-
+    @endif
     <!-- Staff Assignment Modal -->
-    <div class="modal fade" id="assignStaffModal" tabindex="-1" role="dialog" aria-labelledby="assignStaffModalTitle" aria-hidden="true">
+    <div class="modal fade" id="assignStaffModal" tabindex="-1" role="dialog" aria-labelledby="assignStaffModalTitle"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="assignStaffModalTitle">Assigning new <span id="staffPosition"></span> for {{ $fac }}</h5>
+                    <h5 class="modal-title" id="assignStaffModalTitle">Assigning new <span id="staffPosition"></span>
+                        for {{ $fac }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -523,7 +541,7 @@
             var date = new Date(data[i].facility_join)
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
             html += '<td class="text-right">'
-                html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
+            html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
                 html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
               @endif
@@ -914,77 +932,12 @@
             }).success(function () {
               location.reload(true)
             }).error(error => {
-                waitingDialog.hide()
-                bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
+              waitingDialog.hide()
+              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
             })
           }
         })
       }
-
-      function deleteVisitor (cid) {
-        bootbox.prompt('Reason for delete:', function (result) {
-          if (result === null) {
-            return
-          } else {
-            $.ajax({
-              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
-              type: 'DELETE',
-              data: {'reason': result}
-            }).success(function () {
-              location.reload(true)
-            }).error(error => {
-                waitingDialog.hide()
-                bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
-            })
-          }
-        })
-      }
-
-      $('#addButton').click(function () {
-          // Setting Values
-          var cid = $('#cidsearch').val();
-
-          $.ajax({
-              url: $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
-              type: "POST",
-          }).success(function(res) { 
-              location.reload(true);
-          }).error(function() { 
-              alert("Error occurred");
-          });
-      });
-
-      $('#cidsearch').devbridgeAutocomplete({
-          lookup: [],
-          onSelect: (suggestion) => {
-              $('#cidsearch').val(suggestion.data);
-          }
-      });
-      $('#staffcidsearch').devbridgeAutocomplete({
-          lookup: [],
-          onSelect: (suggestion) => {
-              $('#staffcidsearch').val(suggestion.data);
-          }
-      });
-
-      var prevVal = '';
-
-      $('#cidsearch, #staffcidsearch').on('change keydown keyup paste', function() {
-          let newVal = $(this).val();
-          if (newVal.length === 4 && newVal !== prevVal) {
-              let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
-              prevVal = newVal;
-              $.get($.apiUrl() + url + newVal)
-              .success((data) => {
-                  $(this).devbridgeAutocomplete().setOptions({
-                      lookup: $.map(data, (item) => {
-                          return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
-                      })
-                  });
-                  $(this).focus();
-              });
-          }
-      });
 
       function posDel (val) {
         var val_lng
@@ -1048,18 +1001,86 @@
         $('#assignStaffModal #staffPosition').text(val_lng)
         $('#assignStaffModal #staffInt').val(val)
         $('#assignStaffModal').modal('show')
-        $('#confirmAssignStaff').click(function() {
-            $.post("{{secure_url('mgt/ajax/position/'.$fac)}}/" + val, {
-                cid: $('#assignStaffModal #staffcidsearch').val()
-            }, function(data) {
-                bootbox.alert(data)
-                $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                })
+        $('#confirmAssignStaff').click(function () {
+          $.post("{{secure_url('mgt/ajax/position/'.$fac)}}/" + val, {
+            cid: $('#assignStaffModal #staffcidsearch').val()
+          }, function (data) {
+            bootbox.alert(data)
+            $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
+              $('#staff-table').html(data)
             })
-            $('#assignStaffModal').modal('hide')
+          })
+          $('#assignStaffModal').modal('hide')
         })
       }
+
+      @endif
+      @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+
+      function deleteVisitor (cid) {
+        bootbox.prompt('Reason for delete:', function (result) {
+          if (result === null) {
+            return
+          } else {
+            $.ajax({
+              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
+              type: 'DELETE',
+              data: {'reason': result}
+            }).success(function () {
+              location.reload(true)
+            }).error(error => {
+              waitingDialog.hide()
+              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
+            })
+          }
+        })
+      }
+
+      $('#addButton').click(function () {
+        // Setting Values
+        var cid = $('#cidsearch').val()
+
+        $.ajax({
+          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
+          type: 'POST',
+        }).success(function (res) {
+          location.reload(true)
+        }).error(function () {
+          alert('Error occurred')
+        })
+      })
+
+      $('#cidsearch').devbridgeAutocomplete({
+        lookup  : [],
+        onSelect: (suggestion) => {
+          $('#cidsearch').val(suggestion.data)
+        }
+      })
+      $('#staffcidsearch').devbridgeAutocomplete({
+        lookup  : [],
+        onSelect: (suggestion) => {
+          $('#staffcidsearch').val(suggestion.data)
+        }
+      })
+
+      var prevVal = ''
+
+      $('#cidsearch, #staffcidsearch').on('change keydown keyup paste', function () {
+        let newVal = $(this).val()
+        if (newVal.length === 4 && newVal !== prevVal) {
+          let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/')
+          prevVal = newVal
+          $.get($.apiUrl() + url + newVal)
+            .success((data) => {
+              $(this).devbridgeAutocomplete().setOptions({
+                lookup: $.map(data, (item) => {
+                  return {value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid}
+                })
+              })
+              $(this).focus()
+            })
+        }
+      })
         @endif
     </script>
     <script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
