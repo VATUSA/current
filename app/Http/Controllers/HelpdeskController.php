@@ -199,7 +199,7 @@ class HelpDeskController
                 $history->ticket_id = $ticket->id;
                 $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") opened the ticket.";
                 $history->save();
-                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Opened", "emails.help.reopened", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
+                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Reopened", "emails.help.reopened", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
             }
             $ticket->save();
         }
@@ -256,7 +256,7 @@ class HelpDeskController
                 $history->ticket_id = $ticket->id;
                 $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") opened the ticket.";
                 $history->save();
-                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Opened", "emails.help.reopened", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
+                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Reopened", "emails.help.reopened", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
             }
             $ticket->save();
 
@@ -360,7 +360,7 @@ class HelpDeskController
                         $emails[] = $fac->id . "-fe@vatusa.net";
                         $emails[] = $fac->id . "-ec@vatusa.net";
                         $emails[] = $fac->id . "-wm@vatusa.net";
-                        EmailHelper::sendSupportEmail(array_unique($emails), $id, "Ticket assigned to your facility", "emails.help.assigned", ["ticket" => $ticket]);
+                        EmailHelper::sendSupportEmail(array_unique($emails), $id, "Ticket Assigned to Facility", "emails.help.assignedfacility", ["ticket" => $ticket]);
                     }
                 } else {
                     $ticket->assigned_to = $request->input("assign");
@@ -373,7 +373,7 @@ class HelpDeskController
                     $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned the ticket to " . $user->fullname() . " (" . $user->cid . ").";
                     $history->save();
 
-                    EmailHelper::sendSupportEmail($user->email, $id, "Ticket assigned to you", "emails.help.assigned", ["ticket" => $ticket]);
+                    EmailHelper::sendSupportEmail($user->email, $id, "Ticket Assigned to You", "emails.help.assigned", ["ticket" => $ticket]);
                 }
             }
             if (isset($_POST['note'])) {
