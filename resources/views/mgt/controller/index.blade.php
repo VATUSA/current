@@ -139,9 +139,9 @@
                 <h3 class="panel-title">
                     <div class="row">
                         <div class="col-md-8" style="font-size: 16pt;">{{$user->fname}} {{$user->lname}} - {{$user->cid}}</div>
-                        <form class="form-inline">
+                        <form class="form-inline" id="controllerForm">
                             <div class="col-md-4 text-right form-group">
-                                <input type="text" id="cidsearch" class="form-control" placeholder="CID">
+                                <input type="text" id="cidsearch" class="form-control" placeholder="CID or Last Name">
                                 <button type="button" class="btn btn-primary" id="cidsearchbtn"><i
                                         class="fa fa-search"></i></button>
                             </div>
@@ -159,9 +159,9 @@
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Exams</a></li>
                     @endif
-                    @php $canViewTraining = $user->facility == Auth::user()->facility || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
+                    @php $canViewTraining = $user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists() || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
                     <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
-                        title="Not a home controller at your ARTCC" @endif><a href="#training"
+                        title="Not a home or visiting controller at your ARTCC" @endif><a href="#training"
                                                                               @if($canViewTraining) data-controls="training"
                                                                               role="tab"
                                                                               data-toggle="tab" @endif>Training</a></li>
@@ -209,6 +209,8 @@
 
                                         </li>
                                         <li>{{$user->urating->short}} - {{$user->urating->long}}</li>
+                                        <li>Last promoted {{$user->lastPromotion()->created_at ?? 'never.'}}</li>
+                                        <br>
                                         <li>{{$user->facility}}
                                             - {{\App\Classes\Helper::facShtLng($user->facility)}}</li>
                                         <li>Member of {{$user->facility}} since {{ $user->facility_join }}</li>
@@ -222,6 +224,13 @@
                                             </li>
                                         @endif
                                         <br>
+                                        @if ($user->visits()->exists())
+                                            <li>Visiting:</li>
+                                            @foreach ($user->visits()->get() as $visit)
+                                                <li>{{$visit->fac->id}} - {{$visit->fac->name}}</li>
+                                            @endforeach
+                                            <br>
+                                        @endif
                                         <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
                                         <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
@@ -621,7 +630,6 @@
             </div>
         </div>
     </div>
-
     <script>
       function viewXfer (id) {
         $.get("{{secure_url('mgt/ajax/transfer/reason')}}", {id: id}, function (data) {
@@ -670,6 +678,31 @@
           $(this).find('i').addClass('glyphicon-chevon-down').addClass('glyphicon-chevron-up')
         }
       })
+
+      $('#cidsearch').devbridgeAutocomplete({
+          lookup: [],
+          onSelect: (suggestion) => {
+              $('#cidsearch').val(suggestion.data);
+              $('#cidsearchbtn').click();
+          }
+      });
+      var prevVal = '';
+      $('#cidsearch').on('change keydown keyup paste', function() {
+          let newVal = $(this).val();
+          if (newVal.length === 4 && newVal !== prevVal) {
+              let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
+              prevVal = newVal;
+              $.get($.apiUrl() + url + newVal)
+              .success((data) => {
+                  $('#cidsearch').devbridgeAutocomplete().setOptions({
+                      lookup: $.map(data, (item) => {
+                          return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
+                      })
+                  });
+                  $('#cidsearch').focus();
+              });
+          }
+      });
     </script>
 
 

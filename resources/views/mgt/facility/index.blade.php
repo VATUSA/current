@@ -25,8 +25,11 @@
                                         class="fas fa-exchange-alt"></i> Transfers</a>
                             </li>
                         @endif
-                        <li role="presentation"><a href="#mem" aria-controls="mem" role="tab"
-                                                   data-toggle="tab"><i class="fas fa-users"></i> Members</a></li>
+                        <li role="presentation"><a href="#hroster" aria-controls="hroster" role="tab"
+                                                   data-toggle="tab"><i class="fas fa-users"></i> Home Roster</a></li>
+                        <li role="presentation"><a href="#vroster" aria-controls="vroster" role="tab"
+                                                   data-toggle="tab"><i class="fas fa-door-open"></i> Visiting
+                                Roster</a></li>
                         @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
                             <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}"
                                                        aria-controls="training"><i class="fas fa-chart-line"></i>
@@ -126,11 +129,11 @@
                                 </table>
                             </div>
                         @endif
-                        <div role="tabpanel" class="tab-pane" id="mem">
-                            <div id="memloading">
-                                <center><img src="/img/gears.gif"><br><br>Loading members table...</center>
+                        <div role="tabpanel" class="tab-pane" id="hroster">
+                            <div id="hrosterloading">
+                                <center><img src="/img/gears.gif"><br><br>Loading home roster...</center>
                             </div>
-                            <table class="table table-hover table-condensed tablesorter" id="memtable"
+                            <table class="table table-hover table-condensed tablesorter" id="hrostertable"
                                    style="display: none;">
                                 <thead>
                                 <tr>
@@ -138,10 +141,41 @@
                                     <th>Name</th>
                                     <th>Rating</th>
                                     <th>Join Date</th>
+                                    <th>Last Promotion</th>
                                     <td class="text-right">Options</td>
                                 </tr>
                                 </thead>
-                                <tbody id="memtablebody">
+                                <tbody id="hrostertablebody">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="vroster">
+                            <br>
+                            @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+                                <div class="text-center">
+                                    <button class="btn btn-success" data-toggle="modal" data-target="#addVisitorModal">
+                                        <i
+                                            class="fa fa-plus"></i> Add Visitor
+                                    </button>
+                                </div>
+                            @endif
+                            <br>
+                            <div id="vrosterloading">
+                                <center><img src="/img/gears.gif"><br><br>Loading visiting roster...</center>
+                            </div>
+                            <table class="table table-hover table-condensed tablesorter" id="vrostertable"
+                                   style="display: none;">
+                                <thead>
+                                <tr>
+                                    <th>CID</th>
+                                    <th>Name</th>
+                                    <th>Rating</th>
+                                    <th>Home Facility</th>
+                                    <th>Date Added</th>
+                                    <td class="text-right">Options</td>
+                                </tr>
+                                </thead>
+                                <tbody id="vrostertablebody">
                                 </tbody>
                             </table>
                         </div>
@@ -371,6 +405,68 @@
             </div>
         </div>
     </div>
+
+    <!-- Add Visitor Modal -->
+    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+        <div class="modal fade" id="addVisitorModal" tabindex="-1" role="dialog" aria-labelledby="addVisitorModalTitle"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title" id="addVisitorModalTitle">Add Visitor</h5>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <label for="cid">CID or Last Name:</label>
+                        <input type="text" name="cid" class="form-control" id="cidsearch">
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" id="addButton" class="btn btn-sm btn-success">Add</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+    <!-- Staff Assignment Modal -->
+    <div class="modal fade" id="assignStaffModal" tabindex="-1" role="dialog" aria-labelledby="assignStaffModalTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignStaffModalTitle">Assigning new <span id="staffPosition"></span>
+                        for {{ $fac }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <label for="cid">CID or Last Name:</label>
+                    <input type="text" name="cid" class="form-control" id="staffcidsearch">
+                    <input type="number" name="pos" id="staffInt" hidden>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="confirmAssignStaff" class="btn btn-sm btn-success">Add</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
       $(document).ready(function () {
@@ -389,7 +485,7 @@
         })
 
         $.ajax({
-          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster',
+          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/home',
           type: 'GET'
         }).success(function (data) {
           var html = ''
@@ -405,6 +501,10 @@
             html += '</td>'
             var date = new Date(data[i].facility_join)
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
+            var last_promotion = data[i].last_promotion
+            if (last_promotion) var promotion_date = new Date(last_promotion)
+            if (promotion_date) html += '<td>' + (promotion_date.getMonth() + 1) + '/' + promotion_date.getDate() + '/' + promotion_date.getFullYear() + '</td>'
+            else html += '<td><span class="text-muted">N/A</span></td>'
             html += '<td class="text-right">'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isInstructor(\Auth::user()->cid, $fac))
               if (data[i].promotion_eligible == true) {
@@ -412,15 +512,46 @@
               }
               @endif
                 html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
-              @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
+              @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
                 html += ' &nbsp; <a href="#" onClick="deleteController(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
-          $('#memtablebody').html(html)
-          $('#memtable').toggle()
-          $('#memloading').toggle()
-          $('#memtable').tablesorter()
+          $('#hrostertablebody').html(html)
+          $('#hrostertable').toggle()
+          $('#hrosterloading').toggle()
+          $('#hrostertable').tablesorter()
+        })
+
+        $.ajax({
+          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/visit',
+          type: 'GET'
+        }).success(function (data) {
+          var html = ''
+          $.each(data, function (i) {
+            if (data[i].cid == undefined) return
+            html += '<tr><td>' + data[i].cid + '</td>'
+            html += '<td>'
+            if (data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
+            html += data[i].lname + ', ' + data[i].fname
+            html += '</td>'
+            html += '<td data-text="' + data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(data[i].rating)) + '</span>' + data[i].rating_short
+            if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
+            html += '</td>'
+            html += '<td>' + data[i].facility + '</td>'
+            var date = new Date(data[i].facility_join)
+            html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
+            html += '<td class="text-right">'
+            html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
+              @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
+                html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
+              @endif
+                html += '</td></tr>'
+          })
+          $('#vrostertablebody').html(html)
+          $('#vrostertable').toggle()
+          $('#vrosterloading').toggle()
+          $('#vrostertable').tablesorter()
         })
       })
       @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac, false))
@@ -694,7 +825,7 @@
             $.ajax({
               url   : $.apiUrl() + '/v2/facility/{{$fac}}/ulsReturns/' + id,
               method: 'PUT',
-              data  : {url: url}
+              data  : {url: newUrl}
             }).done(() => {
               waitingDialog.hide()
               $('#path-' + id).find('.rp-url').text(newUrl)
@@ -895,88 +1026,113 @@
       }
 
       function posEdit (val) {
+        var val_lng
         switch (val) {
           case 1:
-            bootbox.prompt('Enter new CID for ATM', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/1')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'ATM'
             break
           case 2:
-            bootbox.prompt('Enter new CID for DATM', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/2')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'DATM'
             break
           case 3:
-            bootbox.prompt('Enter new CID for TA', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/3')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'TA'
             break
           case 4:
-            bootbox.prompt('Enter new CID for EC', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/4')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'EC'
             break
           case 5:
-            bootbox.prompt('Enter new CID for FE', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/5')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
+            val_lng = 'FE'
             break
           case 6:
-            bootbox.prompt('Enter new CID for WM', function (result) {
-              if (result === null) {
-              } else {
-                $.post("{{secure_url('mgt/ajax/position/'.$fac.'/6')}}", {cid: result}, function (data) {
-                  bootbox.alert(data)
-                  $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                    $('#staff-table').html(data)
-                  })
-                })
-              }
-            })
-
+            val_lng = 'WM'
             break
         }
+        prevVal = ''
+        $('#assignStaffModal #staffcidsearch').devbridgeAutocomplete().setOptions({lookup: []})
+        $('#assignStaffModal #staffcidsearch').val('')
+        $('#assignStaffModal #staffPosition').text(val_lng)
+        $('#assignStaffModal #staffInt').val(val)
+        $('#assignStaffModal').modal('show')
+        $('#confirmAssignStaff').click(function () {
+          $.post("{{secure_url('mgt/ajax/position/'.$fac)}}/" + val, {
+            cid: $('#assignStaffModal #staffcidsearch').val()
+          }, function (data) {
+            bootbox.alert(data)
+            $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
+              $('#staff-table').html(data)
+            })
+          })
+          $('#assignStaffModal').modal('hide')
+        })
       }
+
+      @endif
+      @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+
+      function deleteVisitor (cid) {
+        bootbox.prompt('Reason for delete:', function (result) {
+          if (result === null) {
+            return
+          } else {
+            $.ajax({
+              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
+              type: 'DELETE',
+              data: {'reason': result}
+            }).success(function () {
+              location.reload(true)
+            }).error(error => {
+              waitingDialog.hide()
+              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
+            })
+          }
+        })
+      }
+
+      $('#addButton').click(function () {
+        // Setting Values
+        var cid = $('#cidsearch').val()
+
+        $.ajax({
+          url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
+          type: 'POST',
+        }).success(function (res) {
+          location.reload(true)
+        }).error(function () {
+          alert('Error occurred')
+        })
+      })
+
+      $('#cidsearch').devbridgeAutocomplete({
+        lookup  : [],
+        onSelect: (suggestion) => {
+          $('#cidsearch').val(suggestion.data)
+        }
+      })
+      $('#staffcidsearch').devbridgeAutocomplete({
+        lookup  : [],
+        onSelect: (suggestion) => {
+          $('#staffcidsearch').val(suggestion.data)
+        }
+      })
+
+      var prevVal = ''
+
+      $('#cidsearch, #staffcidsearch').on('change keydown keyup paste', function () {
+        let newVal = $(this).val()
+        if (newVal.length === 4 && newVal !== prevVal) {
+          let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/')
+          prevVal = newVal
+          $.get($.apiUrl() + url + newVal)
+            .success((data) => {
+              $(this).devbridgeAutocomplete().setOptions({
+                lookup: $.map(data, (item) => {
+                  return {value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid}
+                })
+              })
+              $(this).focus()
+            })
+        }
+      })
         @endif
     </script>
     <script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>

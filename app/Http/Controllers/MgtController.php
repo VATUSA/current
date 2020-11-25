@@ -82,7 +82,8 @@ class MgtController extends Controller
                     abort(500);
                 }
             }
-            $trainingRecords = $user->facility == Auth::user()->facility || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
+            $trainingRecords = $user->facility == Auth::user()->facility || $user->visits()->where('facility',
+                Auth::user()->facility)->exists() || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
                 $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
                     $trainingfac) && $user->cid !== Auth::user()->cid;
@@ -375,7 +376,8 @@ class MgtController extends Controller
             $r->delete();
 
             //Delete Email
-            EmailHelper::setForward('vat' . str_replace('us', 'usa', strtolower($r->role)) . '@vatusa.net', 'vatusa2@vatusa.net');
+            EmailHelper::setForward('vat' . str_replace('us', 'usa', strtolower($r->role)) . '@vatusa.net',
+                'vatusa2@vatusa.net');
 
             /*foreach($previous as $email) {
                 EmailHelper::deleteEmail($email);
@@ -411,7 +413,7 @@ class MgtController extends Controller
         //Add Email
         /*
         $previous = EmailHelper::forwardDestination('vat' . str_replace('us', 'usa', $role).'@vatusa.net');
-        
+
         foreach($previous as $email) {
             EmailHelper::deleteEmail($email);
         }
@@ -629,11 +631,11 @@ class MgtController extends Controller
 
         if (!$forms) {
             return redirect('mgt/facility#mem')->with('error',
-                'No evaluation forms found. Please try again later or contact VATUSA6.');
+                'No evaluation forms found. Please try again later or contact VATUSA12.');
         }
         if ($forms->count() !== 4) {
             return redirect('mgt/facility#mem')->with('error',
-                'Insufficient evaluation forms found. Please try again later or contact VATUSA6.');
+                'Insufficient evaluation forms found. Please try again later or contact VATUSA12.');
         }
 
         if (!$user->promotionEligible()) {
@@ -1037,8 +1039,10 @@ class MgtController extends Controller
             compact('student', 'eval', 'attempt', 'recs'));
     }
 
-    public function viewTrainingStatistics(Request $request)
-    {
+    public
+    function viewTrainingStatistics(
+        Request $request
+    ) {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -1112,7 +1116,7 @@ class MgtController extends Controller
         }
         $sumNumEvals = $evals->count();
         $sumNumPass = $sumNumEvals ? $evals->where('result', 1)->count() : 0;
-        $sumNumFail = $sumNumEvals ? $evals->count() - $sumNumPass : 0;
+        $sumNumFail = $sumNumEvals ? $sumNumEvals - $sumNumPass : 0;
         $sumPassRate = $sumNumEvals ? round($sumNumPass / $sumNumEvals * 100) : 0;
 
         /** INS/MTR Activity */
@@ -1604,7 +1608,8 @@ class MgtController extends Controller
             compact('evals', 'trainingfac', 'trainingfacname', 'facilities'));
     }
 
-    public function viewOTSEvalStatistics(
+    public
+    function viewOTSEvalStatistics(
         Request $request,
         int $form
     ) {
