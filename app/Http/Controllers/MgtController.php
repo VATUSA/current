@@ -1116,7 +1116,7 @@ class MgtController extends Controller
         }
         $sumNumEvals = $evals->count();
         $sumNumPass = $sumNumEvals ? $evals->where('result', 1)->count() : 0;
-        $sumNumFail = $sumNumEvals ? $evals->count() - $sumNumPass : 0;
+        $sumNumFail = $sumNumEvals ? $sumNumEvals - $sumNumPass : 0;
         $sumPassRate = $sumNumEvals ? round($sumNumPass / $sumNumEvals * 100) : 0;
 
         /** INS/MTR Activity */
