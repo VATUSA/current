@@ -7,6 +7,7 @@ use DateTime;
 use DateInterval;
 use App\Actions;
 use App\Facility;
+use App\Visit;
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use Illuminate\Auth\Authenticatable;
@@ -72,6 +73,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function evaluationsIns()
     {
         return $this->hasMany(OTSEval::class, 'instructor_id', 'cid');
+    }
+
+    public function visits()
+    {
+        return $this->hasMany(Visit::class, 'cid', 'cid');
     }
 
     public function getPrimaryRole()
@@ -453,6 +459,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $f = \DB::connection('forum')->table("smf_members")->where("member_name", $this->cid)->first();
 
         return ($f) ? Carbon::createFromTimestamp($f->last_login)->diffInDays(null) : "Unknown";
+    }
+
+    public function lastPromotion()
+    {
+        return $this->hasMany(Promotions::class, 'cid', 'cid')->latest()->first();
     }
 
     public function isActive()

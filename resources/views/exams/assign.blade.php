@@ -18,10 +18,9 @@
         <div class="panel-body">
             {!! Form::open(array('url' => URL::to('/exam/assign', [], true))) !!}
             <div class="form-group">
-                {!! Form::label('CID') !!}
-                {!! Form::text('cid', '', ['class' => 'form-control col-md-5']) !!}
+                <label for="cid">CID or Last Name:</label>
+                <input type="text" name="cid" class="form-control" id="cidsearch">
             </div>
-            <br><br>
             <div class="form-group">
                 {!! Form::label("Exam") !!}
                 <select class="form-control" name="exam">
@@ -47,17 +46,33 @@
             {!! Form::close() !!}
         </div>
     </div>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $('[name=cid]').autocomplete({
-          source   : '/ajax/cid',
-          minLength: 2,
-          select   : function (event, ui) {
-            $('[name=cid]').val(ui.item.value)
 
-            return false
-          }
-        })
-      })
+    <script type="text/javascript">
+        $('#cidsearch').devbridgeAutocomplete({
+            lookup: [],
+            onSelect: (suggestion) => {
+                $('#cidsearch').val(suggestion.data);
+            }
+        });
+
+      var prevVal = '';
+
+      $('#cidsearch').on('change keydown keyup paste', function() {
+            let newVal = $(this).val();
+            if (newVal.length === 4 && newVal !== prevVal) {
+                let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
+                prevVal = newVal;
+                $.get($.apiUrl() + url + newVal)
+                .success((data) => {
+                    $('#cidsearch').devbridgeAutocomplete().setOptions({
+                        lookup: $.map(data, (item) => {
+                            return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
+                        })
+                    });
+                    $('#cidsearch').focus();
+                });
+            }
+      });
     </script>
+
 @endsection
