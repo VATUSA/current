@@ -107,7 +107,7 @@
                                             <td>{{$user->fname}} {{$user->lname}}</td>
                                             <td>{{$user->urating->short}}</td>
                                             @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                                                <td><a href="/mgt/controller/{{$t->cid}}"><i
+                                                <td><a href="/mgt/controller/{{$t->cid}}" target="_blank"><i
                                                             class="fa fa-search"></i></a> &nbsp; <a href="#"
                                                                                                     onClick="appvTrans({{$t->id}})"><i
                                                             class="fa fa-check"></i></a> &nbsp; <a href="#"
@@ -467,6 +467,7 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
       $(document).ready(function () {
         $.post('{{ secure_url("/mgt/ajax/staff/$fac") }}', function (data) {
@@ -896,47 +897,84 @@
       }
 
       function appvTrans (id) {
-        bootbox.confirm('Confirm approval?', function (result) {
-          if (result) {
-            $.post('{{ secure_url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
-              bootbox.alert(data)
-              window.refresh()
-              location.reload(true)
-            })
-          }
+        swal({
+          title     : 'Approving Transfer',
+          text      : 'Are you sure you want to approve this transfer? This can only be undone by VATUSA Staff.',
+          icon      : 'warning',
+          buttons   : true,
+          dangerMode: true,
         })
+          .then(r => {
+            if (r) {
+              $.post('{{ secure_url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
+                if (data == 1)
+                  swal('Success!', 'The transfer has been successfully approved.', 'success').then(_ => location.reload())
+                else
+                  swal('Error!', 'The transfer could not be approved. It may have already been processed.', 'error')
+              }).error(_ => {
+                swal('Error!', 'The transfer could not be approved. A server error has occurred.', 'error')
+              })
+            } else {
+              return null
+            }
+          })
       }
 
       function rejTrans (id) {
-        bootbox.prompt('Reason for rejection:', function (result) {
-          if (result === null) {
-          } else {
-            $.post('{{ secure_url('/mgt/ajax/transfers/2') }}', {id: id, reason: result}, function (data) {
-              bootbox.alert(data)
-              window.refresh()
-              location.reload(true)
-            })
-          }
+        swal({
+          title     : 'Rejecting Transfer',
+          text      : 'Are you sure you want to reject this transfer? This can only be undone by VATUSA Staff.',
+          icon      : 'warning',
+          content   : {
+            element   : 'input',
+            attributes: {
+              placeholder: 'Reason for rejection...'
+            }
+          },
+          buttons   : true,
+          dangerMode: true,
         })
+          .then((r) => {
+            if (r) {
+              $.post('{{ secure_url('/mgt/ajax/transfers/2') }}', {id: id, reason: r}, function (data) {
+                if (data == 1)
+                  swal('Success!', 'The transfer has been successfully rejected.', 'success').then(_ => location.reload())
+                else
+                  swal('Error!', 'The transfer could not be rejected. It may have already been processed.', 'error')
+              }).error(_ => {
+                swal('Error!', 'The transfer could not be rejected. A server error has occurred.', 'error')
+              })
+            }
+          })
       }
 
       function deleteController (cid) {
-        bootbox.prompt('Reason for delete:', function (result) {
-          if (result === null) {
-            return
-          } else {
-            $.ajax({
-              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/' + cid,
-              type: 'DELETE',
-              data: {'reason': result}
-            }).success(function () {
-              location.reload(true)
-            }).error(error => {
-              waitingDialog.hide()
-              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
-            })
-          }
+        swal({
+          title     : 'Deleting Controller',
+          text      : 'Are you sure you want to delete this controller? This can only be undone by VATUSA Staff.',
+          icon      : 'warning',
+          content   : {
+            element   : 'input',
+            attributes: {
+              placeholder: 'Reason for deletion...'
+            }
+          },
+          buttons   : true,
+          dangerMode: true,
         })
+          .then((r) => {
+            if (r) {
+              $.ajax({
+                url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/' + cid,
+                type: 'DELETE',
+                data: {'reason': r}
+              }).success(function () {
+                swal('Success!', 'The controller has been deleted.', 'success').then(_ => location.reload(true))
+              }).error(_ => {
+                swal('Error!', 'Unable to delete controller. A server error has occurred.', 'error')
+              })
+            }
+          })
       }
 
       function posDel (val) {
@@ -961,16 +999,30 @@
             val_lng = 'WM'
             break
         }
-        bootbox.confirm('Confirm vacancy of ' + val_lng + '?', function (result) {
-          if (result) {
-            $.post("{{secure_url('mgt/ajax/del/position/'.$fac)}}", {pos: val}, function (data) {
-              bootbox.alert(data)
-              $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
-                $('#staff-table').html(data)
-              })
-            })
-          }
+        swal({
+          title     : 'Vacating ' + val_lng + ' Position',
+          text      : 'Are you sure you want to vacate this position?',
+          icon      : 'warning',
+          buttons   : true,
+          dangerMode: true,
         })
+          .then(r => {
+            if (r) {
+              $.post("{{secure_url('mgt/ajax/del/position/'.$fac)}}", {pos: val}, function (data) {
+                  if (data == 1) {
+                    swal('Success!', 'The ' + val_lng + ' position has been successfully vacated.', 'success')
+                    $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
+                      $('#staff-table').html(data)
+                    })
+                  } else {
+                    swal('Error!', 'Unable to vacate the posititon.', 'error')
+                  }
+                }
+              ).error(_ => swal('Error!', 'Unable to vacate the posititon. A server error has occurred.', 'error'))
+            } else {
+              return null
+            }
+          })
       }
 
       function posEdit (val) {

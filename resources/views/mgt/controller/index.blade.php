@@ -75,7 +75,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/toggleStaffPrevent") }}",
+          url : "{{ secure_url("/mgt/controller/ajax/toggleStaffPrevent") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
@@ -103,7 +103,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/toggleInsRole") }}",
+          url : "{{ secure_url("/mgt/controller/ajax/toggleInsRole") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()

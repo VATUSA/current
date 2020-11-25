@@ -18,6 +18,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use \Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
@@ -190,11 +191,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 [
                     'name'        => $this->fname . " " . $this->lname,
                     'facility'    => $this->facname,
-                    'by'          => Helper::nameFromCID($by),
+                    'by'          => $by === "Automated" ? $by : Helper::nameFromCID($by),
                     'msg'         => $msg,
                     'facid'       => $facility,
                     'region'      => $region,
-                    'obsInactive' => $this->rating == 1 && str_contains($msg,
+                    'obsInactive' => $this->rating == 1 && Str::contains($msg,
                             ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
             );
@@ -235,7 +236,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function purge($alltables = false)
     {
-        $this->delete();
+        //$this->delete();
 
         //TODO: Purge from All Tables
     }
