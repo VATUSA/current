@@ -512,7 +512,7 @@
               }
               @endif
                 html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
-              @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
+              @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
                 html += ' &nbsp; <a href="#" onClick="deleteController(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
@@ -543,7 +543,7 @@
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
             html += '<td class="text-right">'
             html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
-              @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
+              @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
                 html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
