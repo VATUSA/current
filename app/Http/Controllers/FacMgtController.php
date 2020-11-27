@@ -394,8 +394,10 @@ class FacMgtController extends Controller
                 SMFHelper::setPermissions($user->cid);
             }
 
-            return $pos . ' successfully set vacant.';
+            return 1;
         }
+
+        return 0;
     }
 
     public function ajaxTransfers(Request $request, $status)
@@ -415,9 +417,9 @@ class FacMgtController extends Controller
                 if ($tr != null) {
                     $tr->reject(Auth::user()->cid, $_POST['reason']);
 
-                    return 'Transfer rejected';
+                    return 1;
                 } else {
-                    return 'Transfer not found.';
+                    return 0;
                 }
 
             }
@@ -426,9 +428,9 @@ class FacMgtController extends Controller
                 if ($tr != null) {
                     $tr->accept(Auth::user()->cid);
 
-                    return 'Transfer accepted';
+                    return 1;
                 } else {
-                    return 'Transfer not found.';
+                    return 0;
                 }
 
             }

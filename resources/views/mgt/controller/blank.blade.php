@@ -9,7 +9,7 @@
                         <div class="col-md-8" style="font-size: 16pt;">&nbsp;</div>
                         <form class="form-inline" id="controllerForm">
                             <div class="col-md-4 text-right form-group">
-                                <input type="text" id="cidsearch" class="form-control" placeholder="CID">
+                                <input type="text" id="cidsearch" class="form-control" placeholder="CID or Last Name">
                                 <button type="button" class="btn btn-primary" id="cidsearchbtn"><i class="fa fa-search"></i></button>
                             </div>
                         </form>

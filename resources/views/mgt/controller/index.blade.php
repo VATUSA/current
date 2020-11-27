@@ -75,7 +75,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/toggleStaffPrevent") }}",
+          url : "{{ secure_url("/mgt/controller/ajax/toggleStaffPrevent") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
@@ -103,7 +103,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/toggleInsRole") }}",
+          url : "{{ secure_url("/mgt/controller/ajax/toggleInsRole") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
@@ -159,9 +159,9 @@
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Exams</a></li>
                     @endif
-                    @php $canViewTraining = $user->facility == Auth::user()->facility || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
+                    @php $canViewTraining = $user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists() || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
                     <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
-                        title="Not a home controller at your ARTCC" @endif><a href="#training"
+                        title="Not a home or visiting controller at your ARTCC" @endif><a href="#training"
                                                                               @if($canViewTraining) data-controls="training"
                                                                               role="tab"
                                                                               data-toggle="tab" @endif>Training</a></li>

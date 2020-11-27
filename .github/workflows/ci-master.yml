@@ -2,13 +2,10 @@
 
 name: CI to Docker Hub
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# Controls when the action will run. Triggers the workflow on push or pull request events
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: [master, dev]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -24,10 +21,10 @@ jobs:
 
       - name: Make Cache Directory
         run: mkdir bootstrap/cache
-      
+
       - name: Set up Node
         uses: actions/setup-node@v1
-      
+
       - name: Install Dependencies and Compile Assets
         run: |
           npm install
@@ -37,20 +34,19 @@ jobs:
         run: docker-compose build --no-cache
       
       - name: Log in to Docker Hub
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
       - name: Push to Docker Hub (Master)
-        if: contains(github.ref, "master")
+        if: contains(github.ref, 'master')
         run: |
-          docker tag vatusa/web vatusa/web:latest
-          docker push vatusa/web:latest
+          docker tag vatusa/www vatusa/www:latest
+          docker push vatusa/www:latest
           
       - name: Push to Docker Hub (Dev)
-        if: contains(github.ref, "dev")
+        if: contains(github.ref, 'dev')
         run: |
-          docker tag vatusa/web vatusa/web:devel
-          docker push vatusa/web:devel
+          docker tag vatusa/www vatusa/www:devel
+          docker push vatusa/www:devel
