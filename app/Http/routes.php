@@ -313,8 +313,8 @@ Route::group([
             Route::get('/mgt/facility/training/evals', 'MgtController@viewEvals');
             Route::post('/mgt/facility/training/evals', 'MgtController@viewEvals');
             Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
-            Route::post('/mgt/controller/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
-            Route::post('/mgt/controller/toggleInsRole', 'MgtController@toggleInsRole');
+            Route::post('/mgt/controller/ajax/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
+            Route::post('/mgt/controller/ajax/toggleInsRole', 'MgtController@toggleInsRole');
             Route::get('/mgt/err', 'MgtController@getERR');
             Route::post('/mgt/err', 'MgtController@postERR');
             Route::get('/mgt/solo', 'MgtController@getSolo');

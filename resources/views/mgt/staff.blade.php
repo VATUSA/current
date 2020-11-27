@@ -142,29 +142,25 @@
     </div>
 
     <!-- Assign Staff Modal -->
-    <div class="modal fade" id="staffModal" tabindex="-1" role="dialog" aria-labelledby="staffModalTitle" aria-hidden="true">
+    <div class="modal fade" id="staffModal" tabindex="-1" role="dialog" aria-labelledby="staffModalTitle"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staffModalTitle">Assign Staff</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
+                    <h5 class="modal-title" id="staffModalTitle">Assign Staff</h5>
                 </div>
 
                 <div class="modal-body">
-                    
-                    <p>Are you sure you want to assign this VATUSA staff position? If so, please search or enter a CID for the controller you wish to assign VAT<span id="roleName"></span> to.</p>
-
+                    <p>Are you sure you want to assign this VATUSA staff position? If so, please search or enter a CID
+                        for the controller you wish to assign VAT<span id="roleName"></span> to.</p>
                     <hr>
-
                     <input type="hidden" id="roleHidden">
-
-
                     <label for="cid">CID or Last Name:</label>
                     <input type="text" name="cid" class="form-control" id="cidsearch">
-
                 </div>
 
                 <div class="modal-footer">
@@ -177,72 +173,72 @@
     </div>
 
     <script type="text/javascript">
-        function deleteStaff(role) {
-            roletext = role.replace("US","USA");
-            bootbox.confirm("Vacate the " + roletext + " position?", function (result) {
-                if (result === true) {
-                    $.ajax({
-                        url: "/mgt/staff/" + role,
-                        type: "DELETE"
-                    }).success(function() {
-                        location.reload();
-                    }).error(function() { alert("Error occurred"); });
-                }
-            });
-        }
-
-        $('#staffModal').on('shown.bs.modal', function(event) {
-            // Setting Values
-            var role_str = $(event.relatedTarget).data('role');
-            var role = role_str.replace('US', 'USA');
-
-            $('#roleName').html(role);
-            $('#roleHidden').val(role_str);
-        });
-
-        $('#assignButton').click(function () {
-            // Setting Values
-            var cid = $('#cidsearch').val();
-            var role = $('#roleHidden').val();
-
+      function deleteStaff (role) {
+        roletext = role.replace('US', 'USA')
+        bootbox.confirm('Vacate the ' + roletext + ' position?', function (result) {
+          if (result === true) {
             $.ajax({
-                url: "/mgt/staff/" + role,
-                type: "PUT",
-                data: { 
-                    cid: cid
-                }
-            }).success(function(res) { 
-                location.reload(true);
-            }).error(function() { 
-                alert("Error occurred");
-            });
-        });
+              url : '/mgt/staff/' + role,
+              type: 'DELETE'
+            }).success(function () {
+              location.reload()
+            }).error(function () { alert('Error occurred') })
+          }
+        })
+      }
 
-        $('#cidsearch').devbridgeAutocomplete({
-            lookup: [],
-            onSelect: (suggestion) => {
-                $('#cidsearch').val(suggestion.data);
-            }
-        });
+      $('#staffModal').on('shown.bs.modal', function (event) {
+        // Setting Values
+        var role_str = $(event.relatedTarget).data('role')
+        var role = role_str.replace('US', 'USA')
 
-        var prevVal = '';
+        $('#roleName').html(role)
+        $('#roleHidden').val(role_str)
+      })
 
-        $('#cidsearch').on('change keydown keyup paste', function() {
-            let newVal = $(this).val();
-            if (newVal.length === 4 && newVal !== prevVal) {
-                let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
-                prevVal = newVal;
-                $.get($.apiUrl() + url + newVal)
-                .success((data) => {
-                    $('#cidsearch').devbridgeAutocomplete().setOptions({
-                        lookup: $.map(data, (item) => {
-                            return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
-                        })
-                    });
-                    $('#cidsearch').focus();
-                });
-            }
-        });
+      $('#assignButton').click(function () {
+        // Setting Values
+        var cid = $('#cidsearch').val()
+        var role = $('#roleHidden').val()
+
+        $.ajax({
+          url : '/mgt/staff/' + role,
+          type: 'PUT',
+          data: {
+            cid: cid
+          }
+        }).success(function (res) {
+          location.reload(true)
+        }).error(function () {
+          alert('Error occurred')
+        })
+      })
+
+      $('#cidsearch').devbridgeAutocomplete({
+        lookup  : [],
+        onSelect: (suggestion) => {
+          $('#cidsearch').val(suggestion.data)
+        }
+      })
+
+      var prevVal = ''
+
+      $('#cidsearch').on('change keydown keyup paste', function () {
+        let newVal = $(this).val()
+        if (newVal.length === 4 && newVal !== prevVal) {
+          let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/')
+          prevVal = newVal
+          $.get($.apiUrl() + url + newVal)
+            .success((data) => {
+              $('#cidsearch').devbridgeAutocomplete().setOptions({
+                lookup: $.map(data, (item) => {
+                  return {value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid}
+                })
+              })
+              $('#cidsearch').focus()
+            })
+        }
+      })
 
     </script>
 @stop
