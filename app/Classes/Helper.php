@@ -26,8 +26,9 @@ class Helper
             case "production":
                 return "https://api.vatusa.net";
             case "livedev":
-            case "staging":
                 return "https://api.dev.vatusa.net";
+            case "staging":
+                return "https://api.staging.vatusa.net";
             case "dev":
             case "devel":
             default:
@@ -42,8 +43,9 @@ class Helper
             case "production":
                 return "https://www.vatusa.net";
             case "livedev":
-            case "staging":
                 return "https://dev.vatusa.net";
+            case "staging":
+                return "https://staging.vatusa.net";
             case "dev":
             case "devel":
             default:
