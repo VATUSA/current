@@ -212,6 +212,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $log->log = "Removed from $facname by $by: $msg";
         $log->save();
 
+        /** Remove from visiting rosters if going to ZAE */
+        if ($newfac == "ZAE" && $this->visits) {
+            foreach($this->visits as $visit) {
+                $log = new Actions();
+                $log->from = 0;
+                $log->to = $this->cid;
+                $log->log = "User removed from {$visit->facility} visiting roster: Transfer to ZAE";
+                $log->save();
+                $visit->delete();
+            }
+        }
+
         $this->facility_join = \DB::raw("NOW()");
         $this->facility = $newfac;
         $this->save();
