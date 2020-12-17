@@ -174,6 +174,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 "rating"   => Helper::ratingShortFromInt($this->rating),
                 "facility" => $fac
             ]);
+
+            $this->visits()->where('facility', $fac)->delete();
         }
     }
 

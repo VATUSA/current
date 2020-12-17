@@ -14,7 +14,7 @@
                     </div>
                 </div>
             </div>
-            <form class="form-horizontal" action="/help/ticket/new" method="POST" id="openticket-form">
+            <form class="form-horizontal" action="{{ secure_url('/help/ticket/new') }}" method="POST" id="openticket-form">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
                 <div class="form-group">
                     <label for="tSubject" class="col-sm-2 control-label">Subject</label>
