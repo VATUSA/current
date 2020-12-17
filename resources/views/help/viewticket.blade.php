@@ -35,9 +35,11 @@
                                         <select id="tFacility" class="form-control">
                                             <option value="ZHQ">VATUSA HQ</option>
                                             @foreach(\App\Facility::where('active', '1')->orWhere('id', 'ZAE')->orderBy('name')->get() as $f)
-                                                <option value="{{$f['id']}}"{{($f['id']==$ticket->facility)?" selected=\"true\"":""}}>{{$f['name']}}</option>
+                                                <option
+                                                    value="{{$f['id']}}"{{($f['id']==$ticket->facility)?" selected=\"true\"":""}}>{{$f['name']}}</option>
                                             @endforeach
-                                        </select> <b>* After changing, does not save without changing "Assigned To" dropdown.</b>
+                                        </select> <b>* After changing, does not save without changing "Assigned To"
+                                            dropdown.</b>
                                     @else
                                         <p class="form-control-static">{{\App\Facility::find($ticket->facility)->name}}</p>
                                     @endif
@@ -50,7 +52,8 @@
                                         <select id="tAssignTo" class="form-control">
                                             <option value="0">Unassigned</option>
                                             @foreach(\App\Classes\RoleHelper::getStaff($ticket->facility, true) as $s)
-                                                <option value="{{$s['cid']}}"{{($s['cid']==$ticket->assigned_to)?" selected=\"true\"":""}}>{{$s['role']}}
+                                                <option
+                                                    value="{{$s['cid']}}"{{($s['cid']==$ticket->assigned_to)?" selected=\"true\"":""}}>{{$s['role']}}
                                                     : {{$s['name']}}</option>
                                             @endforeach
                                         </select>
@@ -68,7 +71,7 @@
                                 <label class="col-sm-2 control-label">Status:</label>
                                 <div class="col-sm-10">
                                     <p class="form-control-static"><a
-                                                href="/help/ticket/{{$ticket->id}}/status">{{$ticket->status}}</a></p>
+                                            href="/help/ticket/{{$ticket->id}}/status">{{$ticket->status}}</a></p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -84,17 +87,17 @@
                                 </div>
                             </div>
                             @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">Notes:<br>(Visible to staff only)</label>
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" id="notes">{{$ticket->notes}}</textarea>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Notes:<br>(Visible to staff only)</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" id="notes">{{$ticket->notes}}</textarea>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                            <button type="button" class="btn btn-primary btnNotes">Save Notes</button>
-                            </div>
-                            </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="button" class="btn btn-primary btnNotes">Save Notes</button>
+                                    </div>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -123,7 +126,8 @@
                                     {{\App\Classes\RoleHelper::getUserRoleFull($ticket->cid, $ticket->submitter->facility)}}
                                 </div>
                                 <div class="col-lg-10">
-                                    <span class="font-style: italic">Date: {{ $ticket->created_at->format('m/d/Y H:i') }}</span>
+                                    <span
+                                        class="font-style: italic">Date: {{ $ticket->created_at->format('m/d/Y H:i') }}</span>
                                     <hr>
                                     {!! $ticket->viewbody() !!}
                                 </div>
@@ -144,7 +148,8 @@
                                         {{\App\Classes\RoleHelper::getUserRoleFull($r->cid, $r->submitter->facility)}}
                                     </div>
                                     <div class="col-lg-10">
-                                        <span class="font-style: italic">Date: {{ $r->created_at->format('m/d/Y H:i') }}</span>
+                                        <span
+                                            class="font-style: italic">Date: {{ $r->created_at->format('m/d/Y H:i') }}</span>
                                         <hr>
                                         {!! $r->viewbody() !!}
                                     </div>
@@ -156,7 +161,7 @@
             </div>
         </div>
         @if(\Auth::user()->cid == $ticket->cid || \App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility))
-            <form method="post" action="/help/ticket/{{$ticket->id}}" class="form">
+            <form method="post" action="{{ secure_url("/help/ticket/{$ticket->id}") }}" class="form">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
                 <div class="row">
@@ -166,16 +171,17 @@
                             <div class="panel-body">
                                 <div class="form-group">
                             <textarea id="tReply" rows="5" class="form-control" name="tReply"
-                                      placeholder="Response..."></textarea>
+                                      placeholder="Response..." required></textarea>
                                 </div>
                                 <div class="form-actions">
                                     @if ($ticket->status == "Open")
-                                        <input type="submit" name="replySubmit" class="btn btn-primary" value="Reply">
+                                        <input type="submit" name="replySubmit" class="btn btn-primary" value="Reply"
+                                               data-loading-text="Submitting...">
                                         <input type="submit" name="replyAndCloseSubmit" class="btn btn-success"
-                                               value="Reply and Close">
+                                               value="Reply and Close" data-loading-text="Submitting...">
                                     @else
                                         <input type="submit" name="replyAndOpenSubmit" class="btn btn-info"
-                                               value="Reply and Reopen">
+                                               value="Reply and Reopen" data-loading-text="Submitting...">
                                     @endif
                                 </div>
                             </div>
@@ -204,63 +210,73 @@
     @if(\App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor())
         <script type="text/javascript">
 
-            $('#tFacility').change(function () {
-                // Show Waiting Dialog
-                waitingDialog.show("Loading... make sure to change \"Assigned To\" drop-down to save!", {
-                    dialogsize: "sm",
-                    progressType: "ogblue"
-                });
+          $('#tFacility').change(function () {
+            // Show Waiting Dialog
+            waitingDialog.show('Loading... make sure to change "Assigned To" drop-down to save!', {
+              dialogsize  : 'sm',
+              progressType: 'ogblue'
+            })
 
-                $('#tAssignTo').prop('disabled', 'disabled');
-                $.ajax({
-                    method: "GET",
-                    url: '/ajax/help/staffc/' + $('#tFacility').val()
-                }).done(function (r) {
-                    $('#tAssignTo').replaceOptions($.parseJSON(r));
-                    $('#tAssignTo').prop('disabled', false);
-                    waitingDialog.hide();
-                });
-            });
+            $('#tAssignTo').prop('disabled', 'disabled')
+            $.ajax({
+              method: 'GET',
+              url   : '/ajax/help/staffc/' + $('#tFacility').val()
+            }).done(function (r) {
+              $('#tAssignTo').replaceOptions($.parseJSON(r))
+              $('#tAssignTo').prop('disabled', false)
+              waitingDialog.hide()
+            })
+          })
 
-            $('#tAssignTo').change(function () {
-                if ($('#tassignto').val() == "-1") {
-                    // Show Error Alert
-                    bootbox.alert("You must change the \"Assigned To\" box to save!");
-                    return;
-                }
-                
-                // Show Waiting Dialog
-                waitingDialog.show("Saving", {
-                    dialogSize: "sm", 
-                    progressType: "ogblue"
-                });
+          $('#tAssignTo').change(function () {
+            if ($('#tassignto').val() == '-1') {
+              // Show Error Alert
+              bootbox.alert('You must change the "Assigned To" box to save!')
+              return
+            }
 
-                // Post Ticket Data
-                $.ajax({
-                    method: "POST",
-                    url: '/help/ticket/ajax/{{$ticket->id}}',
-                    data: {facility: $('#tFacility').val(), assign: $('#tAssignTo').val()}
-                }).done(function () {
-                    location.reload(true);
-                });
-            });
+            // Show Waiting Dialog
+            waitingDialog.show('Saving', {
+              dialogSize  : 'sm',
+              progressType: 'ogblue'
+            })
 
-            $('.btnNotes').click(function() {
-                // Show Waiting Dialog
-                waitingDialog.show("Saving...", {
-                    dialogsize: 'sm',
-                    progressType: 'ogblue'
-                });
+            // Post Ticket Data
+            $.ajax({
+              method: 'POST',
+              url   : '/help/ticket/ajax/{{$ticket->id}}',
+              data  : {facility: $('#tFacility').val(), assign: $('#tAssignTo').val()}
+            }).done(function () {
+              location.reload(true)
+            })
+          })
 
-                // Post Ticket Data
-                $.ajax({
-                    method: "POST",
-                    url: '/help/ticket/ajax/{{$ticket->id}}',
-                    data: { note: $('#notes').val() }
-                }).done(function (r) {
-                    waitingDialog.hide();
-                });
-            });
+          $('.btnNotes').click(function () {
+            // Show Waiting Dialog
+            waitingDialog.show('Saving...', {
+              dialogsize  : 'sm',
+              progressType: 'ogblue'
+            })
+
+            // Post Ticket Data
+            $.ajax({
+              method: 'POST',
+              url   : '/help/ticket/ajax/{{$ticket->id}}',
+              data  : {note: $('#notes').val()}
+            }).done(function (r) {
+              waitingDialog.hide()
+            })
+          })
+
+          $('button[type=submit]').click(function (e) {
+            let btn = $(this)
+            if ($('#tReply').val().length) {
+              btn.html('<i class=\'fa fa-spinner fa-spin\'></i> Submitting...').attr('disabled', true)
+            } else {
+              e.preventDefault()
+              alert('Reply cannot be empty.')
+            }
+          })
         </script>
     @endif
 @endsection

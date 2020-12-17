@@ -123,6 +123,12 @@ Route::group([
         return redirect("/");
     });
 
+// TMU ********************
+    Route::get('tmu/map/{fac}', 'TMUController@getMap');
+    Route::get('tmu/map/{fac}/dark', 'TMUController@getMapDark');
+    Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
+    Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
+
     Route::group(['middleware' => 'privacy-agree'], function () {
         Route::get('/', ['as' => '/', 'uses' => 'HomeController@index']);
 
@@ -259,12 +265,6 @@ Route::group([
             return view('info.privacy');
         });
 
-        // TMU ********************
-        Route::get('tmu/map/{fac}', 'TMUController@getMap');
-        Route::get('tmu/map/{fac}/dark', 'TMUController@getMapDark');
-        Route::get('tmu/map/{fac}/coords', 'TMUController@getCoords');
-        Route::get('tmu/notices/{sector?}', 'TMUController@getNotices');
-
 //
 // VATUSA Mgt Facility Function
 // dev.vatusa.net/mgt/facility/{route}
@@ -305,9 +305,12 @@ Route::group([
             Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
             Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
             Route::get('/mgt/controller/{cid}/eval/{form?}', 'MgtController@getOTSEval')->where('form', '[0-9]+');
-            Route::get('/mgt/facility/training/eval/{form?}/view', 'MgtController@viewOTSEval')->where('form', '[0-9]+');
-            Route::get('/mgt/facility/training/eval/{form?}/stats', 'MgtController@viewOTSEvalStatistics')->where('form', '[0-9]+');
-            Route::post('/mgt/facility/training/eval/{form?}/stats', 'MgtController@viewOTSEvalStatistics')->where('form', '[0-9]+');
+            Route::get('/mgt/facility/training/eval/{form?}/view', 'MgtController@viewOTSEval')->where('form',
+                '[0-9]+');
+            Route::get('/mgt/facility/training/eval/{form?}/stats',
+                'MgtController@viewOTSEvalStatistics')->where('form', '[0-9]+');
+            Route::post('/mgt/facility/training/eval/{form?}/stats',
+                'MgtController@viewOTSEvalStatistics')->where('form', '[0-9]+');
             Route::get('/mgt/facility/training/stats', 'MgtController@viewTrainingStatistics');
             Route::post('/mgt/facility/training/stats', 'MgtController@viewTrainingStatistics');
             Route::get('/mgt/facility/training/evals', 'MgtController@viewEvals');

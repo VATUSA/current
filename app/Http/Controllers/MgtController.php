@@ -1019,7 +1019,7 @@ class MgtController extends Controller
             abort(404, "The OTS evaluation form is invalid.");
         }
         $student = $eval->student;
-        if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility)) {
+        if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $student->facility)) {
             abort(403);
         }
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
