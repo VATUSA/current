@@ -86,7 +86,7 @@ class MgtController extends Controller
                 Auth::user()->facility)->exists() || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
                 $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
-                    $trainingfac) && $user->cid !== Auth::user()->cid;
+                    $user->facility) && $user->cid !== Auth::user()->cid;
 
             //Get INS at ARTCC
             $ins = ['ins' => [], 'mtr' => []];
