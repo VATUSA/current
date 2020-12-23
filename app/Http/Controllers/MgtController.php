@@ -90,20 +90,20 @@ class MgtController extends Controller
 
             //Get INS at ARTCC
             $ins = ['ins' => [], 'mtr' => []];
-            $users = User::where('facility', $trainingfac)->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+            $users = User::where('facility', $user->facility)->where('rating', '>=', Helper::ratingIntFromShort("I1"))
                 ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
             if ($users) {
                 foreach ($users as $tUser) {
                     $ins['ins'][$tUser->cid] = $tUser->fullname();
                 }
             }
-            $users = Role::where('facility', $trainingfac)->where('role', 'INS')->get();
+            $users = Role::where('facility', $user->facility)->where('role', 'INS')->get();
             if ($users) {
                 foreach ($users as $tUser) {
                     $ins['ins'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
                 }
             }
-            $users = Role::where('facility', $trainingfac)->where('role', 'MTR')->get();
+            $users = Role::where('facility', $user->facility)->where('role', 'MTR')->get();
             if ($users) {
                 foreach ($users as $tUser) {
                     $ins['mtr'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
