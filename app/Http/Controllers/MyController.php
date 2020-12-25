@@ -12,6 +12,7 @@ use Auth;
 use App\Actions;
 use App\User;
 use App\Facility;
+use Laravel\Socialite\Facades\Socialite;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Wohali\OAuth2\Client\Provider\Discord;
 
@@ -220,18 +221,8 @@ class MyController
 
     public function linkDiscord($mode = "link")
     {
-        sleep(5);
-        $provider = new Discord([
-            'clientId'     => config('services.discord.client'),
-            'clientSecret' => config('services.discord.secret'),
-            'redirectUri'  => config('services.discord.redirect')
-        ]);
-
         if ($mode === "link") {
-            $url = $provider->getAuthorizationUrl(['scope' => 'identify']);
-            session()->put('discordauthstate', $provider->getState());
-
-            return redirect()->away($url);
+            return Socialite::driver('discord')->setScopes(['identify'])->redirect();
         } elseif ($mode === "unlink") {
             $user = Auth::user();
             $user->discord_id = null;
@@ -243,24 +234,10 @@ class MyController
                 return response()->json(false);
             }
         } elseif ($mode === "return") {
-            $code = request()->input('code', null);
-            $state = request()->input('state', null);
-            $sessionState = session()->pull('discordauthstate');
-            if (!$state || $state !== $sessionState) {
-                abort(400, "Invalid State");
-            }
-            if (!$code) {
-                abort(400, "Invalid Code");
-            }
             try {
-                $token = $provider->getAccessToken('authorization_code', compact('code'));
-            } catch (IdentityProviderException $e) {
-                return redirect()->to('/my/profile')->with('discordError', true);
-            }
-
-            try {
+                $dUser = Socialite::driver('discord')->user();
                 $user = Auth::user();
-                $user->discord_id = $provider->getResourceOwner($token)->getId();
+                $user->discord_id = $dUser->getId();
                 try {
                     $user->saveOrFail();
 

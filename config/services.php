@@ -35,8 +35,8 @@ return [
     ],
 
     'discord' => [
-        'client' => env('DISCORD_CLIENT_ID', null),
-        'secret' => env('DISCORD_CLIENT_SECRET', null),
+        'client_id' => env('DISCORD_CLIENT_ID', null),
+        'client_secret' => env('DISCORD_CLIENT_SECRET', null),
         'redirect' => env('DISCORD_REDIRECT', null),
         'botserver' => env('DISCORD_BOT_SERVER','http://discord-bot:3000')
     ]
