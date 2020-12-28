@@ -52,6 +52,11 @@
                         <td><a href="/docs/7210.351.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
+                        <td>7210.352 &mdash; ACE Team Policy and Procedures</td>
+                        <td>01/01/2021</td>
+                        <td><a href="/docs/7210.352.pdf" target="_blank">view</a></td>
+                    </tr>
+                    <tr>
                         <td>VATUSA Organizational Chart</td>
                         <td>11/01/2020</td>
                         <td><a href="/docs/orgchart.pdf" target="_blank">view</a></td>
@@ -158,7 +163,7 @@
                     </tr>
                     <tr>
                         <td>T1000.2 &mdash; APIv1 <em>(Deprecated)</em></td>
-                        <td>06/25/2016</td>
+                        <td>06/25/2016<br><strong>Rem. 03/01/2021</strong></td>
                         @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
                             <td><a href="/docs/T1000.2.pdf" target="_blank">view</a></td>
                         @else
