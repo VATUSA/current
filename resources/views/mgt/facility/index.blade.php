@@ -499,9 +499,9 @@
             html += '<td data-text="' + data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(data[i].rating)) + '</span>' + data[i].rating_short
             if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
             html += '</td>'
-            var date = new Date(data[i].facility_join)
+            var date = new Date(data[i].facility_join.replace(/\s/, 'T')+'Z')
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
-            var last_promotion = data[i].last_promotion
+            var last_promotion = data[i].last_promotion.replace(/\s/, 'T')+'Z'
             if (last_promotion) var promotion_date = new Date(last_promotion)
             if (promotion_date) html += '<td>' + (promotion_date.getMonth() + 1) + '/' + promotion_date.getDate() + '/' + promotion_date.getFullYear() + '</td>'
             else html += '<td><span class="text-muted">N/A</span></td>'
@@ -539,7 +539,7 @@
             if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
             html += '</td>'
             html += '<td>' + data[i].facility + '</td>'
-            var date = new Date(data[i].facility_join)
+            var date = new Date(data[i].facility_join.replace(/\s/, 'T')+'Z')
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
             html += '<td class="text-right">'
             html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
