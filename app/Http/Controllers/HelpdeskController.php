@@ -139,7 +139,7 @@ class HelpDeskController
         $history->save();
 
         $emails = [];
-        $emails[] = "vatusa6@vatusa.net"; // During debug period
+        //$emails[] = "vatusa6@vatusa.net"; // During debug period
         $emails[] = Auth::user()->email;
 
         // Build emails array
@@ -153,6 +153,7 @@ class HelpDeskController
             }
             elseif ($ticket->facility == "ZAE") {
                 $emails[] = "vatusa3@vatusa.net";
+                $emails[] = "vatusa13@vatusa.net";
             }
             else {
                 $fac = Facility::find($ticket->facility);
