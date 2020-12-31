@@ -83,7 +83,7 @@ $(function () {
         targets: 6
       }],
       order       : [[0, 'desc']],
-      orderFixed  : [[6, 'asc']],
+      //orderFixed  : [[6, 'asc']],
       drawCallback: function (settings) {
         let api = this.api()
         let rows = api.rows({page: 'current'}).nodes()

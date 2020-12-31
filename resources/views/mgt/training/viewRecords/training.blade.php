@@ -42,9 +42,9 @@
                         <th>Position</th>
                         <th>Student</th>
                         <th>Duration</th>
-                        <th class="alert-ignore">Progress</th>
+                        <th>Instructor</th>
                         <th class="alert-ignore">Actions</th>
-                        <th class="alert-ignore">Instructor</th>
+                        <th class="alert-ignore">Month</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -63,15 +63,7 @@
                             <td>{{ $record->position }}</td>
                             <td>{{ $record->student->fullname() }}</td>
                             <td>{{ substr($record->duration, 0, 5) }}</td>
-                            <td class="alert-ignore">
-                                @if(!is_null($record->score))
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <span
-                                            class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
-                                        &nbsp;
-                                    @endfor
-                                @endif
-                            </td>
+                            <td>{{ $record->instructor->fullname() }} </td>
                             <td class="alert-ignore">
                                 <div class="btn-group">
                                     <button class="btn btn-primary view-tr"
@@ -80,7 +72,7 @@
                                     </button>
                                 </div>
                             </td>
-                            <td>{{ $record->instructor->fullname() }} </td>
+                            <td>{{ $record->session_date->format('F') }} </td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -107,9 +99,9 @@
                             <th>Position</th>
                             <th>Student</th>
                             <th>Duration</th>
-                            <th class="alert-ignore">Progress</th>
+                            <th>Instructor</th>
                             <th class="alert-ignore">Actions</th>
-                            <th class="alert-ignore">Instructor</th>
+                            <th class="alert-ignore">Month</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -128,15 +120,7 @@
                                 <td>{{ $record->position }}</td>
                                 <td>{{ $record->student->fullname() }}</td>
                                 <td>{{ substr($record->duration, 0, 5) }}</td>
-                                <td class="alert-ignore">
-                                    @if(!is_null($record->score))
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <span
-                                                class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
-                                            &nbsp;
-                                        @endfor
-                                    @endif
-                                </td>
+                                <td>{{ $record->instructor->fullname() }}</td>
                                 <td class="alert-ignore">
                                     <div class="btn-group">
                                         <button class="btn btn-primary view-tr"
@@ -145,7 +129,7 @@
                                         </button>
                                     </div>
                                 </td>
-                                <td>{{ $record->instructor->fullname() }}</td>
+                                <td>{{ $record->session_date->format('F') }} </td>
                             </tr>
                         @endforeach
                         </tbody>
