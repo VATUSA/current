@@ -38,7 +38,7 @@
                     </tr>
                     <tr>
                         <td>GO 61720 &mdash; C3 Senior Controller Program</td>
-                        <td>08/16/2020</td>
+                        <td>12/26/2020</td>
                         <td><a href="/docs/GO-61720.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
