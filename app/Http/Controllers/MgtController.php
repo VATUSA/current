@@ -421,7 +421,7 @@ class MgtController extends Controller
         $user = User::find($cid);
         $email = strtolower(substr($user->fname, 0, 1) . "." . $user->lname) . "@vatusa.net";
         EmailHelper::addEmail($email, env('APP_KEY'));
-        EmailHelper::setForward('vat' . str_replace('us', 'usa', $role) . '@vatusa.net', $email);
+        EmailHelper::setForward('vat' . str_replace('US', 'usa', $role) . '@vatusa.net', $email);
 
 
         $log = new Actions();
@@ -429,7 +429,7 @@ class MgtController extends Controller
         $log->log = "Assigned to role '" . RoleHelper::roleTitle($role) . "' by " . Auth::user()->fullname();
         $log->save();
 
-        if (config('staff.hq.moveToHQ') && $role != "US11") {
+        if (config('staff.hq.moveToHQ')) {
             $u = User::where('cid', $cid)->first();
 
             $tr = new \App\Transfers;
