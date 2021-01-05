@@ -283,13 +283,11 @@ Route::group([
             Route::post('/mgt/ace', 'MgtController@putAce');
             Route::get('/mgt/ace/delete/{cid}', 'MgtController@deleteAce');
             Route::post('/mgt/action/add', 'MgtController@addLog');
-            Route::get('/mgt/ajax/canModifyRecord/{record}', 'MgtController@ajaxCanModifyRecord');
             Route::post('/mgt/ajax/position/{facility}/{id}', 'FacMgtController@ajaxPosition');
             Route::post('/mgt/ajax/del/position/{facility}', 'FacMgtController@ajaxPositionDel');
             Route::post('/mgt/ajax/staff/{facility}', 'FacMgtController@ajaxStaffTable');
             Route::post('/mgt/ajax/transfers/{status}', 'FacMgtController@ajaxTransfers');
             Route::get('/mgt/ajax/transfer/reason', 'FacMgtController@ajaxTransferReason');
-            Route::get('/mgt/controller/ajax/canModifyRecord/{record}', 'MgtController@ajaxCanModifyRecord');
             Route::get('/mgt/controller', 'MgtController@getController');
             Route::get('/mgt/controller/{cid}', 'MgtController@getController');
             Route::post('/mgt/controller/{cid}', 'MgtController@getController');
@@ -304,17 +302,23 @@ Route::group([
             Route::get('/mgt/controller/{cid}/promote', 'MgtController@getControllerPromote');
             Route::get('/mgt/controller/{cid}/togglebasic', 'MgtController@getControllerToggleBasic');
             Route::post('/mgt/controller/{cid}/promote', 'MgtController@postControllerPromote');
-            Route::get('/mgt/controller/{cid}/eval/{form?}', 'MgtController@getOTSEval')->where('form', '[0-9]+');
-            Route::get('/mgt/facility/training/eval/{form?}/view', 'MgtController@viewOTSEval')->where('form',
+
+
+            // Training
+            Route::get('/mgt/controller/{cid}/eval/{form?}', 'TrainingController@getOTSEval')->where('form', '[0-9]+');
+            Route::get('/mgt/facility/training/eval/{form?}/view', 'TrainingController@viewOTSEval')->where('form',
                 '[0-9]+');
             Route::get('/mgt/facility/training/eval/{form?}/stats',
-                'MgtController@viewOTSEvalStatistics')->where('form', '[0-9]+');
+                'TrainingController@viewOTSEvalStatistics')->where('form', '[0-9]+');
             Route::post('/mgt/facility/training/eval/{form?}/stats',
-                'MgtController@viewOTSEvalStatistics')->where('form', '[0-9]+');
-            Route::get('/mgt/facility/training/stats', 'MgtController@viewTrainingStatistics');
+                'TrainingController@viewOTSEvalStatistics')->where('form', '[0-9]+');
+            Route::get('/mgt/facility/training/stats', 'TrainingController@viewTrainingStatistics');
             Route::post('/mgt/facility/training/stats', 'MgtController@viewTrainingStatistics');
-            Route::get('/mgt/facility/training/evals', 'MgtController@viewEvals');
-            Route::post('/mgt/facility/training/evals', 'MgtController@viewEvals');
+            Route::get('/mgt/facility/training/evals', 'TrainingController@viewEvals');
+            Route::post('/mgt/facility/training/evals', 'TrainingController@viewEvals');
+            Route::get('/mgt/controller/ajax/canModifyRecord/{record}', 'TrainingController@ajaxCanModifyRecord');
+
+
             Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
             Route::post('/mgt/controller/ajax/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
             Route::post('/mgt/controller/ajax/toggleInsRole', 'MgtController@toggleInsRole');
