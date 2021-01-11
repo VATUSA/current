@@ -7,7 +7,7 @@
         $('.nav-tabs li:not(.disabled) a[href=' + document.location.hash + ']').tab('show')
 
       $('.nav-tabs a').on('shown.bs.tab', function (e) {
-        history.pushState({}, '', e.target.hash);
+        history.pushState({}, '', e.target.hash)
       })
 
       $('.delete-log').click(function (e) {
@@ -95,6 +95,34 @@
           })
       })
 
+      $('#toggleAcademyEditor').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on'),
+            spinner     = $(this).find('i.spinner-icon')
+
+        spinner.show()
+        $.ajax({
+          type: 'POST',
+          url : "{{ secure_url("/mgt/controller/ajax/toggleAcademyEditor") }}",
+          data: {cid: "{{ $user->cid }}"}
+        }).success(function (result) {
+          spinner.hide()
+          if (result === '1') {
+            //Success
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'info' : 'danger'))
+            panel.removeClass(currentlyOn ? 'panel-warning' : 'panel-default')
+            panel.addClass(currentlyOn ? 'panel-default' : 'panel-warning')
+          } else {
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle Academy editor setting.')
+          }
+        })
+          .error(function (result) {
+            spinner.hide()
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          })
+      })
+
       $('#toggleInsRole').click(function () {
         let icon        = $(this).find('i.toggle-icon'),
             currentlyOn = icon.hasClass('fa-toggle-on'),
@@ -138,7 +166,8 @@
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <div class="row">
-                        <div class="col-md-8" style="font-size: 16pt;">{{$user->fname}} {{$user->lname}} - {{$user->cid}}</div>
+                        <div class="col-md-8" style="font-size: 16pt;">{{$user->fname}} {{$user->lname}}
+                            - {{$user->cid}}</div>
                         <form class="form-inline" id="controllerForm">
                             <div class="col-md-4 text-right form-group">
                                 <input type="text" id="cidsearch" class="form-control" placeholder="CID or Last Name">
@@ -162,9 +191,10 @@
                     @php $canViewTraining = $user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists() || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
                     <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
                         title="Not a home or visiting controller at your ARTCC" @endif><a href="#training"
-                                                                              @if($canViewTraining) data-controls="training"
-                                                                              role="tab"
-                                                                              data-toggle="tab" @endif>Training</a></li>
+                                                                                          @if($canViewTraining) data-controls="training"
+                                                                                          role="tab"
+                                                                                          data-toggle="tab" @endif>Training</a>
+                    </li>
                     <li role="presentation"><a href="#cbt" data-controls="cbt" role="tab"
                                                data-toggle="tab">CBT Progress</a></li>
                     @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
@@ -450,7 +480,8 @@
                             </div>
                         </div>
                     @endif
-                    <div class="tab-pane" role="tabpanel" id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
+                    <div class="tab-pane" role="tabpanel"
+                         id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
                     <div class="tab-pane" role="tabpanel" id="cbt">
                         <h3>CBT Results</h3>
                         <div class="panel-group" id="accordion">
@@ -581,6 +612,17 @@
                                             assign him or her a role.</p>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Academy Material Editor</label>
+                                    <div class="col-sm-10">
+                                    <span id="toggleAcademyEditor" style="font-size:1.8em;">
+                                        <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, "ZAE", "CBT") ? "on text-danger" : "off text-info"}} "></i>
+                                        <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                                    </span>
+                                        <p class="help-block">This will assign the Editor role to the user in Moodle,
+                                            and will allow him or her to edit VATUSA Training Academy material.</p>
+                                    </div>
+                                </div>
                                 @if($user->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Instructor</label>
@@ -599,7 +641,8 @@
                                     <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
                                     <div class="col-sm-10">
                                         <p class="form-control-static" style="cursor:default;">
-                                            @if($user->flag_preventStaffAssign) <strong style="color:#e72828">Yes</strong>
+                                            @if($user->flag_preventStaffAssign) <strong
+                                                style="color:#e72828">Yes</strong>
                                             @else <strong style="color:green">No</strong>
                                             @endif
                                         </p>
@@ -680,29 +723,29 @@
       })
 
       $('#cidsearch').devbridgeAutocomplete({
-          lookup: [],
-          onSelect: (suggestion) => {
-              $('#cidsearch').val(suggestion.data);
-              $('#cidsearchbtn').click();
-          }
-      });
-      var prevVal = '';
-      $('#cidsearch').on('change keydown keyup paste', function() {
-          let newVal = $(this).val();
-          if (newVal.length === 4 && newVal !== prevVal) {
-              let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
-              prevVal = newVal;
-              $.get($.apiUrl() + url + newVal)
-              .success((data) => {
-                  $('#cidsearch').devbridgeAutocomplete().setOptions({
-                      lookup: $.map(data, (item) => {
-                          return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
-                      })
-                  });
-                  $('#cidsearch').focus();
-              });
-          }
-      });
+        lookup  : [],
+        onSelect: (suggestion) => {
+          $('#cidsearch').val(suggestion.data)
+          $('#cidsearchbtn').click()
+        }
+      })
+      var prevVal = ''
+      $('#cidsearch').on('change keydown keyup paste', function () {
+        let newVal = $(this).val()
+        if (newVal.length === 4 && newVal !== prevVal) {
+          let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/')
+          prevVal = newVal
+          $.get($.apiUrl() + url + newVal)
+            .success((data) => {
+              $('#cidsearch').devbridgeAutocomplete().setOptions({
+                lookup: $.map(data, (item) => {
+                  return {value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid}
+                })
+              })
+              $('#cidsearch').focus()
+            })
+        }
+      })
     </script>
 
 

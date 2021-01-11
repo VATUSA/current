@@ -159,9 +159,9 @@ class RoleHelper
      *
      * @return bool
      */
-    public static function hasRole($cid, $facility, $role)
+    public static function hasRole($cid, $facility, $role, $isApi = false)
     {
-        if (static::isVATUSAStaff() && $facility == "ZHQ") {
+        if (static::isVATUSAStaff($cid, $isApi) && $facility == "ZHQ") {
             return true;
         } elseif ($facility == "ZHQ" && $role != "ACE") {
             return false;

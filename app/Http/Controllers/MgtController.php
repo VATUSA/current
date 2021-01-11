@@ -7,6 +7,7 @@ use App\Classes\cPanelHelper;
 use App\Classes\Helper;
 use App\Classes\PromoHelper;
 use App\Classes\SMFHelper;
+use App\Classes\VATUSAMoodle;
 use App\OTSEval;
 use App\OTSEvalForm;
 use App\Promotions;
@@ -962,5 +963,44 @@ class MgtController extends Controller
         }
 
         return "1";
+    }
+
+    public function toggleAcademyEditor(Request $request)
+    {
+        $cid = $request->cid;
+        User::findOrFail($cid);
+        $moodle = new VATUSAMoodle();
+
+        if (!RoleHelper::isVATUSAStaff()) {
+            abort(403);
+        }
+
+        if (RoleHelper::hasRole($cid, "ZAE", "CBT")) {
+            if (is_null($moodle->unassignRole($moodle->getUserId($cid), VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "CBT",
+                "coursecat"))) {
+                try {
+                    Role::where('cid', $cid)->where('role', 'CBT')->delete();
+                } catch (\Exception $e) {
+                    return "0";
+                }
+
+                return "1";
+            }
+
+            return "0";
+        }
+        if (is_null($moodle->assignRole($moodle->getUserId($cid), VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "CBT",
+            "coursecat"))) {
+            $role = new Role();
+            $role->cid = $cid;
+            $role->facility = "ZAE";
+            $role->role = "CBT";
+            $role->saveOrFail();
+
+            return "1";
+        }
+
+        return "0";
+
     }
 }

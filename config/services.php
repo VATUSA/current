@@ -43,6 +43,7 @@ return [
 
     'moodle' => [
         'url'   => env('MOODLE_URL', 'https://academy.vatusa.net'),
-        'token' => env('MOODLE_TOKEN', null),
+        'token' => env('MOODLE_TOKEN'),
+        'token_sso' => env('MOODLE_TOKEN_SSO')
     ]
 ];
