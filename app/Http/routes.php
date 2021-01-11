@@ -322,6 +322,7 @@ Route::group([
             Route::delete('/mgt/controller/{cid}/transfer/override', 'MgtController@deleteControllerTransferOverride');
             Route::post('/mgt/controller/ajax/toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
             Route::post('/mgt/controller/ajax/toggleInsRole', 'MgtController@toggleInsRole');
+            Route::post('/mgt/controller/ajax/toggleAcademyEditor', 'MgtController@toggleAcademyEditor');
             Route::get('/mgt/err', 'MgtController@getERR');
             Route::post('/mgt/err', 'MgtController@postERR');
             Route::get('/mgt/solo', 'MgtController@getSolo');
