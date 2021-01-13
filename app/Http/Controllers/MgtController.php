@@ -1022,10 +1022,12 @@ class MgtController extends Controller
         if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $student->facility)) {
             abort(403);
         }
+        $positionSplit = explode('_', $eval->exam_position);
+        $positionType = $positionSplit[count($positionType - 1)];
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
             'student_id' => $eval->student_id,
             ['exam_date', '<=', $eval->exam_date],
-            ['exam_position', 'like', '%' . explode('_', $eval->exam_position)[1]]
+            ['exam_position', 'like', '%' . $positionType]
         ])->count());
         $recs = TrainingRecord::where([
             'student_id' => $eval->student_id,
