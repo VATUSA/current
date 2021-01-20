@@ -101,26 +101,27 @@ class MoodleSync extends Command
         $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "STU", "coursecat");
 
         //Assign Category Permissions
-        if (RoleHelper::hasRole($user->cid, $user->facility, "TA", true)) {
+        if (RoleHelper::isVATUSAStaff() || RoleHelper::hasRole($user->cid, $user->facility, "TA", true)) {
             $this->moodle->assignRole($id, VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "INS", "coursecat");
         }
-        if (RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true)) {
+        if (RoleHelper::isVATUSAStaff() || RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true)) {
             $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "TA",
                 "coursecat");
         }
-        if (RoleHelper::hasRole($user->cid, "ZAE", "CBT", true)) {
+        if (RoleHelper::isVATUSAStaff() || RoleHelper::hasRole($user->cid, "ZAE", "CBT", true)) {
             $this->moodle->assignRole($id, VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "CBT", "coursecat");
         }
         if ($user->flag_homecontroller && (
                 $user->rating >= Helper::ratingIntFromShort("I1")
                 && $user->rating < Helper::ratingIntFromShort("SUP")
                 || $user->rating == Helper::ratingIntFromShort("ADM")
+                || RoleHelper::isVATUSAStaff()
                 || RoleHelper::hasRole($user->cid, $user->facility, "INS", true))) {
             $this->moodle->assignRole($id, VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "INS", "coursecat");
             $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "INS",
                 "coursecat");
         }
-        if (RoleHelper::hasRole($user->cid, $user->facility, "MTR", true)) {
+        if (RoleHelper::isVATUSAStaff() || RoleHelper::hasRole($user->cid, $user->facility, "MTR", true)) {
             for ($i = 1; $i <= $user->rating; $i++) {
                 $category = "CATEGORY_CONTEXT_" . Helper::ratingShortFromInt($i);
                 $this->moodle->assignRole($id, $this->moodle->getConstant($category), "MTR", "course");
