@@ -172,7 +172,7 @@
         })*/
 
         const jsDate = new Date(),
-              offset = jsDate.getUTCFullYear() - jsDate.getFullYear() + 1
+              offset = jsDate.getUTCFullYear() - jsDate.getFullYear() + 2
 
         $('#exam-date').datetimepicker({
           timepicker: false,
