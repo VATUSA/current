@@ -70,7 +70,7 @@
                         <td><a href="/docs/3120.1A.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
-                        <td>3120.311 &mdash; Procedures for Selection, Submission, and Appointment of Instructors</td>
+                        <td>3120.2C &mdash; Procedures for Selection, Submission, and Appointment of Instructors</td>
                         <td>01/25/2021</td>
                         @if(\Auth::check())
                             <td><a href="/docs/3120.2C.pdf" target="_blank">view</a></td>
