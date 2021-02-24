@@ -87,6 +87,16 @@ class MgtController extends Controller
                 $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
                     $user->facility) && $user->cid !== Auth::user()->cid;
+            if (!$canAddTR) {
+                //Check Visiting Rosters
+                foreach ($user->visits as $visit) {
+                    $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
+                            $visit->facility) && $user->cid !== Auth::user()->cid;
+                    if ($canAddTR) {
+                        break;
+                    }
+                }
+            }
 
             //Get INS at ARTCC
             $ins = ['ins' => [], 'mtr' => []];
@@ -1019,11 +1029,12 @@ class MgtController extends Controller
             abort(404, "The OTS evaluation form is invalid.");
         }
         $student = $eval->student;
-        if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $student->facility)) {
+        if (!RoleHelper::isInstructor(Auth::user()->cid,
+                $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $student->facility)) {
             abort(403);
         }
         $positionSplit = explode('_', $eval->exam_position);
-        $positionType = $positionSplit[count($positionType - 1)];
+        $positionType = $positionSplit[count($positionSplit - 1)];
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
             'student_id' => $eval->student_id,
             ['exam_date', '<=', $eval->exam_date],
