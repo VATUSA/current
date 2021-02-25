@@ -1039,7 +1039,7 @@ class MgtController extends Controller
             abort(403);
         }
         $positionSplit = explode('_', $eval->exam_position);
-        $positionType = $positionSplit[count($positionSplit - 1)];
+        $positionType = $positionSplit[count($positionSplit) - 1];
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
             'student_id' => $eval->student_id,
             ['exam_date', '<=', $eval->exam_date],
