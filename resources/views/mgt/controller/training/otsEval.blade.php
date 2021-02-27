@@ -60,7 +60,7 @@
                                 <p>
                                 <div id="form-actions" class="btn-group">
                                     <button class="btn btn-primary resetForm"><i
-                                            class="fas fa-sync"></i> Reset Form
+                                                class="fas fa-sync"></i> Reset Form
                                     </button>
                                     <button class="btn btn-danger"
                                             onclick="exitForm()">
@@ -122,18 +122,18 @@
                                             @if($indicator->header_type != 2) colspan="2" @endif>
                                             <span class="indicator-header-count">{{ ++$headerCount }}.</span>
                                             <span class="indicator-header-label">{!! $indicator->label !!}<span
-                                                    class="indicator-comment-display"
-                                                    id="indicator-comment-display-{{ $indicator->id }}"></span></span>
+                                                        class="indicator-comment-display"
+                                                        id="indicator-comment-display-{{ $indicator->id }}"></span></span>
                                             @if($indicator->help_text)
                                                 <span class="indicator-help-text" data-toggle="popover"
                                                       title="Instructions" data-content="{{ $indicator->help_text }}"><i
-                                                        class="fas fa-question-circle"></i></span>
+                                                            class="fas fa-question-circle"></i></span>
                                     @endif
                                     @if($indicator->header_type == 2)
                                         <td class="indicator-comment-cell"><span class="indicator-comment" rel="tooltip"
                                                                                  title="Add Comment"
                                                                                  data-id="{{ $indicator->id }}"><i
-                                                    class="fas fa-plus-circle"></i></span>
+                                                        class="fas fa-plus-circle"></i></span>
                                         </td>
                                     @endif
                                     @else
@@ -147,7 +147,7 @@
                                                     <span class="indicator-help-text" data-toggle="popover"
                                                           title="Instructions"
                                                           data-content="{{ $indicator->help_text }}"><i
-                                                            class="fas fa-question-circle"></i>
+                                                                class="fas fa-question-circle"></i>
                                                         </span>
                                                 @endif</div>
                                         </td>
@@ -155,7 +155,7 @@
                                                                                  id="indicator-comment-btn-{{ $indicator->id }}"
                                                                                  title="Add Comment"
                                                                                  data-id="{{ $indicator->id }}"><i
-                                                    class="fas fa-plus-circle"></i></span>
+                                                        class="fas fa-plus-circle"></i></span>
                                         </td>
                                     @endif
                                     @for($i = 0; $i < 4; $i++)
@@ -197,7 +197,7 @@
                                                 <label class="btn btn-default ots-status-input-label">
                                                     <input type="radio" name="ots_result" id="ots-result-fail" value="0"
                                                            class="ots-status-input" autocomplete="off"><i
-                                                        class="fas fa-times"></i> Fail
+                                                            class="fas fa-times"></i> Fail
                                                 </label>
                                             </div>
                                         </div>
@@ -231,20 +231,22 @@
                                         <div class="col-sm-offset-2 col-sm-10">
                                             <input type="hidden" name="form" id="form-id" value="{{ $form->id }}">
                                             <button type="submit" class="btn btn-success" id="submit-eval"><i
-                                                    class="fas fa-check-double"></i> eSign and Submit
+                                                        class="fas fa-check-double"></i> eSign and Submit
                                             </button>
                                             <button class="btn btn-warning resetForm" type="button"><i
-                                                    class="fas fa-sync"></i> Reset Form
+                                                        class="fas fa-sync"></i> Reset Form
                                             </button>
                                             <div class="alert alert-info" style="margin-top: 5px;">
                                                 <i class="fas fa-info-circle" style="display: table-cell"></i>
-                                                <p style="display: table-cell; padding-left: 5px;"> By submitting this form, you agree
+                                                <p style="display: table-cell; padding-left: 5px;"> By submitting this
+                                                    form, you agree
                                                     that you are the examining instructor and have conducted the OTS
                                                     to the standards set forth by the VATUSA training staff and by
                                                     your own ARTCC. You also agree that all data and selections are
                                                     accurate to the best of your ability. <br><strong>Ensure that the
                                                         exam date is accurate, in UTC time, and that it matches the
-                                                        related training record.</strong><br><strong class="text-danger">Once submitted, it
+                                                        related training record.</strong><br><strong
+                                                            class="text-danger">Once submitted, it
                                                         cannot be modified or deleted.</strong></p></div>
                                         </div>
                                     </div>
@@ -443,22 +445,13 @@
                 icon   : 'success',
                 buttons: {
                   join: {
-                    text     : 'Return to Promotion Submission',
+                    text     : 'Return to {{ session()->has('evalRedirect') ? $student->facilityObj->name : 'Promotion' }}',
                     value    : 'return',
                     className: 'btn-success'
-                  },
-                  ok  : {
-                    text: 'OK'
                   }
                 }
-              }).then(selection => {
-                switch (selection) {
-                  case 'return':
-                    window.location = '{{ secure_url("mgt/controller/{$student->cid}/promote") }}'
-                    break
-                  default:
-                    return
-                }
+              }).then(() => {
+                window.location = '{{ session()->has('evalRedirect') ? session()->pull('evalRedirect') : secure_url("mgt/controller/{$student->cid}/promote") }}'
               })
             }
           ).fail((xhr, status, error) => {
@@ -593,6 +586,8 @@
 
       const pad = n => {
         if (n < 10) return '0' + n
+
+        return n
       }
       const updateTime = () => {
         $('#currtime').html(moment().utc().format('dddd MMMM Do, YYYY h:mm:ss a'))

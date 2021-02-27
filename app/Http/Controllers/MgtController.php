@@ -1020,6 +1020,12 @@ class MgtController extends Controller
             return redirect('/mgt/facility#mem')->with('error', 'The controller is not eligible for that evaluation.');
         }
 
+        if ($request->has('withRedirect') && $request->has('url') && $returnFac = $student->facilityObj) {
+            if ($returnUrl = $returnFac->returnPaths()->whereOrder($request->url)->first()) {
+                return redirect()->to($request->url())->with('evalRedirect', $returnUrl->url);
+            }
+        }
+
         return response()->view('mgt.controller.training.otsEval', compact('student', 'form'));
 
     }
