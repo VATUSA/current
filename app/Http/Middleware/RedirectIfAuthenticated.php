@@ -3,6 +3,7 @@
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class RedirectIfAuthenticated {
 
@@ -31,11 +32,11 @@ class RedirectIfAuthenticated {
 	 * @param  \Closure  $next
 	 * @return mixed
 	 */
-	public function handle($request, Closure $next)
+	public function handle(Request $request, Closure $next)
 	{
 		if ($this->auth->check())
 		{
-			return new RedirectResponse(url('/'));
+			return new RedirectResponse(redirect()->intended());
 		}
 
 		return $next($request);
