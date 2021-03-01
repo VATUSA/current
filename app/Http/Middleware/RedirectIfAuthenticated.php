@@ -36,7 +36,7 @@ class RedirectIfAuthenticated {
 	{
 		if ($this->auth->check())
 		{
-			return new RedirectResponse(redirect()->intended());
+			return redirect()->intended();
 		}
 
 		return $next($request);
