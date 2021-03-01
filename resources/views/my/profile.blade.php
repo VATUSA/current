@@ -73,6 +73,7 @@
                                 <label class="col-sm-2 control-label">Name</label>
                                 <div class="col-sm-10">
                                     <p class="form-control-static">{{Auth::user()->fname}} {{Auth::user()->lname}}</p>
+                                    <p class="help-block">To change your name, contact the <a href="https://support.vatsim.net/"> VATSIM Membership Department</a>. If you would like your name changed on VATUSA while it is being processed by VATSIM, send an email to VATUSA12.</a></p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -106,15 +107,9 @@
                                 <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                             </span>
                                     <p class="help-block">To receive emails from the VATUSA mass emailing system, you
-                                        must
-                                        opt-in by
-                                        clicking on the toggle switch above. <br>This only affects the mass emailing
-                                        system
-                                        of
-                                        ARTCCs
-                                        that choose to use this response.<br><strong>This setting does not affect
-                                            account-related emails like transfer requests and exam
-                                            results/assignments.</strong>
+                                        must opt-in by clicking on the toggle switch above. <br>This only affects the mass emailing
+                                        system of ARTCCs that choose to use this response.<br><strong>This setting does not affect
+                                            account-related emails like transfer requests and exam results/assignments.</strong>
                                     </p>
                                 </div>
                             </div>
@@ -144,10 +139,9 @@
                                     </div>
                                     <p class="help-block"><strong>Click <a href="https://discord.gg/a7Qcse7"
                                                                            target="_blank">here</a> to
-                                            join the Discord. <br></strong>Once joined and linked, you may
-                                        assign your roles by clicking "Assign Roles."<br>To automatically synchronize
-                                        your
-                                        rating, register with <a href="https://vatsimsync.com"
+                                            join the Discord. </strong><br>If you have linked your account and the Discord bot is saying otherwise, then you may have linked the wrong account.
+                                            Ensure that you are logging in with the right account when linking.<br>Once joined and linked, you may assign your roles by clicking "Assign Roles."<br>To automatically synchronize
+                                        your rating, register with <a href="https://vatsimsync.com"
                                                                  target="_blank">VATSIMSync</a>.
                                     </p>
                                 </div>
