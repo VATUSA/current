@@ -27,8 +27,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $table = "controllers";
     public $primaryKey = "cid";
     public $incrementing = false;
-    public $timestamps = ["created_at", "updated_at"];
-    protected $hidden = ["password", "remember_token", "cert_update", "access_token", "refresh_token", "token_expires"];
+    public $timestamps = ["created_at", "updated_at", "prefname_date"];
+    protected $hidden = [
+        "password",
+        "remember_token",
+        "cert_update",
+        "access_token",
+        "refresh_token",
+        "token_expires",
+        "prefname",
+        "prefname_date"
+    ];
 
     public function getDates()
     {
@@ -216,7 +225,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         /** Remove from visiting rosters if going to ZAE */
         if ($newfac == "ZAE" && $this->visits) {
-            foreach($this->visits as $visit) {
+            foreach ($this->visits as $visit) {
                 $log = new Actions();
                 $log->from = 0;
                 $log->to = $this->cid;

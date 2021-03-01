@@ -5,6 +5,7 @@ use App\Classes\Helper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
 use App\Role;
+use Carbon\Carbon;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
 use App\User;
@@ -108,9 +109,21 @@ class CERTSync extends Command
                 $this->line("Deleting " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (SUS/INAC) from {$user->facilityObj->id}");
                 $log['suspends'][] = $user->cid;
             }
-
-            $user->fname = ucfirst($apiUser['name_first']);
-            $user->lname = ucwords($apiUser['name_last']);
+            //Process Preferred Name
+            $updateName = true;
+            if ($user && $user->prefname) {
+                if (Carbon::now()->subDays(14)->greaterThanOrEqualTo($user->prefname_date)) {
+                    //Expired
+                    $user->prefname = 0;
+                    $user->prefname_date = null;
+                } else {
+                    $updateName = false;
+                }
+            }
+            if ($updateName) {
+                $user->fname = ucfirst($apiUser['name_first']);
+                $user->lname = ucwords($apiUser['name_last']);
+            }
             $user->rating = $apiUser['rating'];
             $user->cert_update = 1;
             $user->save();
