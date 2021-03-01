@@ -248,10 +248,10 @@
                                     <button class="btn btn-warning" onClick="clearDevULSv2JWK()">Clear</button>
                                 </fieldset>
                                 <br><br>
-                                <h1>APIv2</h1>
+                                <h1>API (v2)</h1>
                                 <fieldset>
                                     <legend>Live</legend>
-                                    <b>APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page
+                                    <b>API JSON Web Key (JWK):</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page
                                     38) --
                                     symmetric key<br>
                                     <input class="form-control" type="text" id="textapiv2jwk"
@@ -265,7 +265,7 @@
                                 <br>
                                 <fieldset>
                                     <legend>Development</legend>
-                                    <b>Sandbox APIv2 JWK:</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC
+                                    <b>Sandbox API JSON Web Key (JWK):</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC
                                         7515</a> page
                                     38) --
                                     symmetric key<br>
@@ -282,33 +282,6 @@
                                     <input class="form-control" type="text" id="apisbkey"
                                            value="{{$facility->api_sandbox_key}}" autocomplete="off"><br>
                                     <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
-                                </fieldset>
-                                <hr>
-                                <h1>APIv1 (Deprecated)</h1>
-                                <fieldset>
-                                    <legend>Live</legend>
-                                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
-                                        <b>IP (v1 only):</b><br><input class="form-control" type="text" id="apiip"
-                                                                       value="{{$facility->ip}}" autocomplete="off">
-                                        <br>
-                                        <button class="btn btn-primary" onClick="ipUpdate()">Update</button>
-                                    @else
-                                        <b>IP (v1 only):</b> {{$facility->ip}}<br>
-                                    @endif
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <legend>Development</legend>
-                                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
-                                        <b>Sandbox IP (v1 only):</b><br><input class="form-control" type="text"
-                                                                               id="apisbip"
-                                                                               autocomplete="off"
-                                                                               value="{{$facility->api_sandbox_ip}}">
-                                        <br>
-                                        <button class="btn btn-primary" onClick="ipSBUpdate()">Update</button>
-                                    @else
-                                        <b>Sandbox IP (v1 only):</b> {{$facility->api_sandbox_ip}}
-                                    @endif
                                 </fieldset>
                             </div>
                         @endif
@@ -884,17 +857,6 @@
 
       @endif
       @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-      function ipUpdate () {
-        $.post('{{ secure_url("/mgt/facility/$fac/api/update") }}', {apiip: $('#apiip').val()}).done(function (result) {
-          if (result == 1) bootbox.alert('Updated')
-        })
-      }
-
-      function ipSBUpdate () {
-        $.post('{{ secure_url("/mgt/facility/{$fac}/api/update/sandbox") }}', {apiip: $('#apisbip').val()}).done(function (result) {
-          if (result == 1) bootbox.alert('Updated')
-        })
-      }
 
       function appvTrans (id) {
         swal({
