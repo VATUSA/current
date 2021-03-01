@@ -148,6 +148,7 @@
             }).success(function (data) {
               var html = ''
               $.each(data, function (i) {
+                if(data[i].subject === undefined) return
                 html = html + '<tr onClick="window.location=\'https://forums.vatusa.net/index.php?topic=' + data[i].id_topic + '\';" style="cursor: pointer">'
                 html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
                 html = html + '<td><p><strong>' + data[i].subject + '</strong><br><small>' + moment(data[i].poster_time).format('MM/DD/YYYY') + '</small></p></td></tr>'
