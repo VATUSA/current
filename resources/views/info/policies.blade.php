@@ -70,10 +70,10 @@
                         <td><a href="/docs/3120.1A.pdf" target="_blank">view</a></td>
                     </tr>
                     <tr>
-                        <td>3120.311 &mdash; Procedures for Selection, Submission, and Appointment of Instructors</td>
-                        <td>03/20/2020</td>
+                        <td>3120.2C &mdash; Procedures for Selection, Submission, and Appointment of Instructors</td>
+                        <td>01/25/2021</td>
                         @if(\Auth::check())
-                            <td><a href="/docs/3120.311.pdf" target="_blank">view</a></td>
+                            <td><a href="/docs/3120.2C.pdf" target="_blank">view</a></td>
                         @else
                             <td>internal</td>
                         @endif
@@ -160,15 +160,6 @@
                             <td>internal</td>
                         @endif
                         --}}
-                    </tr>
-                    <tr>
-                        <td>T1000.2 &mdash; APIv1 <em>(Deprecated)</em></td>
-                        <td>06/25/2016<br><strong>Rem. 03/01/2021</strong></td>
-                        @if(\Auth::check() && (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, 'WM') || \App\Classes\RoleHelper::isVATUSAStaff()))
-                            <td><a href="/docs/T1000.2.pdf" target="_blank">view</a></td>
-                        @else
-                            <td>internal</td>
-                        @endif
                     </tr>
                     <tr>
                         <td>T1000.4 &mdash; CBT Editor</td>

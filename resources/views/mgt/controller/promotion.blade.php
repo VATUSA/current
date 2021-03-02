@@ -172,7 +172,7 @@
         })*/
 
         const jsDate = new Date(),
-              offset = jsDate.getUTCFullYear() - jsDate.getFullYear() + 1
+              offset = jsDate.getUTCFullYear() - jsDate.getFullYear() + 2
 
         $('#exam-date').datetimepicker({
           timepicker: false,
@@ -225,7 +225,7 @@
           }
           Cookies.set('eval-pos', $('#position').val())
           Cookies.set('eval-date', $('#exam-date').val())
-          window.location = 'eval{{ $dateOfExam ? "/$evalId/view" : ''}}'
+          window.location = '{{ $dateOfExam ? "/mgt/facility/training/eval/$evalId/view" : 'eval'}}'
         })
 
         $('#submit-promotion').click(function (e) {
