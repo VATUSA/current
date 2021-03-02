@@ -249,7 +249,7 @@
                             <tbody>
                             <tr>
                                 <td class="vctr"><label for="n-training-position">Position</label></td>
-                                <td><p class="form-control-static" id="n-training-artcc">{{ $trainingfacname }}</p> -
+                                <td><p class="form-control-static" id="n-training-artcc">{{ Auth::user()->facilityObj->name }}</p> -
                                     <input
                                         class="form-control n-training-position training-position"
                                         type="text"

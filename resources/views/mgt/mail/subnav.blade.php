@@ -6,7 +6,7 @@
     </div>
     <div class="panel-body">
         @if(\App\Classes\RoleHelper::isFacilityStaff())
-            <a href="/mail">Webmail</a><br>
+            <a href="https://mail.vatusa.net">Webmail</a><br>
             <a href="/mgt/mail/account">Manage Email(s)</a><br>
             <a href="/mgt/mail/broadcast">Broadcast</a><br>
         @endif
