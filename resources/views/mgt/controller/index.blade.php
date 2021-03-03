@@ -542,7 +542,7 @@
                                             entry.
                                         </div>
                                     @endif
-                                    <form class="form-horizontal" action="{{secure_url("/mgt/action/add")}}"
+                                    <form class="form-horizontal" action="{{secure_url("/mgt/controller/action/add")}}"
                                           method="POST">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                         <input type="hidden" name="to" value="{{ $user->cid }}">
@@ -579,7 +579,7 @@
                                                     !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
                                                         <a data-id="{{ $a->id }}"
                                                            href="#"
-                                                           data-action="{{ secure_url('mgt/deleteActionLog/'.$a->id) }}"
+                                                           data-action="{{ secure_url('mgt/controller/action/delete/'.$a->id) }}"
                                                            class="text-danger delete-log"><i
                                                                 class="fa fa-times"></i></a>
                                                         <i class="spinner-icon fa fa-spinner fa-spin"

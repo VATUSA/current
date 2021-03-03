@@ -491,18 +491,18 @@ class MgtController extends Controller
     }
 
     public
-    function getERR(
+    function getManualTransfer(
         Request $request
     ) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
 
-        return view('mgt.err', ['cid' => $request->input("cid", '')]);
+        return view('mgt.transfer', ['cid' => $request->input("cid", '')]);
     }
 
     public
-    function postERR(
+    function postManualTransfer(
         Request $request
     ) {
         if (!RoleHelper::isVATUSAStaff()) {
@@ -514,16 +514,16 @@ class MgtController extends Controller
         $facility = $request->input("facility");
 
         if (!$cid || !$reason || !$facility) {
-            return redirect("/mgt/err")->with("error", "All items are required");
+            return redirect("/mgt/transfer")->with("error", "All items are required");
         }
 
         $user = User::find($cid);
         if (!$user) {
-            return redirect("/mgt/err")->with("error", "User not found");
+            return redirect("/mgt/transfer")->with("error", "User not found");
         }
 
         if (Transfers::where('cid', $cid)->where('status', 0)->count() > 0) {
-            return redirect("/mgt/err")->with("error", "User has pending transfer request.");
+            return redirect("/mgt/transfer")->with("error", "User has pending transfer request.");
         }
 
         $from = $user->facility;
@@ -553,7 +553,7 @@ class MgtController extends Controller
             'reason'   => $_POST['reason']
         ]);
 
-        return redirect("/mgt/err")->with("success", "Transfer for $cid - " . $user->fullname() . " submitted.");
+        return redirect("/mgt/transfer")->with("success", "Transfer for $cid - " . $user->fullname() . " submitted.");
     }
 
     function getSolo()
