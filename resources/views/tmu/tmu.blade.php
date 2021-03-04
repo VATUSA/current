@@ -197,11 +197,11 @@ for ($i = 1 ; $i <= 360 ; $i++) {
     function updatePlanes() {
       $.ajax({
         method: "GET",
-        url: "https://api.vatusa.net/planes",
+        url: "https://api.vatusa.net/v2/public/planes",
         dataType: 'json'
       }).done(function(data){
         planeLayer.clearLayers();
-        for (var i = 0 ; i < data.length ; i++) {
+        for(let i in data) {
           if (data[i].spd > 30) {
             createPlane(data[i].lat, data[i].lon, data[i].hdg, data[i].callsign, data[i].type, data[i].dep, data[i].arr)
           }
