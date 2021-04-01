@@ -499,7 +499,7 @@
         $.ajax({
           url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/visit',
           type: 'GET'
-        }).success(function (data) {
+        }).success(function (resp) {
           var html = ''
           $.each(resp, function (i) {
             if (resp.data[i].cid == undefined) return
