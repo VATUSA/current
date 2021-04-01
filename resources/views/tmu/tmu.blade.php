@@ -199,13 +199,13 @@ for ($i = 1 ; $i <= 360 ; $i++) {
         method: "GET",
         url: "https://api.vatusa.net/v2/public/planes",
         dataType: 'json'
-      }).done(function(data){
+      }).done(function(resp){
         planeLayer.clearLayers();
-        for(let i in data) {
-          if (data[i].spd > 30) {
-            createPlane(data[i].lat, data[i].lon, data[i].hdg, data[i].callsign, data[i].type, data[i].dep, data[i].arr)
+        $.each(resp.data, function(i) {
+          if (resp.data[i].spd > 30) {
+            createPlane(resp.data[i].lat, resp.data[i].lon, resp.data[i].hdg, resp.data[i].callsign, resp.data[i].type, resp.data[i].dep, resp.data[i].arr)
           }
-        }
+        });
       }).fail(function(xhr, textstatus) {
         console.log(textstatus);
       })

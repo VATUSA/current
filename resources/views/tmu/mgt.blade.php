@@ -627,7 +627,8 @@
               method: 'GET',
               url   : $.apiUrl() + '/v2/tmu/notice/' + id,
             })
-              .done(function (result) {
+              .done(function (resp) {
+                let result = resp.data
                 //Reset fields
                 $('#start-date-edit').datetimepicker('destroy')
                 $('#expire-date-edit').datetimepicker({inline: true}).datetimepicker('destroy')

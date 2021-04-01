@@ -35,37 +35,37 @@
           withCredentials: true
         }
       }).done(function (resp) {
-        if (resp.status === "OK") {
+        if (resp.data.status === "OK") {
           window.location="https://exam.vatusa.net";
         } else {
-          if (resp.responseJSON.msg === "CBTs are not complete") {
-            bootbox.alert("There are CBT requirements assigned with this exam that have not been completed.<br><br>The name of the CBT is: <b>" + resp.responseJSON.cbt + "</b>.  Press OK to be taken to the CBT.", function() {
-              window.location="https://www.vatusa.net/cbt/" + resp.responseJSON.cbtFacility;
+          if (resp.data.msg === "CBTs are not complete") {
+            bootbox.alert("There are CBT requirements assigned with this exam that have not been completed.<br><br>The name of the CBT is: <b>" + resp.responseJSON.data.cbt + "</b>.  Press OK to be taken to the CBT.", function() {
+              window.location="https://www.vatusa.net/cbt/" + resp.data.cbtFacility;
             });
             return;
           }
-          if (resp.responseJSON.msg === "Unauthenticated.") {
+          if (resp.data.msg === "Unauthenticated.") {
             bootbox.alert("Your session data is not valid for this request and requires you to relogin.  Press OK to continue.", function() {
               window.location="https://login.vatusa.net/?exam";
             });
             return;
           }
-          bootbox.alert("There was an error " + JSON.stringify(resp))
+          bootbox.alert("There was an error " + JSON.stringify(resp.data))
         }
       }).fail(function(resp) {
-        if (resp.responseJSON.msg === "CBTs are not complete") {
-          bootbox.alert("There are CBT requirements assigned with this exam that have not been completed.<br><br>The name of the CBT is: <b>" + resp.responseJSON.cbt + "</b>.  Press OK to be taken to the CBT.", function() {
-            window.location="https://www.vatusa.net/cbt/" + resp.responseJSON.cbtFacility;
+        if (resp.data.msg === "CBTs are not complete") {
+          bootbox.alert("There are CBT requirements assigned with this exam that have not been completed.<br><br>The name of the CBT is: <b>" + resp.data.cbt + "</b>.  Press OK to be taken to the CBT.", function() {
+            window.location="https://www.vatusa.net/cbt/" + resp.data.cbtFacility;
           });
           return;
         }
-        if (resp.responseJSON.msg === "Unauthenticated.") {
+        if (resp.data.msg === "Unauthenticated.") {
           bootbox.alert("Your session data is not valid for this request and requires you to relogin.  Press OK to continue.", function() {
             window.location="https://login.vatusa.net/?exam";
           });
           return;
         }
-        bootbox.alert("There was an error " + JSON.stringify(resp))
+        bootbox.alert("There was an error " + JSON.stringify(resp.data))
       })
     });
 </script>

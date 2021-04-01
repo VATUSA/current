@@ -180,7 +180,7 @@ $(function () {
     $.ajax({
       url   : $.apiUrl() + '/v2/training/record/' + id,
       method: 'GET',
-    }).done(result => {
+    }).done(resp => {
       $.ajax({
         url: '/mgt/controller/ajax/canModifyRecord/' + id
       }).done(cm => {
@@ -194,6 +194,7 @@ $(function () {
           $('#tr-view-edit').attr('data-id', '')
         }
 
+        let result = resp.data
         $('.training-position').html(result.position)
         $('.training-student').html(result.student.fname + ' ' + result.student.lname)
         $('#training-artcc').html(result.facility.name)
@@ -290,7 +291,8 @@ $(function () {
     $.ajax({
       url   : $.apiUrl() + '/v2/training/record/' + id,
       method: 'GET',
-    }).done(result => {
+    }).done(resp => {
+      let result = resp.data
       btn.html('<span class=\'glyphicon glyphicon-pencil\'></span>').attr('disabled', false)
       $('#tr-view-edit').html('<span class=\'glyphicon glyphicon-pencil\'></span> Edit').attr('disabled', false)
 

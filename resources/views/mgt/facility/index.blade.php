@@ -460,33 +460,33 @@
         $.ajax({
           url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/home',
           type: 'GET'
-        }).success(function (data) {
+        }).success(function (resp) {
           var html = ''
-          $.each(data, function (i) {
-            if (data[i].cid == undefined) return
-            html += '<tr><td>' + data[i].cid + '</td>'
+          $.each(resp.data, function (i) {
+            if (resp.data[i].cid == undefined) return
+            html += '<tr><td>' + resp.data[i].cid + '</td>'
             html += '<td>'
-            if (data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
-            html += data[i].lname + ', ' + data[i].fname
+            if (resp.data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
+            html += resp.data[i].lname + ', ' + resp.data[i].fname
             html += '</td>'
-            html += '<td data-text="' + data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(data[i].rating)) + '</span>' + data[i].rating_short
-            if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
+            html += '<td data-text="' + resp.data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(resp.data[i].rating)) + '</span>' + resp.data[i].rating_short
+            if (resp.data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
             html += '</td>'
-            var date = new Date(data[i].facility_join.replace(/\s/, 'T'))
+            var date = new Date(resp.data[i].facility_join.replace(/\s/, 'T'))
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
-            var last_promotion = data[i].last_promotion
+            var last_promotion = resp.data[i].last_promotion
             if (last_promotion) var promotion_date = new Date(last_promotion.replace(/\s/, 'T'))
             if (promotion_date) html += '<td>' + (promotion_date.getMonth() + 1) + '/' + promotion_date.getDate() + '/' + promotion_date.getFullYear() + '</td>'
             else html += '<td><span class="text-muted">N/A</span></td>'
             html += '<td class="text-right">'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isInstructor(\Auth::user()->cid, $fac))
-              if (data[i].promotion_eligible == true) {
-                html += '<a href="/mgt/controller/' + data[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
+              if (resp.data[i].promotion_eligible == true) {
+                html += '<a href="/mgt/controller/' + resp.data[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
               }
               @endif
-                html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
+                html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html += ' &nbsp; <a href="#" onClick="deleteController(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
@@ -501,23 +501,23 @@
           type: 'GET'
         }).success(function (data) {
           var html = ''
-          $.each(data, function (i) {
-            if (data[i].cid == undefined) return
+          $.each(resp, function (i) {
+            if (resp.data[i].cid == undefined) return
             html += '<tr><td>' + data[i].cid + '</td>'
             html += '<td>'
-            if (data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
-            html += data[i].lname + ', ' + data[i].fname
+            if (resp.data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
+            html += resp.data[i].lname + ', ' + resp.data[i].fname
             html += '</td>'
-            html += '<td data-text="' + data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(data[i].rating)) + '</span>' + data[i].rating_short
-            if (data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
+            html += '<td data-text="' + resp.data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(resp.data[i].rating)) + '</span>' + resp.data[i].rating_short
+            if (resp.data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
             html += '</td>'
-            html += '<td>' + data[i].facility + '</td>'
-            var date = new Date(data[i].facility_join.replace(/\s/, 'T'))
+            html += '<td>' + resp.data[i].facility + '</td>'
+            var date = new Date(resp.data[i].facility_join.replace(/\s/, 'T'))
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
             html += '<td class="text-right">'
-            html += '<a href="/mgt/controller/' + data[i].cid + '"><i class="fa fa-search"></i></a>'
+            html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + resp.data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
@@ -538,12 +538,11 @@
           url     : `${$.apiUrl()}/v2/email/hosted?facility={{$fac}}`,
           method  : 'GET',
           dataType: 'JSON'
-        }).done((r) => {
+        }).done((resp) => {
           let html
-          console.dir(r)
-          $.each(r.emails, (i) => {
+          $.each(resp.data.emails, i => {
             html = `${html}
-                <tr><td style="vertical-align: middle">${r.emails[i].username}</td><td style="vertical-align: middle">${r.emails[i].cid}</td><td><button class="btn btn-danger nhDelete" data-username="${r.emails[i].username}">Delete</button></td></tr>
+                <tr><td style="vertical-align: middle">${resp.data.emails[i].username}</td><td style="vertical-align: middle">${resp.data.emails[i].cid}</td><td><button class="btn btn-danger nhDelete" data-username="${resp.data.emails[i].username}">Delete</button></td></tr>
               `
           })
           $('#ehloading').hide()
@@ -617,16 +616,16 @@
           xhrFields: {
             includeCredentials: true
           }
-        }).done((data) => {
+        }).done(resp => {
           waitingDialog.hide()
-          if (data.type === 'STATIC') {
+          if (resp.data.type === 'STATIC') {
             $('#emailStatic').val('1')
           } else {
             $('#emailStatic').val('0')
           }
-          $('#emailDestination').val(data.destination)
+          $('#emailDestination').val(resp.data.destination)
           $('#emailBox').show()
-        }).fail((data) => {
+        }).fail(data => {
           waitingDialog.hide()
           bootbox.alert(`Problem handling this request ${data.msg}`)
         })
@@ -640,10 +639,10 @@
             destination: $('#emailDestination').val(),
             static     : ($('#emailStatic').val() == '1') ? true : false
           }
-        }).done((data) => {
+        }).done(data => {
           waitingDialog.hide()
           bootbox.alert('Changes have been saved.')
-        }).fail((data) => {
+        }).fail(data => {
           waitingDialog.hide()
           bootbox.alert(`There was an error processing the request.  Server said: ${data.msg}`)
         })
@@ -659,15 +658,15 @@
         $.ajax({
           url   : `${$.apiUrl()}/v2/facility/{{$fac}}/email/${$('#facilityEmailTemplate').val()}`,
           method: 'GET'
-        }).done((data) => {
-          $('#emailTemplateBody').val(data.body)
+        }).done(resp => {
+          $('#emailTemplateBody').val(resp.data.body)
           waitingDialog.hide()
           $('#emailTemplateBox').show()
           $('#emailTemplateVariableList').html('')
-          for (let variable of data.variables) {
+          for (let variable of resp.data.variables) {
             $('#emailTemplateVariableList').append(`<li>$${variable}</li>`)
           }
-        }).fail((data) => {
+        }).fail(data => {
           waitingDialog.hide()
           bootbox.alert('Failed to load email template from API, got: ' + data)
         })
@@ -680,7 +679,7 @@
         }).done(() => {
           bootbox.alert('Template saved successfully.')
           waitingDialog.hide()
-        }).fail((data) => {
+        }).fail(data => {
           bootbox.alert(`Template save failed`)
           waitingDialog.hide()
         })

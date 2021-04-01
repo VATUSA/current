@@ -145,26 +145,26 @@
             $.ajax({
               url : 'https://api.vatusa.net/v2/public/news/10',
               type: 'GET'
-            }).success(function (data) {
+            }).success(function (resp) {
               var html = ''
-              $.each(data, function (i) {
-                if(data[i].subject === undefined) return
-                html = html + '<tr onClick="window.location=\'https://forums.vatusa.net/index.php?topic=' + data[i].id_topic + '\';" style="cursor: pointer">'
+              $.each(resp.data, function (i) {
+                if(resp.data[i].subject === undefined) return
+                html = html + '<tr onClick="window.location=\'https://forums.vatusa.net/index.php?topic=' + resp.data[i].id_topic + '\';" style="cursor: pointer">'
                 html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
-                html = html + '<td><p><strong>' + data[i].subject + '</strong><br><small>' + moment(moment.unix(data[i].poster_time)).format('MM/DD/YYYY') + '</small></p></td></tr>'
+                html = html + '<td><p><strong>' + resp.data[i].subject + '</strong><br><small>' + moment(moment.unix(resp.data[i].poster_time)).format('MM/DD/YYYY') + '</small></p></td></tr>'
               })
               $('#newsbody').html(html)
             })
             $.ajax({
               url : 'https://api.vatusa.net/v2/public/events/10',
               type: 'GET',
-            }).success(function (data) {
+            }).success(function (resp) {
               var html = ''
-              $.each(data, function (i) {
-                if(data[i].title === undefined) return
-                html = html + '<tr onClick="window.location=\'https://forums.vatusa.net/index.php?topic=' + data[i].id_topic + '\';" style="cursor: pointer">'
+              $.each(resp.data, function (i) {
+                if(resp.data[i].title === undefined) return
+                html = html + '<tr onClick="window.location=\'https://forums.vatusa.net/index.php?topic=' + resp.data[i].id_topic + '\';" style="cursor: pointer">'
                 html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-plane fa-2x"></i></td>'
-                html = html + '<td><p><strong>' + data[i].title + '</strong><br><small>' + moment(data[i].start_date).format('MM/DD/YYYY') + '</small></p></td></tr>'
+                html = html + '<td><p><strong>' + resp.data[i].title + '</strong><br><small>' + moment(resp.data[i].start_date).format('MM/DD/YYYY') + '</small></p></td></tr>'
               })
               $('#eventbody').html(html)
             })
