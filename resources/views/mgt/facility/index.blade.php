@@ -1086,7 +1086,7 @@
           $.get($.apiUrl() + url + newVal)
             .success((data) => {
               $(this).devbridgeAutocomplete().setOptions({
-                lookup: $.map(data, (item) => {
+                lookup: $.map(data.data, (item) => {
                   return {value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid}
                 })
               })

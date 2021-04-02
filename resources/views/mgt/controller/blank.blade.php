@@ -56,9 +56,9 @@
                 let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
                 prevVal = newVal;
                 $.get($.apiUrl() + url + newVal)
-                    .success((data) => {
+                    .success(data => {
                         $('#cidsearch').devbridgeAutocomplete().setOptions({
-                            lookup: $.map(data, (item) => {
+                            lookup: $.map(data.data, (item) => {
                                 return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
                             })
                         });
