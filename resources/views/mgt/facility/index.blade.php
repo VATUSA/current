@@ -503,7 +503,7 @@
           var html = ''
           $.each(resp, function (i) {
             if (resp.data[i].cid == undefined) return
-            html += '<tr><td>' + data[i].cid + '</td>'
+            html += '<tr><td>' + resp.data[i].cid + '</td>'
             html += '<td>'
             if (resp.data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
             html += resp.data[i].lname + ', ' + resp.data[i].fname
