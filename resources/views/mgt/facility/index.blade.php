@@ -501,7 +501,7 @@
           type: 'GET'
         }).success(function (resp) {
           var html = ''
-          $.each(resp, function (i) {
+          $.each(resp.data, function (i) {
             if (resp.data[i].cid == undefined) return
             html += '<tr><td>' + resp.data[i].cid + '</td>'
             html += '<td>'
