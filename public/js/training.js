@@ -476,7 +476,7 @@ $(function () {
       data  : formData
     }).done(result => {
       btn.html('<span class=\'glyphicon glyphicon-ok\'></span> Submit').attr('disabled', false)
-      if (result.status === 'OK') {
+      if (result.data.status === 'OK') {
         if ($('#e-training-ots-grp').find('input[name="ots_status"]:checked').val().match(/[12]/)) {
           btn.prop('disabled', true)
           $('#tr-edit-delete').prop('disabled', true)
@@ -497,10 +497,10 @@ $(function () {
             } else return location.reload()
           })
         } else swal('Success!', 'The training record has been successfully edited. ', 'success')
-      } else swal('Error!', 'Unable to edit training record. ' + (result.msg.match(/^Missing fields/) ? 'Missing fields.' : result.msg), 'error')
+      } else swal('Error!', 'Unable to edit training record. ' + (result.data.msg.match(/^Missing fields/) ? 'Missing fields.' : result.data.msg), 'error')
     }).fail((xhr, status, error) => {
       btn.html('<span class=\'glyphicon glyphicon-ok\'></span> Submit').attr('disabled', false)
-      swal('Error!', 'Unable to edit training record. ' + (xhr.responseJSON.msg.match(/^Missing fields/) ? 'Missing fields.' : xhr.responseJSON.msg), 'error')
+      swal('Error!', 'Unable to edit training record. ' + (xhr.responseJSON.data.msg.match(/^Missing fields/) ? 'Missing fields.' : xhr.responseJSON.data.msg), 'error')
     })
   })
   $('#n-training-submit').click(function (e) {
