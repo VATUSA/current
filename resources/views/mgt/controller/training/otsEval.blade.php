@@ -435,8 +435,8 @@
             },
             result => {
               btn.html('<i class="fas fa-check-double"></i> eSign and Submit').prop('disabled', false)
-              if (result.status !== 'OK') {
-                return swal('Error!', 'Unable to submit OTS evaluation. ' + result.msg + 'Please try again later.', 'error')
+              if (result.data.status !== 'OK') {
+                return swal('Error!', 'Unable to submit OTS evaluation. ' + result.data.msg + 'Please try again later.', 'error')
               }
               window.onbeforeunload = null
               swal({
@@ -455,7 +455,7 @@
               })
             }
           ).fail((xhr, status, error) => {
-            const msg = xhr.responseJSON.hasOwnProperty('msg') ? xhr.responseJSON.msg : ''
+            const msg = xhr.responseJSON.data.hasOwnProperty('msg') ? xhr.responseJSON.data.msg : ''
             btn.html('<i class="fas fa-check-double"></i> eSign and Submit').prop('disabled', false)
             return swal('Error!', 'Unable to submit OTS evaluation. ' + msg + ' Please try again later.', 'error')
           })
