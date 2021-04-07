@@ -196,7 +196,7 @@ Route::group([
             Route::get('ace', 'InfoController@getACE');
             Route::get('join', 'InfoController@getJoin');
             Route::get('members', 'InfoController@getMembers');
-            Route::get('policies', 'InfoController@getPolicies');
+            Route::get('policies', 'PolicyController@index');
             Route::get('solo', function () {
                 return view('info.solo');
             });
@@ -212,8 +212,7 @@ Route::group([
         Route::group(['middleware' => 'auth', 'prefix' => 'mgt'], function () {
             // * * * * * * Facility * * * * * *
             Route::group(['prefix' => 'facility'], function () {
-                Route::get('facility/{fac?}', 'FacMgtController@getIndex');
-
+                Route::get('{fac?}', 'FacMgtController@getIndex');
                 Route::group(['prefix' => '{fac}'], function () {
                     Route::delete('{cid}', 'FacMgtController@deleteController');
                     Route::post('api/generate', 'FacMgtController@postAPIGenerate');
@@ -275,6 +274,10 @@ Route::group([
 
             // * * * * * * Policies * * * * * *
             Route::get('policies', 'PolicyController@edit');
+            Route::post('policies', 'PolicyController@store');
+            Route::put('policies', 'PolicyController@update');
+            Route::put('policies/changeOrder', 'PolicyController@updateOrder');
+            Route::get('policies/newCategory', 'PolicyController@storeCategory');
 
             // * * * * * * Training - Evals * * * * * *
             Route::get('controller/{cid}/eval/{form?}', 'TrainingController@getOTSEval')->where('form',

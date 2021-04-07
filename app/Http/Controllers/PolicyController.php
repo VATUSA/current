@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\RoleHelper;
 use App\Policy;
+use App\PolicyCategory;
 use Illuminate\Http\Request;
 
 class PolicyController extends Controller
@@ -14,23 +16,16 @@ class PolicyController extends Controller
      */
     public function index()
     {
-        return view('info.policies');
+        $categories = PolicyCategory::with('policies')->get();
+
+        return view('info.policies', compact('categories'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a newly created policy in storage.
      *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * @param \Illuminate\Http\Request $request
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -39,9 +34,24 @@ class PolicyController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Store a newly created policy category in storage.
      *
-     * @param  \App\Policy  $policy
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function storeCategory(Request $request)
+    {
+        if(RoleHelper::isVATUSAStaff()) {
+            //Create default category
+        }
+    }
+
+    /**
+     * Show policy.
+     *
+     * @param \App\Policy $policy
+     *
      * @return \Illuminate\Http\Response
      */
     public function show(Policy $policy)
@@ -50,21 +60,25 @@ class PolicyController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for managing policies.
      *
-     * @param  \App\Policy  $policy
-     * @return \Illuminate\Http\Response
+     * @param \App\Policy $policy
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function edit(Policy $policy)
     {
-        //
+        $categories = PolicyCategory::with('policies')->get();
+
+        return view('mgt.policies', compact('categories'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the policy.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Policy  $policy
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Policy              $policy
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Policy $policy)
@@ -73,13 +87,26 @@ class PolicyController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the policy.
      *
-     * @param  \App\Policy  $policy
+     * @param \App\Policy $policy
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy(Policy $policy)
     {
         //
+    }
+
+    /**
+     * Remove the policy.
+     *
+     * @param \App\Policy $policy
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyCategory(Policy $policy)
+    {
+        //Remove category and all policies
     }
 }

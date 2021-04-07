@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePoliciesTable extends Migration
+class CreatePolicyCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,9 @@ class CreatePoliciesTable extends Migration
      */
     public function up()
     {
-        Schema::create('policies', function (Blueprint $table) {
+        Schema::create('policy_categories', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('ident');
-            $table->unsignedSmallInteger('category');
-            $table->text('title');
-            $table->text('slug');
-            $table->date('effective_date');
-            $table->unsignedInteger('perms'); //Bitmap: All | WM | EC | FE | TA | DATM | ATM | USASTAFF
+            $table->string('name');
             $table->unsignedSmallInteger('order');
             $table->timestamps();
         });
@@ -33,6 +28,6 @@ class CreatePoliciesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('policies');
+        Schema::dropIfExists('policy_categories');
     }
 }
