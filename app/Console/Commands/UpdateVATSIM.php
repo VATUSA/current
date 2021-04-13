@@ -79,84 +79,33 @@ class UpdateVATSIM extends Command
      */
     public function handle()
     {
-        if (\Cache::has('vatsim.statusservers')) {
-            $status = json_decode(\Cache::get('vatsim.statusservers'));
-        } else {
-            $status = file_get_contents("http://status.vatsim.net");
-            $data = explode("\n", $status);
-            $status = [];
-            for ($i = 0; isset($data[$i]); $i++) {
-                if (preg_match("/^url0=(.+)/", $data[$i], $matches)) {
-                    $status[] = rtrim($matches[1]);
-                }
-            }
-            \Cache::put("vatsim.statusservers", json_encode($status), 12 * 60 * 60); // Cache for 12 hours
-        }
-        $last = ['server' => null];
-        if (\Storage::has('vatsim.laststatus')) {
-            $last = json_decode(\Storage::get('vatsim.laststatus'));
-        }
-        $x = true;
-        // Never reuse server
-        while ($x) {
-            $selection = rand(0, count($status) - 1);
-            if ($status[$selection] != $last['server']) {
-                $server = rtrim($status[$selection]);
-                unset($x);
-                break;
-            }
-        }
-        $vdata = file_get_contents($server);
+        $vdata = file_get_contents("https://data.vatsim.net/v3/vatsim-data.json");
         if ($vdata == null) {
-            \Log::notice("There was an error retrieving VATSIM data from server $server... received header:". json_encode($http_response_header));
+            \Log::notice("There was an error retrieving VATSIM data from server... received header:" . json_encode($http_response_header));
 
             return;
         }
-        $vdata = explode("\n", $vdata);
-        $in_clients = false;
-        $planes = [];
-        foreach ($vdata as $line) {
-            if (preg_match('/^;/', $line) || preg_match('/^\s+/', $line) || $line == '') {
-                continue;
-            }          // Comments/blank line
-
-            if (preg_match("/^!CLIENTS:/", $line)) {
-                $in_clients = true;
-                continue;
-            } elseif (preg_match('/^!/', $line)) {
-                $in_clients = false;
-                continue;
+        $vdata = json_decode($vdata, true);
+        $pilots = $vdata["pilots"];
+        foreach ($pilots as $pilot) {
+            if (!isset($pilot["latitude"], $pilot["longitude"]) || $pilot["latitude"] < 0 || $pilot["longitude"] > -20) {
+                continue;    // Only log part of our hemisphere
             }
-
-            if (!$in_clients) {
-                continue;
-            }
-
-            $pdata = explode(":", $line);
-            if (!isset($pdata[clienttype], $pdata[cid]) || $pdata[clienttype] == "ATC" || !$pdata[cid]) {
-                continue;
-            }
-            if (!isset($pdata[latitude], $pdata[longitude]) || $pdata[latitude] < 0 || $pdata[longitude] > -20) {
-                continue;
-            }    // Only log part of our hemisphere
             $planes[] = [
-                'callsign' => $pdata[callsign] ?? "",
-                'cid'      => $pdata[cid] ?? 0,
-                'type'     => $pdata[planned_aircraft] ?? "",
-                'dep'      => $pdata[planned_depairport] ?? "",
-                'arr'      => $pdata[planned_destairport] ?? "",
-                'route'    => $pdata[planned_route] ?? "",
-                'lat'      => $pdata[latitude] ?? "",
-                'lon'      => $pdata[longitude] ?? "",
-                'hdg'      => $pdata[heading] ?? 0,
-                'spd'      => $pdata[groundspeed] ?? 0,
-                'alt'      => $pdata[altitude] ?? 0
+                'callsign' => $pilot["callsign"] ?? "",
+                'cid'      => $pilot["cid"] ?? 0,
+                'type'     => $pilot["flight_plan"]["aircraft_short"] ?? "",
+                'dep'      => $pilot["flight_plan"]["departure"] ?? "",
+                'arr'      => $pilot["flight_plan"]["arrival"] ?? "",
+                'route'    => $pilot["flight_plan"]["route"] ?? "",
+                'lat'      => $pilot["latitude"] ?? "",
+                'lon'      => $pilot["longitude"] ?? "",
+                'hdg'      => $pilot["heading"] ?? 0,
+                'spd'      => $pilot["groundspeed"] ?? 0,
+                'alt'      => $pilot["altitude"] ?? 0
             ];
         }
 
-        $last['server'] = $server;
-
-        \Cache::put('vatsim.laststatus', json_encode($last), 5 * 60);   // Keep 5 minutes
-        \Cache::put("vatsim.data", json_encode($planes, JSON_NUMERIC_CHECK), 5 * 60);      // Keep 5 minutes
+        \Cache::put("vatsim.data", json_encode($planes, JSON_NUMERIC_CHECK),  60);      // Keep 1 minute
     }
 }
