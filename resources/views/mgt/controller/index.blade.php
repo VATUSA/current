@@ -510,7 +510,6 @@
                                                     class='fa fa-check'></i> Error! </strong> Could not delete log
                                             entry.
                                         </div>
-                                    @endif
                                     <form class="form-horizontal" action="{{secure_url("/mgt/action/add")}}"
                                           method="POST">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -532,6 +531,7 @@
                                         </div>
                                     </form>
                                     <hr>
+                                    @endif
                                     <table class="table table-striped">
                                         @foreach(\App\Actions::where('to', $user->cid)->orderby('id', 'desc')->get() as $a)
                                             <tr id="log-{{ $a->id }}">
