@@ -470,24 +470,28 @@ class MgtController extends Controller
     function addLog(
         Request $request
     ) {
-        if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff()) {
+        $this->validate($request, [
+            'to'  => 'required',
+            'log' => 'required|min:1',
+        ]);
+
+        $user = User::find($request->to);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        if (!RoleHelper::isFacilitySeniorStaff()) {
             abort(401);
         }
 
-        $this->validate($request, [
-            'from' => 'required',
-            'to'   => 'required',
-            'log'  => 'required|min:1',
-        ]);
-
         $le = new Actions;
-        $le->to = $_POST['to'];
-        $le->from = $_POST['from'];
-        $le->log = $_POST['log'];
+        $le->to = $request->to;
+        $le->from = Auth::user()->cid;
+        $le->log = $request->log;
         $le->save();
-        $le = Actions::where('id', $le->id)->first();
 
-        return redirect('/mgt/controller/' . $le->to)->with('success', 'Your log entry has been added.');
+        return redirect('/mgt/controller/' . $request->to)->with('success', 'Your log entry has been added.');
     }
 
     public
