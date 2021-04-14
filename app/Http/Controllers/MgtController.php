@@ -491,7 +491,7 @@ class MgtController extends Controller
         $le->log = $request->log;
         $le->save();
 
-        return redirect('/mgt/controller/' . $request->to)->with('success', 'Your log entry has been added.');
+        return redirect('/mgt/controller/' . $request->to . '#actions')->with('success', 'Your log entry has been added.');
     }
 
     public
