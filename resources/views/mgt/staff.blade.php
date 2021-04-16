@@ -132,6 +132,14 @@
                                 "<button onClick=\"deleteStaff('US14')\" class=\"btn btn-danger\">Vacate</button>"
                                 :"<button data-toggle=\"modal\" data-target=\"#staffModal\" data-role=\"US14\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
+                        <tr>
+                            <td>VATUSA15</td>
+                            <td>{{\App\Classes\RoleHelper::getNameFromRole("US15")}}</td>
+                            <td>{{\App\Classes\RoleHelper::roleTitle("US15")}}</td>
+                            <td>{!!((\App\Classes\RoleHelper::getNameFromRole("US15")!="Vacant")?
+                                "<button onClick=\"deleteStaff('US15')\" class=\"btn btn-danger\">Vacate</button>"
+                                :"<button data-toggle=\"modal\" data-target=\"#staffModal\" data-role=\"US15\" class=\"btn btn-success\">Assign</button>")!!}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
