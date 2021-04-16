@@ -399,7 +399,7 @@ class MgtController extends Controller
             }
             */
             $user = User::find($cid);
-            if($user->facility == config('staff.hq.HQ'))) {
+            if($user->facility == config('staff.hq.HQ')) {
                 $tr = new \App\Transfers();
                 $tr->cid = $cid;
                 $tr->reason = "Auto Transfer to ZAE: removed from staff.";
