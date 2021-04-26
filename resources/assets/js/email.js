@@ -14,7 +14,7 @@ $(document)
     })
       .done((data) => {
         waitingDialog.hide()
-        $('#emailRoot').html(emailPage(data))
+        $('#emailRoot').html(emailPage(data.data))
       })
   })
   .on('click', '.btnSave', function () {
