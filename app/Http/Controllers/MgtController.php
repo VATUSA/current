@@ -211,7 +211,7 @@ class MgtController extends Controller
             abort(500);
         }
 
-        $user = User::where('cid', $cid)->first();
+        $user = User::find($cid);
         if (!$user) {
             abort(404);
         }
@@ -222,23 +222,42 @@ class MgtController extends Controller
         if (!is_numeric($request->input('rating'))) {
             abort(500);
         }
+        
+        $from = $user->rating;
+        $rating = $request->input('rating');
+        
+        if ($rating > Helper::ratingIntFromShort("I3")) {
+            abort(400);
+        }
+        
+        if (env('APP_ENV', 'dev') == "prod") {
+            $return = CertHelper::changeRating($cid, $request->input('rating'), true);
 
-        $promo = new Promotions();
-        $promo->cid = $cid;
-        $promo->grantor = Auth::user()->cid;
-        $promo->to = $request->input('rating');
-        $promo->from = $user->rating;
-        $promo->exam = "0000-00-00 00:00:00";
-        $promo->examiner = Auth::user()->cid;
-        $promo->position = "n/a";
-        $promo->save();
-
-        if (env('APP_ENV', 'dev') != "dev") {
-            CertHelper::changeRating($cid, $request->input('rating'), true);
+            if($return) {
+                $promo = new Promotions();
+                $promo->cid = $cid;
+                $promo->grantor = Auth::user()->cid;
+                $promo->to = $rating;
+                $promo->from = $from;
+                $promo->exam = "0000-00-00 00:00:00";
+                $promo->examiner = Auth::user()->cid;
+                $promo->position = "n/a";
+                $promo->save();
+                
+                if ($rating >= Helper::ratingIntFromShort("I1")) {
+                    Role::where("cid", $cid)->where(function ($query) {
+                        $query->where("role", "MTR")->orWhere("role", "INS");
+                    })->delete();
+                 }
+                
+                echo "1";
+            }
+            else {
+                echo "0";
+            }
         }
 
         echo "1";
-
         return;
     }
 
