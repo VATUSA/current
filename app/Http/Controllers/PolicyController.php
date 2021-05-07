@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class PolicyController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('bindings');
+        $this->middleware('vatusastaff')->except(['index', 'show']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -38,14 +45,23 @@ class PolicyController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function storeCategory(Request $request)
     {
-        if(RoleHelper::isVATUSAStaff()) {
-            //Create default category
-        }
+        //Create default category
+
+        $last = PolicyCategory::orderByDesc('order')->first();
+        $order = $last ? $last->order + 1 : 0;
+
+        $cat = new PolicyCategory();
+        $cat->name = "New Category " . ($order + 1);
+        $cat->order = $order;
+        $cat->save();
+
+        return redirect('/mgt/policies');
     }
+
 
     /**
      * Show policy.
@@ -62,13 +78,11 @@ class PolicyController extends Controller
     /**
      * Show the form for managing policies.
      *
-     * @param \App\Policy $policy
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
-    public function edit(Policy $policy)
+    public function edit()
     {
-        $categories = PolicyCategory::with('policies')->get();
+        $categories = PolicyCategory::with('policies')->orderBy('order')->get();
 
         return view('mgt.policies', compact('categories'));
     }
@@ -87,6 +101,28 @@ class PolicyController extends Controller
     }
 
     /**
+     * Update the policy category.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\PolicyCategory      $category
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function updateCategory(Request $request, PolicyCategory $category)
+    {
+        if ($request->input('name')) {
+            $category->name = $request->name;
+        }
+        if ($request->filled('order')) {
+            $category->order = $request->order;
+        }
+
+        $category->save();
+
+        echo 1;
+    }
+
+    /**
      * Remove the policy.
      *
      * @param \App\Policy $policy
@@ -101,12 +137,24 @@ class PolicyController extends Controller
     /**
      * Remove the policy.
      *
-     * @param \App\Policy $policy
+     * @param \App\PolicyCategory $category
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Foundation\Application
+     * @throws \Exception
      */
-    public function destroyCategory(Policy $policy)
+    public function destroyCategory(PolicyCategory $category)
     {
-        //Remove category and all policies
+        $order = $category->order;
+        $category->delete();
+
+        $categories = PolicyCategory::where('order', '>', $order)->orderBy('order')->get();
+        foreach ($categories as $category) {
+            $category->order--;
+            $category->save();
+        }
+
+        return redirect('/mgt/policies');
     }
+
+
 }

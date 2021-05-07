@@ -1,5 +1,6 @@
 <?php namespace App\Http\Middleware;
 
+use App\Classes\RoleHelper;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\RedirectResponse;
@@ -33,10 +34,10 @@ class VATUSAStaff {
      */
     public function handle($request, Closure $next)
     {
-        if ($this->auth->check() && $this->auth->user()->permissions > 2)
+        if (RoleHelper::isVATUSAStaff())
             return $next($request);
         else
-            response('Unauthorized.', 401);
+            response('Unauthorized.', 403);
     }
 
 }

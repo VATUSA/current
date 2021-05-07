@@ -23,7 +23,7 @@
                     <div class="tab-content">
                     @foreach($categories as $category)
                         <!-- TOOD: Permissions -->
-                            <div role="tabpanel" class="tab-pane active" id="policy-cat-{{ $category->id }}">
+                            <div role="tabpanel" class="tab-pane @if(!$category->order) active @endif" id="policy-cat-{{ $category->id }}">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>

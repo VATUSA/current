@@ -275,9 +275,11 @@ Route::group([
             // * * * * * * Policies * * * * * *
             Route::get('policies', 'PolicyController@edit');
             Route::post('policies', 'PolicyController@store');
-            Route::put('policies', 'PolicyController@update');
+            Route::post('policies', 'PolicyController@update');
             Route::put('policies/changeOrder', 'PolicyController@updateOrder');
             Route::get('policies/newCategory', 'PolicyController@storeCategory');
+            Route::put('policies/updateCategory/{category}', 'PolicyController@updateCategory');
+            Route::get('policies/deleteCategory/{category}', 'PolicyController@destroyCategory');
 
             // * * * * * * Training - Evals * * * * * *
             Route::get('controller/{cid}/eval/{form?}', 'TrainingController@getOTSEval')->where('form',
