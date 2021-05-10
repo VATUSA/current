@@ -50,7 +50,7 @@
                                             <td>{{ $policy->effective_date->format('m/d/Y') }}
                                                 @if($policy->updated_at->format('m/d/Y') !== $policy->effective_date->format('m/d/Y'))
                                                     <br>
-                                                    <strong>Modified: </strong>{{ $policy->effective_date->format('m/d/Y') }}@endif
+                                                    <strong>Modified: </strong>{{ $policy->updated_at->format('m/d/Y') }}@endif
                                             </td>
                                             <td>{{ $policy->description }}</td>
                                             <td><a href="/info/policies/{{ $policy->slug }}" target="_blank">
