@@ -658,6 +658,9 @@ class RoleHelper
         $perms = explode('|', $policy->perms);
         foreach ($perms as $perm) {
             $perm = intval($perm);
+            if (!$policy->visible && !RoleHelper::isVATUSAStaff()) {
+                return false;
+            }
             if ($perm === Policy::PERMS_ALL || RoleHelper::isVATUSAStaff()) {
                 return true;
             }
