@@ -142,7 +142,7 @@
                             <li class="divider"></li>
                             <li><a href="{{secure_url('info/members')}}"><i class="fas fa-users"></i> Members and Staff</a>
                             </li>
-                            <li><a href="{{secure_url('info/policies')}}"><i class="fas fa-clipboard"></i> Policies</a>
+                            <li><a href="{{secure_url('info/policies')}}"><i class="fas fa-clipboard"></i> Policies and Downloads</a>
                             </li>
                             <li class="divider"></li>
                             <li><a href="{{secure_url("cbt")}}"><i class="fas fa-desktop"></i> Computer Based Training
@@ -395,7 +395,7 @@
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                             <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
                                             <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a></li>
-                                            <li><a href="{{secure_url("mgt/policies") }}">Policy Management</a></li>
+                                            <li><a href="{{secure_url("mgt/policies") }}">Policies & Downloads</a></li>
                                         @endif
 
                                     <!-- Division Statistics [All] -->

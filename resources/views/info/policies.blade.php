@@ -1,5 +1,5 @@
 @extends('layout')
-@section('title', 'Policies')
+@section('title', 'Policies & Downloads')
 @section('content')
     <div class="container">
         <div class="panel panel-default">
@@ -33,38 +33,36 @@
                             @if(!in_array($category->id, $canView)) @continue @endif
                             <div role="tabpanel" class="tab-pane @if(!$category->order) active @endif"
                                  id="policy-cat-{{ $category->id }}">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th>Policy</th>
-                                            <th>Effective Date</th>
-                                            <th class="hidden-xs">Description</th>
-                                            <th>View</th>
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Policy</th>
+                                        <th>Effective Date</th>
+                                        <th class="hidden-xs">Description</th>
+                                        <th>View</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($category->policies as $policy)
+                                        @if(!\App\Classes\RoleHelper::canView($policy)) @continue @endif
+                                        <tr @if(!$policy->visible) class="danger" @endif>
+                                            <td>{{ $policy->ident }} &mdash; {{ $policy->title }}</td>
+                                            <td>{{ $policy->effective_date->format('m/d/Y') }}
+                                                @if($policy->updated_at->format('m/d/Y') !== $policy->effective_date->format('m/d/Y'))
+                                                    <br>
+                                                    <strong>Modified: </strong>{{ $policy->updated_at->format('m/d/Y') }}@endif
+                                            </td>
+                                            <td class="hidden-xs">{{ $policy->description }}</td>
+                                            <td><a href="/info/policies/{{ $policy->slug }}" target="_blank">
+                                                    <button class="btn btn-primary" rel="tooltip"
+                                                            title="{{ strtoupper($policy->extension) }}"><i
+                                                                class="fas fa-eye"></i> View
+                                                    </button>
+                                                </a></td>
                                         </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($category->policies as $policy)
-                                            @if(!\App\Classes\RoleHelper::canView($policy)) @continue @endif
-                                            <tr @if(!$policy->visible) class="danger" @endif>
-                                                <td>{{ $policy->ident }} &mdash; {{ $policy->title }}</td>
-                                                <td>{{ $policy->effective_date->format('m/d/Y') }}
-                                                    @if($policy->updated_at->format('m/d/Y') !== $policy->effective_date->format('m/d/Y'))
-                                                        <br>
-                                                        <strong>Modified: </strong>{{ $policy->updated_at->format('m/d/Y') }}@endif
-                                                </td>
-                                                <td class="hidden-xs">{{ $policy->description }}</td>
-                                                <td><a href="/info/policies/{{ $policy->slug }}" target="_blank">
-                                                        <button class="btn btn-primary" rel="tooltip"
-                                                                title="{{ strtoupper($policy->extension) }}"><i
-                                                                    class="fas fa-eye"></i> View
-                                                        </button>
-                                                    </a></td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         @endforeach
                     </div>
