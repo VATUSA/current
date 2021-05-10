@@ -274,9 +274,8 @@ Route::group([
 
             // * * * * * * Policies * * * * * *
             Route::get('policies', 'PolicyController@edit');
-            Route::post('policies', 'PolicyController@store');
-            Route::post('policies', 'PolicyController@update');
-            Route::put('policies/changeOrder', 'PolicyController@updateOrder');
+            Route::post('policies/store', 'PolicyController@store');
+            Route::put('policies/updatePolicy/{policy}', 'PolicyController@update');
             Route::get('policies/newCategory', 'PolicyController@storeCategory');
             Route::put('policies/updateCategory/{category}', 'PolicyController@updateCategory');
             Route::get('policies/deleteCategory/{category}', 'PolicyController@destroyCategory');

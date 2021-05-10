@@ -11,7 +11,7 @@ class PolicyCategory extends Model
     protected $dates = ['created_at', 'updated_at'];
 
     public function policies() {
-        return $this->hasMany(Policy::class, 'category');
+        return $this->hasMany(Policy::class, 'category')->orderBy('order');
     }
 
     public function resolveRouteBinding($value)

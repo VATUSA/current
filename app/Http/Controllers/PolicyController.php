@@ -6,6 +6,7 @@ use App\Classes\RoleHelper;
 use App\Policy;
 use App\PolicyCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class PolicyController extends Controller
 {
@@ -33,11 +34,47 @@ class PolicyController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|string
      */
     public function store(Request $request)
     {
-        //
+        $category = $request->validate([
+            'category'  => 'required|exists:policy_categories,id',
+            'ident'     => 'required|unique:policies|alpha_num',
+            'title'     => 'required|unique:policies',
+            'slug'      => 'required|unique:policies|alpha_dash',
+            'perms'     => 'required',
+            'file'      => 'required|file|max:1000000',
+            'effective' => 'date_format:m/d/Y'
+        ]);
+
+        $prevPolicy = Policy::where('category', $request->category)->orderByDesc('order')->first();
+        $order = $prevPolicy ? $prevPolicy->order + 1 : 0;
+
+        $policy = new Policy();
+        $policy->ident = $request->ident;
+        $policy->category = $request->category;
+        $policy->title = $request->title;
+        $policy->slug = strtolower($request->slug);
+        $policy->effective_date = (new Carbon($request->effective_date))->format('Y-m-d');
+        $policy->order = $order;
+        $policy->perms = implode('|', $request->perms);
+        $policy->visible = false;
+        $policy->save();
+
+        if (!$request->file('file')->storeAs('docs',
+            $policy->slug . "." . $request->file('file')->getClientOriginalExtension(),
+            'public')) {
+            try {
+                $policy->delete();
+            } catch (\Exception $e) {
+            }
+
+            return "0";
+        } else {
+            return "1";
+        }
+
     }
 
     /**
@@ -93,11 +130,16 @@ class PolicyController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param \App\Policy              $policy
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|string
      */
     public function update(Request $request, Policy $policy)
     {
-        //
+        if ($request->has('order')) {
+            $policy->order = $request->order;
+            $policy->save();
+
+            return "1";
+        }
     }
 
     /**
