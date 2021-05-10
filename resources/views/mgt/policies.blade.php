@@ -336,7 +336,6 @@
             </div>
         </div>
     </div>
-    {{ \Illuminate\Support\Carbon::createFromFormat('m/d/Y', '05/4/2021') }}
 @endsection
 @push('styles')
     <link rel="stylesheet" type="text/css" href="{{ secure_asset("datetimepicker/datetimepicker.css") }}">
