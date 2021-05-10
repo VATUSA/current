@@ -45,7 +45,7 @@
                                     <tbody>
                                     @foreach($category->policies as $policy)
                                         @if(!\App\Classes\RoleHelper::canView($policy)) @continue @endif
-                                        <tr>
+                                        <tr @if(!$policy->visible) class="danger" @endif>
                                             <td>{{ $policy->ident }} &mdash; {{ $policy->title }}</td>
                                             <td>{{ $policy->effective_date->format('m/d/Y') }}
                                                 @if($policy->updated_at->format('m/d/Y') !== $policy->effective_date->format('m/d/Y'))
