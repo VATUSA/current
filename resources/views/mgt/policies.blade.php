@@ -7,12 +7,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
+                                aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="new-policy-modal-title-line"><span
-                            id="new-policy-title-line" class="new-policy-objects">Upload New</span><span
-                            id="edit-policy-title-line" class="edit-policy-objects">Edit Existing</span>
+                                id="new-policy-title-line" class="new-policy-objects">Upload New</span><span
+                                id="edit-policy-title-line" class="edit-policy-objects">Edit Existing</span>
                         <span
-                            id="new-policy-category"></span> Policy</h4>
+                                id="new-policy-category"></span> Policy</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" id="new-policy-form">
@@ -24,9 +24,9 @@
                                        name="ident" style="display: inline; margin-right:10px; width:20%;"
                                        maxlength="10"
                                        required>&mdash;<input
-                                    style="display: inline; margin-left:10px; width:60%" type="text"
-                                    class="form-control" name="title"
-                                    id="new-policy-title" placeholder="Policy Title" required>
+                                        style="display: inline; margin-left:10px; width:60%" type="text"
+                                        class="form-control" name="title"
+                                        id="new-policy-title" placeholder="Policy Title" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -139,11 +139,25 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group edit-policy-objects">
+                            <div class="form-group">
+                                <label for="new-policy-clear-modified" class="col-sm-3 control-label">Options</label>
+                                <div class="col-sm-9">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" name="clear_modified" value="1" id="new-policy-clear-modified">Clear Modified Date
+                                        </label>
+                                    </div>
+                                    <p class="help-block">This will set the Modified Date to be the same as the Effective Date.</p>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="form-group">
                                 <label for="new-policy-file" class="col-sm-3 control-label new-policy-objects">File
                                     Upload</label>
-                                <label for="new-policy-file" class="col-sm-3 control-label edit-policy-objects">File
+                                <label for="new-policy-file" class="col-sm-3 control-label edit-policy-objects">Replacement
+                                    File
                                     Upload</label>
                                 <div class="col-sm-9">
                                     <input type="file" id="new-policy-file" style="width:60%">
@@ -157,11 +171,11 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-success new-policy-objects" id="policy-submit"><i
-                            class="fas fa-check"></i> Submit
+                                class="fas fa-check"></i> Submit
                         New Policy
                     </button>
                     <button type="button" class="btn btn-success edit-policy-objects" id="policy-edit-submit"><i
-                            class="fas fa-check"></i>
+                                class="fas fa-check"></i>
                         Submit
                         Changes
                     </button>
@@ -210,9 +224,9 @@
                                                 data-order="{{ $category->order }}"><i class="fas fa-arrow-up"></i>
                                         </button>
                                         <button
-                                            class="btn btn-primary move-down @if($category->order + 1 == $categories->count()) hidden @endif"
-                                            data-id="{{ $category->id }}"
-                                            data-order="{{ $category->order }}"><i class="fas fa-arrow-down"></i>
+                                                class="btn btn-primary move-down @if($category->order + 1 == $categories->count()) hidden @endif"
+                                                data-id="{{ $category->id }}"
+                                                data-order="{{ $category->order }}"><i class="fas fa-arrow-down"></i>
                                         </button>
                                     </div>
                                     <button class="btn btn-danger delete-category" data-id="{{ $category->id }}"
@@ -239,9 +253,9 @@
                             @foreach($categories as $category)
                                 <li role="presentation" @if(!$category->order) class="active"
                                     @endif id="cat-{{ $category->id }}"><a
-                                        href="#policy-cat-{{ $category->id }}"
-                                        aria-controls="policy-cat-{{ $category->id }}" role="tab"
-                                        data-toggle="tab">{{ $category->name }}</a></li>
+                                            href="#policy-cat-{{ $category->id }}"
+                                            aria-controls="policy-cat-{{ $category->id }}" role="tab"
+                                            data-toggle="tab">{{ $category->name }}</a></li>
                             @endforeach
                         </ul>
                         <!-- Tab panes -->
@@ -268,7 +282,8 @@
                                                 id="policy-order-{{ $policy->order }}"
                                                 @if(!$policy->visible) class="text-muted"@endif>
                                                 <td>{{ $policy->order + 1 }}</td>
-                                                <td>{{ $policy->ident }}<br><em>{{ strtoupper($policy->extension) }}</em></td>
+                                                <td>{{ $policy->ident }}
+                                                    <br><em>{{ strtoupper($policy->extension) }}</em></td>
                                                 <td>{{ $policy->title }}</td>
                                                 <td>@if($policy->effective_date)
                                                         Effective: {{ $policy->effective_date->format("m/d/Y") }}
@@ -277,18 +292,18 @@
                                                 <td>
                                                     <div class="btn-group">
                                                         <button
-                                                            class="btn btn-primary policy-move move-up @if(!$policy->order) hidden @endif"
-                                                            data-id="{{ $policy->id }}"
-                                                            data-cat-id="{{ $policy->category }}"
-                                                            data-order="{{ $policy->order }}"><i
-                                                                class="fas fa-arrow-up"></i>
+                                                                class="btn btn-primary policy-move move-up @if(!$policy->order) hidden @endif"
+                                                                data-id="{{ $policy->id }}"
+                                                                data-cat-id="{{ $policy->category }}"
+                                                                data-order="{{ $policy->order }}"><i
+                                                                    class="fas fa-arrow-up"></i>
                                                         </button>
                                                         <button
-                                                            class="btn btn-primary policy-move move-down @if($policy->order + 1 == $category->policies->count()) hidden @endif"
-                                                            data-id="{{ $policy->id }}"
-                                                            data-cat-id="{{ $policy->category }}"
-                                                            data-order="{{ $policy->order }}"><i
-                                                                class="fas fa-arrow-down"></i>
+                                                                class="btn btn-primary policy-move move-down @if($policy->order + 1 == $category->policies->count()) hidden @endif"
+                                                                data-id="{{ $policy->id }}"
+                                                                data-cat-id="{{ $policy->category }}"
+                                                                data-order="{{ $policy->order }}"><i
+                                                                    class="fas fa-arrow-down"></i>
                                                         </button>
                                                     </div>
                                                     <div class="btn-group">
@@ -297,23 +312,23 @@
                                                                 data-cat-name="{{ $category->name }}"
                                                                 data-cat-id="{{ $category->id }}"
                                                                 data-name="{{ $policy->title }}"><i
-                                                                class="fas fa-pencil-alt"></i></button>
+                                                                    class="fas fa-pencil-alt"></i></button>
                                                         <button class="btn btn-danger delete-policy"
                                                                 data-id="{{ $policy->id }}"
                                                                 data-name="{{ $policy->title }}"><i
-                                                                class="fas fa-times"></i></button>
+                                                                    class="fas fa-times"></i></button>
                                                     </div>
                                                     @if($policy->visible)
                                                         <button class="btn btn-success toggle-visible"
                                                                 data-id="{{ $policy->id }}"
                                                                 style="transition: all 0.4s ease"><i
-                                                                class="fas fa-eye"></i>
+                                                                    class="fas fa-eye"></i>
                                                         </button>
                                                     @else
                                                         <button class="btn btn-default toggle-visible"
                                                                 style="transition: all 0.4s ease"
                                                                 data-id="{{ $policy->id }}"><i
-                                                                class="fas fa-eye-slash"></i></button>
+                                                                    class="fas fa-eye-slash"></i></button>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -325,7 +340,7 @@
                                                         id="new-policy-{{ $category->id }}"
                                                         data-cat-name="{{ $category->name }}"
                                                         data-cat-id="{{ $category->id }}"><i
-                                                        class="fas fa-plus"></i> <span>Add
+                                                            class="fas fa-plus"></i> <span>Add
                                                         New Policy</span>
                                                 </button>
                                             </td>

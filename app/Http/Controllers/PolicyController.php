@@ -189,6 +189,12 @@ class PolicyController extends Controller
         $policy->extension = $request->file !== "undefined" ? $request->file('file')->getClientOriginalExtension() : $policy->extension;
         $policy->effective_date = Carbon::createFromFormat('m/d/Y', $request->effective)->format('Y-m-d');
         $policy->perms = implode('|', $request->perms);
+
+        if ($request->clear_modified) {
+            $policy->timestamps = false;
+            $policy->updated_at = $policy->effective_date;
+        }
+
         $policy->save();
 
         if ($request->file !== "undefined") {
