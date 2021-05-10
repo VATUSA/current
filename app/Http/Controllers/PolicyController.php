@@ -50,7 +50,7 @@ class PolicyController extends Controller
             'perms'       => 'required',
             'file'        => 'required|file|max:1000000',
             'effective'   => 'date_format:m/d/Y',
-            'description' => 'max:255'
+            'desc' => 'max:255'
         ]);
 
         $prevPolicy = Policy::where('category', $request->category)->orderByDesc('order')->first();
@@ -61,7 +61,7 @@ class PolicyController extends Controller
         $policy->category = $request->category;
         $policy->title = $request->title;
         $policy->slug = strtolower($request->slug);
-        $policy->description = $request->description;
+        $policy->description = $request->desc;
         $policy->extension = $request->file('file')->getClientOriginalExtension();
         $policy->effective_date = (new Carbon($request->effective_date))->format('Y-m-d');
         $policy->order = $order;
@@ -170,14 +170,14 @@ class PolicyController extends Controller
             'perms'       => 'required',
             'file'        => 'max:1000000',
             'effective'   => 'date_format:m/d/Y',
-            'description' => 'max:255'
+            'desc' => 'max:255'
         ]);
 
         $policy->ident = $request->ident;
         $policy->category = $request->category;
         $policy->title = $request->title;
         // $policy->slug = strtolower($request->slug);
-        $policy->description = $request->description;
+        $policy->description = $request->desc;
         $oldfileextension = $policy->extension;
         $policy->extension = $request->file !== "undefined" ? $request->file('file')->getClientOriginalExtension() : $policy->extension;
         $policy->effective_date = (new \Carbon\Carbon($request->effective_date))->format('Y-m-d');
