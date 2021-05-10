@@ -150,6 +150,7 @@ class PolicyController extends Controller
     public function update(Request $request, Policy $policy)
     {
         if ($request->has('order')) {
+            $policy->timestamps = false;
             $policy->order = $request->order;
             $policy->save();
 
