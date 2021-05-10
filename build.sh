@@ -9,5 +9,6 @@ echo "*    *    *     *     *    cd /www && php artisan schedule:run" > /etc/cro
 
 mkdir /www/storage/framework/views
 chown application:application /www/storage/framework/views
+chown application:application /www/storage/app/public/docs
 
 cd /www && php artisan migrate
