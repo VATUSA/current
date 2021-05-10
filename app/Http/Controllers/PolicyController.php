@@ -63,7 +63,7 @@ class PolicyController extends Controller
         $policy->slug = strtolower($request->slug);
         $policy->description = $request->desc;
         $policy->extension = $request->file('file')->getClientOriginalExtension();
-        $policy->effective_date = (new Carbon($request->effective_date))->format('Y-m-d');
+        $policy->effective_date = Carbon::createFromFormat('m/d/Y', $request->effective)->format('Y-m-d');
         $policy->order = $order;
         $policy->perms = implode('|', $request->perms);
         $policy->visible = false;
@@ -180,7 +180,7 @@ class PolicyController extends Controller
         $policy->description = $request->desc;
         $oldfileextension = $policy->extension;
         $policy->extension = $request->file !== "undefined" ? $request->file('file')->getClientOriginalExtension() : $policy->extension;
-        $policy->effective_date = (new \Carbon\Carbon($request->effective_date))->format('Y-m-d');
+        $policy->effective_date = Carbon::createFromFormat('m/d/Y', $request->effective)->format('Y-m-d');
         $policy->perms = implode('|', $request->perms);
         $policy->save();
 
