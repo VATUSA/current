@@ -268,7 +268,7 @@
                                                 id="policy-order-{{ $policy->order }}"
                                                 @if(!$policy->visible) class="text-muted"@endif>
                                                 <td>{{ $policy->order + 1 }}</td>
-                                                <td>{{ $policy->ident }}</td>
+                                                <td>{{ $policy->ident }}<br><em>{{ strtoupper($policy->extension) }}</em></td>
                                                 <td>{{ $policy->title }}</td>
                                                 <td>@if($policy->effective_date)
                                                         Effective: {{ $policy->effective_date->format("m/d/Y") }}

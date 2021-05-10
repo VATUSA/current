@@ -54,7 +54,7 @@
                                             </td>
                                             <td>{{ $policy->description }}</td>
                                             <td><a href="/info/policies/{{ $policy->slug }}" target="_blank">
-                                                    <button class="btn btn-primary"><i class="fas fa-eye"></i> View
+                                                    <button class="btn btn-primary" rel="tooltip" title="{{ strtoupper($policy->extension) }}"><i class="fas fa-eye"></i> View
                                                     </button>
                                                 </a></td>
                                         </tr>
