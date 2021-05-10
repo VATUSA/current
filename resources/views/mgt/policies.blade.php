@@ -21,7 +21,7 @@
                             <label for="ident" class="col-sm-3 control-label">Ident & Title</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="new-policy-ident" placeholder="DP001"
-                                       name="ident" style="display: inline; margin-right:10px; width:20%;" maxlength="8"
+                                       name="ident" style="display: inline; margin-right:10px; width:20%;" maxlength="10"
                                        required>&mdash;<input
                                     style="display: inline; margin-left:10px; width:60%" type="text"
                                     class="form-control" name="title"

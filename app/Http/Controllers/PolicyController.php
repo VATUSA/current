@@ -44,7 +44,7 @@ class PolicyController extends Controller
     {
         $category = $request->validate([
             'category'    => 'required|exists:policy_categories,id',
-            'ident'       => 'required|unique:policies|alpha_num|max:8',
+            'ident'       => 'required|regex:/^[\s\w.]*$/|max:10',
             'title'       => 'required|unique:policies',
             'slug'        => 'required|unique:policies|alpha_dash',
             'perms'       => 'required',
@@ -164,7 +164,7 @@ class PolicyController extends Controller
 
         $category = $request->validate([
             'category'    => 'required',
-            'ident'       => 'required|alpha_num|max:8',
+            'ident'       => 'required|regex:/^[\s\w.]*$/|max:10',
             'title'       => 'required',
             //   'slug'        => 'required|unique:policies|alpha_dash',
             'perms'       => 'required',
