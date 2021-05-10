@@ -16,7 +16,7 @@
 		"laravel/socialite": "3.*",
 		"socialiteproviders/discord": "2.*",
 		"llagerlof/moodlerest": "^2.3",
-        "ext-json": "*"
+    "ext-json": "*"
     },
 	"require-dev": {
 		"phpunit/phpunit": "~6.0",

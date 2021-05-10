@@ -52,14 +52,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        if ($request->server->get("SERVER_NAME") == "api.vatusa.net") {
-            if ($e instanceOf NotFoundHttpException) {
-                return response()->json(["status" => "error", "msg" => "Request not known"]);
-            } else {
-                return response()->json(["status" => "error", "msg" => "Unknown error"]);
-            }
-        }
-
         if ($e instanceof MethodNotAllowedHttpException) {
             return redirect('/500');
         }

@@ -95,6 +95,34 @@
           })
       })
 
+      $('#toggleAcademyEditor').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on'),
+            spinner     = $(this).find('i.spinner-icon')
+
+        spinner.show()
+        $.ajax({
+          type: 'POST',
+          url : "{{ secure_url("/mgt/controller/ajax/toggleAcademyEditor") }}",
+          data: {cid: "{{ $user->cid }}"}
+        }).success(function (result) {
+          spinner.hide()
+          if (result === '1') {
+            //Success
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'info' : 'danger'))
+            panel.removeClass(currentlyOn ? 'panel-warning' : 'panel-default')
+            panel.addClass(currentlyOn ? 'panel-default' : 'panel-warning')
+          } else {
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle Academy editor setting.')
+          }
+        })
+          .error(function (result) {
+            spinner.hide()
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          })
+      })
+
       $('#toggleInsRole').click(function () {
         let icon        = $(this).find('i.toggle-icon'),
             currentlyOn = icon.hasClass('fa-toggle-on'),
@@ -516,17 +544,15 @@
                                         </div>
                                     @endif
                                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                        <form class="form-horizontal" action="{{secure_url("/mgt/action/add")}}"
-                                              method="POST">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="hidden" name="to" value="{{ $user->cid }}">
-                                            <input type="hidden" name="from" value="{{ Auth::user()->cid }}">
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label">Add a Log Entry</label>
-                                                <div class="col-sm-10"><textarea class="form-control" rows="2"
-                                                                                 name="log"
-                                                                                 placeholder="Entry"></textarea>
-                                                </div>
+                                    <form class="form-horizontal" action="{{secure_url("/mgt/controller/action/add")}}"
+                                          method="POST">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="to" value="{{ $user->cid }}">
+                                        <input type="hidden" name="from" value="{{ Auth::user()->cid }}">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Add a Log Entry</label>
+                                            <div class="col-sm-10"><textarea class="form-control" rows="2" name="log"
+                                                                             placeholder="Entry"></textarea>
                                             </div>
                                             <div class="form-group">
                                                 <div class="col-sm-offset-2 col-sm-10">
@@ -555,7 +581,7 @@
                                                     !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
                                                         <a data-id="{{ $a->id }}"
                                                            href="#"
-                                                           data-action="{{ secure_url('mgt/deleteActionLog/'.$a->id) }}"
+                                                           data-action="{{ secure_url('mgt/controller/action/delete/'.$a->id) }}"
                                                            class="text-danger delete-log"><i
                                                                     class="fa fa-times"></i></a>
                                                         <i class="spinner-icon fa fa-spinner fa-spin"
@@ -588,6 +614,17 @@
                                             assign him or her a role.</p>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Academy Material Editor</label>
+                                    <div class="col-sm-10">
+                                    <span id="toggleAcademyEditor" style="font-size:1.8em;">
+                                        <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, "ZAE", "CBT") ? "on text-danger" : "off text-info"}} "></i>
+                                        <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                                    </span>
+                                        <p class="help-block">This will assign the Editor role to the user in Moodle,
+                                            and will allow him or her to edit VATUSA Training Academy material.</p>
+                                    </div>
+                                </div>
                                 @if($user->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Instructor</label>
@@ -607,7 +644,7 @@
                                     <div class="col-sm-10">
                                         <p class="form-control-static" style="cursor:default;">
                                             @if($user->flag_preventStaffAssign) <strong
-                                                    style="color:#e72828">Yes</strong>
+                                                style="color:#e72828">Yes</strong>
                                             @else <strong style="color:green">No</strong>
                                             @endif
                                         </p>

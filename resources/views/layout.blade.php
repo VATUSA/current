@@ -394,8 +394,8 @@
                                         <!-- ACE Team/Division Staff Management [VATUSA] -->
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                             <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
-                                            <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a>
-                                            </li>
+                                            <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a></li>
+                                            <li><a href="{{secure_url("mgt/policies") }}">Policy Management</a></li>
                                         @endif
 
                                     <!-- Division Statistics [All] -->
@@ -479,11 +479,13 @@
                     class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>
-
+<script
+    src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+    integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+    crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/js/bootbox.min.js"></script>
-<script src="/js/jquery-ui.min.js"></script>
 <script src="/js/vatusa.js"></script>
 <script src="/js/bootstrap-formhelpers.js"></script>
 
