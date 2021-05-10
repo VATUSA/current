@@ -163,8 +163,8 @@ class PolicyController extends Controller
             return "1";
         }
 
-        $category = $request->validate([
-            'category'  => 'required|exists:policy_categories,id',
+        $request->validate([
+            'category_edit'  => 'required|exists:policy_categories,id',
             'ident'     => 'required|regex:/^[\s\w.]*$/|max:10',
             'title'     => 'required',
             //   'slug'        => 'required|unique:policies|alpha_dash',
@@ -176,11 +176,11 @@ class PolicyController extends Controller
 
         $policy->ident = $request->ident;
 
-        if ($policy->category !== $request->category) {
-            $policies = Policy::where('category', $request->category)->orderByDesc('order')->first();
+        if ($policy->category !== $request->category_edit) {
+            $policies = Policy::where('category', $request->category_edit)->orderByDesc('order')->first();
             $policy->order = $policies->exists() ? $policies->order + 1 : 0;
         }
-        $policy->category = $request->category;
+        $policy->category = $request->category_edit;
 
         $policy->title = $request->title;
         // $policy->slug = strtolower($request->slug);

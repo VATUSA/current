@@ -49,9 +49,9 @@
                             </div>
                         </div>
                         <div class="form-group edit-policy-objects">
-                            <label for="new-policy-category" class="col-sm-3 control-label">Category</label>
+                            <label for="new-policy-category-input" class="col-sm-3 control-label">Category</label>
                             <div class="col-sm-9">
-                                <select style="width:87%" class="form-control" name="category" id="new-policy-category">
+                                <select style="width:87%" class="form-control" name="category_edit" id="new-policy-category-input">
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -577,7 +577,7 @@
               $('#new-policy-title').val(response.title)
               $('#new-policy-slug').val(response.slug).prop('disabled', true)
               $('#new-policy-desc').val(response.description ?? '')
-              $('#new-policy-category').val(response.category)
+              $('#new-policy-category-input').val(response.category)
 
               let perms     = response.perms.split('|'),
                   overrides = {
