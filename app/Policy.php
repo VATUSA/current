@@ -18,6 +18,7 @@ class Policy extends Model
     public const PERMS_TA = 7;
     public const PERMS_DATM = 8;
     public const PERMS_ATM = 9;
+    public const PERMS_VATUSA = 10;
 
     public function category() {
         return $this->belongsTo(PolicyCategory::class,'policy_category');

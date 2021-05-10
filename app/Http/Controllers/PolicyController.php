@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Classes\RoleHelper;
 use App\Policy;
 use App\PolicyCategory;
+use Auth;
+use Composer\Util\AuthHelper;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class PolicyController extends Controller
 {
@@ -39,13 +43,14 @@ class PolicyController extends Controller
     public function store(Request $request)
     {
         $category = $request->validate([
-            'category'  => 'required|exists:policy_categories,id',
-            'ident'     => 'required|unique:policies|alpha_num',
-            'title'     => 'required|unique:policies',
-            'slug'      => 'required|unique:policies|alpha_dash',
-            'perms'     => 'required',
-            'file'      => 'required|file|max:1000000',
-            'effective' => 'date_format:m/d/Y'
+            'category'    => 'required|exists:policy_categories,id',
+            'ident'       => 'required|unique:policies|alpha_num|max:8',
+            'title'       => 'required|unique:policies',
+            'slug'        => 'required|unique:policies|alpha_dash',
+            'perms'       => 'required',
+            'file'        => 'required|file|max:1000000',
+            'effective'   => 'date_format:m/d/Y',
+            'description' => 'max:255'
         ]);
 
         $prevPolicy = Policy::where('category', $request->category)->orderByDesc('order')->first();
@@ -56,6 +61,8 @@ class PolicyController extends Controller
         $policy->category = $request->category;
         $policy->title = $request->title;
         $policy->slug = strtolower($request->slug);
+        $policy->description = $request->description;
+        $policy->extension = $request->file('file')->getClientOriginalExtension();
         $policy->effective_date = (new Carbon($request->effective_date))->format('Y-m-d');
         $policy->order = $order;
         $policy->perms = implode('|', $request->perms);
@@ -105,11 +112,19 @@ class PolicyController extends Controller
      *
      * @param \App\Policy $policy
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function show(Policy $policy)
+    public function show(string $slug)
     {
-        //
+        $policy = Policy::where('slug', $slug)->first();
+        if (!RoleHelper::canView($policy)) {
+            abort(403, "You are not allowed to access that file.");
+        }
+        if ($policy && Storage::disk('public')->exists("docs/$policy->slug.$policy->extension")) {
+            return response()->file(Storage::disk('public')->path("docs/$policy->slug.$policy->extension"));
+        }
+
+        abort(404);
     }
 
     /**
@@ -140,6 +155,53 @@ class PolicyController extends Controller
 
             return "1";
         }
+        if ($request->has('visible')) {
+            $policy->visible = $request->visible === "true";
+            $policy->save();
+
+            return "1";
+        }
+
+        $category = $request->validate([
+            'category'    => 'required',
+            'ident'       => 'required|alpha_num|max:8',
+            'title'       => 'required',
+            //   'slug'        => 'required|unique:policies|alpha_dash',
+            'perms'       => 'required',
+            'file'        => 'max:1000000',
+            'effective'   => 'date_format:m/d/Y',
+            'description' => 'max:255'
+        ]);
+
+        $policy->ident = $request->ident;
+        $policy->category = $request->category;
+        $policy->title = $request->title;
+        // $policy->slug = strtolower($request->slug);
+        $policy->description = $request->description;
+        $oldfileextension = $policy->extension;
+        $policy->extension = $request->file !== "undefined" ? $request->file('file')->getClientOriginalExtension() : $policy->extension;
+        $policy->effective_date = (new \Carbon\Carbon($request->effective_date))->format('Y-m-d');
+        $policy->perms = implode('|', $request->perms);
+        $policy->save();
+
+        if ($request->file !== "undefined") {
+            if (!Storage::disk('public')->delete('docs/' . $policy->slug . "." . $oldfileextension)) {
+                $policy->extension = $oldfileextension;
+                $policy->save();
+
+                return "0";
+            }
+
+            if (!$request->file('file')->storeAs('docs',
+                $policy->slug . "." . $request->file('file')->getClientOriginalExtension(),
+                'public')) {
+                return "0";
+            } else {
+                return "1";
+            }
+        }
+
+        return "1";
     }
 
     /**
@@ -150,8 +212,11 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function updateCategory(Request $request, PolicyCategory $category)
-    {
+    public
+    function updateCategory(
+        Request $request,
+        PolicyCategory $category
+    ) {
         if ($request->input('name')) {
             $category->name = $request->name;
         }
@@ -169,11 +234,23 @@ class PolicyController extends Controller
      *
      * @param \App\Policy $policy
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|string
      */
-    public function destroy(Policy $policy)
-    {
-        //
+    public
+    function destroy(
+        Policy $policy
+    ) {
+        if (Storage::disk('public')->delete('docs/' . $policy->slug . "." . $policy->extension)) {
+            try {
+                $policy->delete();
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            }
+
+            return "1";
+        }
+
+        return "0";
     }
 
     /**
@@ -184,8 +261,10 @@ class PolicyController extends Controller
      * @return \Illuminate\Foundation\Application
      * @throws \Exception
      */
-    public function destroyCategory(PolicyCategory $category)
-    {
+    public
+    function destroyCategory(
+        PolicyCategory $category
+    ) {
         $order = $category->order;
         $category->delete();
 
@@ -197,6 +276,19 @@ class PolicyController extends Controller
 
         return redirect('/mgt/policies');
     }
+
+    public
+    function getPolicy(
+        Request $request,
+        Policy $policy
+    ) {
+        if (!$request->ajax()) {
+            abort(400);
+        }
+
+        return response()->json($policy->toArray());
+    }
+
 
 
 }

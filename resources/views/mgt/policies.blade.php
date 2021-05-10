@@ -1,5 +1,5 @@
 @extends('layout')
-@section('title', 'Policies Management')
+@section('title', 'Policies & Downloads Management')
 @section('content')
     <!-- New Policy Modal -->
     <div class="modal fade" id="new-policy-modal" tabindex="-1" role="dialog" aria-labelledby="Create New Policy">
@@ -8,7 +8,10 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="new-policy-modal-title">Upload New <span
+                    <h4 class="modal-title" id="new-policy-modal-title-line"><span
+                            id="new-policy-title-line" class="new-policy-objects">Upload New</span><span
+                            id="edit-policy-title-line" class="edit-policy-objects">Edit Existing</span>
+                        <span
                             id="new-policy-category"></span> Policy</h4>
                 </div>
                 <div class="modal-body">
@@ -18,8 +21,8 @@
                             <label for="ident" class="col-sm-3 control-label">Ident & Title</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="new-policy-ident" placeholder="DP001"
-                                       name="ident" style="display: inline; margin-right:10px; width:20%;"
-                                       required>-<input
+                                       name="ident" style="display: inline; margin-right:10px; width:20%;" maxlength="8"
+                                       required>&mdash;<input
                                     style="display: inline; margin-left:10px; width:60%" type="text"
                                     class="form-control" name="title"
                                     id="new-policy-title" placeholder="Policy Title" required>
@@ -31,8 +34,27 @@
                                 <div class="input-group">
                                     <div class="input-group-addon">vatusa.net/docs/</div>
                                     <input type="text" class="form-control" name="slug" id="new-policy-slug"
-                                           placeholder="new-document-name" style="width:79%" required>
+                                           placeholder="new-document-name" style="width:81%" required>
                                 </div>
+                                <p class="help-block edit-policy-objects"><i class="fas fa-info-circle"></i> To change
+                                    the Policy URL, you must delete the policy and create a new one.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="slug" class="col-sm-3 control-label">Short Description</label>
+                            <div class="col-sm-9">
+                                <input style="width:87%" type="text" class="form-control" name="desc"
+                                       id="new-policy-desc" placeholder="Policy Description">
+                            </div>
+                        </div>
+                        <div class="form-group edit-policy-objects">
+                            <label for="new-policy-category" class="col-sm-3 control-label">Category</label>
+                            <div class="col-sm-9">
+                                <select style="width:87%" class="form-control" name="category" id="new-policy-category">
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -97,6 +119,11 @@
                                         Traffic Managers
                                     </label>
                                 </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="perms[]" value="10" class="perm-checkbox">VATUSA Staff
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -111,9 +138,14 @@
                         </div>
                         <div class="form-group">
                             <div class="form-group">
-                                <label for="new-policy-file" class="col-sm-3 control-label">File Upload</label>
+                                <label for="new-policy-file" class="col-sm-3 control-label new-policy-objects">File
+                                    Upload</label>
+                                <label for="new-policy-file" class="col-sm-3 control-label edit-policy-objects">File
+                                    Upload</label>
                                 <div class="col-sm-9">
                                     <input type="file" id="new-policy-file" style="width:60%">
+                                    <p class="help-block edit-policy-objects">If no file is uploaded, the previous file
+                                        will remain.</p>
                                 </div>
                             </div>
                         </div>
@@ -121,8 +153,14 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" id="policy-submit"><i class="fas fa-check"></i> Submit
+                    <button type="button" class="btn btn-success new-policy-objects" id="policy-submit"><i
+                            class="fas fa-check"></i> Submit
                         New Policy
+                    </button>
+                    <button type="button" class="btn btn-success edit-policy-objects" id="policy-edit-submit"><i
+                            class="fas fa-check"></i>
+                        Submit
+                        Changes
                     </button>
                 </div>
             </div>
@@ -132,7 +170,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    Policies and Documents Management
+                    Policies & Downloads Management
                 </h3>
             </div>
             <div class="panel-body">
@@ -252,18 +290,25 @@
                                                     <div class="btn-group">
                                                         <button class="btn btn-warning edit-policy"
                                                                 data-id="{{ $policy->id }}"
-                                                                data-name="{{ $policy->name }}"><i
+                                                                data-cat-name="{{ $category->name }}"
+                                                                data-cat-id="{{ $category->id }}"
+                                                                data-name="{{ $policy->title }}"><i
                                                                 class="fas fa-pencil-alt"></i></button>
                                                         <button class="btn btn-danger delete-policy"
                                                                 data-id="{{ $policy->id }}"
-                                                                data-name="{{ $policy->name }}"><i
+                                                                data-name="{{ $policy->title }}"><i
                                                                 class="fas fa-times"></i></button>
                                                     </div>
                                                     @if($policy->visible)
-                                                        <button class="btn btn-primary"><i class="fas fa-eye"></i>
+                                                        <button class="btn btn-success toggle-visible"
+                                                                data-id="{{ $policy->id }}"
+                                                                style="transition: all 0.4s ease"><i
+                                                                class="fas fa-eye"></i>
                                                         </button>
                                                     @else
-                                                        <button class="btn btn-default"><i
+                                                        <button class="btn btn-default toggle-visible"
+                                                                style="transition: all 0.4s ease"
+                                                                data-id="{{ $policy->id }}"><i
                                                                 class="fas fa-eye-slash"></i></button>
                                                     @endif
                                                 </td>
@@ -298,10 +343,8 @@
 @section('scripts')
     <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script
-        src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
-        integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
-        crossorigin="anonymous"></script>
+    <script src="{{ secure_asset("js/moment.js") }}" type="text/javascript"></script>
+
     <script type="text/javascript">
       $(document).ready(function () {
         $('#newPolicyCategory').click(function () {
@@ -315,6 +358,7 @@
             icon      : 'warning',
             buttons   : true,
             dangerMode: true,
+            closeModal: false
           })
             .then((willDelete) => {
               if (willDelete) {
@@ -363,7 +407,7 @@
 
           $.ajax({
             'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + id,
-            'method': 'PUT',
+            'method': type === 'category' ? 'PUT' : 'POST',
             'data'  : {'order': order - 1}
           })
             .error(function (xhr, status, error) {
@@ -373,7 +417,7 @@
             .done(function (result) {
               $.ajax({
                 'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + idAbove,
-                'method': 'PUT',
+                'method': type === 'category' ? 'PUT' : 'POST',
                 'data'  : {'order': order}
               })
                 .error(function (xhr, status, error) {
@@ -430,7 +474,7 @@
 
           $.ajax({
             'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + id,
-            'method': 'PUT',
+            'method': type === 'category' ? 'PUT' : 'POST',
             'data'  : {'order': order + 1}
           })
             .error(function (xhr, status, error) {
@@ -439,7 +483,7 @@
             .done(function (result) {
               $.ajax({
                 'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + idBelow,
-                'method': 'PUT',
+                'method': type === 'category' ? 'PUT' : 'POST',
                 'data'  : {'order': order}
               })
                 .error(function (xhr, status, error) {
@@ -485,6 +529,11 @@
               catId   = btn.data('cat-id'),
               catName = btn.data('cat-name')
 
+          $('.new-policy-objects').show()
+          $('.edit-policy-objects').hide()
+          $('#new-policy-slug').prop('disabled', false)
+
+          $('#new-policy-form')[0].reset()
           $('#new-policy-category').text(catName)
           $('#new-policy-category-id').val(catId)
 
@@ -494,76 +543,225 @@
             format    : 'm/d/Y'
           })
 
-          $('#new-policy-form')[0].reset()
           $('input[type=checkbox]').prop('disabled', false)
           $('#new-policy-modal').modal('toggle')
         })
-      })
-      $('#new-policy-title').on('keyup', function () {
-        let val = $(this).val()
+        $('.edit-policy').click(function () {
+          let btn     = $(this),
+              id      = $(this).data('id'),
+              catId   = btn.data('cat-id'),
+              catName = btn.data('cat-name')
+          btn.prop('disabled', true).html('<i class="fas fa-spin fa-spinner"></i>')
+          $.get('/mgt/policies/getInfo/' + id, response => {
+            if (response.hasOwnProperty('id')) {
+              $('#new-policy-form')[0].reset()
+              $('#new-policy-category').text(catName)
+              $('#new-policy-category-id').val(catId)
 
-        $('#new-policy-slug').val(val.toLowerCase().replace(/[^\w -]+/g, '').replace(/ +/g, '-'))
-      })
-      $('#new-policy-slug').on('keyup', function () {
-        let val = $(this).val()
+              $('.new-policy-objects').hide()
+              $('.edit-policy-objects').show()
+              $('#policy-edit-submit').attr('data-id', id)
 
-        $(this).val(val.toLowerCase().replace(/[^\w -]+/g, '').replace(/ +/g, '-'))
-      })
+              $('#new-policy-effective-date').datetimepicker({
+                timepicker: false,
+                mask      : true,
+                format    : 'm/d/Y'
+              })
 
-      $('.perm-checkbox').change(function () {
-        let box = $(this),
-            val = box.val()
-        let overrides = {
-          0: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-          1: [2, 3, 4, 5, 6, 7, 8, 9],
-          2: [8, 9],
-          3: [8, 9],
-          4: [8, 9],
-          5: [6, 7, 8, 9],
-          6: [7, 8, 9],
-          7: [8, 9],
-          8: [9],
-        }
-        if (overrides[val] !== undefined)
-          $.each(overrides[val], function (i, ival) {
-            let checkbox = $('.perm-checkbox[value="' + ival + '"]'),
-                state    = box.prop('checked')
-            checkbox.attr('disabled', state).prop('checked', state)
+              $('input[type=checkbox]').prop('disabled', false)
+
+              $('#new-policy-ident').val(response.ident)
+              $('#new-policy-title').val(response.title)
+              $('#new-policy-slug').val(response.slug).prop('disabled', true)
+              $('#new-policy-desc').val(response.description ?? '')
+              $('#new-policy-category').val(response.category)
+
+              let perms     = response.perms.split('|'),
+                  overrides = {
+                    0: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    1: [2, 3, 4, 5, 6, 7, 8, 9],
+                    2: [8, 9],
+                    3: [8, 9],
+                    4: [8, 9],
+                    5: [6, 7, 8, 9],
+                    6: [7, 8, 9],
+                    7: [8, 9],
+                    8: [9],
+                  }
+              $.each(perms, (index, perm) => {
+                $('.perm-checkbox[value=' + perm + ']').prop('checked', true)
+
+                if (overrides[perm] !== undefined)
+                  $.each(overrides[perm], function (i, ival) {
+                    let checkbox = $('.perm-checkbox[value="' + ival + '"]'),
+                        state    = true
+                    checkbox.attr('disabled', state).prop('checked', state)
+                  })
+              })
+              $('#new-policy-effective-date').val(moment(response.effective_date).format('MM/DD/YYYY'))
+              $('#new-policy-modal').modal('toggle')
+              btn.prop('disabled', false).html('<i class="fas fa-pencil-alt"></i>')
+            } else return swal('Error!', 'Could not get policy details.', 'error')
           })
-      })
-
-      $('#policy-submit').click(function () {
-        let btn      = $(this),
-            form     = $('#new-policy-form')[0],
-            file     = $('#new-policy-file')[0].files,
-            formData = new FormData(form)
-        btn.prop('disabled', true).html('<i class=\'fas fa-spin fa-spinner\'></i> Submitting...')
-        formData.append('file', file[0])
-
-        if (!$('#new-policy-ident').val().length || !$('#new-policy-title').val().length || !$('#new-policy-slug').val().length || !$('.perm-checkbox:checked').length || !file.length) {
-          btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit New Policy')
-          return swal('Error!', 'All inputs (except Effective Date) are required.', 'error')
-        }
-
-        $.ajax({
-          url        : '/mgt/policies/store',
-          method     : 'POST',
-          data       : formData,
-          processData: false,
-          contentType: false
-        }).done(response => {
-          if (parseInt(response)) {
-            btn.html('<i class=\'fas fa-check\'></i> Submitted')
-            return (swal('Success!', 'The policy has been successfully uploaded.', 'success').then(_ => location.reload()))
-          }
-
-          btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit New Policy')
-          swal('Error!', 'Unable to upload policy. ' + response, 'error')
-        }).error((xhr, status, error) => {
-          btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit New Policy')
-          swal('Error!', 'Unable to upload policy. ' + error, 'error')
+        })
+        $('.delete-policy').click(function () {
+          swal({
+            title     : 'Are you sure you want to delete "' + $(this).data('name') + '"?',
+            text      : 'This will also delete the file from the server and cannot be undone.',
+            icon      : 'warning',
+            buttons   : true,
+            dangerMode: true,
+            closeModal: false
+          })
+            .then((willDelete) => {
+              if (willDelete) {
+                $.ajax({
+                  url   : '/mgt/policies/' + $(this).data('id'),
+                  method: 'DELETE'
+                })
+                  .done(resp => {
+                    if (parseInt(resp)) {
+                      $('tr[data-policy-id="' + $(this).data('id') + '"]').remove()
+                      return swal('Success!', 'The policy has been deleted.', 'success')
+                    }
+                    swal('Error!', 'The policy could not be deleted.', 'error')
+                  })
+                  .error((xhr, status, error) => {
+                    swal('Error!', 'The policy could not be deleted. ' + xhr.responseJSON.message, 'error')
+                  })
+              } else return false
+            })
+        })
+        $('.toggle-visible').click(function () {
+          let btn       = $(this),
+              isVisible = btn.hasClass('btn-success')
+          btn.prop('disabled', true).html('<i class=\'fas fa-spin fa-spinner\'></i>')
+          $.ajax({
+            url   : '/mgt/policies/updatePolicy/' + btn.data('id'),
+            method: 'POST',
+            data  : {visible: !isVisible}
+          }).done(response => {
+            if (parseInt(response)) {
+              btn.prop('disabled', false).html('<i class=\'fas fa-eye\'></i>')
+              if (isVisible) {
+                btn.removeClass('btn-success').addClass('btn-default')
+                btn.find('i').removeClass('fas fa-eye').addClass('fas fa-eye-slash')
+                btn.parents('tr').addClass('text-muted')
+              } else {
+                btn.attr('title', 'Make Visible')
+                btn.find('i').removeClass('fas fa-eye-slash').addClass('fas fa-eye')
+                btn.removeClass('btn-default').addClass('btn-success')
+                btn.parents('tr').removeClass('text-muted')
+              }
+            } else swal('Error!', 'Unable to toggle visibility.', 'error')
+          }).error((xhr, status, error) => {
+            btn.prop('disabled', false).html('<i class=\'fas fa-eye\'></i>')
+            swal('Error!', 'Unable to toggle visibility. ' + xhr.responseJSON.message, 'error')
+          })
         })
 
+        $('#new-policy-title').on('keyup', function () {
+          if ($('#new-policy-slug').prop('disabled')) return false
+          let val = $(this).val()
+
+          $('#new-policy-slug').val(val.toLowerCase().replace(/[^\w -]+/g, '').replace(/ +/g, '-'))
+        })
+        $('#new-policy-slug').on('keyup', function () {
+          let val = $(this).val()
+
+          $(this).val(val.toLowerCase().replace(/[^\w -]+/g, '').replace(/ +/g, '-'))
+        })
+
+        $('.perm-checkbox').change(function () {
+          let box = $(this),
+              val = box.val()
+          let overrides = {
+            0: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            1: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+            2: [8, 9, 10],
+            3: [8, 9, 10],
+            4: [8, 9, 10],
+            5: [6, 7, 8, 9, 10],
+            6: [7, 8, 9, 10],
+            7: [8, 9, 10],
+            8: [9, 10],
+            9: [10]
+          }
+          if (overrides[val] !== undefined)
+            $.each(overrides[val], function (i, ival) {
+              let checkbox = $('.perm-checkbox[value="' + ival + '"]'),
+                  state    = box.prop('checked')
+              checkbox.attr('disabled', state).prop('checked', state)
+            })
+        })
+
+        $('#policy-submit').click(function () {
+          let btn      = $(this),
+              form     = $('#new-policy-form')[0],
+              file     = $('#new-policy-file')[0].files,
+              formData = new FormData(form)
+          btn.prop('disabled', true).html('<i class=\'fas fa-spin fa-spinner\'></i> Submitting...')
+          formData.append('file', file[0])
+
+          if (!$('#new-policy-ident').val().length || !$('#new-policy-title').val().length || !$('#new-policy-slug').val().length || !$('.perm-checkbox:checked').length || !$('#new-policy-effective-date').val().length || !file.length) {
+            btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit New Policy')
+            return swal('Error!', 'All inputs are required.', 'error')
+          }
+
+          $.ajax({
+            url        : '/mgt/policies/store',
+            method     : 'POST',
+            data       : formData,
+            processData: false,
+            contentType: false
+          }).done(response => {
+            if (parseInt(response)) {
+              btn.html('<i class=\'fas fa-check\'></i> Submitted')
+              return (swal('Success!', 'The policy has been successfully uploaded.', 'success').then(_ => location.reload()))
+            }
+
+            btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit New Policy')
+            swal('Error!', 'Unable to upload policy. ' + response, 'error')
+          }).error((xhr, status, error) => {
+            btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit New Policy')
+            swal('Error!', 'Unable to upload policy. ' + xhr.responseJSON.message, 'error')
+          })
+
+        })
+        $('#policy-edit-submit').click(function () {
+          let btn      = $(this),
+              id       = $(this).data('id'),
+              form     = $('#new-policy-form')[0],
+              file     = $('#new-policy-file')[0].files,
+              formData = new FormData(form)
+          btn.prop('disabled', true).html('<i class=\'fas fa-spin fa-spinner\'></i> Submitting...')
+          formData.append('file', file[0])
+
+          if (!$('#new-policy-ident').val().length || !$('#new-policy-title').val().length || !$('#new-policy-slug').val().length || !$('#new-policy-effective-date').val().length || !$('.perm-checkbox:checked').length) {
+            btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit Changes')
+            return swal('Error!', 'All inputs are required.', 'error')
+          }
+
+          $.ajax({
+            url        : '/mgt/policies/updatePolicy/' + id,
+            method     : 'POST',
+            data       : formData,
+            processData: false,
+            contentType: false
+          }).done(response => {
+            if (parseInt(response)) {
+              btn.html('<i class=\'fas fa-check\'></i> Submitted')
+              return (swal('Success!', 'The policy has been successfully edited.', 'success').then(_ => location.reload()))
+            }
+
+            btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit Changes')
+            swal('Error!', 'Unable to edit policy. ' + response, 'error')
+          }).error((xhr, status, error) => {
+            btn.prop('disabled', false).html('<i class=\'fas fa-check\'></i> Submit Changes')
+            swal('Error!', 'Unable to edit policy. ' + xhr.responseJSON.message, 'error')
+          })
+
+        })
       })
     </script>
 @endsection

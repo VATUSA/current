@@ -18,7 +18,9 @@ class CreatePoliciesTable extends Migration
             $table->string('ident');
             $table->unsignedInteger('category');
             $table->text('title');
-            $table->text('slug');
+            $table->string('slug');
+            $table->string('description');
+            $table->string('extension');
             $table->date('effective_date')->nullable();
             $table->string('perms'); //Bitmap: All | WM | EC | FE | TA | DATM | ATM | USASTAFF
             $table->boolean('visible');

@@ -197,6 +197,7 @@ Route::group([
             Route::get('join', 'InfoController@getJoin');
             Route::get('members', 'InfoController@getMembers');
             Route::get('policies', 'PolicyController@index');
+            Route::get('policies/{slug}', 'PolicyController@show');
             Route::get('solo', function () {
                 return view('info.solo');
             });
@@ -274,8 +275,11 @@ Route::group([
 
             // * * * * * * Policies * * * * * *
             Route::get('policies', 'PolicyController@edit');
+            Route::get('policies/{policy:slug}', 'PolicyController@show');
+            Route::get('policies/getInfo/{policy}', 'PolicyController@getPolicy');
             Route::post('policies/store', 'PolicyController@store');
-            Route::put('policies/updatePolicy/{policy}', 'PolicyController@update');
+            Route::post('policies/updatePolicy/{policy}', 'PolicyController@update');
+            Route::delete('policies/{policy}', 'PolicyController@destroy');
             Route::get('policies/newCategory', 'PolicyController@storeCategory');
             Route::put('policies/updateCategory/{category}', 'PolicyController@updateCategory');
             Route::get('policies/deleteCategory/{category}', 'PolicyController@destroyCategory');

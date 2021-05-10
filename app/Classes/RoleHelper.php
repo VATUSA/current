@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 
+use App\Policy;
 use \App\Role;
 use \App\User;
 use \App\Facility;
@@ -200,7 +201,7 @@ class RoleHelper
         if ($user == null) {
             return false;
         }
-      
+
         /*if ($user->facility == "ZHQ") {
             return true;
         }*/
@@ -285,8 +286,12 @@ class RoleHelper
         return false;
     }
 
-    public static function isFacilitySeniorStaff($cid = null, $facility = null, $isApi = false, bool $includeVATUSA = true)
-    {
+    public static function isFacilitySeniorStaff(
+        $cid = null,
+        $facility = null,
+        $isApi = false,
+        bool $includeVATUSA = true
+    ) {
         if (!\Auth::check() && !$isApi) {
             return false;
         }
@@ -296,7 +301,7 @@ class RoleHelper
         if ($facility == null) {
             $facility = \Auth::user()->facility;
         }
-        if($facility instanceof Facility) {
+        if ($facility instanceof Facility) {
             $facility = $facility->id;
         }
 
@@ -408,14 +413,14 @@ class RoleHelper
     }
 
     /**
-     * @param null|integer $cid
-     * @param null|string  $facility
+     * @param integer|null $cid
+     * @param string|null  $facility
      *
      * @param bool         $includeVATUSA
      *
      * @return bool
      */
-    public static function isInstructor($cid = null, $facility = null, bool $includeVATUSA = true)
+    public static function isInstructor(int $cid = null, string $facility = null, bool $includeVATUSA = true)
     {
         if (!Auth::check() && !($cid || $facility)) {
             return false;
@@ -423,8 +428,7 @@ class RoleHelper
         if (is_null($cid) || !$cid) {
             $cid = Auth::user()->cid;
             $user = Auth::user();
-        }
-        else {
+        } else {
             $user = User::find($cid);
         }
         if ($facility == null) {
@@ -513,26 +517,26 @@ class RoleHelper
         if ($facility != "ZAE") {
             // Eloquent: I1s/I2s/I3s Listing (do not include SUPs/ADMs)
             foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))
-                ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('SUP'))
-                ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('ADM'))
-                ->where('facility', $facility)
-                ->orderBy('fname')
-                ->orderBy('lname')
-                ->get() as $user) {
-                    if (!static::isFacilityStaff($user->cid, $facility)) {
-                        $staff[] = [
-                            'cid' => $user->cid,
-                            'name' => $user->fullname(),
-                            'role' => 'INS'
-                        ];
-                    }
+                         ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('SUP'))
+                         ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('ADM'))
+                         ->where('facility', $facility)
+                         ->orderBy('fname')
+                         ->orderBy('lname')
+                         ->get() as $user) {
+                if (!static::isFacilityStaff($user->cid, $facility)) {
+                    $staff[] = [
+                        'cid'  => $user->cid,
+                        'name' => $user->fullname(),
+                        'role' => 'INS'
+                    ];
+                }
             }
 
             // Eloquent: SUPs Tagged as Instructors
             foreach (\App\Role::where('facility', $facility)->where('role', 'INS')->get() as $s) {
                 if (!static::isFacilityStaff($s->cid, $facility)) {
                     $staff[] = [
-                        'cid' => $s->cid,
+                        'cid'  => $s->cid,
                         'name' => $s->user->fullname(),
                         'role' => 'INS'
                     ];
@@ -543,29 +547,29 @@ class RoleHelper
         if ($getVATUSA && $facility == "ZHQ") {
             // Eloquent: All VATUSA Staff
             foreach (\App\Role::where('facility', 'ZHQ')
-                ->where('role', 'LIKE', "US%")
-                ->orderBy("role")
-                ->get() as $r) {
-                    $staff[] = [
-                        'cid'  => $r->cid,
-                        'name' => $r->user->fullname() . " (" . static::roleTitle($r->role) . ")",
-                        'role' => str_replace("US", "VATUSA", $r->role)
-                    ];
+                         ->where('role', 'LIKE', "US%")
+                         ->orderBy("role")
+                         ->get() as $r) {
+                $staff[] = [
+                    'cid'  => $r->cid,
+                    'name' => $r->user->fullname() . " (" . static::roleTitle($r->role) . ")",
+                    'role' => str_replace("US", "VATUSA", $r->role)
+                ];
             }
         }
 
         if ($facility == "ZAE") {
             // Eloquent: VATUSA Training Staff (%3 [e.g. 3/13])
-            foreach(\App\Role::where('facility', 'ZHQ')
-                ->where('role', 'LIKE', "%3")
-                ->orderBy("role")
-                ->get() as $v) {
-                    $staff[] = [
-                        'cid' => $v->cid,
-                        'name' => $v->user->fullname() . " (" . static::roleTitle($v->role) . ")",
-                        'role' => str_replace("US", "VATUSA", $v->role)
-                    ];
-                }
+            foreach (\App\Role::where('facility', 'ZHQ')
+                         ->where('role', 'LIKE', "%3")
+                         ->orderBy("role")
+                         ->get() as $v) {
+                $staff[] = [
+                    'cid'  => $v->cid,
+                    'name' => $v->user->fullname() . " (" . static::roleTitle($v->role) . ")",
+                    'role' => str_replace("US", "VATUSA", $v->role)
+                ];
+            }
         }
 
         return $staff;
@@ -631,9 +635,66 @@ class RoleHelper
         return ['MENTOR', 'INS'];
     }
 
-    public static function isTrainingStaff($cid = null, bool $includeMentor = true, $facility = null, bool $includeVATUSA = true)
+    public static function isTrainingStaff(
+        $cid = null,
+        bool $includeMentor = true,
+        $facility = null,
+        bool $includeVATUSA = true
+    ) {
+        return ($includeMentor && self::isMentor($cid, $facility)) || self::isInstructor($cid, $facility,
+                $includeVATUSA) || self::isFacilitySeniorStaff($cid,
+                $facility, false, $includeVATUSA);
+    }
+
+    /**
+     * Determine if a user can view a policy.
+     *
+     * @param \App\Policy $policy
+     *
+     * @return bool
+     */
+    public static function canView(Policy $policy): bool
     {
-        return ($includeMentor && self::isMentor($cid, $facility)) || self::isInstructor($cid, $facility, $includeVATUSA) || self::isFacilitySeniorStaff($cid,
-                $facility,false, $includeVATUSA);
+        $perms = explode('|', $policy->perms);
+        foreach ($perms as $perm) {
+            $perm = intval($perm);
+            if ($perm === Policy::PERMS_ALL || RoleHelper::isVATUSAStaff()) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_HOME && Auth::check() & Auth::user()->flag_homecontroller) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_WM && Auth::check() && (RoleHelper::hasRole(Auth::user()->cid,
+                        Auth::user()->facility, "WM") || RoleHelper::isFacilitySeniorStaffExceptTA())) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_FE && Auth::check() && (RoleHelper::hasRole(Auth::user()->cid,
+                        Auth::user()->facility, "FE") || RoleHelper::isFacilitySeniorStaffExceptTA())) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_EC && Auth::check() && (RoleHelper::hasRole(Auth::user()->cid,
+                        Auth::user()->facility, "EC") || RoleHelper::isFacilitySeniorStaffExceptTA())) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_MTR && (RoleHelper::isMentor() || RoleHelper::isInstructor() || RoleHelper::isFacilitySeniorStaff())) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_INS && (RoleHelper::isInstructor() || RoleHelper::isFacilitySeniorStaff())) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_TA && RoleHelper::isFacilitySeniorStaff()) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_DATM && RoleHelper::isFacilitySeniorStaffExceptTA()) {
+                return true;
+            }
+            if ($perm === Policy::PERMS_ATM && Auth::check() && RoleHelper::hasRole(Auth::user()->cid,
+                    Auth::user()->facility, "ATM")) {
+                return true;
+            }
+
+        }
+
+        return false;
     }
 }
