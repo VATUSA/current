@@ -239,12 +239,12 @@
             position: $('#position').val()
           }, result => {
             btn.attr('disabled', false).html('<i class="fas fa-check"></i> Promote')
-            if (result.hasOwnProperty('status') && result.status === 'OK') {
+            if (result.data.hasOwnProperty('status') && result.data.status === 'OK') {
               return swal('Success!', 'The controller has been promoted.', 'success').then(() => {
                 return window.location = '{{ secure_url('/mgt/facility') }}'
               })
             } else
-              return swal('Error!', 'The controller was not promoted. ' + result.msg, 'error')
+              return swal('Error!', 'The controller was not promoted. ' + result.data.msg, 'error')
           }).fail(_ => {
             btn.attr('disabled', false).html('<i class="fas fa-check"></i> Promote')
             return swal('Error!', 'The controller was not promoted. Please ensure all fields and requirements are completed or try again later.', 'error')

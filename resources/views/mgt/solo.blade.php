@@ -80,7 +80,7 @@
             })
             .error(function (result) {
               btn.prop('disabled', false)
-              swal('Error!', 'Unable to add solo endorsement. ' + result.responseJSON.msg, 'error')
+              swal('Error!', 'Unable to add solo endorsement. ' + result.responseJSON.data.msg, 'error')
             })
         })
 

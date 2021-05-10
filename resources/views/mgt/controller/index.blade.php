@@ -161,8 +161,8 @@
 @section('content')
     <div class="container">
         <div
-            class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
-            id="user-info-panel">
+                class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
+                id="user-info-panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <div class="row">
@@ -172,7 +172,7 @@
                             <div class="col-md-4 text-right form-group">
                                 <input type="text" id="cidsearch" class="form-control" placeholder="CID or Last Name">
                                 <button type="button" class="btn btn-primary" id="cidsearchbtn"><i
-                                        class="fa fa-search"></i></button>
+                                            class="fa fa-search"></i></button>
                             </div>
                         </form>
                     </div>
@@ -197,7 +197,7 @@
                     </li>
                     <li role="presentation"><a href="#cbt" data-controls="cbt" role="tab"
                                                data-toggle="tab">CBT Progress</a></li>
-                    @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
+                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
                         <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
                                 Log</a></li>
                         <li role="presentation"><a href="#tickets" aria-controls="tickets" role="tab" data-toggle="tab">Support
@@ -219,12 +219,12 @@
                                         @if(\App\Classes\RoleHelper::isVATUSAStaff() ||
                                             \App\Classes\RoleHelper::isFacilitySeniorStaff())
                                             <li>{{$user->email}} &nbsp; <a href="mailto:{{$user->email}}"><i
-                                                        class="fa fa-envelope text-primary"
-                                                        style="font-size:80%"></i></a>
+                                                            class="fa fa-envelope text-primary"
+                                                            style="font-size:80%"></i></a>
                                             </li>
                                         @else
                                             <li>[Email Private] <a href="/mgt/mail/{{$user->cid}}"><i
-                                                        class="fa fa-envelope text-primary"></i></a></li>
+                                                            class="fa fa-envelope text-primary"></i></a></li>
                                         @endif
                                         <li>
                                             @if($user->flag_broadcastOptedIn)
@@ -411,7 +411,7 @@
                                                 <td style="vertical-align: middle"
                                                     class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
                                                     <i
-                                                        class="fa {{(($promo->from < $promo->to)? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
+                                                            class="fa {{(($promo->from < $promo->to) ? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
                                                 </td>
                                                 <td style="vertical-align: middle">
                                                     <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->to) }}</strong>
@@ -439,15 +439,15 @@
                                                        style="cursor: pointer"></i></td>
                                                 <td><strong>{{$t->to}}</strong></td>
                                                 <td><a href="#" onClick="viewXfer({{$t->id}})"><i
-                                                            class="fa fa-search"></i></a>
+                                                                class="fa fa-search"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach
                                         @if(\App\Classes\RoleHelper::isVATUSAStaff())
                                             <tr>
                                                 <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
-                                                            id="waivertogglei"
-                                                            class="fa {{(($user->flag_xferOverride==1)?"fa-toggle-on text-success":"fa-toggle-off text-danger")}}"></i></span>
+                                                                id="waivertogglei"
+                                                                class="fa {{(($user->flag_xferOverride==1) ? "fa-toggle-on text-success" : "fa-toggle-off text-danger")}}"></i></span>
                                                     <a href="/mgt/err?cid={{$user->cid}}">Submit TR</a>
                                                 </td>
                                             </tr>
@@ -469,7 +469,8 @@
                                             <tr style="text-align: center">
                                                 <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
                                                 <td style="width: 70%; text-align: left"><a
-                                                        href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a></td>
+                                                            href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a>
+                                                </td>
                                                 <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
                                                     %
                                                 </td>
@@ -521,7 +522,7 @@
                             @endforeach
                         </div>
                     </div>
-                    @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
+                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
                         <div class="tab-pane" role="tabpanel" id="actions">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
@@ -538,10 +539,11 @@
                                         </div>
                                         <div class="alert alert-danger" id="delete-log-error" style="display:none;">
                                             <strong><i
-                                                    class='fa fa-check'></i> Error! </strong> Could not delete log
+                                                        class='fa fa-check'></i> Error! </strong> Could not delete log
                                             entry.
                                         </div>
                                     @endif
+                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
                                     <form class="form-horizontal" action="{{secure_url("/mgt/controller/action/add")}}"
                                           method="POST">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -552,16 +554,16 @@
                                             <div class="col-sm-10"><textarea class="form-control" rows="2" name="log"
                                                                              placeholder="Entry"></textarea>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-offset-2 col-sm-10">
-                                                <button type="submit" class="btn btn-success sub-action-btn"
-                                                        value="submit">
-                                                    <i class="fa fa-check"></i> Submit
-                                                </button>
+                                            <div class="form-group">
+                                                <div class="col-sm-offset-2 col-sm-10">
+                                                    <button type="submit" class="btn btn-success sub-action-btn"
+                                                            value="submit">
+                                                        <i class="fa fa-check"></i> Submit
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    @endif
                                     <hr>
                                     <table class="table table-striped">
                                         @foreach(\App\Actions::where('to', $user->cid)->orderby('id', 'desc')->get() as $a)
@@ -581,7 +583,7 @@
                                                            href="#"
                                                            data-action="{{ secure_url('mgt/controller/action/delete/'.$a->id) }}"
                                                            class="text-danger delete-log"><i
-                                                                class="fa fa-times"></i></a>
+                                                                    class="fa fa-times"></i></a>
                                                         <i class="spinner-icon fa fa-spinner fa-spin"
                                                            style="display:none;"></i>
 
@@ -738,7 +740,7 @@
           $.get($.apiUrl() + url + newVal)
             .success((data) => {
               $('#cidsearch').devbridgeAutocomplete().setOptions({
-                lookup: $.map(data, (item) => {
+                lookup: $.map(data.data, (item) => {
                   return {value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid}
                 })
               })

@@ -211,7 +211,7 @@ class MgtController extends Controller
             abort(500);
         }
 
-        $user = User::where('cid', $cid)->first();
+        $user = User::find($cid);
         if (!$user) {
             abort(404);
         }
@@ -222,23 +222,42 @@ class MgtController extends Controller
         if (!is_numeric($request->input('rating'))) {
             abort(500);
         }
+        
+        $from = $user->rating;
+        $rating = $request->input('rating');
+        
+        if ($rating > Helper::ratingIntFromShort("I3")) {
+            abort(400);
+        }
+        
+        if (env('APP_ENV', 'dev') == "prod") {
+            $return = CertHelper::changeRating($cid, $request->input('rating'), true);
 
-        $promo = new Promotions();
-        $promo->cid = $cid;
-        $promo->grantor = Auth::user()->cid;
-        $promo->to = $request->input('rating');
-        $promo->from = $user->rating;
-        $promo->exam = "0000-00-00 00:00:00";
-        $promo->examiner = Auth::user()->cid;
-        $promo->position = "n/a";
-        $promo->save();
-
-        if (env('APP_ENV', 'dev') != "dev") {
-            CertHelper::changeRating($cid, $request->input('rating'), true);
+            if($return) {
+                $promo = new Promotions();
+                $promo->cid = $cid;
+                $promo->grantor = Auth::user()->cid;
+                $promo->to = $rating;
+                $promo->from = $from;
+                $promo->exam = "0000-00-00 00:00:00";
+                $promo->examiner = Auth::user()->cid;
+                $promo->position = "n/a";
+                $promo->save();
+                
+                if ($rating >= Helper::ratingIntFromShort("I1")) {
+                    Role::where("cid", $cid)->where(function ($query) {
+                        $query->where("role", "MTR")->orWhere("role", "INS");
+                    })->delete();
+                 }
+                
+                echo "1";
+            }
+            else {
+                echo "0";
+            }
         }
 
         echo "1";
-
         return;
     }
 
@@ -384,20 +403,37 @@ class MgtController extends Controller
         }
         $roles = Role::where('role', $role)->where('facility', 'ZHQ')->get();
         foreach ($roles as $r) {
+            $cid = $r->cid;
             $log = new Actions();
-            $log->to = $r->cid;
+            $log->to = $cid;
             $log->log = "Removed from role '" . RoleHelper::roleTitle($r->role) . "' by " . Auth::user()->fullname();
             $log->save();
-            $r->delete();
 
             //Delete Email
-            EmailHelper::setForward('vat' . str_replace('US', 'usa', $r->role) . '@vatusa.net',
+            /*EmailHelper::setForward('vat' . str_replace('US', 'usa', $r->role) . '@vatusa.net',
                 'vatusa2@vatusa.net');
 
-            /*foreach($previous as $email) {
+            foreach($previous as $email) {
                 EmailHelper::deleteEmail($email);
-            }*/
-            SMFHelper::setPermissions($log->to);
+            }
+            */
+            $user = User::find($cid);
+            if($user->facility == config('staff.hq.HQ')) {
+                $tr = new \App\Transfers();
+                $tr->cid = $cid;
+                $tr->reason = "Auto Transfer to ZAE: removed from staff.";
+                $tr->to = "ZAE";
+                $tr->from = config('staff.hq.HQ');
+                $tr->status = 1;
+                $tr->actionby = 0;
+                $tr->save();
+                
+                $user->flag_xferOverride = 1;
+                $user->save();
+            }
+            
+            $r->delete();
+            SMFHelper::setPermissions($cid);
         }
     }
 
@@ -413,8 +449,7 @@ class MgtController extends Controller
             abort(401);
         }
 
-        parse_str(file_get_contents("php://input"), $vars);
-        $cid = $vars['cid'];
+        $cid = $request->cid;
 
         $this->deleteStaff($request, $role);
 
@@ -432,12 +467,11 @@ class MgtController extends Controller
         foreach($previous as $email) {
             EmailHelper::deleteEmail($email);
         }
-        */
         $user = User::find($cid);
         $email = strtolower(substr($user->fname, 0, 1) . "." . $user->lname) . "@vatusa.net";
         EmailHelper::addEmail($email, env('APP_KEY'));
         EmailHelper::setForward('vat' . str_replace('US', 'usa', $role) . '@vatusa.net', $email);
-
+        */
 
         $log = new Actions();
         $log->to = $cid;
@@ -445,22 +479,38 @@ class MgtController extends Controller
         $log->save();
 
         if (config('staff.hq.moveToHQ')) {
-            $u = User::where('cid', $cid)->first();
-
-            $tr = new \App\Transfers;
+            $tr = new \App\Transfers();
+            $u = User::find($cid);
+            
             $tr->cid = $cid;
-            $tr->reason = "Auto Transfer to " . config('staff.hq.HQ') . ": Controller set as staff.";
+            $tr->reason = "Auto Transfer to " . config('staff.hq.HQ') . ": set as staff.";
             $tr->to = config('staff.hq.HQ');
             $tr->from = $u->facility;
             $tr->status = 1;
             $tr->actionby = 0;
             $tr->save();
 
-            $log = new Actions;
+            $log = new Actions();
             $log->to = $u->cid;
             $log->from = 0;
-            $log->log = "Auto Transfer to " . $tr->to . ", controller set as staff.";
+            $log->log = "Auto Transfer to " . $tr->to . ": set as staff.";
             $log->save();
+            
+            EmailHelper::sendEmail(
+                ["{$u->facility}-atm@vatusa.net", "{$u->facility}-datm@vatusa.net", "vatusa{$u->facilityObj->region}@vatusa.net"],
+                "Removal from {$u->facilityObj->name}",
+                "emails.user.removed",
+                [
+                    'name'        => $u->fname . " " . $u->lname,
+                    'facility'    => $u->facilityObj->name,
+                    'by'          => "Automated",
+                    'msg'         => "Auto Transfer to " . $tr->to . ": set as staff.",
+                    'facid'       => $u->facility,
+                    'region'      => $u->facilityObj->region,
+                    'obsInactive' => 0
+                ]
+            );
+            
             $u->addToFacility($tr->to);
         }
         SMFHelper::setPermissions($cid);
@@ -470,24 +520,28 @@ class MgtController extends Controller
     function addLog(
         Request $request
     ) {
-        if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff()) {
+        $this->validate($request, [
+            'to'  => 'required',
+            'log' => 'required|min:1',
+        ]);
+
+        $user = User::find($request->to);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        if (!RoleHelper::isFacilitySeniorStaff()) {
             abort(401);
         }
 
-        $this->validate($request, [
-            'from' => 'required',
-            'to'   => 'required',
-            'log'  => 'required|min:1',
-        ]);
-
         $le = new Actions;
-        $le->to = $_POST['to'];
-        $le->from = $_POST['from'];
-        $le->log = $_POST['log'];
+        $le->to = $request->to;
+        $le->from = Auth::user()->cid;
+        $le->log = $request->log;
         $le->save();
-        $le = Actions::where('id', $le->id)->first();
 
-        return redirect('/mgt/controller/' . $le->to)->with('success', 'Your log entry has been added.');
+        return redirect('/mgt/controller/' . $request->to . '#actions')->with('success', 'Your log entry has been added.');
     }
 
     public

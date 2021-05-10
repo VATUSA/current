@@ -4,7 +4,7 @@ $(document)
   .ready(() => {
     waitingDialog.show()
     $.ajax({
-      url      : 'https://api.vatusa.devel/v2/email',
+      url      : 'https://api.vatusa.net/v2/email',
 //      url: 'http://api.vatusa.devel/v2/email',
       method   : 'get',
       dataType : 'json',
@@ -14,7 +14,7 @@ $(document)
     })
       .done((data) => {
         waitingDialog.hide()
-        $('#emailRoot').html(emailPage(data))
+        $('#emailRoot').html(emailPage(data.data))
       })
   })
   .on('click', '.btnSave', function () {
@@ -25,7 +25,7 @@ $(document)
         return false
       }
       $.ajax({
-        url      : 'https://api.vatusa.devel/v2/email',
+        url      : 'https://api.vatusa.net/v2/email',
         //url: 'http://api.vatusa.devel/v2/email',
         method   : 'put',
         xhrFields: {
@@ -44,7 +44,7 @@ $(document)
       })
     } else {
       $.ajax({
-        url      : 'https://api.vatusa.devel/v2/email',
+        url      : 'https://api.vatusa.net/v2/email',
         //url: 'http://api.vatusa.devel/v2/email',
         method   : 'put',
         xhrFields: {

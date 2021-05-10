@@ -118,6 +118,12 @@
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US14")}}</td>
                                     <td><a href="mailto:vatusa14@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
+                                <tr>
+                                    <td>VATUSA15</td>
+                                    <td>{{\App\Classes\RoleHelper::getNameFromRole("US15")}}</td>
+                                    <td>{{\App\Classes\RoleHelper::roleTitle("US15")}}</td>
+                                    <td><a href="mailto:vatusa15@vatusa.net"><i class="fa fa-envelope"></i></a></td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
