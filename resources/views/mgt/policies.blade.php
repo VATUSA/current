@@ -21,7 +21,8 @@
                             <label for="ident" class="col-sm-3 control-label">Ident & Title</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="new-policy-ident" placeholder="DP001"
-                                       name="ident" style="display: inline; margin-right:10px; width:20%;" maxlength="10"
+                                       name="ident" style="display: inline; margin-right:10px; width:20%;"
+                                       maxlength="10"
                                        required>&mdash;<input
                                     style="display: inline; margin-left:10px; width:60%" type="text"
                                     class="form-control" name="title"
@@ -121,7 +122,8 @@
                                 </div>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" name="perms[]" value="10" class="perm-checkbox">VATUSA Staff
+                                        <input type="checkbox" name="perms[]" value="10" class="perm-checkbox">VATUSA
+                                        Staff
                                     </label>
                                 </div>
                             </div>
@@ -262,7 +264,8 @@
                                         <tbody>
                                         @foreach($category->policies as $policy)
                                             <tr data-policy-id="{{ $policy->id }}"
-                                                id="policy-order-{{ $policy->order }}">
+                                                id="policy-order-{{ $policy->order }}"
+                                                @if(!$policy->visible) class="text-muted"@endif>
                                                 <td>{{ $policy->order + 1 }}</td>
                                                 <td>{{ $policy->ident }}</td>
                                                 <td>{{ $policy->title }}</td>
@@ -578,17 +581,17 @@
 
               let perms     = response.perms.split('|'),
                   overrides = {
-                0: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                1: [2, 3, 4, 5, 6, 7, 8, 9, 10],
-                2: [8, 9, 10],
-                3: [8, 9, 10],
-                4: [8, 9, 10],
-                5: [6, 7, 8, 9, 10],
-                6: [7, 8, 9, 10],
-                7: [8, 9, 10],
-                8: [9, 10],
-                9: [10]
-              }
+                    0: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    1: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    2: [8, 9, 10],
+                    3: [8, 9, 10],
+                    4: [8, 9, 10],
+                    5: [6, 7, 8, 9, 10],
+                    6: [7, 8, 9, 10],
+                    7: [8, 9, 10],
+                    8: [9, 10],
+                    9: [10]
+                  }
               $.each(perms, (index, perm) => {
                 $('.perm-checkbox[value=' + perm + ']').prop('checked', true)
 
