@@ -42,7 +42,7 @@ class PolicyController extends Controller
      */
     public function store(Request $request)
     {
-        $category = $request->validate([
+        $request->validate([
             'category'    => 'required|exists:policy_categories,id',
             'ident'       => 'required|regex:/^[\s\w.]*$/|max:10',
             'title'       => 'required|unique:policies',
