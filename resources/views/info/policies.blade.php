@@ -33,7 +33,7 @@
                             @if(!in_array($category->id, $canView)) @continue @endif
                             <div role="tabpanel" class="tab-pane @if(!$category->order) active @endif"
                                  id="policy-cat-{{ $category->id }}">
-                                <table class="table table-hover">
+                                <table class="table table-hover table-responsive">
                                     <thead>
                                     <tr>
                                         <th>Policy</th>

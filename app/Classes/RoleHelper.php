@@ -664,7 +664,7 @@ class RoleHelper
             if ($perm === Policy::PERMS_ALL || RoleHelper::isVATUSAStaff()) {
                 return true;
             }
-            if ($perm === Policy::PERMS_HOME && Auth::check() & Auth::user()->flag_homecontroller) {
+            if ($perm === Policy::PERMS_HOME && Auth::check() && Auth::user()->flag_homecontroller) {
                 return true;
             }
             if ($perm === Policy::PERMS_WM && Auth::check() && (RoleHelper::hasRole(Auth::user()->cid,
