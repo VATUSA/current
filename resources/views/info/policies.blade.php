@@ -22,7 +22,7 @@
                                             href="#policy-cat-{{ $category->id }}"
                                             aria-controls="policy-cat-{{ $category->id }}" role="tab"
                                             data-toggle="tab">{{ $category->name }}</a></li>
-                                    @break(2)
+                                    @break
                                 @endif
                             @endforeach
                         @endforeach

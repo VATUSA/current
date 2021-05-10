@@ -164,14 +164,14 @@ class PolicyController extends Controller
         }
 
         $request->validate([
-            'category_edit'  => 'required|exists:policy_categories,id',
-            'ident'     => 'required|regex:/^[\s\w.]*$/|max:10',
-            'title'     => 'required',
+            'category_edit' => 'required|exists:policy_categories,id',
+            'ident'         => 'required|regex:/^[\s\w.]*$/|max:10',
+            'title'         => 'required',
             //   'slug'        => 'required|unique:policies|alpha_dash',
-            'perms'     => 'required',
-            'file'      => 'max:1000000',
-            'effective' => 'date_format:m/d/Y',
-            'desc'      => 'max:255'
+            'perms'         => 'required',
+            'file'          => 'max:1000000',
+            'effective'     => 'date_format:m/d/Y',
+            'desc'          => 'max:255'
         ]);
 
         $policy->ident = $request->ident;
@@ -249,7 +249,13 @@ class PolicyController extends Controller
     ) {
         if (Storage::disk('public')->delete('docs/' . $policy->slug . "." . $policy->extension)) {
             try {
+                $order = $policy->order;
                 $policy->delete();
+                $policies = Policy::where('order', '>', $order)->orderBy('order')->get();
+                foreach ($policies as $policy) {
+                    $policy->order--;
+                    $policy->save();
+                }
             } catch (\Exception $e) {
                 return $e->getMessage();
             }

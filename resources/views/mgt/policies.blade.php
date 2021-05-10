@@ -51,7 +51,8 @@
                         <div class="form-group edit-policy-objects">
                             <label for="new-policy-category-input" class="col-sm-3 control-label">Category</label>
                             <div class="col-sm-9">
-                                <select style="width:87%" class="form-control" name="category_edit" id="new-policy-category-input">
+                                <select style="width:87%" class="form-control" name="category_edit"
+                                        id="new-policy-category-input">
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -691,12 +692,22 @@
             8: [9, 10],
             9: [10]
           }
-          if (overrides[val] !== undefined)
+          if (overrides[val] !== undefined) {
             $.each(overrides[val], function (i, ival) {
               let checkbox = $('.perm-checkbox[value="' + ival + '"]'),
                   state    = box.prop('checked')
               checkbox.attr('disabled', state).prop('checked', state)
             })
+          }
+          $('.perm-checkbox:checked').each(function () {
+            if (overrides[$(this).val()] !== undefined) {
+              $.each(overrides[$(this).val()], function (i, ival) {
+                let checkbox = $('.perm-checkbox[value="' + ival + '"]'),
+                    state    = true
+                checkbox.attr('disabled', state).prop('checked', state)
+              })
+            }
+          })
         })
 
         $('#policy-submit').click(function () {
