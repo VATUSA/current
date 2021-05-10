@@ -43,14 +43,14 @@ class PolicyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category'    => 'required|exists:policy_categories,id',
-            'ident'       => 'required|regex:/^[\s\w.]*$/|max:10',
-            'title'       => 'required|unique:policies',
-            'slug'        => 'required|unique:policies|alpha_dash',
-            'perms'       => 'required',
-            'file'        => 'required|file|max:1000000',
-            'effective'   => 'date_format:m/d/Y',
-            'desc' => 'max:255'
+            'category'  => 'required|exists:policy_categories,id',
+            'ident'     => 'required|regex:/^[\s\w.]*$/|max:10',
+            'title'     => 'required|unique:policies',
+            'slug'      => 'required|unique:policies|alpha_dash',
+            'perms'     => 'required',
+            'file'      => 'required|file|max:1000000',
+            'effective' => 'date_format:m/d/Y',
+            'desc'      => 'max:255'
         ]);
 
         $prevPolicy = Policy::where('category', $request->category)->orderByDesc('order')->first();
@@ -164,18 +164,24 @@ class PolicyController extends Controller
         }
 
         $category = $request->validate([
-            'category'    => 'required',
-            'ident'       => 'required|regex:/^[\s\w.]*$/|max:10',
-            'title'       => 'required',
+            'category'  => 'required|exists:policy_categories,id',
+            'ident'     => 'required|regex:/^[\s\w.]*$/|max:10',
+            'title'     => 'required',
             //   'slug'        => 'required|unique:policies|alpha_dash',
-            'perms'       => 'required',
-            'file'        => 'max:1000000',
-            'effective'   => 'date_format:m/d/Y',
-            'desc' => 'max:255'
+            'perms'     => 'required',
+            'file'      => 'max:1000000',
+            'effective' => 'date_format:m/d/Y',
+            'desc'      => 'max:255'
         ]);
 
         $policy->ident = $request->ident;
+
+        if ($policy->category !== $request->category) {
+            $policies = Policy::where('category', $request->category)->orderByDesc('order')->first();
+            $policy->order = $policies->exists() ? $policies->order + 1 : 0;
+        }
         $policy->category = $request->category;
+
         $policy->title = $request->title;
         // $policy->slug = strtolower($request->slug);
         $policy->description = $request->desc;
@@ -289,7 +295,6 @@ class PolicyController extends Controller
 
         return response()->json($policy->toArray());
     }
-
 
 
 }
