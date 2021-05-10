@@ -178,7 +178,7 @@ class PolicyController extends Controller
 
         if ($policy->category !== $request->category_edit) {
             $policies = Policy::where('category', $request->category_edit)->orderByDesc('order')->first();
-            $policy->order = $policies->exists() ? $policies->order + 1 : 0;
+            $policy->order = $policies ? $policies->order + 1 : 0;
         }
         $policy->category = $request->category_edit;
 
