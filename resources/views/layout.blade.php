@@ -399,7 +399,7 @@
                                         @endif
 
                                     <!-- Division Statistics [All] -->
-                                        <li><a href="{{ secure_url("/stats") }}">Division Statistics</a></li>
+                                        <li><a href="{{ secure_url("/mgt/stats") }}">Division Statistics</a></li>
 
                                         <!-- Solo Certifications [Instructors/ATM/DATM/TA/VATUSA] -->
                                         @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())

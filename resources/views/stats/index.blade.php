@@ -366,7 +366,7 @@
           if ($('#detailfacilityselect').val() == '0') return
           $('#detailprocessing').show()
           $.ajax({
-            url     : '/stats/details/' + $('#detailfacilityselect').val(),
+            url     : '/mgt/stats/details/' + $('#detailfacilityselect').val(),
             type    : 'GET',
             dataType: 'JSON',
           }).success(function (data) {
