@@ -3,6 +3,7 @@
 use App\Facility;
 use App\Classes\RoleHelper;
 use App\Classes\Helper;
+use App\Policy;
 use App\User;
 
 class InfoController
@@ -20,7 +21,14 @@ class InfoController
 
     public function getMembers()
     {
-        return view('info.members');
+        $orgchart = Policy::where('ident', 'ORG')->first();
+        if ($orgchart) {
+            $orgLink = secure_url("/info/policies/" . $orgchart->slug);
+        } else {
+            $orgLink = null;
+        }
+
+        return view('info.members',  compact('orgLink'));
     }
 
     public function getPolicies()
