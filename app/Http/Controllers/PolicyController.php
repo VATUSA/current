@@ -210,6 +210,11 @@ class PolicyController extends Controller
                 'public')) {
                 return "0";
             } else {
+                if (!$request->clear_modified) {
+                    $policy->updated_at = Carbon::now();
+                    $policy->save();
+                }
+
                 return "1";
             }
         }
