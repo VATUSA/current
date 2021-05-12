@@ -145,10 +145,12 @@
                                 <div class="col-sm-9">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" name="clear_modified" value="1" id="new-policy-clear-modified">Clear Modified Date
+                                            <input type="checkbox" name="clear_modified" value="1"
+                                                   id="new-policy-clear-modified">Clear Modified Date
                                         </label>
                                     </div>
-                                    <p class="help-block">This will set the Modified Date to be the same as the Effective Date.</p>
+                                    <p class="help-block">This will set the Modified Date to be the same as the
+                                        Effective Date.</p>
                                 </div>
                             </div>
                         </div>
@@ -413,9 +415,9 @@
               id      = btn.data('id'),
               order   = parseInt(btn.attr('data-order')),
               type    = $(this).hasClass('policy-move') ? 'policy' : 'category',
-              tr      = $('tr#' + type + '-order-' + order),
+              tr      = btn.closest('table').find('tr#' + type + '-order-' + order),
               cat     = btn.data('cat-id'),
-              trAbove = $('tr#' + type + '-order-' + (order - 1)),
+              trAbove = btn.closest('table').find('tr#' + type + '-order-' + (order - 1)),
               idAbove = trAbove.data(type === 'policy' ? 'policy-id' : 'cat-id')
 
           if (!order) return null
@@ -465,8 +467,8 @@
                     trAbove.find('.move-up').attr('data-order', order)
                     trAbove.find('.move-down').attr('data-order', order)
 
-                    if (type === 'category') $('#cat-' + id).after($('#cat-' + idAbove))
-                    else $('#policy-' + id).after($('#policy-' + idAbove))
+                    if (type === 'category') btn.closest('table').find('#cat-' + id).after($('#cat-' + idAbove))
+                    else btn.closest('table').find('#policy-' + id).after($('#policy-' + idAbove))
 
                     btn.attr('disabled', false).html('<i class=\'fas fa-arrow-up\'></i>')
                     tr.effect('highlight', {}, 2000)
@@ -480,9 +482,9 @@
               id      = btn.data('id'),
               order   = parseInt(btn.attr('data-order')),
               type    = $(this).hasClass('policy-move') ? 'policy' : 'category',
-              tr      = $('tr#' + type + '-order-' + order),
+              tr      = btn.closest('table').find('tr#' + type + '-order-' + order),
               cat     = btn.data('cat-id'),
-              trBelow = $('tr#' + type + '-order-' + (order + 1)),
+              trBelow = btn.closest('table').find('tr#' + type + '-order-' + (order + 1)),
               idBelow = trBelow.data(type === 'policy' ? 'policy-id' : 'cat-id')
 
           if (type === 'category' && order == {{ $categories->count() }} || type === 'policy' && order == $('#cat-policy-count-' + cat).val()) return null
@@ -533,8 +535,8 @@
                   trBelow.find('.move-up').attr('data-order', order)
                   trBelow.find('.move-down').attr('data-order', order)
 
-                  if (type === 'category') $('#cat-' + idBelow).after($('#cat-' + id))
-                  else $('#policy-' + idBelow).after($('#policy-' + id))
+                  if (type === 'category') btn.closest('table').find('#cat-' + idBelow).after($('#cat-' + id))
+                  else btn.closest('table').find('#policy-' + idBelow).after($('#policy-' + id))
 
                   btn.attr('disabled', false).html('<i class=\'fas fa-arrow-down\'></i>')
                   tr.effect('highlight', {}, 2000)
