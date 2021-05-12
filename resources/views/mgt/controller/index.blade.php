@@ -200,8 +200,6 @@
                     @if (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
                         <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
                                 Log</a></li>
-                        <li role="presentation"><a href="#tickets" aria-controls="tickets" role="tab" data-toggle="tab">Support
-                                Tickets</a></li>
                     @endif
                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
                         <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
@@ -484,9 +482,9 @@
                     <div class="tab-pane" role="tabpanel"
                          id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
                     <div class="tab-pane" role="tabpanel" id="cbt">
-                        <h3>CBT Results</h3>
+                        <h3>CBT Progress</h3>
                         <div class="panel-group" id="accordion">
-                            @foreach(\App\TrainingBlock::where('visible',1)->orderBy('facility')->orderBy('order')->get() as $block)
+                            @foreach(\App\TrainingBlock::where('visible', 1)->orderBy('facility')->orderBy('order')->get() as $block)
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">
@@ -499,7 +497,7 @@
                                             <thead>
                                             <tr>
                                                 <th style="width: auto;">Chapter</th>
-                                                <th style="width: 100px;">Compl</th>
+                                                <th style="width: 100px;">Complete</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -544,15 +542,18 @@
                                         </div>
                                     @endif
                                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                    <form class="form-horizontal" action="{{secure_url("/mgt/controller/action/add")}}"
-                                          method="POST">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="hidden" name="to" value="{{ $user->cid }}">
-                                        <input type="hidden" name="from" value="{{ Auth::user()->cid }}">
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label">Add a Log Entry</label>
-                                            <div class="col-sm-10"><textarea class="form-control" rows="2" name="log"
-                                                                             placeholder="Entry"></textarea>
+                                        <form class="form-horizontal"
+                                              action="{{secure_url("/mgt/controller/action/add")}}"
+                                              method="POST">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="to" value="{{ $user->cid }}">
+                                            <input type="hidden" name="from" value="{{ Auth::user()->cid }}">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Add a Log Entry</label>
+                                                <div class="col-sm-10"><textarea class="form-control" rows="2"
+                                                                                 name="log"
+                                                                                 placeholder="Entry"></textarea>
+                                                </div>
                                             </div>
                                             <div class="form-group">
                                                 <div class="col-sm-offset-2 col-sm-10">
@@ -596,7 +597,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" role="tabpanel" id="tickets">Coming soon</div>
                     @endif
                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
                         <div class="tab-pane" role="tabpanel" id="roles">
@@ -644,7 +644,7 @@
                                     <div class="col-sm-10">
                                         <p class="form-control-static" style="cursor:default;">
                                             @if($user->flag_preventStaffAssign) <strong
-                                                style="color:#e72828">Yes</strong>
+                                                    style="color:#e72828">Yes</strong>
                                             @else <strong style="color:green">No</strong>
                                             @endif
                                         </p>
