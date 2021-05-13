@@ -105,12 +105,14 @@ class EmailHelper
      */
     public static function sendEmailBCC($fromEmail, $fromName, $emails, $subject, $template, $data)
     {
-        Mail::send($template, $data, function ($msg) use ($data, $fromEmail, $emails, $fromName, $subject) {
-            $msg->from("no-reply@vatusa.net", "VATUSA Web Services");
-            $msg->to($fromEmail, $fromName);
-            $msg->subject("[VATUSA] $subject");
-            $msg->bcc($emails);
-        });
+        foreach($emails as $email) {
+            Mail::send($template, $data, function ($msg) use ($data, $fromEmail, $email, $fromName, $subject) {
+                $msg->from("no-reply@vatusa.net", "VATUSA Web Services");
+                $msg->to($fromEmail, $fromName);
+                $msg->subject("[VATUSA] $subject");
+                $msg->bcc($email);
+            });
+        }
     }
 
     /**
