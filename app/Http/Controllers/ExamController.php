@@ -340,33 +340,31 @@ class ExamController extends Controller
         return View('exams.assign', ['exams' => $examArr, 'expireoptions' => ExamHelper::expireOptions()]);
     }
 
-    public function postAssign()
+    public function postAssign(Request $request)
     {
-        $exam = Exam::find($_POST['exam']);
+        $examid = $request->exam;
+        $exam = Exam::find($examid);
+        $expire = $request->expire;
+        $cid = $request->cid;
+
         if ($exam == null) {
             abort(404);
         }
         $this->canAssignExam(null, $exam);
 
-        if (User::where('cid', $_POST['cid'])->count() == 0) {
+        if (User::where('cid', $cid)->count() == 0) {
             return redirect('/exam/assign')->with("error", "User not found.");
         }
 
-        if (ExamHelper::isAssigned($_POST['cid'], $_POST['exam'])) {
+        if (ExamHelper::isAssigned($cid, $examid)) {
             $error = "Exam already assigned.";
         } else {
-            ExamHelper::assign($_POST['cid'], $_POST['exam'], null, $_POST['expire']);
+            ExamHelper::assign($cid, $examid, null, $expire);
             $success = "Exam assigned.";
         }
 
-        if (RoleHelper::isVATUSAStaff()) {
-            $exams = Exam::orderBy('facility_id')->orderBy('name')->get();
-        } else {
-            $exams = Exam::where('facility_id', Auth::user()->facility)->orWhere('facility_id',
-                'ZAE')->orderBy('name')->get();
-        }
+        $return = array();
 
-        $return = ['exams' => $exams, 'expireoptions' => ExamHelper::expireOptions()];
         if (isset($error)) {
             $return['error'] = $error;
         }
@@ -374,7 +372,7 @@ class ExamController extends Controller
             $return['success'] = $success;
         }
 
-        return View('exams.assign', $return);
+        return redirect('/exam/assign')->with($return);
     }
 
     /** Assignment Handlers **/
