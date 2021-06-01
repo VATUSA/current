@@ -13,9 +13,10 @@
           rel="stylesheet">
           <link href="{{ mix('css/vatusa.css') }}" rel="stylesheet">
     @stack('styles')
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/img/vatusa-512-darkblue.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
 
 
 
@@ -55,7 +56,7 @@
     <div class="head">
         <div class="layer">
             <div class="container">
-                <img src="/img/logo-dark.png" class="logo"/>
+                <img src="/img/logo-alt.png" class="logo"/>
                 @if(Auth::check())
                     <div class="pull-right">
                         <div class="wb-usr">

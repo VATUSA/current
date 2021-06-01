@@ -347,9 +347,9 @@
                                     <th class="small-12 large-12 columns first last"
                                         style="Margin: 0 auto; color: #0a0a0a; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: normal; line-height: 1.3; margin: 0 auto; padding: 0; padding-bottom: 16px; padding-left: 16px; padding-right: 16px; text-align: left; width: 564px;">
                                         <center data-parsed="" style="min-width: 532px; width: 100%;"><img
-                                                src="https://vatusa.net/img/logo-light.png" align="center"
+                                                src="https://vatusa.net/img/logo-full.png" align="center"
                                                 class="float-center"
-                                                style="-ms-interpolation-mode: bicubic; Margin: 0 auto; clear: both; display: block; float: none; margin: 0 auto; max-width: 100%; outline: none; text-align: center; text-decoration: none; width: auto;">
+                                                style="-ms-interpolation-mode: bicubic; Margin: 0 auto; clear: both; display: block; float: none; margin: 0 auto; max-width: 100%; outline: none; text-align: center; text-decoration: none; width: 80%;">
                                         </center>
                                         <table
                                             style="border-collapse: collapse; border-spacing: 0; padding: 0; text-align: left; vertical-align: top; width: 100%;">
