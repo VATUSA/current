@@ -301,8 +301,8 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="exports">
                             <p>Exports of the statistics information in CSV format.</p>
-                            <a href="/stats/export/overview">Overview</a><br>
-                            <a href="/stats/export/details">Detailed</a>
+                            <a href="/mgt/stats/export/overview">Overview</a><br>
+                            <a href="/mgt/stats/export/details">Detailed</a>
                         </div>
                     </div>
                 </div>
