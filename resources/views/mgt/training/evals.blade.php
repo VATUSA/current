@@ -103,7 +103,7 @@
                                             </td>
                                             <td>{{ $eval->exam_position }}</td>
                                             <td>{{ $eval->student->fullname() }}</td>
-                                            <td>{{ $eval->instructor->fullname() }}</td>
+                                            <td>{{ $eval->instructor ? $eval->instructor->fullname() : "<em> Account Erased</em>" }}</td>
                                             <td>@if($eval->result) <i class="fas fa-check"></i> Pass @else <i
                                                     class="fas fa-times"></i>
                                                 Fail @endif</td>
@@ -167,7 +167,7 @@
                                                 </td>
                                                 <td>{{ $eval->exam_position }}</td>
                                                 <td>{{ $eval->student->fullname() }}</td>
-                                                <td>{{ $eval->instructor->fullname() }}</td>
+                                                <td>{{ $eval->instructor ? $eval->instructor->fullname() : "<em> Account Erased</em>" }}</td>
                                                 <td>@if($eval->result) <i class="fas fa-check"></i> Pass @else <i
                                                         class="fas fa-times"></i>
                                                     Fail @endif</td>

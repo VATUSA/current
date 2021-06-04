@@ -82,7 +82,7 @@
                                             class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
                                     </td>
                                     <td>{{ $record->position }}</td>
-                                    <td>{{ $record->instructor->fullname() }}</td>
+                                    <td>{{ $record->instructor ? $record->instructor->fullname() : "<em> Account Erased</em>"}}</td>
                                     <td>{{ substr($record->duration, 0, 5) }}</td>
                                     <td class="alert-ignore">
                                         @if(!is_null($record->score))
@@ -180,7 +180,7 @@
                                                 class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
                                         </td>
                                         <td>{{ $record->position }}</td>
-                                        <td>{{ $record->instructor->fullname() }}</td>
+                                        <td>{{ $record->instructor ? $record->instructor->fullname() : "<em>Account Erased</em>" }}</td>
                                         <td>{{ substr($record->duration, 0, 5) }}</td>
                                         <td class="alert-ignore">
                                             @if(!is_null($record->score))

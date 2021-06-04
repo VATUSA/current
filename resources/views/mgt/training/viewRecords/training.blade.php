@@ -63,7 +63,7 @@
                             <td>{{ $record->position }}</td>
                             <td>{{ $record->student->fullname() }}</td>
                             <td>{{ substr($record->duration, 0, 5) }}</td>
-                            <td>{{ $record->instructor->fullname() }} </td>
+                            <td>{{ $record->instructor ? $record->instructor->fullname() : "<em> Account Erased</em>" }} </td>
                             <td class="alert-ignore">
                                 <div class="btn-group">
                                     <button class="btn btn-primary view-tr"

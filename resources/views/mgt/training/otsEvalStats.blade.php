@@ -238,7 +238,7 @@
                                         <td class="indicator-comment-cell">&nbsp;</td>
                                     @endif
                                     @php $colors = ['', 'info', 'success', 'danger']; @endphp
-                                    @if($indicator->header_type != 1) @php $percents = \App\OTSEvalIndResult::getPercentages($indicator->id,$facility->id ?? null,$instructor,$interval); @endphp @endif
+                                    @if($indicator->header_type != 1) @php $percents = \App\OTSEvalIndResult::getPercentages($indicator->id, $facility->id ?? null, $instructor, $interval); @endphp @endif
                                     @for($i = 0; $i < 4; $i++)
                                         @if($indicator->header_type == 1)
                                             <td class="result-cell result-na default-header">&nbsp;</td>

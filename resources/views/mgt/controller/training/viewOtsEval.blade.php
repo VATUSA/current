@@ -111,12 +111,12 @@
                                             <span class="indicator-header-label">{!! $indicator->label !!}
                                                 @if($indicator->result($eval->id) && $indicator->result($eval->id)->comment)
                                                     <br> <span
-                                                        class="indicator-comment-display"
-                                                        id="indicator-comment-display-{{ $indicator->id }}">{{ $indicator->result($eval->id)->comment }}</span>@endif</span>
+                                                            class="indicator-comment-display"
+                                                            id="indicator-comment-display-{{ $indicator->id }}">{{ $indicator->result($eval->id)->comment }}</span>@endif</span>
                                             @if($indicator->help_text)
                                                 <span class="indicator-help-text" data-toggle="popover"
                                                       title="Instructions" data-content="{{ $indicator->help_text }}"><i
-                                                        class="fas fa-question-circle"></i></span>
+                                                            class="fas fa-question-circle"></i></span>
                                     @endif
                                     @if($indicator->header_type == 2)
                                         <td class="indicator-comment-cell">&nbsp;</td>
@@ -127,13 +127,13 @@
                                             <div class="indicator-item-label">
                                                 <span>{!! $indicator->label !!}</span>
                                                 @if($indicator->result($eval->id)->comment)<br><span
-                                                    class="indicator-comment-display"
-                                                    id="indicator-comment-display-{{ $indicator->id }}">{{ $indicator->result($eval->id)->comment }}</span>@endif
+                                                        class="indicator-comment-display"
+                                                        id="indicator-comment-display-{{ $indicator->id }}">{{ $indicator->result($eval->id)->comment }}</span>@endif
                                                 @if($indicator->help_text)
                                                     <span class="indicator-help-text" data-toggle="popover"
                                                           title="Instructions"
                                                           data-content="{{ $indicator->help_text }}"><i
-                                                            class="fas fa-question-circle"></i>
+                                                                class="fas fa-question-circle"></i>
                                                         </span>
                                                 @endif
                                             </div>
@@ -178,7 +178,7 @@
                                                     <span class="glyphicon glyphicon-ok"></span> Pass</span>
                                                 @else
                                                     <span class="label label-danger" id="training-ots-exam-fail"><span
-                                                            class="glyphicon glyphicon-remove"></span> Fail</span>
+                                                                class="glyphicon glyphicon-remove"></span> Fail</span>
                                                 @endif
                                             </p>
                                         </div>
@@ -214,8 +214,8 @@
                                     <div class="form-group">
                                         <label for="notes" class="col-sm-2 control-label text-center">Examiner</label>
                                         <div class="col-sm-10">
-                                            <p class="form-control-static">{{ $eval->instructor->fullname() }}
-                                                ({{ $eval->instructor->cid }})</p>
+                                            <p class="form-control-static">@if($eval->instructor) {{ $eval->instructor->fullname() }}
+                                                ({{ $eval->instructor->cid }}) @else <em>Account Erased</em> @endif</p>
                                         </div>
                                     </div>
                                     <div class="form-group">
