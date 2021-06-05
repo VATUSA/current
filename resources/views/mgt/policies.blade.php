@@ -429,7 +429,7 @@
           $.ajax({
             'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + id,
             'method': type === 'category' ? 'PUT' : 'POST',
-            'data'  : {'order': order - 1}
+            'data'  : {order: order - 1, clear_modified: true}
           })
             .error(function (xhr, status, error) {
               swal('Error!', 'Unable to move ' + type + '. ' + error, 'error')
@@ -439,7 +439,7 @@
               $.ajax({
                 'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + idAbove,
                 'method': type === 'category' ? 'PUT' : 'POST',
-                'data'  : {'order': order}
+                'data'  : {order: order, clear_modified: true}
               })
                 .error(function (xhr, status, error) {
                   swal('Error!', 'Unable to move ' + type + '. ' + error, 'error')
@@ -496,7 +496,7 @@
           $.ajax({
             'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + id,
             'method': type === 'category' ? 'PUT' : 'POST',
-            'data'  : {'order': order + 1}
+            'data'  : {order: order + 1, clear_modified: true}
           })
             .error(function (xhr, status, error) {
               swal('Error!', 'Unable to move ' + type + '. ' + error, 'error')
@@ -505,7 +505,7 @@
               $.ajax({
                 'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + idBelow,
                 'method': type === 'category' ? 'PUT' : 'POST',
-                'data'  : {'order': order}
+                'data'  : {order: order, clear_modified: true}
               })
                 .error(function (xhr, status, error) {
                   swal('Error!', 'Unable to move ' + type + '. ' + error, 'error')
@@ -661,7 +661,7 @@
           $.ajax({
             url   : '/mgt/policies/updatePolicy/' + btn.data('id'),
             method: 'POST',
-            data  : {visible: !isVisible}
+            data  : {visible: !isVisible, clear_modified: true}
           }).done(response => {
             if (parseInt(response)) {
               btn.prop('disabled', false).html('<i class=\'fas fa-eye\'></i>')
