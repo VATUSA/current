@@ -5,21 +5,23 @@
 	"license": "MIT",
 	"type": "project",
 	"require": {
-		"laravel/framework": "5.5.*",
-		"laravelcollective/html": "^5.3.0",
+		"laravel/framework": "6.*",
+		"laravelcollective/html": "^6.0",
 		"guzzlehttp/guzzle": "^6.2",
-		"barryvdh/laravel-cors": "^0.10.0",
 		"predis/predis": "^1.1",
+		"fideloper/proxy": "^4.0",
         "ext-simplexml": "*",
 		"sentry/sentry-laravel": "1.7.0",
 		"fzaninotto/faker": "~1.4",
-		"laravel/socialite": "3.*",
+		"laravel/socialite": "5.*",
 		"socialiteproviders/discord": "2.*",
 		"llagerlof/moodlerest": "^2.3",
-    "ext-json": "*"
+    	"ext-json": "*",
+		"laravel/helpers": "^1.4",
+		"fruitcake/laravel-cors": "^2.0"
     },
 	"require-dev": {
-		"phpunit/phpunit": "~6.0",
+		"phpunit/phpunit": "^7.0",
 		"filp/whoops": "~2.0",
 		"mockery/mockery": "0.9.*",
 		"symfony/dom-crawler": "~3.1",
@@ -41,22 +43,16 @@
 		]
 	},
 	"scripts": {
-		"post-install-cmd": [
-			"php artisan clear-compiled",
-			"php artisan optimize"
-		],
-		"post-update-cmd": [
-			"php artisan clear-compiled",
-			"php artisan optimize"
-		],
-		"post-create-project-cmd": [
-			"php -r \"copy('.env.example', '.env');\"",
-			"php artisan key:generate"
-		],
-		"post-autoload-dump": [
-			"Illuminate\\Foundation\\composerScripts::postAutoloadDump",
-			"@php artisan package:discover"
-		]
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
 	},
 	"config": {
 		"preferred-install": "dist"

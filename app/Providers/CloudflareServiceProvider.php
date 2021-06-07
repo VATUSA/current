@@ -42,7 +42,7 @@ class CloudflareServiceProvider extends ServiceProvider
         if ($return->getStatusCode() == 200) {
             $list = json_decode($return->getBody(), true);
             $ips = array_merge($list["result"]["ipv4_cidrs"], $list["result"]["ipv6_cidrs"]);
-            Cache::put('cf_ips', $ips, 60 * 24);
+            Cache::put('cf_ips', $ips, 60 * 60 * 24);
 
             return $ips;
         } else {
