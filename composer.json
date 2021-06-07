@@ -5,21 +5,21 @@
 	"license": "MIT",
 	"type": "project",
 	"require": {
-		"laravel/framework": "5.5.*",
-		"laravelcollective/html": "^5.3.0",
+		"laravel/framework": "5.7.*",
+		"laravelcollective/html": "^5.7.0",
 		"guzzlehttp/guzzle": "^6.2",
-		"barryvdh/laravel-cors": "^0.10.0",
 		"predis/predis": "^1.1",
+		"fideloper/proxy": "^4.0",
         "ext-simplexml": "*",
 		"sentry/sentry-laravel": "1.7.0",
 		"fzaninotto/faker": "~1.4",
 		"laravel/socialite": "3.*",
 		"socialiteproviders/discord": "2.*",
 		"llagerlof/moodlerest": "^2.3",
-    "ext-json": "*"
+    	"ext-json": "*"
     },
 	"require-dev": {
-		"phpunit/phpunit": "~6.0",
+		"phpunit/phpunit": "^7.0",
 		"filp/whoops": "~2.0",
 		"mockery/mockery": "0.9.*",
 		"symfony/dom-crawler": "~3.1",
@@ -42,12 +42,10 @@
 	},
 	"scripts": {
 		"post-install-cmd": [
-			"php artisan clear-compiled",
-			"php artisan optimize"
+			"php artisan clear-compiled"
 		],
 		"post-update-cmd": [
-			"php artisan clear-compiled",
-			"php artisan optimize"
+			"php artisan clear-compiled"
 		],
 		"post-create-project-cmd": [
 			"php -r \"copy('.env.example', '.env');\"",
