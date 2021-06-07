@@ -9,7 +9,7 @@ use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
 use Auth;
 use App\Classes\Helper;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 
 class EmailMgtController extends Controller
 {
@@ -26,7 +26,7 @@ class EmailMgtController extends Controller
         return view('mgt.mail.email');
     }
 
-    public function postConfig() {
+    public function postConfig(Request $request) {
         if (!Auth::check()) abort(401);
 
         $role = Auth::user()->getPrimaryRole();
@@ -38,9 +38,9 @@ class EmailMgtController extends Controller
             $email = "$fac-$role@vatusa.net";
 
         $type = (int)cPanelHelper::getType($email);
-        $reqType = (int)Input::get("type");
-        $reqDest = Input::get("dest");
-        $reqPassword = Input::get("password");
+        $reqType = (int)$request->input("type");
+        $reqDest = $request->input("dest");
+        $reqPassword = $request->input("password");
 
 
         // Full Account
