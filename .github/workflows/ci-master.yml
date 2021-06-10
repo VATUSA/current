@@ -19,9 +19,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Make Cache Directory
-        run: mkdir bootstrap/cache
-
       - name: Set up Node
         uses: actions/setup-node@v1
 
