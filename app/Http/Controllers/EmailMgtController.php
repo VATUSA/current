@@ -9,7 +9,6 @@ use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
 use Auth;
 use App\Classes\Helper;
-use Illuminate\Support\Facades\Request;
 
 class EmailMgtController extends Controller
 {

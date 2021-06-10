@@ -73,7 +73,8 @@ class TrainingController extends Controller
             abort(404, "The OTS evaluation form is invalid.");
         }
         $student = $eval->student;
-        if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $student->facility)) {
+        if (!RoleHelper::isInstructor(Auth::user()->cid,
+                $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $student->facility)) {
             abort(403);
         }
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
@@ -264,6 +265,9 @@ class TrainingController extends Controller
             if ($facility) {
                 foreach ($allIns as $type => $arr) {
                     foreach ($arr as $ins) {
+                        if (!User::find($ins['cid'])) {
+                            continue;
+                        }
                         $datasets[$ins['cid']]['label'] = $ins['name'];
                         $filter = $hoursPerMonth->filter(function ($q) use ($ins) {
                             return $q->instructor_id == $ins['cid'];
@@ -273,7 +277,9 @@ class TrainingController extends Controller
                 }
             } else {
                 $datasets[0]['label'] = "Total";
-                $datasets[0]['data'][] = floor($hoursPerMonth->pluck('sum')->sum() / 3600);
+                $datasets[0]['data'][] = floor($hoursPerMonth->filter(function ($q) {
+                    return !is_null(User::find($q->instructor_id));
+                })->pluck('sum')->sum() / 3600);
             }
         }
         foreach ($datasets as $k => $v) {
@@ -298,7 +304,7 @@ class TrainingController extends Controller
             $timePerInstructor = $records->with(['instructor:cid,fname,lname'])->selectRaw('SUM(TIME_TO_SEC(duration)) AS total, instructor_id')
                 ->groupBy(['instructor_id']);
             foreach ($timePerInstructor->get() as $time) {
-                if (!$time->instructor_id) {
+                if (!User::find($time->instructor_id)) {
                     continue;
                 }
                 $timePerInstructorData['labels'][] = $time->instructor->fullname();
@@ -489,6 +495,9 @@ class TrainingController extends Controller
                 // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
                 //dd($hoursPerMonth->get()->toArray());
                 foreach ($allIns['ins'] as $ins) {
+                    if (!User::find($ins['cid'])) {
+                        continue;
+                    }
                     $datasets[$ins['cid']]['label'] = $ins['name'];
                     $filter = $evalsPerMonth->filter(function ($q) use ($ins) {
                         return $q->instructor_id == $ins['cid'];
@@ -516,7 +525,7 @@ class TrainingController extends Controller
             $evalsPerForm = $evals->with(['instructor:cid,fname,lname'])->selectRaw('COUNT(*) AS total, instructor_id')
                 ->groupBy(['instructor_id']);
             foreach ($evalsPerForm->get() as $eval) {
-                if (!$eval->instructor_id) {
+                if (!User::find($eval->instructor_id)) {
                     continue;
                 }
                 $evalsPerFormDataIns['labels'][] = $eval->instructor->fullname();
@@ -751,6 +760,9 @@ class TrainingController extends Controller
                 foreach ($allIns as $ins) {
                     // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
                     //dd($hoursPerMonth->get()->toArray());
+                    if (!User::find($ins['cid'])) {
+                        continue;
+                    }
 
                     $datasets[$ins['cid']]['label'] = $ins['name'];
                     $datasets[$ins['cid']]['data'][] = $evalsPerMonth->filter(function ($e) use ($ins) {
@@ -760,7 +772,7 @@ class TrainingController extends Controller
             } else {
                 $datasets[0]['label'] = "Total";
                 $datasets[0]['data'][] = $instructor ? $evalsPerMonth->filter(function ($e) use ($instructor) {
-                    return $e->instructor_id == $instructor;
+                    return User::find($e->instructor_id) && $e->instructor_id == $instructor;
                 })->count() : $evalsPerMonth->count();
             }
         }
