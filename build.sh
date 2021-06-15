@@ -8,6 +8,7 @@ chown application:application /www/.env
 echo "*    *    *     *     *    cd /www && php artisan schedule:run" > /etc/crontabs/application
 
 mkdir /www/storage/framework/views
+mkdir /www/storage/framework/session
 chown -R application:application /www/storage
 
 cd /www && php artisan migrate

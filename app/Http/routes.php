@@ -12,7 +12,7 @@
 */
 
 Route::group([
-    'domain'     => str_replace(['https://', 'http://'], '', \App\Classes\Helper::mainUrl()),
+    'domain'     => config('app.url'),
     'middleware' => ['smf', 'csrf', 'lastactivity']
 ], function () {
     Route::get('/login', 'AuthController@getLogin');

@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'app' => "VATUSA",
     'env' => env('APP_ENV', 'production'),
 
@@ -16,7 +15,7 @@ return [
 	|
 	*/
 
-	'debug' => env('APP_DEBUG'),
+	'debug' => env('APP_DEBUG', false),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -29,7 +28,7 @@ return [
 	|
 	*/
 
-	'url' => 'http://dev.vatusa.net',
+	'url' => env('APP_URL', 'https://www.vatusa.devel'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -169,7 +168,6 @@ return [
 	*/
 
 	'aliases' => [
-
 		'App'       => 'Illuminate\Support\Facades\App',
 		'Artisan'   => 'Illuminate\Support\Facades\Artisan',
 		'Auth'      => 'Illuminate\Support\Facades\Auth',
@@ -204,6 +202,5 @@ return [
 		'URL'       => 'Illuminate\Support\Facades\URL',
 		'Validator' => 'Illuminate\Support\Facades\Validator',
 		'View'      => 'Illuminate\Support\Facades\View',
-	],
-
+	]
 ];

@@ -21,36 +21,12 @@ class Helper
 
     public static function apiUrl()
     {
-        switch (app()->environment()) {
-            case "prod":
-            case "production":
-                return "https://api.vatusa.net";
-            case "livedev":
-                return "https://api.dev.vatusa.net";
-            case "staging":
-                return "https://api.staging.vatusa.net";
-            case "dev":
-            case "devel":
-            default:
-                return "https://api.vatusa.devel";
-        }
+        return str_replace('www.vatusa', 'api.vatusa', config('app.url'));
     }
 
     public static function mainUrl()
     {
-        switch (app()->environment()) {
-            case "prod":
-            case "production":
-                return "https://www.vatusa.net";
-            case "livedev":
-                return "https://dev.vatusa.net";
-            case "staging":
-                return "https://staging.vatusa.net";
-            case "dev":
-            case "devel":
-            default:
-                return "https://www.vatusa.devel";
-        }
+       return config('app.url');
     }
 
     public static function nameFromCID($cid, $retCID = 0)
