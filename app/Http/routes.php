@@ -10,6 +10,14 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::get('readiness', function() {
+    try {
+        DB::connection()->getPdo();
+    } catch (Exception $e) {
+        return response('Not Ready', 500);
+}
+    return 'Ready';
+});
 
 Route::group([
     'domain'     => config('app.url'),
