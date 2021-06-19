@@ -29,6 +29,7 @@ return [
 	*/
 
 	'url' => env('APP_URL', 'https://www.vatusa.devel'),
+	'loginUrl' => env('LOGIN_URL', 'https://login.vatusa.devel'),
 
 	/*
 	|--------------------------------------------------------------------------

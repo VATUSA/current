@@ -43,11 +43,7 @@ class AuthController extends Controller
             //Otherwise, normal redirect to home
             $return = request()->has('agreed') ? "agreed" : env('LOGIN_ENV');
 
-            if (app()->environment('staging')) {
-                return redirect()->guest('https://login.staging.vatusa.net/?' . $return);
-            }
-
-            return redirect()->guest(app()->environment("livedev") ? 'https://login.dev.vatusa.net/?' . $return : 'https://login.vatusa.net/?' . $return);
+            return redirect()->guest(config('app.loginUrl') . "/?" . $return);
         } else {
             SMFHelper::setPermissions(Auth::user()->cid);
         }
