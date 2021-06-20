@@ -5,7 +5,7 @@ cat /run/secrets/*.env >> /www/.env
 
 chown application:application /www/.env
 
-echo "*    *    *     *     *    cd /www && php artisan schedule:run" > /etc/crontabs/application
+# echo "*    *    *     *     *    cd /www && php artisan schedule:run" > /etc/crontabs/application
 
 mkdir /www/storage/framework/views
 mkdir /www/storage/framework/session
