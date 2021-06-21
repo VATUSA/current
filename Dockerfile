@@ -17,6 +17,6 @@ RUN composer.phar install --no-dev --no-scripts && mkdir -p /www/storage/framewo
 USER root
 RUN rm /usr/local/bin/composer.phar
 
-RUN cp /usr/local/etc/php/conf.d public/vatusa.ini
+RUN mv /usr/local/etc/php/conf.d /etc/php7/conf.d/99-vatusa.ini
 
 EXPOSE 80
