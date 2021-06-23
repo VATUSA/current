@@ -81,7 +81,7 @@
                                 <div class="col-sm-10">
                                     <p class="form-control-static">{{Auth::user()->email}}</p>
                                     <span id="helpBlock" class="help-block">Click <a
-                                            href="http://cert.vatsim.net/vatsimnet/newmail.php">here</a> to change. Your email will be updated here on your next login.</span>
+                                            href="https://my.vatsim.net/user/email">here</a> to change. Your email will be updated here on your next login.</span>
                                 </div>
                             </div>
                             <div class="form-group">
