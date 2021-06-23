@@ -47,12 +47,12 @@ Route::group([
          *  AJAX  *
          * * * * * */
         Route::group(['prefix' => 'ajax'], function () {
-            Route::get('/ajax/cid', 'AJAXController@getCID');
-            Route::get('/ajax/events', 'AJAXController@getEvents');
-            Route::get('/ajax/news', 'AJAXController@getNews');
-            Route::get('/ajax/help/staffc/{facility}', 'AJAXController@getHelpStaffc');
-            Route::get('/ajax/help/staff/{facility}', 'AJAXController@getHelpStaff');
-            Route::get('/ajax/passstrength/{pass}', function ($pass) {
+            Route::get('/cid', 'AJAXController@getCID');
+            Route::get('/events', 'AJAXController@getEvents');
+            Route::get('/news', 'AJAXController@getNews');
+            Route::get('/help/staffc/{facility}', 'AJAXController@getHelpStaffc');
+            Route::get('/help/staff/{facility}', 'AJAXController@getHelpStaff');
+            Route::get('/passstrength/{pass}', function ($pass) {
                 echo \App\Classes\cPanelHelper::getPassStrength($pass);
             });
         });
