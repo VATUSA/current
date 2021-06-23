@@ -58,7 +58,7 @@
             <div class="container">
                 <img src="/img/logo-alt.png" class="logo"/>
                 @if(Auth::check())
-                    <div class="pull-right">
+                    <div class="pull-right hidden-xs">
                         <div class="wb-usr">
                             <span class="grab"><strong>{{Auth::user()->fname.' '.Auth::user()->lname}}</strong></span>
                             <br>
