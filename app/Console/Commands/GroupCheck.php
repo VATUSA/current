@@ -42,5 +42,7 @@ class GroupCheck extends Command {
         foreach ($users as $user) {
             SMFHelper::setPermissions($user->cid);
         }
+
+        return 0;
     }
 }

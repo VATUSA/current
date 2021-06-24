@@ -42,6 +42,8 @@ class ULSTokens extends Command
     public function handle()
     {
         \DB::raw("DELETE FROM `uls_tokens` WHERE `date` <= DATE_SUB(NOW(), INTERVAL 30 SECOND)");
+
+        return 0;
     }
 
     /**

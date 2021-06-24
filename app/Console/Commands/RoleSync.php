@@ -90,5 +90,7 @@ class RoleSync extends Command
                 $role->save();
             }
         }
+
+        return 0;
     }
 }

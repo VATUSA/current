@@ -43,5 +43,7 @@ class ExpireNotices extends Command
         foreach ($notices as $notice) {
             $notice->delete();
         }
+
+        return 0;
     }
 }

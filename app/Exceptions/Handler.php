@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -33,7 +34,7 @@ class Handler extends ExceptionHandler
      * @return void
      * @throws \Exception
      */
-    public function report(Exception $e)
+    public function report(Throwable $e)
     {
         if (app()->bound('sentry') && $this->shouldReport($e)) {
             app('sentry')->captureException($e);
@@ -50,7 +51,7 @@ class Handler extends ExceptionHandler
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function render($request, Exception $e)
+    public function render($request, Throwable $e)
     {
         if ($e instanceof MethodNotAllowedHttpException) {
             return redirect('/500');

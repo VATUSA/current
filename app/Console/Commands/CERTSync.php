@@ -194,6 +194,8 @@ class CERTSync extends Command
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
 
         $this->info("Completed in " . (microtime(true) - $start) . " seconds.");
+
+        return 0;
     }
 
     public function checkDeleted($user)

@@ -78,5 +78,7 @@ class UpdateVATSIM extends Command
         }
 
         \Cache::put("vatsim.data", json_encode($planes ?? [], JSON_NUMERIC_CHECK),  60 * 60);      // Keep 1 minute
+
+        return 0;
     }
 }

@@ -41,13 +41,17 @@ class TransferEmails extends Command
     public function handle()
     {
         foreach (Facility::where('active', 1)->get() as $facility) {
-            foreach(['atm','datm','ta','ec','fe','wm'] as $position) {
-                $destination = null; $email = $facility . "-" . $position . "@vatusa.net";
+            foreach (['atm', 'datm', 'ta', 'ec', 'fe', 'wm'] as $position) {
+                $destination = null;
+                $email = $facility . "-" . $position . "@vatusa.net";
                 if ($facility->{$position} == 0) {
-                    if ($position == "atm") { $destination = "vatusa" . $facility->region . "@vatusa.net"; }
-                    else { $destination = "$facility-sstf@vatusa.net"; }
+                    if ($position == "atm") {
+                        $destination = "vatusa" . $facility->region . "@vatusa.net";
+                    } else {
+                        $destination = "$facility-sstf@vatusa.net";
+                    }
                 } else {
-                    if(cPanelHelper::getType($email) == 1) {
+                    if (cPanelHelper::getType($email) == 1) {
                         $destination = cPanelHelper::getDest($email);
                     } else {
                         $destination = Helper::emailFromCID($facility->{$position});
@@ -60,7 +64,8 @@ class TransferEmails extends Command
                 curl_setopt($ch, CURLOPT_HTTPHEADER, [
                     'Authorization' => 'Bearer ' . env('API_TOKEN')
                 ]);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, ['email' => $email, 'destination' => $destination, 'static' => "false"]);
+                curl_setopt($ch, CURLOPT_POSTFIELDS,
+                    ['email' => $email, 'destination' => $destination, 'static' => "false"]);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 $result = curl_exec($ch);
                 if ($result == false) {
@@ -69,5 +74,7 @@ class TransferEmails extends Command
                 curl_close($ch);
             }
         }
+
+        return 0;
     }
 }

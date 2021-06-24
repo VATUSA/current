@@ -65,6 +65,8 @@ class ExamReassign extends Command
             }
         }
         \DB::raw("DELETE FROM `solo_certs` WHERE `expires` < NOW()");
+
+        return 0;
     }
 
     /**

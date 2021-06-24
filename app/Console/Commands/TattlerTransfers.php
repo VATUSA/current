@@ -33,7 +33,8 @@ class TattlerTransfers extends Command
      */
     public function handle()
     {
-        $transfers = Transfers::whereRaw("DATE_ADD(created_at, INTERVAL " . config('tattlers.transfers.maxdays', 7) . " DAY) < NOW()")->where('status', 0)->get();
+        $transfers = Transfers::whereRaw("DATE_ADD(created_at, INTERVAL " . config('tattlers.transfers.maxdays',
+                7) . " DAY) < NOW()")->where('status', 0)->get();
         if ($transfers) {
             foreach ($transfers as $transfer) {
                 $user = User::find($transfer->cid);
@@ -46,23 +47,25 @@ class TattlerTransfers extends Command
                         "vatusa" . $to->region . "@vatusa.net",
                         "vatusa1@vatusa.net",
                         "vatusa2@vatusa.net",
-                   //     "vatusa6@vatusa.net"
+                        //     "vatusa6@vatusa.net"
                     ],
                     "Tattler: Transfer Pending",
                     "emails.tattlers.transferpending",
                     [
-                        'name' => $user->fullname(),
-                        'cid' => $user->cid,
-                        'rating' => $rating,
+                        'name'    => $user->fullname(),
+                        'cid'     => $user->cid,
+                        'rating'  => $rating,
                         'gaining' => $transfer->to,
-                        'losing' => $transfer->from,
-                        'reason' => $transfer->reason,
-                        'days' => config('tattlers.transfers.maxdays', 7),
-                        'date' => $transfer->created_at
+                        'losing'  => $transfer->from,
+                        'reason'  => $transfer->reason,
+                        'days'    => config('tattlers.transfers.maxdays', 7),
+                        'date'    => $transfer->created_at
                     ]
                 );
             }
         }
+
+        return 0;
     }
 
     /**
