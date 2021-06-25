@@ -3,9 +3,9 @@
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use Illuminate\Console\Command;
-use App\Transfers;
-use App\User;
-use App\Facility;
+use App\Models\Transfers;
+use App\Models\User;
+use App\Models\Facility;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 

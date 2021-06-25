@@ -7,7 +7,7 @@
 namespace App\Classes;
 
 
-use App\ReturnPaths;
+use App\Models\ReturnPaths;
 
 class ULSHelper
 {

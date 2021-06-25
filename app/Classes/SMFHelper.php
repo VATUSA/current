@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-use App\User;
+use App\Models\User;
 
 class SMFHelper
 {

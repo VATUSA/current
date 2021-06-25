@@ -2,10 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
-use \App\Facility;
-use \App\TrainingBlock;
-use \App\TrainingChapter;
-use \App\TrainingProgress;
+use App\Models\Facility;
+use App\Models\TrainingBlock;
+use App\Models\TrainingChapter;
+use App\Models\TrainingProgress;
 use Auth;
 use Illuminate\Support\Facades\DB;
 

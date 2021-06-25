@@ -2,12 +2,12 @@
 
 namespace App\Classes;
 
-use App\Policy;
-use \App\Role;
-use \App\User;
-use \App\Facility;
-use \App\RoleTitle;
-use \App\Actions;
+use App\Models\Policy;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\Facility;
+use App\Models\RoleTitle;
+use App\Models\Actions;
 use \Auth;
 use Illuminate\Support\Facades\Schema;
 
@@ -516,7 +516,7 @@ class RoleHelper
 
         if ($facility != "ZAE") {
             // Eloquent: I1s/I2s/I3s Listing (do not include SUPs/ADMs)
-            foreach (\App\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))
+            foreach (\App\Models\User::where('rating', '>=', \App\Classes\Helper::ratingIntFromShort('I1'))
                          ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('SUP'))
                          ->where('rating', '!=', \App\Classes\Helper::ratingIntFromShort('ADM'))
                          ->where('facility', $facility)
@@ -533,7 +533,7 @@ class RoleHelper
             }
 
             // Eloquent: SUPs Tagged as Instructors
-            foreach (\App\Role::where('facility', $facility)->where('role', 'INS')->get() as $s) {
+            foreach (\App\Models\Role::where('facility', $facility)->where('role', 'INS')->get() as $s) {
                 if (!static::isFacilityStaff($s->cid, $facility)) {
                     $staff[] = [
                         'cid'  => $s->cid,
@@ -546,7 +546,7 @@ class RoleHelper
 
         if ($getVATUSA && $facility == "ZHQ") {
             // Eloquent: All VATUSA Staff
-            foreach (\App\Role::where('facility', 'ZHQ')
+            foreach (\App\Models\Role::where('facility', 'ZHQ')
                          ->where('role', 'LIKE', "US%")
                          ->orderBy("role")
                          ->get() as $r) {
@@ -560,7 +560,7 @@ class RoleHelper
 
         if ($facility == "ZAE") {
             // Eloquent: VATUSA Training Staff (%3 [e.g. 3/13])
-            foreach (\App\Role::where('facility', 'ZHQ')
+            foreach (\App\Models\Role::where('facility', 'ZHQ')
                          ->where('role', 'LIKE', "%3")
                          ->orderBy("role")
                          ->get() as $v) {
@@ -649,7 +649,7 @@ class RoleHelper
     /**
      * Determine if a user can view a policy.
      *
-     * @param \App\Policy $policy
+     * @param \App\Models\Policy $policy
      *
      * @return bool
      */

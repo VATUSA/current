@@ -29,7 +29,7 @@
                         <select name="tFacility" id="tFacility" class="form-control">
                             <option value="ZHQ">VATUSA Headquarters</option>
                             <option value="ZAE">VATUSA Academy</option>
-                            @foreach(\App\Facility::where('active', '1')->orderBy('name')->get() as $f)
+                            @foreach(\App\Models\Facility::where('active', '1')->orderBy('name')->get() as $f)
                                 <option value="{{$f->id}}">{{$f->name}}</option>
                             @endforeach
                         </select>

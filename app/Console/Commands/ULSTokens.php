@@ -1,8 +1,8 @@
 <?php namespace App\Console\Commands;
 
 use App\Classes\ExamHelper;
-use App\Exam;
-use App\ExamReassignment;
+use App\Models\Exam;
+use App\Models\ExamReassignment;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;

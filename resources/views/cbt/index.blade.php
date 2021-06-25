@@ -7,7 +7,7 @@
                 <h3 class="panel-title">
 
                     <select id="fac" class="mgt-sel">
-                        @foreach(\App\Facility::where('active', 1)->orWhere('id','ZAE')->orderBy('name')->get() as $f)
+                        @foreach(\App\Models\Facility::where('active', 1)->orWhere('id','ZAE')->orderBy('name')->get() as $f)
                             <option name="{{$f->id}}" @if($f->id == $fac) selected="true" @endif>{{$f->id}}</option>
                         @endforeach
                     </select>&nbsp;-&nbsp;

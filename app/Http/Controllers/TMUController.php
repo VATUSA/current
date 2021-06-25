@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
-use App\tmu_facilities;
-use App\tmu_colors;
-use App\tmu_maps;
-use App\TMUNotice;
+use App\Models\tmu_facilities;
+use App\Models\tmu_colors;
+use App\Models\tmu_maps;
+use App\Models\TMUNotice;
 use GuzzleHttp\Client as API;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;

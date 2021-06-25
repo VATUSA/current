@@ -210,7 +210,7 @@
                                     Facility: <select id="detailfacilityselect">
                                         <option value="0">Select Facility</option>
                                         <option value="overview">Overview of Division</option>
-                                        @foreach(\App\Facility::where('active',1)->orderBy("name")->get() as $detfacility)
+                                        @foreach(\App\Models\Facility::where('active',1)->orderBy("name")->get() as $detfacility)
                                             <option value="{{$detfacility->id}}">{{$detfacility->name}}</option>
                                         @endforeach
                                     </select> <span id="detailprocessing"
@@ -263,7 +263,7 @@
                                 <div class="col-md-12">
                                     Facility: <select id="examfacilityselect">
                                         <option value="0">Select Facility</option>
-                                        @foreach(\App\Facility::where('active',1)->orWhere("id", "ZAE")->orderBy("name")->get() as $detfacility)
+                                        @foreach(\App\Models\Facility::where('active',1)->orWhere("id", "ZAE")->orderBy("name")->get() as $detfacility)
                                             <option value="{{$detfacility->id}}">{{$detfacility->name}}</option>
                                         @endforeach
                                     </select> Year: <select id="examYearSelect">

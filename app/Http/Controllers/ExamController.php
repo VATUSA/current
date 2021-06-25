@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\ExamResults;
-use App\ExamResultsData;
+use App\Models\ExamResults;
+use App\Models\ExamResultsData;
 use Illuminate\Http\Request;
 use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
 use App\Classes\ExamHelper;
 use App\Classes\Helper;
-use App\Actions;
-use App\Exam;
-use App\ExamQuestions;
-use App\ExamAssignment;
-use App\ExamReassignment;
-use App\Facility;
-use App\User;
+use App\Models\Actions;
+use App\Models\Exam;
+use App\Models\ExamQuestions;
+use App\Models\ExamAssignment;
+use App\Models\ExamReassignment;
+use App\Models\Facility;
+use App\Models\User;
 use Auth;
-use App\TrainingBlock;
+use App\Models\TrainingBlock;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;

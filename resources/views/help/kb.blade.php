@@ -9,7 +9,7 @@
             <div class="col-lg-12 text-right">Cannot find an answer? <a href="/help/ticket/new">Submit a support
                     ticket</a></div>
         </div>
-        @foreach(\App\KnowledgebaseCategories::get() as $cat)
+        @foreach(\App\Models\KnowledgebaseCategories::get() as $cat)
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">

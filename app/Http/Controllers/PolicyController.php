@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
-use App\Policy;
-use App\PolicyCategory;
+use App\Models\Policy;
+use App\Models\PolicyCategory;
 use Auth;
 use Composer\Util\AuthHelper;
 use Illuminate\Database\Eloquent\Model;
@@ -110,7 +110,7 @@ class PolicyController extends Controller
     /**
      * Show policy.
      *
-     * @param \App\Policy $policy
+     * @param \App\Models\Policy $policy
      *
      * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
@@ -143,7 +143,7 @@ class PolicyController extends Controller
      * Update the policy.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Policy              $policy
+     * @param \App\Models\Policy       $policy
      *
      * @return \Illuminate\Http\Response|string
      */
@@ -225,8 +225,8 @@ class PolicyController extends Controller
     /**
      * Update the policy category.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\PolicyCategory      $category
+     * @param \Illuminate\Http\Request   $request
+     * @param \App\Models\PolicyCategory $category
      *
      * @return \Illuminate\Http\Response
      */
@@ -250,7 +250,7 @@ class PolicyController extends Controller
     /**
      * Remove the policy.
      *
-     * @param \App\Policy $policy
+     * @param \App\Models\Policy $policy
      *
      * @return \Illuminate\Http\Response|string
      */
@@ -280,7 +280,7 @@ class PolicyController extends Controller
     /**
      * Remove the policy.
      *
-     * @param \App\PolicyCategory $category
+     * @param \App\Models\PolicyCategory $category
      *
      * @return \Illuminate\Foundation\Application
      * @throws \Exception

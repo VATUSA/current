@@ -1,27 +1,27 @@
 <?php namespace App\Http\Controllers;
 
-use App\Actions;
-use App\ChecklistData;
-use App\Checklists;
+use App\Models\Actions;
+use App\Models\ChecklistData;
+use App\Models\Checklists;
 use App\Classes\cPanelHelper;
 use App\Classes\Helper;
 use App\Classes\PromoHelper;
 use App\Classes\SMFHelper;
 use App\Classes\VATUSAMoodle;
-use App\OTSEval;
-use App\OTSEvalForm;
-use App\Promotions;
-use App\Role;
-use App\SoloCert;
-use App\TrainingRecord;
-use App\Transfers;
+use App\Models\OTSEval;
+use App\Models\OTSEvalForm;
+use App\Models\Promotions;
+use App\Models\Role;
+use App\Models\SoloCert;
+use App\Models\TrainingRecord;
+use App\Models\Transfers;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use App\User;
-use App\Facility;
+use App\Models\User;
+use App\Models\Facility;
 use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
 use App\Classes\CertHelper;
@@ -419,7 +419,7 @@ class MgtController extends Controller
             */
             $user = User::find($cid);
             if($user->facility == config('staff.hq.HQ')) {
-                $tr = new \App\Transfers();
+                $tr = new \App\Models\Transfers();
                 $tr->cid = $cid;
                 $tr->reason = "Auto Transfer to ZAE: removed from staff.";
                 $tr->to = "ZAE";
@@ -479,7 +479,7 @@ class MgtController extends Controller
         $log->save();
 
         if (config('staff.hq.moveToHQ')) {
-            $tr = new \App\Transfers();
+            $tr = new \App\Models\Transfers();
             $u = User::find($cid);
             
             $tr->cid = $cid;

@@ -1,7 +1,7 @@
 <?php namespace App\Console\Commands;
 
 use App\Classes\SMFHelper;
-use App\User;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class GroupCheck extends Command {

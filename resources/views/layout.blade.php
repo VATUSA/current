@@ -99,35 +99,35 @@
                             <li class="dropdown-header"><h5
                                     style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5>
                             </li>
-                            @foreach(\App\Facility::where(['active' => 1, 'region' => 4])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 4])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
                                     style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">South Central Region</h5>
                             </li>
-                            @foreach(\App\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
                                     style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Midwestern Region</h5>
                             </li>
-                            @foreach(\App\Facility::where(['active' => 1, 'region' => 6])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 6])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
                                     style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern Region</h5>
                             </li>
-                            @foreach(\App\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
                                     style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southeastern Region</h5>
                             </li>
-                            @foreach(\App\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                         </ul>
@@ -216,15 +216,15 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="/tmu/notices" target="_blank">N.T.O.S. - TMU Notices</a></li>
                                 <li class="divider"></li>
-                                @foreach(\App\tmu_facilities::where('parent',null)->orderBy('id', 'asc')->get() as $f)
-                                    @if(\App\tmu_facilities::where('parent', $f->id)->count() >= 1)
+                                @foreach(\App\Models\tmu_facilities::where('parent',null)->orderBy('id', 'asc')->get() as $f)
+                                    @if(\App\Models\tmu_facilities::where('parent', $f->id)->count() >= 1)
                                         <li class="dropdown-submenu">
                                             <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown"
                                                role="button" aria-expanded="false">{{$f->id}} - {{$f->name}}</a>
                                             <ul class="dropdown-menu">
                                                 <li><a href="/tmu/map/{{$f->id}}" target="_blank">{{$f->id}}
                                                         - {{$f->name}}</a></li>
-                                                @foreach(\App\tmu_facilities::where('parent', $f->id)->orderBy('id', 'asc')->get() as $sf)
+                                                @foreach(\App\Models\tmu_facilities::where('parent', $f->id)->orderBy('id', 'asc')->get() as $sf)
                                                     <li><a href="/tmu/map/{{$sf->id}}" target="_blank">{{$sf->id}}
                                                             - {{$sf->name}}</a></li>
                                                 @endforeach

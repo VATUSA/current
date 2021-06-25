@@ -22,7 +22,7 @@ class CreateReturnPathsTable extends Migration
         });
 
         /** Import Existing  */
-        $facilities = \App\Facility::where('active', true)->get();
+        $facilities = \App\Models\Facility::where('active', true)->get();
         foreach ($facilities as $facility) {
             if ($facility->uls_return) {
                 $facility->returnPaths()->create([

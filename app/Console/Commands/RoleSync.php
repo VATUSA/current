@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Facility;
-use App\Role;
+use App\Models\Facility;
+use App\Models\Role;
 
 class RoleSync extends Command
 {

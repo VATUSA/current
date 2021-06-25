@@ -33,7 +33,7 @@
                                 <option value="0">Any</option>
                                 <option value="ZHQ">Headquarters</option>
                                 <option value="ZAE">Academy</option>
-                                @foreach(\App\Facility::where('active', '1')->orderBy('name')->get() as $f)
+                                @foreach(\App\Models\Facility::where('active', '1')->orderBy('name')->get() as $f)
                                     <option value="{{$f->id}}">{{$f->name}}</option>
                                 @endforeach
                             </select>

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\TMUNotice;
+use App\Models\TMUNotice;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 

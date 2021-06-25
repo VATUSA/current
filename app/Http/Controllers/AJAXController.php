@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
-use App\TrainingRecord;
-use App\User;
+use App\Models\TrainingRecord;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 

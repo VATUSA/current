@@ -2,8 +2,8 @@
 
 use App\Classes\EmailHelper;
 use App\Classes\SMFHelper;
-use App\Facility;
-use App\User;
+use App\Models\Facility;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class TattlerStaffVisit extends Command

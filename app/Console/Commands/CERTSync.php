@@ -4,13 +4,13 @@ use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
-use App\Role;
+use App\Models\Role;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Console\Command;
-use App\User;
-use App\Facility;
-use App\Actions;
+use App\Models\User;
+use App\Models\Facility;
+use App\Models\Actions;
 use GuzzleHttp\Client as Guzzle;
 
 class CERTSync extends Command

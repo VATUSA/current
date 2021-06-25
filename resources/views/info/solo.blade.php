@@ -14,7 +14,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach(\App\SoloCert::where('expires','>=',\DB::raw('NOW()'))->get() as $cert)
+                    @foreach(\App\Models\SoloCert::where('expires','>=',\DB::raw('NOW()'))->get() as $cert)
                         <tr>
                             <td>{{$cert->cid}}</td>
                             <td>{{$cert->user()->first()->fullname()}}</td>

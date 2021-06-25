@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Classes\cPanelHelper;
 use App\Classes\Helper;
-use App\Facility;
+use App\Models\Facility;
 use Illuminate\Console\Command;
 
 class TransferEmails extends Command

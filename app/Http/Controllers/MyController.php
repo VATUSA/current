@@ -4,14 +4,14 @@ use App\Classes\EmailHelper;
 use App\Classes\ExamHelper;
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
-use App\Promotions;
+use App\Models\Promotions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Transfers;
+use App\Models\Transfers;
 use Auth;
-use App\Actions;
-use App\User;
-use App\Facility;
+use App\Models\Actions;
+use App\Models\User;
+use App\Models\Facility;
 use Laravel\Socialite\Facades\Socialite;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Wohali\OAuth2\Client\Provider\Discord;
@@ -165,7 +165,7 @@ class MyController
         $log->save();
 
         if (Auth::user()->flag_xferOverride) {
-            $u = \App\User::where('cid', Auth::user()->cid)->first();
+            $u = \App\Models\User::where('cid', Auth::user()->cid)->first();
             $u->flag_xferOverride = 0;
             $u->save();
             $log = new Actions;
