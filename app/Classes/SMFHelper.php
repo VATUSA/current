@@ -169,4 +169,24 @@ class SMFHelper
         ];
         createPost($msgOptions, $topicOptions, $posterOptions);*/
     }
+
+    /**
+     * @param $cid
+     *
+     * @return mixed
+     */
+    public static function isRegistered($cid)
+    {
+        return \DB::connection("forum")->table("smf_members")->where("member_name", $cid)->count();
+    }
+
+    public static function updateData($cid, $last, $first, $email)
+    {
+        \DB::connection("forum")->table("smf_members")
+            ->where("member_name", $cid)
+            ->update([
+                'real_name'     => "$first $last",
+                'email_address' => "$email"
+            ]);
+    }
 }

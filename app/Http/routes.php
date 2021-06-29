@@ -1,5 +1,51 @@
 <?php
 
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise\Utils;
+use Illuminate\Support\Facades\Storage;
+
+Route::get('test', function () {
+    $guzzle = new \GuzzleHttp\Client();
+    $roster = array();
+    $perPage = 100;
+    $url = "https://api.vatsim.net/api/divisions/USA/members?per_page=$perPage";
+    try {
+        $response = $guzzle->get($url, [
+            'headers' => [
+                'Authorization' => 'Token ' . config('services.vatsim.apiToken')
+            ]
+        ]);
+    } catch (RequestException $e) {
+        if ($e->hasResponse()) {
+            dd($e->getResponse());
+        }
+    }
+    $response = json_decode($response->getBody(), true);
+    $count = $response["count"];
+    $roster[] = $response["results"];
+
+    $pages = ceil($count / $perPage);
+    $promises = [];
+    for ($i = 2; $i <= 3; $i++) {
+        $promises[] = $guzzle->getAsync($url . "&page=$i", [
+            'headers' => [
+                'Authorization' => 'Token ' . config('services.vatsim.apiToken')
+            ]
+        ]);
+    }
+    try {
+        $responses = Utils::unwrap($promises);
+        foreach ($responses as $response) {
+            $roster[] = json_decode($response->getBody(), true)["results"];
+        }
+    } catch (ConnectException $e) {
+        dd($e->getMessage());
+    }
+
+    dd($roster);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -10,12 +56,13 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('readiness', function() {
+Route::get('readiness', function () {
     try {
         DB::connection()->getPdo();
     } catch (Exception $e) {
         return response('Not Ready', 500);
-}
+    }
+
     return 'Ready';
 });
 

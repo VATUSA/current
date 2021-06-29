@@ -229,6 +229,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
+        if($newfac == "ZZN") {
+            $this->flag_homecontroller = 0;
+        }
+
         $this->facility_join = \DB::raw("NOW()");
         $this->facility = $newfac;
         $this->save();
