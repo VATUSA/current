@@ -52,10 +52,27 @@ jobs:
           docker tag vatusa/www vatusa/www:dev
           docker push vatusa/www:dev
 
-      - name: Deploy to Kubernetes Cluster
+      - name: Deploy to Kubernetes Cluster - Update Deployment
         if: contains(github.ref, 'master')
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
           args: set image deployment/www *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
+      
+      - name: Deploy to Kubernetes Cluster - Update Cron Job
+        if: contains(github.ref, 'master')
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: set image cronjob/www-cron *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
+          
+          
+      - name: Deploy to Kubernetes Cluster - Update Queue Worker
+        if: contains(github.ref, 'master')
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: set image deployment/www-queue *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
