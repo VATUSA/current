@@ -325,22 +325,22 @@
             querystring = querystring + `&month=${$('#examMonthSelect').val()}`
           }
           $.ajax({
-            url     : 'https://api.vatusa.net/v2/stats/exams/' + $('#examfacilityselect').val() + querystring,
+            url     : $.apiUrl() + '/v2/stats/exams/' + $('#examfacilityselect').val() + querystring,
             method  : 'GET',
             dataType: 'JSON'
           }).done((data) => {
             $('#examcontainertable tbody').html('')
             waitingDialog.hide()
             $('#examcontainer').show()
-            for (let i in data) {
-              if (data.hasOwnProperty(i)) {
-                if (data[i].taken > 0) {
+            for (let i in data.data) {
+              if (data.data.hasOwnProperty(i)) {
+                if (data.data[i].taken > 0) {
                   $('#examcontainertable tbody').append(`
                   <tr>
-                  <td>${data[i].name}</td>
-                  <td>${data[i].taken}</td>
-                  <td>${data[i].passed} (${Math.floor((data[i].passed / data[i].taken) * 100)}%)</td>
-                  <td>${data[i].failed} (${Math.floor((data[i].failed / data[i].taken) * 100)}%)</td>
+                  <td>${data.data[i].name}</td>
+                  <td>${data.data[i].taken}</td>
+                  <td>${data.data[i].passed} (${Math.floor((data.data[i].passed / data.data[i].taken) * 100)}%)</td>
+                  <td>${data.data[i].failed} (${Math.floor((data.data[i].failed / data.data[i].taken) * 100)}%)</td>
                   </tr>
                 `)
                 }
