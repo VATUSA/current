@@ -18,6 +18,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      
+      - name: Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
       - name: Set up Node
         uses: actions/setup-node@v1
@@ -39,8 +43,8 @@ jobs:
       - name: Push to Docker Hub (Master)
         if: contains(github.ref, 'master')
         run: |
-          docker tag vatusa/www vatusa/www:latest
-          docker push vatusa/www:latest
+          docker tag vatusa/www vatusa/www:${{ steps.vars.outputs.sha_short }}
+          docker push vatusa/www:${{ steps.vars.outputs.sha_short }}
           
       - name: Push to Docker Hub (Dev)
         if: contains(github.ref, 'dev')
@@ -48,10 +52,27 @@ jobs:
           docker tag vatusa/www vatusa/www:dev
           docker push vatusa/www:dev
 
-      - name: Deploy to Kubernetes Cluster
+      - name: Deploy to Kubernetes Cluster - Update Deployment
         if: contains(github.ref, 'master')
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
-          args: rollout restart deployment/www -n web
+          args: set image deployment/www *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
+      
+      - name: Deploy to Kubernetes Cluster - Update Cron Job
+        if: contains(github.ref, 'master')
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: set image cronjob/www-cron *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
+          
+          
+      - name: Deploy to Kubernetes Cluster - Update Queue Worker
+        if: contains(github.ref, 'master')
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: set image deployment/www-queue *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
