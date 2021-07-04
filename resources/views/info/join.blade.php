@@ -36,8 +36,8 @@
                     </li>
                     <li>
                         After you join the VATUSA division, you must complete the <strong>"<u>Block 1</u> - Basic
-                            ATC/S1"</strong> Computer Based Training (CBT) course. This can be found at <a href="/cbt">https://www.vatusa.net/cbt</a></b>
-                        . <u>ALL</u> items under Block 1 must be checked complete before you will be permitted to start
+                            ATC/S1"</strong> and <strong>"<u>Block 2</u> - Delivery and Ground Control"</strong> Computer Based Training (CBT) courses, found at <a href="/cbt">https://www.vatusa.net/cbt</a></b>
+                        . <u>ALL</u> items must be checked complete before you will be permitted to start
                         the Basic ATC Exam.
                     </li>
                     <li> Pass the "Basic/S1 Exam." Click on the "Assign Basic ATC Exam" under "My VATUSA" to be assigned
