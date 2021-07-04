@@ -53,6 +53,7 @@ class CERTSync extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handle()
     {
@@ -122,6 +123,27 @@ class CERTSync extends Command
         $this->log[] = "User updates complete. Processing deletions.";
         foreach (User::where('cert_update', 0)->where('flag_homecontroller', 1)->get() as $out) {
             //Transferred out.
+            //Verify with user endpoint.
+            try {
+                $response = $this->guzzle->get("https://api.vatsim.net/api/ratings/$out->cid/", [
+                    'headers' => [
+                        'Authorization' => 'Token ' . config('services.vatsim.apiToken')
+                    ]
+                ]);
+                $div = json_decode($response->getBody(), true)['division'];
+                if ($div === "USA") {
+                    continue;
+                }
+            } catch (RequestException $e) {
+                if ($e->hasResponse()) {
+                    if ($e->getCode() !== 404) {
+                        $this->error($e->getResponse()->getBody());
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+            }
             $log['deletes'][] = $out->cid;
         }
 
@@ -130,7 +152,7 @@ class CERTSync extends Command
         $this->info("Total to be deleted: " . number_format($deleteCount));
         $this->info[] = "Total to be deleted: " . number_format($deleteCount);
 
-        if (1 == 0 && $deleteCount > 800) {
+        if ($deleteCount > 800) {
             $this->log[] = "More than 800 records are going to be deleted... possible error. Aborting.";
             $this->error("More than 800 records are going to be deleted... possible error. Aborting.");
 
@@ -260,7 +282,8 @@ class CERTSync extends Command
             ]);
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
-                $this->error($e->getResponse());
+                $this->error($e->getResponse()->getBody());
+                exit(1);
             }
         }
         $response = json_decode($response->getBody(), true);
@@ -283,7 +306,8 @@ class CERTSync extends Command
             $i = 2;
             foreach ($responses as $response) {
                 if ($response['state'] !== "fulfilled") {
-                    $this->line("$i Rejected");
+                    $this->error("$i Rejected");
+                    exit(0);
                 } else {
                     $rosterPage = json_decode($response['value']->getBody(), true)["results"];
                     $roster[] = $rosterPage;
@@ -293,6 +317,7 @@ class CERTSync extends Command
             }
         } catch (ConnectException $e) {
             $this->error($e->getMessage());
+            exit(1);
         }
 
         $this->info("Roster retrieved. Processed Pages: " . count($roster) . "/" . $pages);
