@@ -2,10 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Classes\Helper;
-use App\Role;
-use App\User;
-use App\Facility;
-use App\Transfers;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\Facility;
+use App\Models\Transfers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 

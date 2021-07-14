@@ -1,7 +1,7 @@
 <?php namespace App\Classes;
 
-use App\Actions;
-use App\User;
+use App\Models\Actions;
+use App\Models\User;
 use Auth;
 
 class CertHelper

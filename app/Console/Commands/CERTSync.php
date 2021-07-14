@@ -4,14 +4,21 @@ use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
-use App\Role;
+use App\Models\ExamResults;
+use App\Models\Role;
+use App\Models\Transfers;
 use Carbon\Carbon;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise\Utils;
 use Illuminate\Console\Command;
-use App\User;
-use App\Facility;
-use App\Actions;
+use App\Models\User;
+use App\Models\Facility;
+use App\Models\Actions;
 use GuzzleHttp\Client as Guzzle;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CERTSync extends Command
 {
@@ -23,28 +30,12 @@ class CERTSync extends Command
      */
     protected $signature = 'CERTSync {--A|all : Process all users, including non-members}';
 
-    private $ratings = [
-        "Inactive"          => -2,
-        "Suspended"         => -1,
-        "Unknown"           => 0,
-        "Pilot/Observer"    => 1,
-        "Student"           => 2,
-        "Student 2"         => 3,
-        "Senior Student"    => 4,
-        "Controller"        => 5,
-        "Senior Controller" => 7,
-        "Instructor"        => 8,
-        "Senior Instructor" => 10,
-        "Supervisor"        => 11,
-        "Administrator"     => 12
-    ];
-
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Sync our tables to CERT';
+    protected $description = 'Sync our tables to VATSIM';
 
     public $log;
 
@@ -62,94 +53,118 @@ class CERTSync extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handle()
     {
         $start = microtime(true);
-        \DB::table("controllers")->update(["cert_update" => 0]);
-        $log = ['deletes' => [], 'purges' => [], 'suspends' => []];
+        $log = ['deletes' => [], 'suspends' => []];
 
-        $users = $this->option("all") ? User::all() : User::where('facility', '!=', 'ZZN');
+        $roster = $this->fetchRoster(app()->environment("dev"));
 
-        $i = 0;
-        foreach ($users->get() as $user) {
-            $isHome = $user->flag_homecontroller && $user->facility !== "ZZN";
+        DB::table("controllers")->update(["cert_update" => 0]);
 
+        $this->info("Processing user updates...");
+        $this->log[] = "Processing user updates...";
+        $count = 0;
+        foreach ($roster as $page) {
+            foreach ($page as $apiUser) {
+                $cid = $apiUser['id'];
+                $rating = $apiUser['rating'];
+                $email = $apiUser['email'];
+                $fname = ucfirst($apiUser['name_first']);
+                $lname = ucwords($apiUser['name_last']);
+                $user = User::find($cid);
+
+                if ($user) {
+                    $updateName = true;
+                    if ($user->prefname) {
+                        if (Carbon::now()->subDays(14)->greaterThanOrEqualTo($user->prefname_date)) {
+                            //Expired
+                            $user->prefname = 0;
+                            $user->prefname_date = null;
+                        } else {
+                            $updateName = false;
+                        }
+                    }
+                    if ($updateName) {
+                        $user->fname = ucfirst(trim($fname));
+                        $user->lname = ucwords(trim($lname));
+                    }
+                    $oldRating = $user->rating;
+                    $user->rating = $rating;
+                    $user->email = $email;
+                    $user->save();
+
+                    if (SMFHelper::isRegistered($cid)) {
+                        SMFHelper::updateData($cid, $user->lname, $user->fname, $email);
+                        SMFHelper::setPermissions($cid);
+                    }
+
+                    if ($user->rating <= 0) {
+                        //Suspended or Inactive
+                        if ($user->rating != $oldRating && $user->flag_homecontroller) {
+                            $log['suspends'][] = $user->cid;
+                        }
+                    }
+
+                    $user->cert_update = 1;
+                    $user->save();
+                    $count++;
+                }
+            }
+        }
+
+
+        $this->info("Users updated: " . number_format($count));
+        $this->log[] = "Users updated: " . number_format($count);
+
+        $this->info("User updates complete. Processing deletions.");
+        $this->log[] = "User updates complete. Processing deletions.";
+        foreach (User::where('cert_update', 0)->where('flag_homecontroller', 1)->get() as $out) {
+            //Transferred out.
+            //Verify with user endpoint.
             try {
-                $i++;
-                $response = $this->guzzle->get("https://api.vatsim.net/api/ratings/{$user->cid}");
+                $response = $this->guzzle->get("https://api.vatsim.net/api/ratings/$out->cid/", [
+                    'headers' => [
+                        'Authorization' => 'Token ' . config('services.vatsim.apiToken')
+                    ]
+                ]);
+                $div = json_decode($response->getBody(), true)['division'];
+                if ($div === "USA") {
+                    continue;
+                }
             } catch (RequestException $e) {
                 if ($e->hasResponse()) {
-                    if ($e->getResponse()->getStatusCode() == 404) {
-                        if (!$isHome) {
-                            $this->log[] = "Purging Non-member {$user->fullname()} ({$user->cid}).";
-                            $this->line("Purging Non-member {$user->fullname()} ({$user->cid}).");
-                        } else {
-                            $this->log[] = "Purging home controller {$user->fullname()} ({$user->cid}) ({$user->facilityObj->id}).";
-                            $this->line("Purging Home controller {$user->fullname()} ({$user->cid}) ({$user->facilityObj->id}).");
-                        }
-                        $log['purges'][] = $user->cid;
+                    if ($e->getCode() !== 404) {
+                        $this->error($e->getResponse()->getBody());
                         continue;
                     }
-                }
-                $this->error(\GuzzleHttp\Psr7\str($e->getRequest()) . "\n" . \GuzzleHttp\Psr7\str($e->getResponse()));
-                $this->line("Error after $i");
-                continue;
-            }
-
-            $apiUser = json_decode($response->getBody(), true);
-
-            if ($apiUser['division'] !== "USA" && $isHome) {
-                //Transfer Out
-                $this->line("Deleting " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (" . Helper::ratingShortFromInt($user->rating) . ") from {$user->facilityObj->id}");
-                $log['deletes'][] = $user->cid;
-            }
-            if ($apiUser['rating'] < 0 && $apiUser['division'] === "USA") {
-                //Suspended or Inactive
-                $this->line("Deleting " . $user->fname . " " . $user->lname . " (" . $user->cid . ") (SUS/INAC) from {$user->facilityObj->id}");
-                $log['suspends'][] = $user->cid;
-            }
-            //Process Preferred Name
-            $updateName = true;
-            if ($user && $user->prefname) {
-                if (Carbon::now()->subDays(14)->greaterThanOrEqualTo($user->prefname_date)) {
-                    //Expired
-                    $user->prefname = 0;
-                    $user->prefname_date = null;
                 } else {
-                    $updateName = false;
+                    continue;
                 }
             }
-            if ($updateName) {
-                $user->fname = ucfirst($apiUser['name_first']);
-                $user->lname = ucwords($apiUser['name_last']);
-            }
-            $user->rating = $apiUser['rating'];
-            $user->cert_update = 1;
-            $user->save();
+            $log['deletes'][] = $out->cid;
         }
 
-        $count = 0;
-        foreach ($log as $type) {
-            $count += count($type);
-        }
+        $deleteCount = count($log['deletes']) + count($log['suspends']);
 
-        if ($count > 800) {
+        $this->info("Total to be deleted: " . number_format($deleteCount));
+        $this->info[] = "Total to be deleted: " . number_format($deleteCount);
+
+        if ($deleteCount > 800) {
             $this->log[] = "More than 800 records are going to be deleted... possible error. Aborting.";
             $this->error("More than 800 records are going to be deleted... possible error. Aborting.");
 
-            EmailHelper::sendEmail("vatusa12@vatusa.net", "CERTSync Error", "emails.logsend", ['log' => $this->log]);
+            EmailHelper::sendEmail("vatusa12@vatusa.net", "CERTSync Error", "emails.logsend",
+                ['log' => $this->log]);
             exit;
         }
-
-        $this->line("User collection complete. Processing deletions.");
 
         foreach ($log['deletes'] as $cid) {
             $delUser = User::find($cid);
             $facility = $delUser->facilityObj->id;
             $delUser->removeFromFacility("Automated", "Left division", "ZZN");
-            $delUser->flag_homecontroller = 0;
-            $delUser->save();
             $this->checkDeleted($delUser);
             $this->line("Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . Helper::ratingShortFromInt($delUser->rating) . ") from $facility");
             $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . Helper::ratingShortFromInt($delUser->rating) . ") from $facility";
@@ -158,8 +173,6 @@ class CERTSync extends Command
             $delUser = User::find($cid);
             $facility = $delUser->facilityObj->id;
             $delUser->removeFromFacility("Automated", "Suspended/Inactive", "ZZN");
-            $delUser->flag_homecontroller = 0;
-            $delUser->save();
             $this->checkDeleted($delUser);
 
             /*$log = new Actions();
@@ -167,23 +180,23 @@ class CERTSync extends Command
             $log->log = "User suspended or inactive, removing from division";
             $log->save();*/
 
-            $this->line("Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (Suspended/Inactive) from $facility");
-            $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (Suspended/Inactive) from $facility";
+            $this->line("Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . Helper::ratingLongFromInt($delUser->rating) . ") from $facility");
+            $this->log[] = "Deleted " . $delUser->fname . " " . $delUser->lname . " (" . $delUser->cid . ") (" . Helper::ratingLongFromInt($delUser->rating) . ") from $facility";
         }
-        foreach ($log['purges'] as $cid) {
-            $purgeUser = User::find($cid);
-            $facility = $purgeUser->facilityObj->id;
-            $this->line("Purged " . $purgeUser->fname . " " . $purgeUser->lname . " (" . $purgeUser->cid . ") (" . Helper::ratingShortFromInt($purgeUser->rating) . ") from $facility");
-            $this->log[] = "Purged " . $purgeUser->fname . " " . $purgeUser->lname . " (" . $purgeUser->cid . ") (" . Helper::ratingShortFromInt($purgeUser->rating) . ") from $facility";
-            $purgeUser->purge();
-        }
+        /* foreach ($log['purges'] as $cid) {
+             $purgeUser = User::find($cid);
+             $facility = $purgeUser->facilityObj->id;
+             $this->line("Purged " . $purgeUser->fname . " " . $purgeUser->lname . " (" . $purgeUser->cid . ") (" . Helper::ratingShortFromInt($purgeUser->rating) . ") from $facility");
+             $this->log[] = "Purged " . $purgeUser->fname . " " . $purgeUser->lname . " (" . $purgeUser->cid . ") (" . Helper::ratingShortFromInt($purgeUser->rating) . ") from $facility";
+             $purgeUser->purge();
+         }*/
 
         $this->log[] = "";
         $this->log[] = "Transferred Out: " . number_format(count($log['deletes']));
+        $this->info("Transferred Out: " . number_format(count($log['deletes'])));
         $this->log[] = "";
         $this->log[] = "Suspended/Inactive: " . number_format(count($log['suspends']));
-        $this->log[] = "";
-        $this->log[] = "Purged: " . number_format(count($log['purges']));
+        $this->info("Suspended/Inactive: " . number_format(count($log['suspends'])));
         $this->log[] = "";
         $this->log[] = "Home Controllers: " . number_format(User::where('facility',
                 'NOT LIKE', "ZZN")->count());
@@ -194,10 +207,14 @@ class CERTSync extends Command
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
 
         $this->info("Completed in " . (microtime(true) - $start) . " seconds.");
+
+        return 0;
     }
 
-    public function checkDeleted($user)
-    {
+    public
+    function checkDeleted(
+        $user
+    ) {
         $removals = "";
         if ($user->facility == "ZAE" || $user->facility == "ZZN") {
             return;
@@ -237,5 +254,85 @@ class CERTSync extends Command
                 "CERTSync: Staff deletion report for " . $user->fullname() . " (" . $user->cid . ")", $removals);
             $this->log[] = $removals;
         }*/
+    }
+
+    private function fetchRoster($testing = false): array
+    {
+        $this->info("Retrieving roster...");
+        $this->log[] = "Retrieving roster...";
+
+        $start = microtime(true);
+        $roster = array();
+        $perPage = 1000;
+        $url = "https://api.vatsim.net/api/divisions/USA/members/?page_size=$perPage";
+
+        if (Storage::exists('roster.json') && $testing) {
+            //Use cached roster. Testing only.
+            $this->line('Using cached roster.');
+            $this->log[] = 'Using cached roster.';
+
+            return json_decode(Storage::get('roster.json'), true);
+        }
+
+        try {
+            $response = $this->guzzle->get($url, [
+                'headers' => [
+                    'Authorization' => 'Token ' . config('services.vatsim.apiToken')
+                ]
+            ]);
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
+                $this->error($e->getResponse()->getBody());
+                exit(1);
+            }
+        }
+        $response = json_decode($response->getBody(), true);
+        $count = $response["count"];
+        $recursiveCount = 0;
+        $roster[] = $response["results"];
+        $recursiveCount += count($response["results"]);
+
+        $pages = ceil($count / $perPage);
+        $promises = [];
+        for ($i = 2; $i <= $pages; $i++) {
+            $promises[] = $this->guzzle->getAsync($url . "&page=$i", [
+                'headers' => [
+                    'Authorization' => 'Token ' . config('services.vatsim.apiToken')
+                ]
+            ]);
+        }
+        try {
+            $responses = Utils::settle($promises)->wait();
+            $i = 2;
+            foreach ($responses as $response) {
+                if ($response['state'] !== "fulfilled") {
+                    $this->error("$i Rejected");
+                    exit(0);
+                } else {
+                    $rosterPage = json_decode($response['value']->getBody(), true)["results"];
+                    $roster[] = $rosterPage;
+                    $recursiveCount += count($rosterPage);
+                }
+                $i++;
+            }
+        } catch (ConnectException $e) {
+            $this->error($e->getMessage());
+            exit(1);
+        }
+
+        $this->info("Roster retrieved. Processed Pages: " . count($roster) . "/" . $pages);
+        $this->log[] = "Roster retrieved. Processed Pages: " . count($roster) . "/" . $pages;
+
+        $this->info("Retrieved Members: $recursiveCount/$count");
+        $this->log[] = "Retrieved Members: $recursiveCount/$count";
+
+        $this->info("Time: " . (microtime(true) - $start) . "s");
+        $this->log[] = "Time: " . (microtime(true) - $start) . "s";
+
+        if ($testing) {
+            Storage::put('roster.json', json_encode($roster));
+        }
+
+        return $roster;
     }
 }

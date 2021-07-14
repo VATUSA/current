@@ -1,11 +1,11 @@
 <?php
 namespace App\Classes;
 
-use App\ExamAssignment;
-use App\ExamQuestions;
-use App\Exam;
-use App\Actions;
-use App\TrainingBlock;
+use App\Models\ExamAssignment;
+use App\Models\ExamQuestions;
+use App\Models\Exam;
+use App\Models\Actions;
+use App\Models\TrainingBlock;
 use DB;
 use DateTime;
 use Auth;
@@ -91,7 +91,7 @@ class ExamHelper
             $to[] = $exam->facility_id . "-TA@vatusa.net";
         }
 
-        if ($fac == "ZAE") { $fac = \App\User::find($cid)->facility; }
+        if ($fac == "ZAE") { $fac = \App\Models\User::find($cid)->facility; }
         EmailHelper::sendEmailFacilityTemplate($to, "Exam Assigned", $fac, "examassigned", $data);
 
         $log = new Actions();

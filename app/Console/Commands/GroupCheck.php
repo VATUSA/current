@@ -1,7 +1,7 @@
 <?php namespace App\Console\Commands;
 
 use App\Classes\SMFHelper;
-use App\User;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class GroupCheck extends Command {
@@ -42,5 +42,7 @@ class GroupCheck extends Command {
         foreach ($users as $user) {
             SMFHelper::setPermissions($user->cid);
         }
+
+        return 0;
     }
 }

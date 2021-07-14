@@ -21,7 +21,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach(\App\Role::where('role','ACE')->orderBy('cid')->get() as $ace)
+                    @foreach(\App\Models\Role::where('role','ACE')->orderBy('cid')->get() as $ace)
                     <tr>
                         <td>{{$ace->cid}}</td>
                         <td>{{$ace->user()->first()->fullname()}}</td>

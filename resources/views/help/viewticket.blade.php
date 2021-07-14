@@ -34,14 +34,14 @@
                                     @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
                                         <select id="tFacility" class="form-control">
                                             <option value="ZHQ">VATUSA HQ</option>
-                                            @foreach(\App\Facility::where('active', '1')->orWhere('id', 'ZAE')->orderBy('name')->get() as $f)
+                                            @foreach(\App\Models\Facility::where('active', '1')->orWhere('id', 'ZAE')->orderBy('name')->get() as $f)
                                                 <option
                                                     value="{{$f['id']}}"{{($f['id']==$ticket->facility)?" selected=\"true\"":""}}>{{$f['name']}}</option>
                                             @endforeach
                                         </select> <b>* After changing, does not save without changing "Assigned To"
                                             dropdown.</b>
                                     @else
-                                        <p class="form-control-static">{{\App\Facility::find($ticket->facility)->name}}</p>
+                                        <p class="form-control-static">{{\App\Models\Facility::find($ticket->facility)->name}}</p>
                                     @endif
                                 </div>
                             </div>

@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
-use App\tmu_facilities;
-use App\TMUNotice;
+use App\Models\tmu_facilities;
+use App\Models\TMUNotice;
 use Illuminate\Support\Carbon;
 
 class HomeController

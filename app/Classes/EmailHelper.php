@@ -2,7 +2,7 @@
 namespace App\Classes;
 
 use Mail;
-use App\EmailConfig;
+use App\Models\EmailConfig;
 
 class EmailHelper
 {
@@ -155,7 +155,7 @@ class EmailHelper
      * @return int
      */
     public static function isOptedIn($cid) {
-        $user = \App\User::find($cid);
+        $user = \App\Models\User::find($cid);
 
         return $user && $user->flag_broadcastOptedIn;
     }

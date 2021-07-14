@@ -6,7 +6,7 @@
             <h3 class="panel-title">
                 @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isAcademyStaff())
                 <select id="fac" class="mgt-sel">
-                    @foreach(\App\Facility::where('active', 1)->orWhere('id','ZAE')->orderBy('name')->get() as $f)
+                    @foreach(\App\Models\Facility::where('active', 1)->orWhere('id','ZAE')->orderBy('name')->get() as $f)
                         <option name="{{$f->id}}" @if($f->id == $fac) selected="true" @endif>{{$f->id}}</option>
                     @endforeach
                 </select>
@@ -30,7 +30,7 @@
                             <td colspan="5"><center><strong>{{$exam->name}}</strong></center></td>
                         </tr>
                     <?php $flag = 0; ?>
-                    @foreach(\App\ExamReassignment::where('exam_id', $exam->id)->get() as $reassign)
+                    @foreach(\App\Models\ExamReassignment::where('exam_id', $exam->id)->get() as $reassign)
                             <?php $flag = 1; ?>
                         <tr class="warning" id="re{{$reassign->id}}">
                             <td><a href="/mgt/controller/{{$reassign->cid}}" data-toggle="tooltip" data-placement="bottom" title="{{$reassign->cid}}">{{\App\Classes\Helper::nameFromCID($reassign->cid)}}</a></td>
@@ -39,7 +39,7 @@
                             <td>@if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $exam->facility_id) || $exam->instructor_id == \Auth::user()->cid) <i class="fas fa-trash-alt text-danger" onClick="deleteReassign({{$reassign->id}})"></i> @endif</td>
                         </tr>
                     @endforeach
-                    @foreach(\App\ExamAssignment::where('exam_id', $exam->id)->get() as $assign)
+                    @foreach(\App\Models\ExamAssignment::where('exam_id', $exam->id)->get() as $assign)
                             <?php $flag = 1; ?>
                         <tr id="as{{$assign->id}}">
                             <td><a href="/mgt/controller/{{$assign->cid}}" data-toggle="tooltip" data-placement="bottom" title="{{$assign->cid}}">{{\App\Classes\Helper::nameFromCID($assign->cid)}}</a></td>

@@ -1,6 +1,6 @@
 <?php
 
-use App\TrainingRecord;
+use App\Models\TrainingRecord;
 use Faker\Generator as Faker;
 
 $factory->define(TrainingRecord::class, function (Faker $faker) {

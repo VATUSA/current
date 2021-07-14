@@ -6,7 +6,7 @@
 
 namespace App\Classes;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use MoodleRest;
 use ReflectionClass;
@@ -63,18 +63,23 @@ class VATUSAMoodle extends MoodleRest
      * VATUSAMoodle constructor.
      *
      * @param bool $isSSO
+     *
+     * @throws \Exception
      */
     public function __construct(bool $isSSO = false)
     {
-        parent::__construct(config('services.moodle.url') . '/webservice/rest/server.php',
-            $isSSO ? config('services.moodle.token_sso') : config('services.moodle.token'));
+        if(in_array(app()->environment(), ["livedev", "staging", "prod"])) {
+            parent::__construct(config('services.moodle.url') . '/webservice/rest/server.php',
+                $isSSO ? config('services.moodle.token_sso') : config('services.moodle.token'));
 
-        $this->categories = $this->getCategories();
+            $this->categories = $this->getCategories();
+        }
     }
 
     /**
      * Get all Cohorts
      * @return mixed
+     * @throws \Exception
      */
     public function getCohorts()
     {
@@ -84,6 +89,7 @@ class VATUSAMoodle extends MoodleRest
     /**
      * Get members of all Cohorts.
      * @return array|mixed
+     * @throws \Exception
      */
     public function getCohortMembers(): array
     {
@@ -99,6 +105,7 @@ class VATUSAMoodle extends MoodleRest
     /**
      * Get an array of all categories.
      * @return mixed
+     * @throws \Exception
      */
     public function getCategories()
     {
@@ -111,6 +118,7 @@ class VATUSAMoodle extends MoodleRest
      * @param int $id Category ID
      *
      * @return mixed
+     * @throws \Exception
      */
     public function getCategory(int $id): array
     {
@@ -156,6 +164,7 @@ class VATUSAMoodle extends MoodleRest
      * @param bool     $full          Return full array
      *
      * @return array
+     * @throws \Exception
      */
     public function getAllSubcategories(
         ?int $parent,
@@ -185,6 +194,7 @@ class VATUSAMoodle extends MoodleRest
      * @param string $name
      *
      * @return mixed
+     * @throws \Exception
      */
     public function createCategory(string $id, string $name)
     {
@@ -204,6 +214,7 @@ class VATUSAMoodle extends MoodleRest
      * @param int $id
      *
      * @return mixed
+     * @throws \Exception
      */
     public function deleteCategory(int $id)
     {
@@ -223,6 +234,7 @@ class VATUSAMoodle extends MoodleRest
      * @param string $cid
      *
      * @return mixed
+     * @throws \Exception
      */
     public function getUser(string $cid)
     {
@@ -235,6 +247,7 @@ class VATUSAMoodle extends MoodleRest
      * @param int $cid
      *
      * @return bool|int
+     * @throws \Exception
      */
     public function getUserId(int $cid)
     {
@@ -250,9 +263,10 @@ class VATUSAMoodle extends MoodleRest
     /**
      * Create user.
      *
-     * @param \App\User $user
+     * @param \App\Models\User $user
      *
      * @return false|mixed
+     * @throws \Exception
      */
     public function createUser(User $user)
     {
@@ -281,10 +295,11 @@ class VATUSAMoodle extends MoodleRest
     /**
      * Update user.
      *
-     * @param \App\User $user
-     * @param int       $id
+     * @param \App\Models\User $user
+     * @param int              $id
      *
      * @return bool|null
+     * @throws \Exception
      */
     public function updateUser(User $user, int $id): ?bool
     {
@@ -313,6 +328,7 @@ class VATUSAMoodle extends MoodleRest
      * @param string $typeval Scope of Cohort - Identifier
      *
      * @return mixed
+     * @throws \Exception
      */
     public function createCohort(string $id, string $name, string $type = 'system', string $typeval = '')
     {
@@ -339,6 +355,7 @@ class VATUSAMoodle extends MoodleRest
      * @param string $cnumber Cohort IDNumber
      *
      * @return mixed
+     * @throws \Exception
      */
     public function assignCohort(int $uid, string $cnumber)
     {
@@ -365,6 +382,7 @@ class VATUSAMoodle extends MoodleRest
      * @param int $cid
      *
      * @return mixed
+     * @throws \Exception
      */
     public function removeCohort(int $uid, int $cid)
     {
@@ -391,6 +409,7 @@ class VATUSAMoodle extends MoodleRest
      * @param string   $context Context Type
      *
      * @return mixed
+     * @throws \Exception
      */
     public function assignRole(int $uid, ?int $cid, string $role, string $context)
     {
@@ -416,6 +435,7 @@ class VATUSAMoodle extends MoodleRest
      * @param string   $context Context Type
      *
      * @return mixed
+     * @throws \Exception
      */
     public function unassignRole(int $uid, ?int $cid, string $role, string $context)
     {
@@ -465,6 +485,7 @@ class VATUSAMoodle extends MoodleRest
      * @param int|null $catid
      *
      * @return mixed
+     * @throws \Exception
      */
     public function getCoursesInCategory(int $catid = null)
     {
@@ -510,6 +531,7 @@ class VATUSAMoodle extends MoodleRest
      * @param int|null $rid Role ID
      *
      * @return mixed
+     * @throws \Exception
      */
     public function enrolUser(int $uid, int $cid, ?int $rid = null)
     {

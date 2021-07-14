@@ -2,14 +2,14 @@
 namespace App\Http\Controllers;
 
 use App\Classes\EmailHelper;
-use App\Facility;
-use App\KnowledgebaseCategories;
-use App\KnowledgebaseQuestions;
-use App\Role;
-use App\Ticket;
-use App\TicketHistory;
-use App\TicketReplies;
-use App\User;
+use App\Models\Facility;
+use App\Models\KnowledgebaseCategories;
+use App\Models\KnowledgebaseQuestions;
+use App\Models\Role;
+use App\Models\Ticket;
+use App\Models\TicketHistory;
+use App\Models\TicketReplies;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Classes\RoleHelper;
 use Auth;

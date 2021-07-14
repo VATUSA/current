@@ -1,10 +1,10 @@
 <?php
 namespace App\Classes;
 
-use App\User;
+use App\Models\User;
 use App\Classes\CertHelper;
-use App\Promotions;
-use App\Actions;
+use App\Models\Promotions;
+use App\Models\Actions;
 
 class PromoHelper
 {
@@ -27,7 +27,7 @@ class PromoHelper
             $log = new Actions;
             $log->to = $cid;
             $log->from = $ins;
-            $log->log = "Rating Change: ".$user->urating->short." to ".\App\Classes\Helper::ratingShortFromInt($to)." issued by ".Helper::nameFromCID($ins);
+            $log->log = "Rating Change: ".$user->urating->short." to ". \App\Classes\Helper::ratingShortFromInt($to)." issued by ".Helper::nameFromCID($ins);
             $log->save();
 
             $user->rating = $to;

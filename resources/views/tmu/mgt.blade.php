@@ -23,7 +23,7 @@
                 <h3 class="panel-title">
                     @if(\App\Classes\RoleHelper::isVATUSAStaff())
                         <select id="fac" class="mgt-sel">
-                            @foreach(\App\Facility::where('active', 1)->orderBy('name')->get() as $f)
+                            @foreach(\App\Models\Facility::where('active', 1)->orderBy('name')->get() as $f)
                                 <option name="{{$f->id}}" @if($f->id == $fac) selected="true" @endif>{{$f->id}}</option>
                             @endforeach
                         </select>&nbsp;-&nbsp;
@@ -184,7 +184,7 @@
                                             <select class="form-control" name="facility" id="facility"
                                                     autocomplete="off">
                                                 <option value="">-- Select One --</option>
-                                                @foreach(\App\tmu_facilities::where('parent', $fac)->orWhere('id' , $fac)->orderBy('name')->get() as $tmufac)
+                                                @foreach(\App\Models\tmu_facilities::where('parent', $fac)->orWhere('id' , $fac)->orderBy('name')->get() as $tmufac)
                                                     <option
                                                         value="{{ $tmufac->id }}">{{ "[" . $tmufac->id . "] " . $tmufac->name }}</option>
                                                 @endforeach
@@ -315,7 +315,7 @@
                                                                     id="facility-edit"
                                                                     autocomplete="off">
                                                                 <option value="">-- Select One --</option>
-                                                                @foreach(\App\tmu_facilities::where('parent', $fac)->orWhere('id' , $fac)->orderBy('name')->get() as $tmufac)
+                                                                @foreach(\App\Models\tmu_facilities::where('parent', $fac)->orWhere('id' , $fac)->orderBy('name')->get() as $tmufac)
                                                                     <option
                                                                         value="{{ $tmufac->id }}">{{ "[" . $tmufac->id . "] " . $tmufac->name }}</option>
                                                                 @endforeach

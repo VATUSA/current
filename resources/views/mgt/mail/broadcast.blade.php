@@ -53,7 +53,7 @@
                                         <option value="ACE">All ACE Team Members</option>
                                     </optgroup>
                                     <optgroup label="Facilities">
-                                        @foreach(\App\Facility::where('active', 1)->orderby('name', 'ASC')->get() as $f)
+                                        @foreach(\App\Models\Facility::where('active', 1)->orderby('name', 'ASC')->get() as $f)
                                             <option value="{{$f->id}}">{{$f->name}}</option>
                                         @endforeach
                                     </optgroup>

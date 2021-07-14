@@ -2,8 +2,8 @@
 
 namespace App\Classes;
 
-use App\User;
-use App\Facility;
+use App\Models\User;
+use App\Models\Facility;
 
 class Helper
 {
@@ -66,29 +66,29 @@ class Helper
 
     public static function ratingIntFromShort($short)
     {
-        return \App\Rating::where('short', $short)->first()->id;
+        return \App\Models\Rating::where('short', $short)->first()->id;
     }
 
     public static function ratingShortFromInt($rating)
     {
-        return \App\Rating::find($rating)->short;
+        return \App\Models\Rating::find($rating)->short;
     }
 
     public static function ratingLongFromInt($rating)
     {
-        $rating = \App\Rating::find($rating);
+        $rating = \App\Models\Rating::find($rating);
 
         return $rating->long;
     }
 
     public static function ratingLngSht($rat)
     {
-        return \App\Rating::where('long', $rat)->first()->short;
+        return \App\Models\Rating::where('long', $rat)->first()->short;
     }
 
     public static function ratingShtLng($rat)
     {
-        return \App\Rating::where('short', $rat)->first()->long;
+        return \App\Models\Rating::where('short', $rat)->first()->long;
     }
 
     public static function facShtLng($fac)

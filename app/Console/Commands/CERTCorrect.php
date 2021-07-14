@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Actions;
+use App\Models\Actions;
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
-use App\Transfers;
-use App\User;
+use App\Models\Transfers;
+use App\Models\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\Exception\RequestException;
