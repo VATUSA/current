@@ -127,6 +127,8 @@ class MoodleSync extends Command
                 $this->moodle->assignRole($id, $this->moodle->getConstant($category), "MTR", "course");
             }
         }
+        
+        /* Enrolments to be done through Cohort Sync
 
         //Enrol User in Courses within Academy and ARTCC
         $vatusaCategories = $this->moodle->getAcademyCategoryIds();
@@ -140,6 +142,6 @@ class MoodleSync extends Command
                 $this->moodle->enrolUser($id, $course["id"]);
             }
         }
-
+        */
     }
 }
