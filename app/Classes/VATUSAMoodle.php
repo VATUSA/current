@@ -32,7 +32,8 @@ class VATUSAMoodle extends MoodleRest
         'INS' => 4,
         'STU' => 5,
         'MTR' => 9,
-        'CBT' => 10
+        'CBT' => 10,
+        'FACCBT' => 11
     ];
 
     /** @var int Category Contexts */

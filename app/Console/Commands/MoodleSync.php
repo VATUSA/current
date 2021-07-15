@@ -111,6 +111,10 @@ class MoodleSync extends Command
         if (RoleHelper::isVATUSAStaff() || RoleHelper::hasRole($user->cid, "ZAE", "CBT", true)) {
             $this->moodle->assignRole($id, VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "CBT", "coursecat");
         }
+        if (RoleHelper::isVATUSAStaff() || RoleHelper::hasRole($user->cid, $user->facility, "CBT", true)) {
+            $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "FACCBT",
+                "coursecat");
+        }
         if ($user->flag_homecontroller && (
                 $user->rating >= Helper::ratingIntFromShort("I1")
                 && $user->rating < Helper::ratingIntFromShort("SUP")
