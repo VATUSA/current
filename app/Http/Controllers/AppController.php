@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions;
+use App\Models\Actions;
 use App\Classes\Helper;
 use App\Classes\SMFHelper;
-use App\Role;
+use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\User;
-use App\Facility;
+use App\Models\User;
+use App\Models\Facility;
 use App\Classes\RoleHelper;
-use App\PushLog;
+use App\Models\PushLog;
 use Auth;
 /**
  *

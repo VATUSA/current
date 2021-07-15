@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Actions;
-use App\Transfers;
-use App\User;
+use App\Models\Actions;
+use App\Models\Transfers;
+use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;

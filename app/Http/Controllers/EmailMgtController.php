@@ -1,10 +1,10 @@
 <?php namespace App\Http\Controllers;
 
 use App\Classes\cPanelHelper;
-use App\Role;
+use App\Models\Role;
 use Illuminate\Http\Request;
-use App\User;
-use App\Facility;
+use App\Models\User;
+use App\Models\Facility;
 use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
 use Auth;

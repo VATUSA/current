@@ -9,13 +9,13 @@ use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Facility;
-use App\TrainingRecord;
-use App\OTSEval;
-use App\User;
-use App\Promotions;
-use App\Role;
-use App\OTSEvalForm;
+use App\Models\Facility;
+use App\Models\TrainingRecord;
+use App\Models\OTSEval;
+use App\Models\User;
+use App\Models\Promotions;
+use App\Models\Role;
+use App\Models\OTSEvalForm;
 
 class TrainingController extends Controller
 {

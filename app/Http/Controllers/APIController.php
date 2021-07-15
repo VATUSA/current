@@ -1,21 +1,21 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\ExamResults;
-use App\ExamResultsData;
-use App\SoloCert;
+use App\Models\ExamResults;
+use App\Models\ExamResultsData;
+use App\Models\SoloCert;
 use Illuminate\Http\Request;
 use App\Classes\EmailHelper;
 use App\Classes\RoleHelper;
 use App\Classes\Helper;
-use App\Actions;
-use App\Facility;
-use App\Transfers;
-use App\User;
-use App\TrainingBlock;
-use App\TrainingChapter;
-use App\TrainingProgress;
-use App\Exam;
+use App\Models\Actions;
+use App\Models\Facility;
+use App\Models\Transfers;
+use App\Models\User;
+use App\Models\TrainingBlock;
+use App\Models\TrainingChapter;
+use App\Models\TrainingProgress;
+use App\Models\Exam;
 
 class APIController
     extends Controller

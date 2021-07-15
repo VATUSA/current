@@ -1,14 +1,23 @@
 <?php
 
 return [
-	'driver' => 'smtp',
-	'host' => env('MAIL_HOST', 'mail.vatusa.net'),
-	'port' => env('MAIL_PORT', 587),
-	'from' => ['address' =>  'no-reply@vatusa.net', 'name' => 'VATUSA'],
-	'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-	'username' => env('SUPPORT_EMAIL_USERNAME', 'no-reply@vatusa.net'),
-	'password' => env("SUPPORT_EMAIL_PASSWORD"),
+    'default' => 'smtp',
+    'mailers' => [
+        'smtp' => [
+            'transport'  => 'smtp',
+            'host'       => env('MAIL_HOST', 'mail.vatusa.net'),
+            'port'       => env('MAIL_PORT', 587),
+            'from'       => ['address' => 'no-reply@vatusa.net', 'name' => 'VATUSA'],
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'username'   => env('SUPPORT_EMAIL_USERNAME', 'no-reply@vatusa.net'),
+            'password'   => env("SUPPORT_EMAIL_PASSWORD"),
+            'timeout'    => null,
+            'auth_mode'  => null
+        ],
 
-	'sendmail' => '/usr/sbin/sendmail -bs',
-	'pretend' => false,
+        'sendmail' => [
+            'transport' => 'sendmail',
+            'path'      => '/usr/sbin/sendmail -bs',
+        ]
+    ]
 ];

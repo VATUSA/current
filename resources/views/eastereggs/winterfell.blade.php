@@ -5,7 +5,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    <select id="facmgt" class="mgt-sel">@foreach(\App\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f) <option name="{{$f->id}}">{{$f->id}}</option> @endforeach</select> - Winterfell Facility Management
+                    <select id="facmgt" class="mgt-sel">@foreach(\App\Models\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f) <option name="{{$f->id}}">{{$f->id}}</option> @endforeach</select> - Winterfell Facility Management
                 </h3>
             </div>
             <div class="panel-body">

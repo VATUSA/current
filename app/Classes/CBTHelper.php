@@ -1,8 +1,8 @@
 <?php
 namespace App\Classes;
 
-use App\TrainingChapter;
-use App\TrainingProgress;
+use App\Models\TrainingChapter;
+use App\Models\TrainingProgress;
 use Auth;
 
 class CBTHelper

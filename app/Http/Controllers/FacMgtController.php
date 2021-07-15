@@ -4,12 +4,12 @@ use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\SMFHelper;
 use Auth;
-use App\Transfers;
+use App\Models\Transfers;
 use Illuminate\Http\Request;
-use App\User;
-use App\Facility;
+use App\Models\User;
+use App\Models\Facility;
 use App\Classes\RoleHelper;
-use App\Actions;
+use App\Models\Actions;
 
 class FacMgtController extends Controller
 {

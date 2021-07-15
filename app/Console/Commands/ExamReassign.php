@@ -1,11 +1,11 @@
 <?php namespace App\Console\Commands;
 
 use Carbon\Carbon;
-use App\Actions;
+use App\Models\Actions;
 use App\Classes\ExamHelper;
-use App\Exam;
-use App\ExamAssignment;
-use App\ExamReassignment;
+use App\Models\Exam;
+use App\Models\ExamAssignment;
+use App\Models\ExamReassignment;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -65,6 +65,8 @@ class ExamReassign extends Command
             }
         }
         \DB::raw("DELETE FROM `solo_certs` WHERE `expires` < NOW()");
+
+        return 0;
     }
 
     /**

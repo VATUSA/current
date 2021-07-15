@@ -18,7 +18,7 @@
                         <div class="col-sm-10">
                             <select class="form-control" name="facility">
                                 <option value="0">Select a Facility</option>
-                                @foreach(\App\Facility::where('active', 1)->orderby('name', 'ASC')->get() as $f)
+                                @foreach(\App\Models\Facility::where('active', 1)->orderby('name', 'ASC')->get() as $f)
                                     <option value="{{$f->id}}">{{$f->name}}</option>
                                 @endforeach
                             </select>

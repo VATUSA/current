@@ -35,9 +35,9 @@ return [
     ],
 
     'discord' => [
-        'client_id'     => env('DISCORD_CLIENT_ID', null),
-        'client_secret' => env('DISCORD_CLIENT_SECRET', null),
-        'redirect'      => env('DISCORD_REDIRECT', null),
+        'client_id'     => env('DISCORD_CLIENT_ID'),
+        'client_secret' => env('DISCORD_CLIENT_SECRET'),
+        'redirect'      => env('DISCORD_REDIRECT'),
         'botserver'     => env('DISCORD_BOT_SERVER', 'http://discord-bot:3000')
     ],
 
@@ -45,5 +45,9 @@ return [
         'url'   => env('MOODLE_URL', 'https://academy.vatusa.net'),
         'token' => env('MOODLE_TOKEN'),
         'token_sso' => env('MOODLE_TOKEN_SSO')
+    ],
+
+    'vatsim' => [
+        'apiToken' => env('VATSIM_API_TOKEN', '')
     ]
 ];

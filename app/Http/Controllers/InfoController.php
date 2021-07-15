@@ -1,10 +1,10 @@
 <?php namespace App\Http\Controllers;
 
-use App\Facility;
+use App\Models\Facility;
 use App\Classes\RoleHelper;
 use App\Classes\Helper;
-use App\Policy;
-use App\User;
+use App\Models\Policy;
+use App\Models\User;
 
 class InfoController
     extends Controller

@@ -10,7 +10,7 @@
             </div>
             <table class="table table-hover" id="kbc_table">
                 <tbody>
-                @foreach(\App\KnowledgebaseCategories::all() as $kbc)
+                @foreach(\App\Models\KnowledgebaseCategories::all() as $kbc)
                     <tr>
                         <td id="kb_{{$kbc->id}}"><i class="fas fa-trash-alt text-danger" onClick="deleteKBC({{$kbc->id}})"></i>&nbsp;&nbsp;
                             <i class="fas fa-pencil-alt text-info" onClick="renameKBC({{$kbc->id}})"></i>

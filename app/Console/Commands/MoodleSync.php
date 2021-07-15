@@ -5,9 +5,9 @@ namespace App\Console\Commands;
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
 use App\Classes\VATUSAMoodle;
-use App\Facility;
-use App\Role;
-use App\User;
+use App\Models\Facility;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class MoodleSync extends Command
@@ -75,7 +75,7 @@ class MoodleSync extends Command
     /**
      * Synchronize Roles
      *
-     * @param \App\User $user
+     * @param \App\Models\User $user
      */
     private function sync(User $user)
     {
@@ -131,6 +131,8 @@ class MoodleSync extends Command
                 $this->moodle->assignRole($id, $this->moodle->getConstant($category), "MTR", "course");
             }
         }
+        
+        /* Enrolments to be done through Cohort Sync
 
         //Enrol User in Courses within Academy and ARTCC
         $vatusaCategories = $this->moodle->getAcademyCategoryIds();
@@ -144,6 +146,6 @@ class MoodleSync extends Command
                 $this->moodle->enrolUser($id, $course["id"]);
             }
         }
-
+        */
     }
 }

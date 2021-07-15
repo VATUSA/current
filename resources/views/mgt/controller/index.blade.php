@@ -398,7 +398,7 @@
                                             </td>
                                         </tr>
                                         </thead>
-                                        @foreach (\App\Promotions::where('cid', $user->cid)->orderby('created_at', 'desc')->get() as $promo)
+                                        @foreach (\App\Models\Promotions::where('cid', $user->cid)->orderby('created_at', 'desc')->get() as $promo)
                                             <tr style="text-align: center">
                                                 <td style="width:30%">{!! $promo->created_at->format('m/d/Y') !!}
                                                     <br><em>{{ \App\Classes\Helper::nameFromCID($promo->grantor) }}</em>
@@ -427,7 +427,7 @@
                                             </td>
                                         </tr>
                                         </thead>
-                                        @foreach(\App\Transfers::where('cid', $user->cid)->orderby('id', 'desc')->get() as $t)
+                                        @foreach(\App\Models\Transfers::where('cid', $user->cid)->orderby('id', 'desc')->get() as $t)
                                             <tr style="text-align: center">
                                                 <td>{{substr($t->updated_at, 0,10)}}</td>
                                                 <td><strong>{{$t->from}}</strong></td>
@@ -463,7 +463,7 @@
                                 </div>
                                 <div class="panel-body">
                                     <table class="table table-striped">
-                                        @foreach(\App\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
+                                        @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
                                             <tr style="text-align: center">
                                                 <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
                                                 <td style="width: 70%; text-align: left"><a
@@ -484,7 +484,7 @@
                     <div class="tab-pane" role="tabpanel" id="cbt">
                         <h3>CBT Progress</h3>
                         <div class="panel-group" id="accordion">
-                            @foreach(\App\TrainingBlock::where('visible', 1)->orderBy('facility')->orderBy('order')->get() as $block)
+                            @foreach(\App\Models\TrainingBlock::where('visible', 1)->orderBy('facility')->orderBy('order')->get() as $block)
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">
@@ -567,7 +567,7 @@
                                     @endif
                                     <hr>
                                     <table class="table table-striped">
-                                        @foreach(\App\Actions::where('to', $user->cid)->orderby('id', 'desc')->get() as $a)
+                                        @foreach(\App\Models\Actions::where('to', $user->cid)->orderby('id', 'desc')->get() as $a)
                                             <tr id="log-{{ $a->id }}">
                                                 <td style="width:10%"><strong>{{substr($a->created_at, 0,10)}}</strong>
                                                 </td>
