@@ -123,6 +123,34 @@
           })
       })
 
+      $('#toggleAcademyEditorFacility').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on'),
+            spinner     = $(this).find('i.spinner-icon')
+
+        spinner.show()
+        $.ajax({
+          type: 'POST',
+          url : "{{ secure_url("/mgt/controller/ajax/toggleAcademyEditor") }}",
+          data: {cid: "{{ $user->cid }}", facOnly: true}
+        }).success(function (result) {
+          spinner.hide()
+          if (result === '1') {
+            //Success
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'info' : 'danger'))
+            panel.removeClass(currentlyOn ? 'panel-warning' : 'panel-default')
+            panel.addClass(currentlyOn ? 'panel-default' : 'panel-warning')
+          } else {
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle Academy editor setting.')
+          }
+        })
+          .error(function (result) {
+            spinner.hide()
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle prevention of staff assignment setting.')
+          })
+      })
+
       $('#toggleInsRole').click(function () {
         let icon        = $(this).find('i.toggle-icon'),
             currentlyOn = icon.hasClass('fa-toggle-on'),
@@ -669,6 +697,17 @@
                                     </div>
                                 @endif
                             @endif
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Academy Material Editor (Facility)</label>
+                                    <div class="col-sm-10">
+                                    <span id="toggleAcademyEditorFacility" style="font-size:1.8em;">
+                                        <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, $user->facility, "CBT") ? "on text-danger" : "off text-info"}} "></i>
+                                        <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                                    </span>
+                                        <p class="help-block">This will assign the Editor role to the user in Moodle,
+                                            and will allow him or her to edit the facility Moodle material.</p>
+                                    </div>
+                                </div>
                         </div>
                     @endif
                 </div>

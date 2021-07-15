@@ -222,18 +222,18 @@ class MgtController extends Controller
         if (!is_numeric($request->input('rating'))) {
             abort(500);
         }
-        
+
         $from = $user->rating;
         $rating = $request->input('rating');
-        
+
         if ($rating > Helper::ratingIntFromShort("I3")) {
             abort(400);
         }
-        
+
         if (env('APP_ENV', 'dev') == "prod") {
             $return = CertHelper::changeRating($cid, $request->input('rating'), true);
 
-            if($return) {
+            if ($return) {
                 $promo = new Promotions();
                 $promo->cid = $cid;
                 $promo->grantor = Auth::user()->cid;
@@ -243,21 +243,21 @@ class MgtController extends Controller
                 $promo->examiner = Auth::user()->cid;
                 $promo->position = "n/a";
                 $promo->save();
-                
+
                 if ($rating >= Helper::ratingIntFromShort("I1")) {
                     Role::where("cid", $cid)->where(function ($query) {
                         $query->where("role", "MTR")->orWhere("role", "INS");
                     })->delete();
-                 }
-                
+                }
+
                 echo "1";
-            }
-            else {
+            } else {
                 echo "0";
             }
         }
 
         echo "1";
+
         return;
     }
 
@@ -418,7 +418,7 @@ class MgtController extends Controller
             }
             */
             $user = User::find($cid);
-            if($user->facility == config('staff.hq.HQ')) {
+            if ($user->facility == config('staff.hq.HQ')) {
                 $tr = new \App\Models\Transfers();
                 $tr->cid = $cid;
                 $tr->reason = "Auto Transfer to ZAE: removed from staff.";
@@ -427,11 +427,11 @@ class MgtController extends Controller
                 $tr->status = 1;
                 $tr->actionby = 0;
                 $tr->save();
-                
+
                 $user->flag_xferOverride = 1;
                 $user->save();
             }
-            
+
             $r->delete();
             SMFHelper::setPermissions($cid);
         }
@@ -481,7 +481,7 @@ class MgtController extends Controller
         if (config('staff.hq.moveToHQ')) {
             $tr = new \App\Models\Transfers();
             $u = User::find($cid);
-            
+
             $tr->cid = $cid;
             $tr->reason = "Auto Transfer to " . config('staff.hq.HQ') . ": set as staff.";
             $tr->to = config('staff.hq.HQ');
@@ -495,9 +495,13 @@ class MgtController extends Controller
             $log->from = 0;
             $log->log = "Auto Transfer to " . $tr->to . ": set as staff.";
             $log->save();
-            
+
             EmailHelper::sendEmail(
-                ["{$u->facility}-atm@vatusa.net", "{$u->facility}-datm@vatusa.net", "vatusa{$u->facilityObj->region}@vatusa.net"],
+                [
+                    "{$u->facility}-atm@vatusa.net",
+                    "{$u->facility}-datm@vatusa.net",
+                    "vatusa{$u->facilityObj->region}@vatusa.net"
+                ],
                 "Removal from {$u->facilityObj->name}",
                 "emails.user.removed",
                 [
@@ -510,7 +514,7 @@ class MgtController extends Controller
                     'obsInactive' => 0
                 ]
             );
-            
+
             $u->addToFacility($tr->to);
         }
         SMFHelper::setPermissions($cid);
@@ -541,7 +545,8 @@ class MgtController extends Controller
         $le->log = $request->log;
         $le->save();
 
-        return redirect('/mgt/controller/' . $request->to . '#actions')->with('success', 'Your log entry has been added.');
+        return redirect('/mgt/controller/' . $request->to . '#actions')->with('success',
+            'Your log entry has been added.');
     }
 
     public
@@ -1835,18 +1840,25 @@ class MgtController extends Controller
     public function toggleAcademyEditor(Request $request)
     {
         $cid = $request->cid;
-        User::findOrFail($cid);
+        $user = User::findOrFail($cid);
+
+        $isFacility = $request->input('facOnly', false) == true;
+        $facility = $isFacility ? $user->facility : "ZAE";
         $moodle = new VATUSAMoodle();
 
-        if (!RoleHelper::isVATUSAStaff()) {
+        if ((!$isFacility && !RoleHelper::isVATUSAStaff()) || ($isFacility && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
+                    $facility))) {
             abort(403);
         }
 
-        if (RoleHelper::hasRole($cid, "ZAE", "CBT")) {
-            if (is_null($moodle->unassignRole($moodle->getUserId($cid), VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "CBT",
+        if (RoleHelper::hasRole($cid, $facility, $isFacility ? "FACCBT" : "CBT")) {
+            if (is_null($moodle->unassignRole($moodle->getUserId($cid),
+                $isFacility ? $this->moodle->getCategoryFromShort($user->facility,
+                    true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
                 "coursecat"))) {
                 try {
-                    Role::where('cid', $cid)->where('role', 'CBT')->delete();
+                    Role::where('cid', $cid)->where('role', $isFacility ? 'FACCBT' : 'CBT')->where('facility',
+                        $facility)->delete();
                 } catch (\Exception $e) {
                     return "0";
                 }
@@ -1856,12 +1868,14 @@ class MgtController extends Controller
 
             return "0";
         }
-        if (is_null($moodle->assignRole($moodle->getUserId($cid), VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "CBT",
+        if (is_null($moodle->assignRole($moodle->getUserId($cid),
+            $isFacility ? $this->moodle->getCategoryFromShort($user->facility,
+                true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
             "coursecat"))) {
             $role = new Role();
             $role->cid = $cid;
-            $role->facility = "ZAE";
-            $role->role = "CBT";
+            $role->facility = $facility;
+            $role->role = $isFacility ? "FACCBT" : "CBT";
             $role->saveOrFail();
 
             return "1";
