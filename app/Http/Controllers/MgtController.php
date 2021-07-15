@@ -1853,7 +1853,7 @@ class MgtController extends Controller
 
         if (RoleHelper::hasRole($cid, $facility, $isFacility ? "FACCBT" : "CBT")) {
             if (is_null($moodle->unassignRole($moodle->getUserId($cid),
-                $isFacility ? $this->moodle->getCategoryFromShort($user->facility,
+                $isFacility ? $moodle->getCategoryFromShort($user->facility,
                     true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
                 "coursecat"))) {
                 try {
@@ -1868,8 +1868,9 @@ class MgtController extends Controller
 
             return "0";
         }
+
         if (is_null($moodle->assignRole($moodle->getUserId($cid),
-            $isFacility ? $this->moodle->getCategoryFromShort($user->facility,
+            $isFacility ? $moodle->getCategoryFromShort($user->facility,
                 true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
             "coursecat"))) {
             $role = new Role();
