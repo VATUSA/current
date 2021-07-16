@@ -59,6 +59,7 @@ jobs:
       
       - name: Create kubeconfig
         run: |
+          mkdir ~/.kube
           cat << EOF > ~/.kube/config
           apiVersion: v1
           clusters:
