@@ -6,6 +6,8 @@ name: CI to Docker Hub
 on:
   push:
     branches: [master, dev]
+env:
+  KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -51,28 +53,24 @@ jobs:
         run: |
           docker tag vatusa/www vatusa/www:dev
           docker push vatusa/www:dev
+          
+      - name: Install kubectl
+      - uses: azure/setup-kubectl@v1
+        with:
+          version: 'v1.21.2'
 
       - name: Deploy to Kubernetes Cluster - Update Deployment
         if: contains(github.ref, 'master')
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: set image deployment/www *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
-      
+        run: |
+          kubectl set image deployment/www *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
+          
       - name: Deploy to Kubernetes Cluster - Update Cron Job
         if: contains(github.ref, 'master')
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: set image cronjob/www-cron *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
+        run: |
+          kubectl set image cronjob/www-cron *=vatusa/www-cron:${{ steps.vars.outputs.sha_short }} -n web
           
           
       - name: Deploy to Kubernetes Cluster - Update Queue Worker
-        if: contains(github.ref, 'master')
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: set image deployment/www-queue *=vatusa/www:${{ steps.vars.outputs.sha_short }} -n web
+        if: contains(github.ref, 'master')     
+        run: |
+          kubectl set image deployment/www-queue *=vatusa/www-queue:${{ steps.vars.outputs.sha_short }} -n web
