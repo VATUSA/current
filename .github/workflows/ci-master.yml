@@ -58,6 +58,30 @@ jobs:
         uses: azure/setup-kubectl@v1
         with:
           version: 'v1.21.2'
+      
+      - name: Create kubeconfig
+        run: |
+          cat << EOF > kube-config
+          apiVersion: v1
+          clusters:
+          - cluster:
+              certificate-authority-data: ${{ secrets.KUBECONFIG_CLUSTER_CERT_AUTH_DATA }}
+              server: ${{ secrets.KUBECONFIG_CLUSTER_SERVER }}
+            name: ${{ secrets.KUBECONFIG_CLUSTER_NAME }}
+          contexts:
+          - context:
+              cluster: ${{ secrets.KUBECONFIG_CLUSTER_NAME }}
+              user: ${{ secrets.KUBECONFIG_CLUSTER_NAME }}-admin
+            name: ${{ secrets.KUBECONFIG_CLUSTER_NAME }}
+          current-context: ${{ secrets.KUBECONFIG_CLUSTER_NAME }}
+          kind: Config
+          preferences: {}
+          users:
+          - name: ${{ secrets.KUBECONFIG_CLUSTER_NAME }}-admin
+            user:
+              token: ${{ secrets.KUBECONFIG_CLUSTER_TOKEN }}
+          EOF
+          export KUBECONFIG=$(pwd)/kube-config
 
       - name: Deploy to Kubernetes Cluster - Update Deployment
         if: contains(github.ref, 'master')
