@@ -61,7 +61,7 @@ jobs:
       
       - name: Create kubeconfig
         run: |
-          cat << EOF > kube-config
+          cat << EOF > ~/.kube/config
           apiVersion: v1
           clusters:
           - cluster:
@@ -81,7 +81,6 @@ jobs:
             user:
               token: ${{ secrets.KUBECONFIG_CLUSTER_TOKEN }}
           EOF
-          export KUBECONFIG=$(pwd)/kube-config
 
       - name: Deploy to Kubernetes Cluster - Update Deployment
         if: contains(github.ref, 'master')
@@ -92,8 +91,7 @@ jobs:
         if: contains(github.ref, 'master')
         run: |
           kubectl set image cronjob/www-cron *=vatusa/www-cron:${{ steps.vars.outputs.sha_short }} -n web
-          
-          
+      
       - name: Deploy to Kubernetes Cluster - Update Queue Worker
         if: contains(github.ref, 'master')     
         run: |
