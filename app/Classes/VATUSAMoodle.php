@@ -13,19 +13,6 @@ use ReflectionClass;
 
 class VATUSAMoodle extends MoodleRest
 {
-
-    /**
-     * List of Cohorts
-     * @var array|mixed
-     */
-    protected $cohorts = [];
-
-    /**
-     * List of all Categories
-     * @var array|mixed
-     */
-    protected $categories = [];
-
     /** @var int[] Role Mappings */
     protected $roleIds = [
         'TA'  => 1,
@@ -72,8 +59,6 @@ class VATUSAMoodle extends MoodleRest
         if(in_array(app()->environment(), ["livedev", "staging", "prod"])) {
             parent::__construct(config('services.moodle.url') . '/webservice/rest/server.php',
                 $isSSO ? config('services.moodle.token_sso') : config('services.moodle.token'));
-
-            $this->categories = $this->getCategories();
         }
     }
 
@@ -135,6 +120,7 @@ class VATUSAMoodle extends MoodleRest
      * @param bool        $full    Return full array
      *
      * @return mixed|null
+     * @throws \Exception
      */
     public function getCategoryFromShort(?string $short, bool $context = false, bool $full = false)
     {
@@ -142,7 +128,7 @@ class VATUSAMoodle extends MoodleRest
             return null;
         }
 
-        foreach ($this->categories as $category) {
+        foreach ($this->getCategories() as $category) {
             if ($category["idnumber"] === $short) {
                 if ($full) {
                     return $context ? array_merge($category,
