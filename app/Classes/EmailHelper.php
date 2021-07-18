@@ -51,7 +51,7 @@ class EmailHelper
             $sent = [];
             foreach($email as $e) {
                 if (in_array($e, $sent)) continue;
-                Mail::send($template, $data, function($msg) use ($data, $e, $subject, $ticket) {
+                Mail::queue($template, $data, function($msg) use ($data, $e, $subject, $ticket) {
                     $msg->from('support@vatusa.net', 'VATUSA Help Desk');
                     $msg->bcc($e);
                     $msg->subject("[VATUSA Help Desk] (Ticket #$ticket) $subject");
@@ -59,7 +59,7 @@ class EmailHelper
                 $sent[] = $e;
             }
         } else {
-            Mail::send($template, $data, function($msg) use ($data, $email, $subject, $ticket) {
+            Mail::queue($template, $data, function($msg) use ($data, $email, $subject, $ticket) {
                 $msg->from('support@vatusa.net', 'VATUSA Help Desk');
                 $msg->bcc($email);
                 $msg->subject("[VATUSA Help Desk] (Ticket #$ticket) $subject");
@@ -78,7 +78,7 @@ class EmailHelper
      */
     public static function sendEmail($email, $subject, $template, $data)
     {
-        Mail::send($template, $data, function ($msg) use ($data, $email, $subject) {
+        Mail::queue($template, $data, function ($msg) use ($data, $email, $subject) {
             $msg->from('no-reply@vatusa.net', "VATUSA Web Services");
             $msg->to($email);
             $msg->subject("[VATUSA] $subject");
@@ -106,7 +106,7 @@ class EmailHelper
     public static function sendEmailBCC($fromEmail, $fromName, $emails, $subject, $template, $data)
     {
         foreach($emails as $email) {
-            Mail::send($template, $data, function ($msg) use ($data, $fromEmail, $email, $fromName, $subject) {
+            Mail::queue($template, $data, function ($msg) use ($data, $fromEmail, $email, $fromName, $subject) {
                 $msg->from("no-reply@vatusa.net", "VATUSA Web Services");
                 $msg->to($fromEmail, $fromName);
                 $msg->subject("[VATUSA] $subject");
@@ -125,7 +125,7 @@ class EmailHelper
      */
     public static function sendEmailFrom($email, $from_email, $from_name, $subject, $template, $data)
     {
-        Mail::send($template, $data, function ($msg) use ($data, $from_email, $from_name, $email, $subject) {
+        Mail::queue($template, $data, function ($msg) use ($data, $from_email, $from_name, $email, $subject) {
             $msg->from("no-reply@vatusa.net", "$from_name");
             $msg->replyTo($from_email, $from_name);
             $msg->to($email);
