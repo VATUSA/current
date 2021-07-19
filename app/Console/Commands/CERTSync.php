@@ -28,7 +28,7 @@ class CERTSync extends Command
      *
      * @var $signature
      */
-    protected $signature = 'CERTSync {--A|all : Process all users, including non-members}';
+    protected $signature = 'CERTSync';
 
     /**
      * The console command description.
