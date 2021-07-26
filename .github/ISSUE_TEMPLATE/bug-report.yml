@@ -46,11 +46,10 @@ body:
         - Safari
         - Microsoft Edge
   - type: textarea
-    id: reproduce
+    id: screenshots
     attributes:
       label: Screenshots
       description: Link to screenshots, if applicable.
       placeholder: Screenshot links...
-      value: ""
     validations:
       required: false
