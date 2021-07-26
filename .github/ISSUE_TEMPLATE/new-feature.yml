@@ -1,0 +1,35 @@
+name: New Feature
+description: Submit a new feature request for the VATUSA frontend.
+title: "[FEAT] "
+labels: [enchancement]
+assignees:
+  - bnahin
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request! Do not include a bug report or repeat a request.
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Is your feature request related to a problem? If so, please describe.
+      description: Please include a clear and concise description of what the problem is.
+      placeholder: I'm always frustrated when ...
+    validations:
+      required: false
+  - type: textarea
+    id: request
+    attributes:
+      label: What is your new feature idea or request?
+      description: A description of the new feature.
+      placeholder: A detailed description...
+    validations:
+      required: true
