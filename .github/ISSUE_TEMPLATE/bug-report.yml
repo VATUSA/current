@@ -23,7 +23,6 @@ body:
       label: What happened?
       description: Please include a clear and concise description of what the bug is.
       placeholder: A description of what happened...
-      value: "A bug happened!"
     validations:
       required: true
   - type: textarea
@@ -32,7 +31,6 @@ body:
       label: How can it be reproduced?
       description: Steps to reproduce the bug.
       placeholder: How to reproduce...
-      value: "Go to ... then click on..."
     validations:
       required: true
   - type: dropdown
