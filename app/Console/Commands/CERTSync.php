@@ -47,6 +47,8 @@ class CERTSync extends Command
 
         $this->guzzle = new Guzzle();
         $this->log = array();
+        
+        ini_set('memory_limit', '1024M');
     }
 
     /**
