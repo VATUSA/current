@@ -231,7 +231,7 @@ $(function () {
             break
         }
         $('#training-location').html(location)
-        $('#training-instructor').html(result.instructor.fname + ' ' + result.instructor.lname)
+        $('#training-instructor').html(result.instructor.length ? result.instructor.fname + ' ' + result.instructor.lname : '<em>Account Erased</em>')
         $('#training-notes').html(result.notes)
 
         $('#training-ots-exam').hide()
