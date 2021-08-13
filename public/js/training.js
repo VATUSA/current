@@ -309,7 +309,7 @@ $(function () {
       $('#e-training-duration-mins').val(mins)
       $('#e-training-movements').val(result.movements)
       $('#e-training-location').val(result.location)
-      $('#e-training-instructor').html(result.instructor.fname + ' ' + result.instructor.lname)
+      $('#e-training-instructor').html(Object.getOwnPropertyNames(result.instructor).length ? result.instructor.fname + ' ' + result.instructor.lname : '<em>Account Erased</em>')
       $('#e-ots-status-' + result.ots_status).parent().button('toggle')
 
       $('#e-training-datetime').datetimepicker({
