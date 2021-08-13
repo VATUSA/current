@@ -66,7 +66,12 @@ class MgtController extends Controller
 
             /** Training Records */
             $trainingfac = $request->input('fac', null);
-            $trainingfaclist = $user->trainingRecords()->groupBy('facility_id')->get();
+            $trainingfaclist = $user->trainingRecords()->groupBy('facility_id')->get()->filter(function ($record) use (
+                $user
+            ) {
+                return Auth::user()->facility === $record->facility_id || Auth::user()->facility === $user->facility || $user->visits()->where('facility',
+                        Auth::user()->facility)->exists();
+            });
 
             if (!$trainingfac) {
                 if ($trainingfaclist->count() == 1) {
@@ -83,7 +88,7 @@ class MgtController extends Controller
                     abort(500);
                 }
             }
-            $trainingRecords = $user->facility == Auth::user()->facility || $user->visits()->where('facility',
+            $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility || $user->visits()->where('facility',
                 Auth::user()->facility)->exists() || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
                 $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,

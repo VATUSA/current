@@ -216,9 +216,9 @@
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Exams</a></li>
                     @endif
-                    @php $canViewTraining = $user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists() || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
+                    @php $canViewTraining = $user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists() || $user->trainingRecords()->where('facility_id', Auth::user()->facility)->exists() || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
                     <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
-                        title="Not a home or visiting controller at your ARTCC" @endif><a href="#training"
+                        title="Not a home or visiting controller at your ARTCC or does not have any records from your ARTCC." @endif><a href="#training"
                                                                                           @if($canViewTraining) data-controls="training"
                                                                                           role="tab"
                                                                                           data-toggle="tab" @endif>Training</a>

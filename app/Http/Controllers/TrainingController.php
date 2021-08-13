@@ -45,13 +45,14 @@ class TrainingController extends Controller
         if (!$student) {
             abort(404);
         }
-        if (!RoleHelper::isInstructor(Auth::user()->cid, $student->facility)) {
-            abort(403);
-        }
         $form = $form ? OTSEvalForm::has('perfcats')
             ->has('perfcats.indicators')->withAll()->find($form)
             : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
                 ->withAll()->where('rating_id', $student->rating + 1)->first();
+        if (!RoleHelper::isInstructor(Auth::user()->cid,
+                $student->facility) && !RoleHelper::isInstructor(Auth::user()->cid, $form->facility)) {
+            abort(403);
+        }
         if (!$student || !$form) {
             abort(404, "The OTS evaluation form is invalid.");
         }
@@ -74,7 +75,9 @@ class TrainingController extends Controller
         }
         $student = $eval->student;
         if (!RoleHelper::isInstructor(Auth::user()->cid,
-                $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $student->facility)) {
+                $student->facility) && !RoleHelper::isInstructor(Auth::user()->cid,
+                $eval->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
+                $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $eval->facility)) {
             abort(403);
         }
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
@@ -278,8 +281,8 @@ class TrainingController extends Controller
             } else {
                 $datasets[0]['label'] = "Total";
                 $datasets[0]['data'][] = floor($hoursPerMonth->filter(function ($q) {
-                    return !is_null(User::find($q->instructor_id));
-                })->pluck('sum')->sum() / 3600);
+                        return !is_null(User::find($q->instructor_id));
+                    })->pluck('sum')->sum() / 3600);
             }
         }
         foreach ($datasets as $k => $v) {

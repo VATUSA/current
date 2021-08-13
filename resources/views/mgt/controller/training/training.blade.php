@@ -55,7 +55,7 @@
                 <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
                 @php $postypes = ['OTS', 'DEL', 'GND', 'TWR', 'APP', 'CTR']; @endphp
                 <div role="tabpanel" class="tab-pane active" id="all">
-                    @if($trainingRecords->count() && $trainingfaclist->count())
+                    @if(!is_array($trainingRecords) && $trainingRecords->count() && $trainingfaclist->count())
                         <table class="training-records-list table table-striped" id="training-records-all">
                             <thead>
                             <tr>
@@ -149,7 +149,7 @@
                 @foreach($postypes as $postype)
                     <div role="tabpanel" class="tab-pane"
                          id="{{strtolower($postype)}}">
-                        @if($trainingRecords->count() && $trainingfaclist->count())
+                        @if(!is_array($trainingRecords) && $trainingRecords->count() && $trainingfaclist->count())
                             @php $records = $trainingRecords->filter(function($record) use ($postype) {
                                                                     return $postype == "OTS" ? in_array($record->ots_status, [1,2]) : preg_match("/$postype\$/", $record->position);
                                                                     })
