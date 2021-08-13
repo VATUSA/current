@@ -231,7 +231,7 @@ $(function () {
             break
         }
         $('#training-location').html(location)
-        $('#training-instructor').html(result.instructor.length ? result.instructor.fname + ' ' + result.instructor.lname : '<em>Account Erased</em>')
+        $('#training-instructor').html(Object.getOwnPropertyNames(result.instructor).length ? result.instructor.fname + ' ' + result.instructor.lname : '<em>Account Erased</em>')
         $('#training-notes').html(result.notes)
 
         $('#training-ots-exam').hide()
