@@ -133,9 +133,45 @@ class MgtController extends Controller
                 asort($ins[$type]);
             }
 
+            $moodle = new VATUSAMoodle();
+            try {
+                $uid = $moodle->getUserId($cid);
+            } catch (\Exception $e) {
+                $uid = -1;
+            }
+            $basicAssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
+                config('exams.BASIC.enrolId'));
+            $s2AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
+                config('exams.S2.enrolId'));
+            $s3AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
+                config('exams.S3.enrolId'));
+            $c1AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
+                config('exams.C1.enrolId'));
+
+            $examAttempts = [
+                'Basic ATC/S1 Exam'                   => array_merge([
+                    'examInfo'   => config('exams.BASIC'),
+                    'assignDate' => $basicAssignmentDate ? Carbon::createFromTimestampUTC($basicAssignmentDate)->format('Y-m-d H:i') : false
+                ], ['attempts' => $moodle->getQuizAttempts(config('exams.BASIC.id'), null, $uid)]),
+                'S2 Rating (TWR) Controller Exam'     => array_merge([
+                    'examInfo'   => config('exams.S2'),
+                    'assignDate' => $s2AssignmentDate ? Carbon::createFromTimestampUTC($s2AssignmentDate)->format('Y-m-d H:i') : false
+                ], ['attempts' => $moodle->getQuizAttempts(config('exams.S2.id'), null, $uid)]),
+                'S3 Rating (DEP/APP) Controller Exam' => array_merge([
+                    'examInfo'   => config('exams.S3'),
+                    'assignDate' => $s3AssignmentDate ? Carbon::createFromTimestampUTC($s3AssignmentDate)->format('Y-m-d H:i') : false
+                ],
+                    ['attempts' => $moodle->getQuizAttempts(config('exams.S3.id'), null, $uid)]),
+                'C1 Rating (CTR) Controller Exam'     => array_merge([
+                    'examInfo'   => config('exams.C1'),
+                    'assignDate' => $c1AssignmentDate ? Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : false
+                ],
+                    ['attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)]),
+            ];
+
             return view('mgt.controller.index',
                 compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingfaclist', 'trainingfac',
-                    'trainingfacname', 'ins', 'canAddTR'));
+                    'trainingfacname', 'ins', 'canAddTR', 'examAttempts'));
         } else {
             return view('mgt.controller.404');
         }

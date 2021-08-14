@@ -189,8 +189,8 @@
 @section('content')
     <div class="container">
         <div
-                class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
-                id="user-info-panel">
+            class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
+            id="user-info-panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <div class="row">
@@ -200,7 +200,7 @@
                             <div class="col-md-4 text-right form-group">
                                 <input type="text" id="cidsearch" class="form-control" placeholder="CID or Last Name">
                                 <button type="button" class="btn btn-primary" id="cidsearchbtn"><i
-                                            class="fa fa-search"></i></button>
+                                        class="fa fa-search"></i></button>
                             </div>
                         </form>
                     </div>
@@ -218,10 +218,11 @@
                     @endif
                     @php $canViewTraining = $user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists() || $user->trainingRecords()->where('facility_id', Auth::user()->facility)->exists() || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
                     <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
-                        title="Not a home or visiting controller at your ARTCC or does not have any records from your ARTCC." @endif><a href="#training"
-                                                                                          @if($canViewTraining) data-controls="training"
-                                                                                          role="tab"
-                                                                                          data-toggle="tab" @endif>Training</a>
+                        title="Not a home or visiting controller at your ARTCC or does not have any records from your ARTCC." @endif>
+                        <a href="#training"
+                           @if($canViewTraining) data-controls="training"
+                           role="tab"
+                           data-toggle="tab" @endif>Training</a>
                     </li>
                     <li role="presentation"><a href="#cbt" data-controls="cbt" role="tab"
                                                data-toggle="tab">CBT Progress</a></li>
@@ -245,12 +246,12 @@
                                         @if(\App\Classes\RoleHelper::isVATUSAStaff() ||
                                             \App\Classes\RoleHelper::isFacilitySeniorStaff())
                                             <li>{{$user->email}} &nbsp; <a href="mailto:{{$user->email}}"><i
-                                                            class="fa fa-envelope text-primary"
-                                                            style="font-size:80%"></i></a>
+                                                        class="fa fa-envelope text-primary"
+                                                        style="font-size:80%"></i></a>
                                             </li>
                                         @else
                                             <li>[Email Private] <a href="/mgt/mail/{{$user->cid}}"><i
-                                                            class="fa fa-envelope text-primary"></i></a></li>
+                                                        class="fa fa-envelope text-primary"></i></a></li>
                                         @endif
                                         <li>
                                             @if($user->flag_broadcastOptedIn)
@@ -437,7 +438,7 @@
                                                 <td style="vertical-align: middle"
                                                     class="{{(($promo->from < $promo->to)? 'text-success' : 'text-danger')}}">
                                                     <i
-                                                            class="fa {{(($promo->from < $promo->to) ? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
+                                                        class="fa {{(($promo->from < $promo->to) ? 'fa-arrow-up' : 'fa-arrow-down')}}"></i>
                                                 </td>
                                                 <td style="vertical-align: middle">
                                                     <strong>{{ \App\Classes\Helper::ratingShortFromInt($promo->to) }}</strong>
@@ -465,15 +466,15 @@
                                                        style="cursor: pointer"></i></td>
                                                 <td><strong>{{$t->to}}</strong></td>
                                                 <td><a href="#" onClick="viewXfer({{$t->id}})"><i
-                                                                class="fa fa-search"></i></a>
+                                                            class="fa fa-search"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach
                                         @if(\App\Classes\RoleHelper::isVATUSAStaff())
                                             <tr>
                                                 <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
-                                                                id="waivertogglei"
-                                                                class="fa {{(($user->flag_xferOverride==1) ? "fa-toggle-on text-success" : "fa-toggle-off text-danger")}}"></i></span>
+                                                            id="waivertogglei"
+                                                            class="fa {{(($user->flag_xferOverride==1) ? "fa-toggle-on text-success" : "fa-toggle-off text-danger")}}"></i></span>
                                                     <a href="/mgt/transfer?cid={{$user->cid}}">Submit TR</a>
                                                 </td>
                                             </tr>
@@ -490,19 +491,132 @@
                                     </h3>
                                 </div>
                                 <div class="panel-body">
-                                    <table class="table table-striped">
-                                        @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
-                                            <tr style="text-align: center">
-                                                <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
-                                                <td style="width: 70%; text-align: left"><a
-                                                            href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a>
-                                                </td>
-                                                <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
-                                                    %
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </table>
+                                    <div>
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs nav-justified text-centers" id="exam-tabs"
+                                            role="tablist">
+                                            <li role="presentation" class="active"><a href="#"
+                                                                                      data-target="legacy"
+                                                                                      aria-controls="home" role="tab"
+                                                                                      data-toggle="tab"
+                                                                                      class="text-warning">Legacy</a>
+                                            </li>
+                                            <li role="presentation"><a href="#" data-target="academy"
+                                                                       aria-controls="academy"
+                                                                       role="tab" data-toggle="tab"
+                                                                       class="text-success">Academy</a></li>
+                                        </ul>
+
+                                        <!-- Tab panes -->
+                                        <div class="tab-content" id="exam-tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="legacy">
+                                                <table class="table table-striped">
+                                                    @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
+                                                        <tr style="text-align: center">
+                                                            <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
+                                                            <td style="width: 70%; text-align: left"><a
+                                                                    href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a>
+                                                            </td>
+                                                            <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
+                                                                %
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </table>
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane" id="academy">
+                                                {{-- -<pre>@dump($examAttempts)</pre> --}}
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Exam Name</th>
+                                                        <th>Attempts</th>
+                                                        <th>Enrollment</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @foreach($examAttempts as $exam => $data)
+                                                        @php $hasPassed = 0; @endphp
+                                                        <tr @if($data['examInfo']['rating'] - 1 > $user->rating) class="text-muted" @endif>
+                                                            <td>{{ $exam }}</td>
+                                                            <td>@if(empty($data['attempts']) && $data['examInfo']['rating'] - 1 <= $user->rating)
+                                                                    <span
+                                                                        class="label label-info">Not Taken</span>
+                                                                @elseif(empty($data['attempts']))
+                                                                    <em>Not Eligible</em>
+                                                                @else
+                                                                    @foreach($data['attempts'] as $attempt)
+                                                                        <p>Attempt
+                                                                            <strong>{{ $attempt['attempt'] }}</strong>:
+                                                                            @switch($attempt['state'])
+                                                                                @case('finished')
+                                                                                @if(round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) >= $data['examInfo']['passingPercent'])
+                                                                                    @php $hasPassed = 1; @endphp
+                                                                                    <span
+                                                                                        class="label label-success"
+                                                                                        rel="tooltip"
+                                                                                        title="{{ $attempt['sumgrades'] }}/{{ $data['examInfo']['numQuestions'] }} ({{ round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) }}%)">Passed</span>
+                                                                                @else
+                                                                                    <span
+                                                                                        class="label label-danger"
+                                                                                        rel="tooltip"
+                                                                                        title="{{ $attempt['sumgrades'] }}/{{ $data['examInfo']['numQuestions'] }} ({{ round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) }}%)">Failed</span>
+                                                                                @endif
+                                                                                @break
+                                                                                @case('inprogress')
+                                                                                <span class="label label-warning">In Progress</span>
+                                                                                @break
+                                                                                @default
+                                                                                <span
+                                                                                    class="label label-danger">{{ ucwords($attempt['state']) }}</span>
+                                                                                @break
+                                                                            @endswitch
+                                                                            <br>
+                                                                        </p>
+                                                                    @endforeach
+                                                                @endif
+                                                            </td>
+                                                            <td id="enrollment-status-{{ $data['examInfo']['courseId'] }}">
+                                                                @if($hasPassed)
+                                                                    <em>Not Applicable - Exam Passed</em>
+                                                                @elseif ($data['assignDate'])
+                                                                    <strong class="text-success"><i
+                                                                            class="fas fa-check"></i> Enrolled</strong>
+                                                                    on
+                                                                    {{ $data['assignDate'] }}
+                                                                @elseif($data['examInfo']['id'] === config('exams.BASIC.id'))
+                                                                    <em>Not Applicable - Self Assigned</em>
+                                                                @elseif($data['examInfo']['rating'] - 1 <= $user->rating)
+                                                                    <button
+                                                                        class="btn btn-success btn-sm enrol-exam-course"
+                                                                        data-id="{{ $data['examInfo']['courseId'] }}"
+                                                                        data-name="{{ $exam }}"><i
+                                                                            class="fas fa-user-plus"></i> Enroll
+                                                                    </button>
+                                                                @else
+                                                                    <em>Not Eligible</em>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                    <!--<tr>
+                                                            <td>S2 Rating (TWR) Controller Exam</td>
+                                                            <td>Attempt <strong>1</strong>: <span
+                                                                    class="label label-success" rel="tooltip"
+                                                                    title="30/30 (100%)">Passed</span></td>
+                                                            <td><em>Completed</em></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>S3 Rating (APP) Controller Exam</td>
+                                                            <td><span class="label label-info">Not Taken</span></td>
+                                                            <td><em>Not Applicable</em></td>
+                                                        </tr>-->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -565,7 +679,7 @@
                                         </div>
                                         <div class="alert alert-danger" id="delete-log-error" style="display:none;">
                                             <strong><i
-                                                        class='fa fa-check'></i> Error! </strong> Could not delete log
+                                                    class='fa fa-check'></i> Error! </strong> Could not delete log
                                             entry.
                                         </div>
                                     @endif
@@ -612,7 +726,7 @@
                                                            href="#"
                                                            data-action="{{ secure_url('mgt/controller/action/delete/'.$a->id) }}"
                                                            class="text-danger delete-log"><i
-                                                                    class="fa fa-times"></i></a>
+                                                                class="fa fa-times"></i></a>
                                                         <i class="spinner-icon fa fa-spinner fa-spin"
                                                            style="display:none;"></i>
 
@@ -672,7 +786,7 @@
                                     <div class="col-sm-10">
                                         <p class="form-control-static" style="cursor:default;">
                                             @if($user->flag_preventStaffAssign) <strong
-                                                    style="color:#e72828">Yes</strong>
+                                                style="color:#e72828">Yes</strong>
                                             @else <strong style="color:green">No</strong>
                                             @endif
                                         </p>
@@ -697,17 +811,17 @@
                                     </div>
                                 @endif
                             @endif
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Academy Material Editor (Facility)</label>
-                                    <div class="col-sm-10">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Academy Material Editor (Facility)</label>
+                                <div class="col-sm-10">
                                     <span id="toggleAcademyEditorFacility" style="font-size:1.8em;">
                                         <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, $user->facility, "CBT") ? "on text-danger" : "off text-info"}} "></i>
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
-                                        <p class="help-block">This will assign the Editor role to the user in Moodle,
-                                            and will allow him or her to edit the facility Moodle material.</p>
-                                    </div>
+                                    <p class="help-block">This will assign the Editor role to the user in Moodle,
+                                        and will allow him or her to edit the facility Moodle material.</p>
                                 </div>
+                            </div>
                         </div>
                     @endif
                 </div>
@@ -786,6 +900,53 @@
               $('#cidsearch').focus()
             })
         }
+      })
+
+      $('.enrol-exam-course').click(function () {
+        let btn  = $(this),
+            id   = btn.data('id'),
+            name = btn.data('name')
+        swal({
+          title  : 'Enrolling User in Rating Course',
+          text   : 'Are you sure you want to enrol this controller in the ' + name + ' course?',
+          icon   : 'warning',
+          buttons: {
+            cancel : {
+              text   : 'No, cancel',
+              visible: true,
+            },
+            confirm: {
+              text      : 'Yes, enroll',
+              className : 'btn-success',
+              closeModal: false
+            }
+          }
+        })
+          .then(resp => {
+            if (resp) {
+              $.ajax({
+                url   : $.apiUrl() + '/v2/academy/enroll/' + id,
+                data  : {cid: {{ $user->cid }}},
+                method: 'POST'
+              }).success(data => {
+                if (data.data.status === 'OK') {
+                  swal('Success!', 'The controller has been enrolled in the course.', 'success')
+                  $('#enrollment-status-' + id).html('<strong class="text-success"><i class="fas fa-check"></i> Enrolled</strong> on ' + moment().utc().format('YYYY-MM-DD HH:MM'))
+                } else
+                  swal('Error!', 'Unable to enroll the controller in the course. Please try again later.', 'success')
+              })
+                .error(err => swal('Error!', 'Unable to enroll the controller in the course. ' + JSON.stringify(err), 'error'))
+            } else {
+              return false
+            }
+          })
+      })
+
+      $('#exam-tabs a').on('click', function (e) {
+        e.preventDefault()
+
+        $('#exam-tab-content .tab-pane').hide()
+        $('#' + $(this).data('target')).show()
       })
     </script>
 
