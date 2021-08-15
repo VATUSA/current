@@ -328,6 +328,15 @@ class ExamController extends Controller
             })->orderBy('name')->get();
         }
 
+        $exams = $exams->reject(function ($exam) {
+            return in_array($exam->id, [
+                config('exams.BASIC.legacyId'),
+                config('exams.S2.legacyId'),
+                config('exams.S3.legacyId'),
+                config('exams.C1.legacyId')
+            ]);
+        });
+
         $examArr = array();
         foreach ($exams as $exam) {
             $examArr[$exam->facility->name][] = array(
