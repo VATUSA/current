@@ -160,7 +160,7 @@
                             </tr>
                             <tr>
                                 <td>Do you need the Basic ATC Exam?</td>
-                                <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes, <a href="/my/assignbasic">Request Exam</a></span>' !!}</td>
+                                <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes</span>' !!}</td>
                             </tr>
                             <tr>
                                 <td>Has it been at least 90 days since your last transfer?</td>

@@ -144,17 +144,17 @@
                             <li><a href="https://discord.gg/a7Qcse7" target="_blank"><i class="fab fa-discord"></i>
                                     Official Discord</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{secure_url('info/members')}}"><i class="fas fa-users"></i> Members and Staff</a>
+                            <li><a href="{{ secure_url('info/members') }}"><i class="fas fa-users"></i> Members and Staff</a>
                             </li>
-                            <li><a href="{{secure_url('info/policies')}}"><i class="fas fa-clipboard"></i> Policies and
+                            <li><a href="{{ secure_url('info/policies') }}"><i class="fas fa-clipboard"></i> Policies and
                                     Downloads</a>
                             </li>
                             <li class="divider"></li>
                             <li><a href="https://forums.vatusa.net/?action=calendar"><i class="fas fa-calendar"></i>
                                     Events Calendar</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{secure_url('info/ace')}}"><i class="fas fa-star"></i> ACE Team</a></li>
-                            <li><a href="{{secure_url('info/solo')}}"><i class="fas fa-certificate"></i> Solo Certs</a>
+                            <li><a href="{{ secure_url('info/ace') }}"><i class="fas fa-star"></i> ACE Team</a></li>
+                            <li><a href="{{ secure_url('info/solo') }}"><i class="fas fa-certificate"></i> Solo Certs</a>
                             </li>
                         </ul>
                     </li>
@@ -254,9 +254,9 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="https://status.vatusa.net">System Status</a></li>
                             <li class="divider"></li>
-                            <li><a href="/help/kb"><i class="fas fa-question-circle"></i> Knowledgebase/FAQ</a></li>
-                            <li><a href="/help/ticket/new"><i class="fas fa-life-ring"></i> Open New Ticket</a></li>
-                            <li><a href="/help/ticket/mine"><i class="far fa-life-ring"></i> My Tickets</a></li>
+                            <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i> Knowledgebase/FAQ</a></li>
+                            <li><a href="{{ secure_url("/help/ticket/new") }}"><i class="fas fa-life-ring"></i> Open New Ticket</a></li>
+                            <li><a href="{{ secure_url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My Tickets</a></li>
                             @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
                                 <li class="divider"></li>
                                 <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
@@ -264,14 +264,14 @@
                                                                 aria-expanded="false"><i
                                             class="fas fa-hands-helping"></i> Ticket Manager</a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="/help/ticket/myassigned">My Assigned Tickets</a></li>
-                                        <li><a href="/help/ticket/open">Open Tickets</a></li>
-                                        <li><a href="/help/ticket/closed">Closed Tickets</a></li>
-                                        <li><a href="/help/ticket/search">Search Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/myassigned") }}">My Assigned Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/open") }}">Open Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/closed") }}">Closed Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/search") }}">Search Tickets</a></li>
                                     </ul>
                                 </li>
                                 @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                    <li><a href="/help/kbe">Knowledgebase Editor</a></li>
+                                    <li><a href="{{ secure_url("/help/kbe") }}">Knowledgebase Editor</a></li>
                                 @endif
                             @endif
                         </ul>
@@ -283,22 +283,23 @@
                                                 aria-expanded="false">
                                 <i class="fa fa-user"></i> My VATUSA<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{secure_url('my/profile')}}"><i class="fas fa-id-badge"></i> Profile</a>
+                                <li><a href="{{ secure_url('my/profile') }}"><i class="fas fa-id-badge"></i> Profile</a>
                                 </li>
-                                @if(!Auth::user()->selectionEligible() && !Auth::user()->transferEligible())
-                                    <li><a href="/my/profile"><i class="fas fa-question-circle"></i> Why can I not join
-                                            a facility?</a></li>
-                                @endif
-                                @if(Auth::user()->facility()->active || Auth::user()->facility == "ZHQ" || (Auth::user()->transferEligible() && !Auth::user()->selectionEligible()))
-                                    <li><a href="{{secure_url('my/transfer')}}"><i class="fas fa-exchange-alt"></i>
-                                            Transfer Request</a></li>
-                                @endif
-                                @if (Auth::user()->selectionEligible())
-                                    <li><a href="{{secure_url('my/select')}}"><i class="fas fa-star"></i> Join Facility</a>
+                                @if(Auth::user()->selectionEligible())
+                                    <li><a href="{{ secure_url('my/select') }}"><i class="fas fa-star"></i> Join Facility</a>
                                     </li>
+                                @elseif(Auth::user()->transferEligible())
+                                    <li><a href="{{ secure_url('my/transfer') }}"><i class="fas fa-exchange-alt"></i>
+                                            Transfer Request</a></li>
+                                @else
+                                    <li><a href="{{ secure_url("/my/profile") }}"><i class="fas fa-question-circle"></i>
+                                            Why can I not join
+                                            a facility or transfer?</a></li>
                                 @endif
-                                <li><a href="{{secure_url('exam')}}"><i class="fas fa-school"></i> Exam Center (Legacy)</a></li>
-                                <li><a href="{{secure_url("cbt")}}"><i class="fas fa-desktop"></i> Computer Based Training (Legacy)</a></li>
+                                <li><a href="{{ secure_url('exam') }}"><i class="fas fa-school"></i> Exam Center (Legacy)</a>
+                                </li>
+                                <li><a href="{{ secure_url("cbt") }}"><i class="fas fa-desktop"></i> Computer Based
+                                        Training (Legacy)</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li>
                                     <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i

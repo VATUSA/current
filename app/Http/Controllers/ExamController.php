@@ -287,7 +287,7 @@ class ExamController extends Controller
                 $fac = Auth::user()->facility;
             }
             EmailHelper::sendEmailFacilityTemplate($to, "Exam Passed", $fac, "exampassed", $data);
-            if ($exam->id == config("exams.BASIC")) {
+            if ($exam->id == config("exams.BASIC.legacyId")) {
                 Auth::user()->flag_needbasic = 0;
                 Auth::user()->save();
             }
