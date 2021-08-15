@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 use App\Classes\RoleHelper;
 use Auth;
 
-class HelpDeskController
+class HelpdeskController
     extends Controller
 {
     public function getIndex()
