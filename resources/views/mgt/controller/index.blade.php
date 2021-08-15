@@ -291,7 +291,7 @@
                                         <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
                                         <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
-                                        <li>Needs Basic ATC Exam?
+                                        {{--<li>Needs Basic ATC Exam:
                                             @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 <a href="/mgt/controller/{{$user->cid}}/togglebasic">
                                                     @endif
@@ -303,7 +303,7 @@
                                                     @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 </a>
                                             @endif
-                                        </li>
+                                        </li>--}}
                                         <br>
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
                                             $user->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
@@ -369,11 +369,11 @@
                                         </tr>
                                         </thead>
                                         <tr>
-                                            <td>Is in VATUSA division?</td>
+                                            <td>In VATUSA division?</td>
                                             <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                                         </tr>
                                         <tr>
-                                            <td>Need the Basic ATC Exam?</td>
+                                            <td>Needs to complete the Basic ATC/S1 courses?</td>
                                             <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes</span>' !!}</td>
                                         </tr>
                                         <tr>

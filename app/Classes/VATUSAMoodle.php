@@ -548,7 +548,7 @@ class VATUSAMoodle extends MoodleRest
             }
 
             return $this->request("mod_quiz_get_user_attempts",
-                ["quizid" => $quizid, "userid" => $userid])['attempts'];
+                ["quizid" => $quizid, "userid" => $userid])['attempts'] ?? [];
         } catch (Exception $e) {
             return [];
         }

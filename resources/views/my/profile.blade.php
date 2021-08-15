@@ -157,11 +157,11 @@
                             </tr>
                             </thead>
                             <tr>
-                                <td>Is in VATUSA Division?</td>
+                                <td>Are you in the VATUSA Division?</td>
                                 <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>Do you need the Basic ATC Exam?</td>
+                                <td>Have you completed the Basic ATC/S1 courses?</td>
                                 <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes</span>' !!}</td>
                             </tr>
                             <tr>
@@ -183,11 +183,11 @@
                                 <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>Does not hold a staff position at a facility?</td>
+                                <td>Do you not hold a staff position at a facility?</td>
                                 <td>{!! ($checks['staff'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>Does not hold an I1 or I3 rating?</td>
+                                <td>Do you not hold an I1 or I3 rating?</td>
                                 <td>{!! ($checks['instructor'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
