@@ -287,7 +287,7 @@ class ExamController extends Controller
                 $fac = Auth::user()->facility;
             }
             EmailHelper::sendEmailFacilityTemplate($to, "Exam Passed", $fac, "exampassed", $data);
-            if ($exam->id == config("exams.BASIC")) {
+            if ($exam->id == config("exams.BASIC.legacyId")) {
                 Auth::user()->flag_needbasic = 0;
                 Auth::user()->save();
             }
@@ -327,6 +327,15 @@ class ExamController extends Controller
                     ->orWhere('facility_id', Auth::user()->facility);
             })->orderBy('name')->get();
         }
+
+        $exams = $exams->reject(function ($exam) {
+            return in_array($exam->id, [
+                config('exams.BASIC.legacyId'),
+                config('exams.S2.legacyId'),
+                config('exams.S3.legacyId'),
+                config('exams.C1.legacyId')
+            ]);
+        });
 
         $examArr = array();
         foreach ($exams as $exam) {

@@ -50,6 +50,8 @@
                                                               data-toggle="tab">My Information</a></li>
                     <li role="presentation"><a href="#training" aria-controls="training" role="tab"
                                                data-toggle="tab">Training Records</a></li>
+                    <li role="presentation"><a href="#academy" aria-controls="academy" role="tab"
+                                               data-toggle="tab">Academy Exams</a></li>
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="info"><br>
@@ -160,7 +162,7 @@
                             </tr>
                             <tr>
                                 <td>Do you need the Basic ATC Exam?</td>
-                                <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes, <a href="/my/assignbasic">Request Exam</a></span>' !!}</td>
+                                <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes</span>' !!}</td>
                             </tr>
                             <tr>
                                 <td>Has it been at least 90 days since your last transfer?</td>
@@ -202,6 +204,9 @@
                     </div>
                     <div role="tabpanel" class="tab-pane" id="training"><br>
                         @include('my.training.training')
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="academy"><br>
+                        @include('my.training.academy')
                     </div>
                 </div>
             </div>

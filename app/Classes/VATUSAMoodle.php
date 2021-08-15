@@ -7,6 +7,7 @@
 namespace App\Classes;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use MoodleRest;
 use ReflectionClass;
@@ -15,11 +16,11 @@ class VATUSAMoodle extends MoodleRest
 {
     /** @var int[] Role Mappings */
     protected $roleIds = [
-        'TA'  => 1,
-        'INS' => 4,
-        'STU' => 5,
-        'MTR' => 9,
-        'CBT' => 10,
+        'TA'     => 1,
+        'INS'    => 4,
+        'STU'    => 5,
+        'MTR'    => 9,
+        'CBT'    => 10,
         'FACCBT' => 11
     ];
 
@@ -56,7 +57,7 @@ class VATUSAMoodle extends MoodleRest
      */
     public function __construct(bool $isSSO = false)
     {
-        if(in_array(app()->environment(), ["livedev", "staging", "prod"])) {
+        if (in_array(app()->environment(), ["livedev", "staging", "prod", "dev"])) {
             parent::__construct(config('services.moodle.url') . '/webservice/rest/server.php',
                 $isSSO ? config('services.moodle.token_sso') : config('services.moodle.token'));
         }
@@ -239,7 +240,6 @@ class VATUSAMoodle extends MoodleRest
     public function getUserId(int $cid)
     {
         $user = $this->getUser($cid)["users"][0] ?? [];
-
         if (empty($user)) {
             return false;
         }
@@ -528,6 +528,46 @@ class VATUSAMoodle extends MoodleRest
 
         return $this->request("enrol_manual_enrol_users",
             ["enrolments" => [0 => ["roleid" => $rid, "userid" => $uid, "courseid" => $cid]]]);
+    }
+
+    /**
+     * Get quiz attempts
+     *
+     * @param int      $quizid The Quiz ID
+     * @param int|null $cid    The user's CID
+     * @param int|null $uid
+     *
+     * @return array
+     */
+    public function getQuizAttempts(int $quizid, ?int $cid, ?int $uid = null): array
+    {
+        try {
+            $userid = $uid ?? $this->getUserId($cid);
+            if (!$userid) {
+                return [];
+            }
+
+            return $this->request("mod_quiz_get_user_attempts",
+                ["quizid" => $quizid, "userid" => $userid])['attempts'];
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
+    public function getUserEnrolmentInfo(?int $uid, int $enrolmentId)
+    {
+        return DB::connection('moodle')->table('user_enrolments')
+            ->where('userid', $uid)
+            ->where('enrolid', $enrolmentId)
+            ->first();
+    }
+
+    public function getUserEnrolmentTimestamp(?int $uid, int $enrolmentId)
+    {
+        $info = $this->getUserEnrolmentInfo($uid, $enrolmentId);
+
+        return $info->timecreated ?? false;
+
     }
 
 

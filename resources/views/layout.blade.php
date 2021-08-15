@@ -11,13 +11,12 @@
     <link href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
-          <link href="{{ mix('css/vatusa.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/vatusa.css') }}" rel="stylesheet">
     @stack('styles')
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
-
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -89,8 +88,10 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="/">
-                            Home
+                            <i class="fas fa-home"></i> Home
                         </a></li>
+                    <li><a href="https://forums.vatusa.net"><i class="fas fa-comment"></i> Forums</a></li>
+                    <li><a href="https://academy.vatusa.net"><i class="fas fa-graduation-cap"></i> Academy</a></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                             aria-expanded="false">
                             Facilities
@@ -104,7 +105,8 @@
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">South Central Region</h5>
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">South Central
+                                    Region</h5>
                             </li>
                             @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
@@ -118,21 +120,22 @@
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern Region</h5>
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern
+                                    Region</h5>
                             </li>
                             @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southeastern Region</h5>
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southeastern
+                                    Region</h5>
                             </li>
                             @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                         </ul>
                     </li>
-                    <li><a href="https://forums.vatusa.net">Forums</a></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                             aria-expanded="false">
                             Division Info <span class="caret"></span>
@@ -141,18 +144,18 @@
                             <li><a href="https://discord.gg/a7Qcse7" target="_blank"><i class="fab fa-discord"></i>
                                     Official Discord</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{secure_url('info/members')}}"><i class="fas fa-users"></i> Members and Staff</a>
+                            <li><a href="{{ secure_url('info/members') }}"><i class="fas fa-users"></i> Members and Staff</a>
                             </li>
-                            <li><a href="{{secure_url('info/policies')}}"><i class="fas fa-clipboard"></i> Policies and Downloads</a>
+                            <li><a href="{{ secure_url('info/policies') }}"><i class="fas fa-clipboard"></i> Policies and
+                                    Downloads</a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="{{secure_url("cbt")}}"><i class="fas fa-desktop"></i> Computer Based Training
-                                    (CBT)</a></li>
                             <li><a href="https://forums.vatusa.net/?action=calendar"><i class="fas fa-calendar"></i>
                                     Events Calendar</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{secure_url('info/ace')}}"><i class="fas fa-star"></i> ACE Team</a></li>
-                            <li><a href="{{secure_url('info/solo')}}"><i class="fas fa-certificate"></i> Solo Certs</a></li>
+                            <li><a href="{{ secure_url('info/ace') }}"><i class="fas fa-star"></i> ACE Team</a></li>
+                            <li><a href="{{ secure_url('info/solo') }}"><i class="fas fa-certificate"></i> Solo Certs</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -163,20 +166,27 @@
                             <li class="dropdown-header">
                                 <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">VATSIM Resources</h5>
                             </li>
-                            <li><a href="https://www.vatsim.net/pilots/getting-started" target="_blank"><i class="fas fa-star"></i> Getting
+                            <li><a href="https://www.vatsim.net/pilots/getting-started" target="_blank"><i
+                                        class="fas fa-star"></i> Getting
                                     Started</a></li>
-                            <li><a href="http://www.vatsim.net/pilots/training" target="_blank"><i class="fas fa-school"></i> Training</a></li>
-                            <li><a href="http://www.vatsim.net/pilots/virtual-airlines" target="_blank"><i class="fas fa-plane"></i> Virtual
+                            <li><a href="http://www.vatsim.net/pilots/training" target="_blank"><i
+                                        class="fas fa-school"></i> Training</a></li>
+                            <li><a href="http://www.vatsim.net/pilots/virtual-airlines" target="_blank"><i
+                                        class="fas fa-plane"></i> Virtual
                                     Airlines</a></li>
-                            <li><a href="http://stats.vatsim.net/" target="_blank"><i class="fas fa-chart-line"></i> VATSIM Stats/Tracking</a></li>
+                            <li><a href="http://stats.vatsim.net/" target="_blank"><i class="fas fa-chart-line"></i>
+                                    VATSIM Stats/Tracking</a></li>
                             <li class="divider"></li>
-                            <li><a href="https://www.vatusa.net/forums/?action=calendar"><i class="fas fa-calendar"></i> Events Calendar</a></li>
+                            <li><a href="https://www.vatusa.net/forums/?action=calendar"><i class="fas fa-calendar"></i>
+                                    Events Calendar</a></li>
                             <li class="divider"></li>
                             <li class="dropdown-header">
                                 <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Other Resources</h5>
                             </li>
-                            <li><a href="https://www.skyvector.com" target="_blank"><i class="fas fa-route"></i> Charts</a></li>
-                            <li><a href="http://www.flightaware.com/statistics/ifr-route/" target="_blank"><i class="fas fa-map"></i> Routes</a>
+                            <li><a href="https://www.skyvector.com" target="_blank"><i class="fas fa-route"></i> Charts</a>
+                            </li>
+                            <li><a href="http://www.flightaware.com/statistics/ifr-route/" target="_blank"><i
+                                        class="fas fa-map"></i> Routes</a>
                             </li>
                             <li class="dropdown-submenu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -244,23 +254,24 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="https://status.vatusa.net">System Status</a></li>
                             <li class="divider"></li>
-                            <li><a href="/help/kb"><i class="fas fa-question-circle"></i> Knowledgebase/FAQ</a></li>
-                            <li><a href="/help/ticket/new"><i class="fas fa-life-ring"></i> Open New Ticket</a></li>
-                            <li><a href="/help/ticket/mine"><i class="far fa-life-ring"></i> My Tickets</a></li>
+                            <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i> Knowledgebase/FAQ</a></li>
+                            <li><a href="{{ secure_url("/help/ticket/new") }}"><i class="fas fa-life-ring"></i> Open New Ticket</a></li>
+                            <li><a href="{{ secure_url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My Tickets</a></li>
                             @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
                                 <li class="divider"></li>
                                 <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
                                                                 data-toggle="dropdown" role="button"
-                                                                aria-expanded="false"><i class="fas fa-hands-helping"></i> Ticket Manager</a>
+                                                                aria-expanded="false"><i
+                                            class="fas fa-hands-helping"></i> Ticket Manager</a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="/help/ticket/myassigned">My Assigned Tickets</a></li>
-                                        <li><a href="/help/ticket/open">Open Tickets</a></li>
-                                        <li><a href="/help/ticket/closed">Closed Tickets</a></li>
-                                        <li><a href="/help/ticket/search">Search Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/myassigned") }}">My Assigned Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/open") }}">Open Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/closed") }}">Closed Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/search") }}">Search Tickets</a></li>
                                     </ul>
                                 </li>
                                 @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                    <li><a href="/help/kbe">Knowledgebase Editor</a></li>
+                                    <li><a href="{{ secure_url("/help/kbe") }}">Knowledgebase Editor</a></li>
                                 @endif
                             @endif
                         </ul>
@@ -272,25 +283,27 @@
                                                 aria-expanded="false">
                                 <i class="fa fa-user"></i> My VATUSA<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{secure_url('my/profile')}}"><i class="fas fa-id-badge"></i> Profile</a></li>
-                                @if(!Auth::user()->selectionEligible() && !Auth::user()->transferEligible())
-                                    <li><a href="/my/profile"><i class="fas fa-question-circle"></i> Why can I not join a facility?</a></li>
+                                <li><a href="{{ secure_url('my/profile') }}"><i class="fas fa-id-badge"></i> Profile</a>
+                                </li>
+                                @if(Auth::user()->selectionEligible())
+                                    <li><a href="{{ secure_url('my/select') }}"><i class="fas fa-star"></i> Join Facility</a>
+                                    </li>
+                                @elseif(Auth::user()->transferEligible())
+                                    <li><a href="{{ secure_url('my/transfer') }}"><i class="fas fa-exchange-alt"></i>
+                                            Transfer Request</a></li>
+                                @else
+                                    <li><a href="{{ secure_url("/my/profile") }}"><i class="fas fa-question-circle"></i>
+                                            Why can I not join
+                                            a facility or transfer?</a></li>
                                 @endif
-                                @if(Auth::user()->facility()->active || Auth::user()->facility == "ZHQ" || (Auth::user()->transferEligible() && !Auth::user()->selectionEligible()))
-                                    <li><a href="{{secure_url('my/transfer')}}"><i class="fas fa-exchange-alt"></i> Transfer Request</a></li>
-                                @endif
-                                @if (Auth::user()->selectionEligible())
-                                    <li><a href="{{secure_url('my/select')}}"><i class="fas fa-star"></i> Join Facility</a></li>
-                                @endif
-                                <li><a href="{{secure_url('exam')}}"><i class="fas fa-school"></i> Exam Center</a></li>
-                                <li><a href="{{secure_url("cbt")}}"><i class="fas fa-desktop"></i> Computer Based Training (CBT)</a></li>
-                                @if(Auth::user()->flag_needbasic)
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="{{secure_url("my/assignbasic")}}"><i class="fas fa-pencil"></i> Request Basic ATC Exam</a></li>
-                                @endif
+                                <li><a href="{{ secure_url('exam') }}"><i class="fas fa-school"></i> Exam Center (Legacy)</a>
+                                </li>
+                                <li><a href="{{ secure_url("cbt") }}"><i class="fas fa-desktop"></i> Computer Based
+                                        Training (Legacy)</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li>
-                                    <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                                    <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i
+                                            class="fas fa-sign-out-alt"></i> Logout</a>
                                 </li>
                             </ul>
                         </li>
@@ -346,12 +359,12 @@
 
                                         <!-- Exam Management [Instructors/ATM/DATM/TA] -->
                                         @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                            <li><a href="{{secure_url("exam")}}">Exam Management</a></li>
+                                            <li><a href="{{secure_url("exam")}}">Exam Management (Legacy)</a></li>
                                         @endif
 
                                     <!-- CBT Editor [VATUSA/ATM/DATM/TA] -->
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
-                                            <li><a href="{{secure_url("cbt/editor") }}">CBT Editor</a></li>
+                                            <li><a href="{{secure_url("cbt/editor") }}">CBT Editor (Legacy)</a></li>
                                         @endif
 
                                     <!-- Training Statistics [INS/ATM/DATM/TA/VATUSA] -->
@@ -395,7 +408,8 @@
                                         <!-- ACE Team/Division Staff Management [VATUSA] -->
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                             <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
-                                            <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a></li>
+                                            <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a>
+                                            </li>
                                             <li><a href="{{secure_url("mgt/policies") }}">Policies & Downloads</a></li>
                                         @endif
 
@@ -454,7 +468,8 @@
 @if(env('APP_ENV', 'dev') != 'prod')
     <div class="container">
         <div class="alert alert-danger">
-            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> This is a development environment!!! While live, it does feature beta/alpha
+            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> This is a development environment!!!
+            While live, it does feature beta/alpha
             software that may not be functioning.
         </div>
     </div>
