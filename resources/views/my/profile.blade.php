@@ -50,6 +50,8 @@
                                                               data-toggle="tab">My Information</a></li>
                     <li role="presentation"><a href="#training" aria-controls="training" role="tab"
                                                data-toggle="tab">Training Records</a></li>
+                    <li role="presentation"><a href="#academy" aria-controls="academy" role="tab"
+                                               data-toggle="tab">Academy Exams</a></li>
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="info"><br>
@@ -202,6 +204,9 @@
                     </div>
                     <div role="tabpanel" class="tab-pane" id="training"><br>
                         @include('my.training.training')
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="academy"><br>
+                        @include('my.training.academy')
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ use App\Classes\EmailHelper;
 use App\Classes\ExamHelper;
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
+use App\Classes\VATUSAMoodle;
 use App\Models\Promotions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -51,8 +52,44 @@ class MyController
         $trainingRecords = Auth::user()->trainingRecords()->with('instructor:cid,fname,lname')->where('facility_id',
             $trainingfac)->get();
 
+        $moodle = new VATUSAMoodle();
+        try {
+            $uid = $moodle->getUserId(Auth::user()->cid);
+        } catch (\Exception $e) {
+            $uid = -1;
+        }
+        $basicAssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
+            config('exams.BASIC.enrolId'));
+        $s2AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
+            config('exams.S2.enrolId'));
+        $s3AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
+            config('exams.S3.enrolId'));
+        $c1AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
+            config('exams.C1.enrolId'));
+
+        $examAttempts = [
+            'Basic ATC/S1 Exam'                   => array_merge([
+                'examInfo'   => config('exams.BASIC'),
+                'assignDate' => $basicAssignmentDate ? Carbon::createFromTimestampUTC($basicAssignmentDate)->format('Y-m-d H:i') : false
+            ], ['attempts' => $moodle->getQuizAttempts(config('exams.BASIC.id'), null, $uid)]),
+            'S2 Rating (TWR) Controller Exam'     => array_merge([
+                'examInfo'   => config('exams.S2'),
+                'assignDate' => $s2AssignmentDate ? Carbon::createFromTimestampUTC($s2AssignmentDate)->format('Y-m-d H:i') : false
+            ], ['attempts' => $moodle->getQuizAttempts(config('exams.S2.id'), null, $uid)]),
+            'S3 Rating (DEP/APP) Controller Exam' => array_merge([
+                'examInfo'   => config('exams.S3'),
+                'assignDate' => $s3AssignmentDate ? Carbon::createFromTimestampUTC($s3AssignmentDate)->format('Y-m-d H:i') : false
+            ],
+                ['attempts' => $moodle->getQuizAttempts(config('exams.S3.id'), null, $uid)]),
+            'C1 Rating (CTR) Controller Exam'     => array_merge([
+                'examInfo'   => config('exams.C1'),
+                'assignDate' => $c1AssignmentDate ? Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : false
+            ],
+                ['attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)]),
+        ];
+
         return view('my.profile',
-            compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist'));
+            compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist', 'examAttempts'));
     }
 
     public function getAssignBasic()

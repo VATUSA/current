@@ -541,7 +541,9 @@
                                                             <td>{{ $exam }}</td>
                                                             <td>@if(empty($data['attempts']) && $data['examInfo']['rating'] - 1 <= $user->rating)
                                                                     <span
-                                                                        class="label label-info">Not Taken</span>
+                                                                        class="label label-info"><i
+                                                                            class="fas fa-question-circle"
+                                                                            style="font-size: inherit !important;"></i> Not Taken</span>
                                                                 @elseif(empty($data['attempts']))
                                                                     <em>Not Eligible</em>
                                                                 @else
@@ -552,19 +554,27 @@
                                                                                 @case('finished')
                                                                                 @if(round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) >= $data['examInfo']['passingPercent'])
                                                                                     @php $hasPassed = 1; @endphp
-                                                                                    <span
-                                                                                        class="label label-success"
-                                                                                        rel="tooltip"
-                                                                                        title="{{ $attempt['sumgrades'] }}/{{ $data['examInfo']['numQuestions'] }} ({{ round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) }}%)">Passed</span>
+                                                                                    <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}"
+                                                                                       style="text-decoration: none"><span
+                                                                                            class="label label-success"
+                                                                                            rel="tooltip"
+                                                                                            title="{{ $attempt['sumgrades'] }}/{{ $data['examInfo']['numQuestions'] }} ({{ round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) }}%)"><i
+                                                                                                class="fas fa-check"
+                                                                                                style="font-size: inherit !important;"></i> Passed</span></a>
                                                                                 @else
-                                                                                    <span
-                                                                                        class="label label-danger"
-                                                                                        rel="tooltip"
-                                                                                        title="{{ $attempt['sumgrades'] }}/{{ $data['examInfo']['numQuestions'] }} ({{ round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) }}%)">Failed</span>
+                                                                                    <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}"
+                                                                                       style="text-decoration: none"><span
+                                                                                            class="label label-danger"
+                                                                                            rel="tooltip"
+                                                                                            title="{{ $attempt['sumgrades'] }}/{{ $data['examInfo']['numQuestions'] }} ({{ round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) }}%)"><i
+                                                                                                class="fas fa-times"
+                                                                                                style="font-size: inherit !important;"></i> Failed</span></a>
                                                                                 @endif
                                                                                 @break
                                                                                 @case('inprogress')
-                                                                                <span class="label label-warning">In Progress</span>
+                                                                                <span class="label label-warning"><i
+                                                                                        class="fas fa-clock"
+                                                                                        style="font-size: inherit !important;"></i> In Progress</span>
                                                                                 @break
                                                                                 @default
                                                                                 <span
@@ -578,39 +588,37 @@
                                                             </td>
                                                             <td id="enrollment-status-{{ $data['examInfo']['courseId'] }}">
                                                                 @if($hasPassed)
-                                                                    <em>Not Applicable - Exam Passed</em>
+                                                                    <strong style="color: #39683a"><em><i
+                                                                                class="fas fa-check-double"></i> Course
+                                                                            Complete</em></strong>
                                                                 @elseif ($data['assignDate'])
                                                                     <strong class="text-success"><i
-                                                                            class="fas fa-check"></i> Enrolled</strong>
+                                                                            class="fas fa-user-check"></i>
+                                                                        Enrolled</strong>
                                                                     on
                                                                     {{ $data['assignDate'] }}
                                                                 @elseif($data['examInfo']['id'] === config('exams.BASIC.id'))
-                                                                    <em>Not Applicable - Self Assigned</em>
+                                                                    <em>Auto-Enrolled</em>
                                                                 @elseif($data['examInfo']['rating'] - 1 <= $user->rating)
-                                                                    <button
-                                                                        class="btn btn-success btn-sm enrol-exam-course"
-                                                                        data-id="{{ $data['examInfo']['courseId'] }}"
-                                                                        data-name="{{ $exam }}"><i
-                                                                            class="fas fa-user-plus"></i> Enroll
-                                                                    </button>
+                                                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor())
+                                                                        <button
+                                                                            class="btn btn-success btn-sm enrol-exam-course"
+                                                                            data-id="{{ $data['examInfo']['courseId'] }}"
+                                                                            data-name="{{ $exam }}"><i
+                                                                                class="fas fa-user-plus"></i> Enroll
+                                                                        </button>
+                                                                    @else
+                                                                        <span
+                                                                            class="label label-danger"><i
+                                                                                class="fas fa-times-circle"
+                                                                                style="font-size: inherit !important;"></i> Not Enrolled</span>
+                                                                    @endif
                                                                 @else
                                                                     <em>Not Eligible</em>
                                                                 @endif
                                                             </td>
                                                         </tr>
                                                     @endforeach
-                                                    <!--<tr>
-                                                            <td>S2 Rating (TWR) Controller Exam</td>
-                                                            <td>Attempt <strong>1</strong>: <span
-                                                                    class="label label-success" rel="tooltip"
-                                                                    title="30/30 (100%)">Passed</span></td>
-                                                            <td><em>Completed</em></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>S3 Rating (APP) Controller Exam</td>
-                                                            <td><span class="label label-info">Not Taken</span></td>
-                                                            <td><em>Not Applicable</em></td>
-                                                        </tr>-->
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -931,7 +939,7 @@
               }).success(data => {
                 if (data.data.status === 'OK') {
                   swal('Success!', 'The controller has been enrolled in the course.', 'success')
-                  $('#enrollment-status-' + id).html('<strong class="text-success"><i class="fas fa-check"></i> Enrolled</strong> on ' + moment().utc().format('YYYY-MM-DD HH:MM'))
+                  $('#enrollment-status-' + id).html('<strong class="text-success"><i class="fas fa-user-check"></i> Enrolled</strong> on ' + moment().utc().format('YYYY-MM-DD HH:MM'))
                 } else
                   swal('Error!', 'Unable to enroll the controller in the course. Please try again later.', 'success')
               })
