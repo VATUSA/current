@@ -427,7 +427,7 @@
 
 
                     @else
-                        <li><a href="#" id="login-link" data-action="{{ url('login') }}"><i class="fa fa-user"></i>
+                        <li><a href="#" id="login-link" data-action="{{ url('login') }}"><i class="fas fa-user"></i>
                                 Login</a></li>
                     @endif
                 </ul>

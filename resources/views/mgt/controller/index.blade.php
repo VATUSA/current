@@ -714,8 +714,8 @@
                                                 </div>
                                             </div>
                                         </form>
+                                            <hr>
                                     @endif
-                                    <hr>
                                     <table class="table table-striped">
                                         @foreach(\App\Models\Actions::where('to', $user->cid)->orderby('id', 'desc')->get() as $a)
                                             <tr id="log-{{ $a->id }}">
