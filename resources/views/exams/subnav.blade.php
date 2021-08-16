@@ -6,14 +6,14 @@
     </div>
     <div class="panel-body">
         <a href="/exam">View Your Exam Results</a><br>
-        <a href="https://www.vatusa.devel/my/profile#academy">View Your Academy Results</a><br>
-        <a href="{{secure_url('exam/0')}}">View Your Assignments</a><br>
+        <!--<a href="{{ secure_url("/my/profile#academy") }}">View Your Academy Results</a><br>-->
+        <a href="{{ secure_url('exam/0') }}">View Your Assignments</a><br>
         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor())
         <hr>
-        <a href="{{secure_url("exam/assign")}}">Assign Exam</a><br>
-        <a href="{{secure_url("exam/view")}}">View Assigned Exams</a><br>
+        <a href="{{ secure_url("exam/assign") }}">Assign Exam</a><br>
+        <a href="{{ secure_url("exam/view") }}">View Assigned Exams</a><br>
             @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
-            <a href="{{secure_url("exam/edit")}}">Edit Exams</a>
+            <a href="{{ secure_url("exam/edit") }}">Edit Exams</a>
             @endif
         @endif
     </div>
