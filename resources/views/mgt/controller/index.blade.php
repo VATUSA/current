@@ -714,7 +714,7 @@
                                                 </div>
                                             </div>
                                         </form>
-                                            <hr>
+                                        <hr>
                                     @endif
                                     <table class="table table-striped">
                                         @foreach(\App\Models\Actions::where('to', $user->cid)->orderby('id', 'desc')->get() as $a)
@@ -819,17 +819,19 @@
                                     </div>
                                 @endif
                             @endif
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">Academy Material Editor (Facility)</label>
-                                <div class="col-sm-10">
+                            @if(!\App\Classes\RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true))
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Academy Material Editor (Facility)</label>
+                                    <div class="col-sm-10">
                                     <span id="toggleAcademyEditorFacility" style="font-size:1.8em;">
                                         <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, $user->facility, "FACCBT") ? "on text-danger" : "off text-info"}} "></i>
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
-                                    <p class="help-block">This will assign the Editor role to the user in Moodle,
-                                        and will allow him or her to edit the facility Moodle material.</p>
+                                        <p class="help-block">This will assign the Editor role to the user in Moodle,
+                                            and will allow him or her to edit the facility Moodle material.</p>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     @endif
                 </div>
