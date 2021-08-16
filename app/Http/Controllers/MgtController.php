@@ -16,9 +16,8 @@ use App\Models\SoloCert;
 use App\Models\TrainingRecord;
 use App\Models\Transfers;
 use Carbon\Carbon;
-use Carbon\CarbonInterval;
+use Exception;
 use Faker\Factory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Facility;
@@ -136,7 +135,7 @@ class MgtController extends Controller
             $moodle = new VATUSAMoodle();
             try {
                 $uid = $moodle->getUserId($cid);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $uid = -1;
             }
             $basicAssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
@@ -1878,7 +1877,7 @@ class MgtController extends Controller
                 'numPassFailsData', 'evalsPerMonthDataIns', 'allIns', 'tableData', 'hasGlobalAccess'));
     }
 
-    public function toggleAcademyEditor(Request $request)
+    public function toggleAcademyEditor(Request $request): string
     {
         $cid = $request->cid;
         $user = User::findOrFail($cid);
@@ -1892,38 +1891,40 @@ class MgtController extends Controller
             abort(403);
         }
 
-        if (RoleHelper::hasRole($cid, $facility, $isFacility ? "FACCBT" : "CBT")) {
-            if (is_null($moodle->unassignRole($moodle->getUserId($cid),
+        try {
+            if (RoleHelper::hasRole($cid, $facility, $isFacility ? "FACCBT" : "CBT")) {
+                if (is_null($moodle->unassignRole($moodle->getUserId($cid),
+                    $isFacility ? $moodle->getCategoryFromShort($user->facility,
+                        true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
+                    "coursecat"))) {
+                    try {
+                        Role::where('cid', $cid)->where('role', $isFacility ? 'FACCBT' : 'CBT')->where('facility',
+                            $facility)->delete();
+                    } catch (Exception $e) {
+                        return "0";
+                    }
+
+                    return "1";
+                }
+
+                return "0";
+            }
+            if (is_null($moodle->assignRole($moodle->getUserId($cid),
                 $isFacility ? $moodle->getCategoryFromShort($user->facility,
                     true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
                 "coursecat"))) {
-                try {
-                    Role::where('cid', $cid)->where('role', $isFacility ? 'FACCBT' : 'CBT')->where('facility',
-                        $facility)->delete();
-                } catch (\Exception $e) {
-                    return "0";
-                }
+                $role = new Role();
+                $role->cid = $cid;
+                $role->facility = $facility;
+                $role->role = $isFacility ? "FACCBT" : "CBT";
+                $role->saveOrFail();
 
                 return "1";
             }
 
             return "0";
+        } catch (Exception $e) {
+            return "0";
         }
-
-        if (is_null($moodle->assignRole($moodle->getUserId($cid),
-            $isFacility ? $moodle->getCategoryFromShort($user->facility,
-                true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
-            "coursecat"))) {
-            $role = new Role();
-            $role->cid = $cid;
-            $role->facility = $facility;
-            $role->role = $isFacility ? "FACCBT" : "CBT";
-            $role->saveOrFail();
-
-            return "1";
-        }
-
-        return "0";
-
     }
 }

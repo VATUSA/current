@@ -823,7 +823,7 @@
                                 <label class="col-sm-2 control-label">Academy Material Editor (Facility)</label>
                                 <div class="col-sm-10">
                                     <span id="toggleAcademyEditorFacility" style="font-size:1.8em;">
-                                        <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, $user->facility, "CBT") ? "on text-danger" : "off text-info"}} "></i>
+                                        <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, $user->facility, "FACCBT") ? "on text-danger" : "off text-info"}} "></i>
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
                                     <p class="help-block">This will assign the Editor role to the user in Moodle,

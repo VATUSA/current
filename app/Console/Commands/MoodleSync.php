@@ -76,6 +76,8 @@ class MoodleSync extends Command
      * Synchronize Roles
      *
      * @param \App\Models\User $user
+     *
+     * @throws \Exception
      */
     private function sync(User $user)
     {
@@ -87,6 +89,7 @@ class MoodleSync extends Command
             //Create User
             $id = $this->moodle->createUser($user)[0]["id"];
         }
+        $facilities = $user->visits->pluck('facility')->merge(collect($user->facility))->unique();
 
         //Assign Cohorts
         $this->moodle->clearUserCohorts($id);
@@ -94,12 +97,32 @@ class MoodleSync extends Command
         $this->moodle->assignCohort($id, $user->facility);
         $this->moodle->assignCohort($id, "$user->facility-" . Helper::ratingShortFromInt($user->rating)); //Facility level rating
 
+        foreach ($user->visits->pluck('facility') as $facility) {
+            $this->moodle->assignCohort($id, $facility . "-V"); //Facility level visitor
+            $this->moodle->assignCohort($id,
+                "$facility-" . Helper::ratingShortFromInt($user->rating)); //Facility level rating
+        }
         //Clear Roles
+
+        //Uncomment below to skip clearing Mentor tag from ARTCC Course Category for Mentors.
+        /**
+         * $isMentor = Role::where("cid", $user->cid)->where("facility", $user->facility)->where("role", "MTR")->exists();
+         * $this->moodle->clearUserRoles($id, $isMentor,
+         * [VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $this->moodle->getCategoryFromShort($user->facility, true)]);
+         * foreach ($user->visits->pluck('facility') as $f) {
+         * if ($f == $user->facility) {
+         * continue;
+         * }
+         * $this->moodle->clearUserRoles($id, false, [$this->moodle->getCategoryFromShort($f, true)]);
+         * }
+         **/
         $this->moodle->clearUserRoles($id);
 
         //Assign Student Role
         $this->moodle->assignRole($id, VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "STU", "coursecat");
-        $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "STU", "coursecat");
+        foreach ($facilities as $facility) {
+            $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($facility, true), "STU", "coursecat");
+        }
 
         //Assign Category Permissions
         if (RoleHelper::isVATUSAStaff() || RoleHelper::hasRole($user->cid, $user->facility, "TA", true)) {
@@ -132,7 +155,11 @@ class MoodleSync extends Command
                 $this->moodle->assignRole($id, $this->moodle->getConstant($category), "MTR", "course");
             }
         }
-        
+        if (Role::where("cid", $user->cid)->where("facility", $user->facility)->where("role", "MTR")->exists()) {
+            $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "MTR",
+                "coursecat");
+        }
+
         /* Enrolments to be done through Cohort Sync
 
         //Enrol User in Courses within Academy and ARTCC
@@ -148,5 +175,6 @@ class MoodleSync extends Command
             }
         }
         */
+
     }
 }
