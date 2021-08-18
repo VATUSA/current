@@ -596,7 +596,7 @@
                                                                             class="btn btn-success btn-sm enrol-exam-course"
                                                                             data-id="{{ $data['examInfo']['courseId'] }}"
                                                                             data-name="{{ $exam }}"><i
-                                                                                class="fas fa-user-plus"></i> Enroll
+                                                                                class="fas fa-user-plus" @if($data['examInfo']['rating'] === 5) disabled @endif></i> Enroll
                                                                         </button>
                                                                     @else
                                                                         <span
