@@ -577,7 +577,7 @@
                                                                     @endforeach
                                                                 @endif
                                                             </td>
-                                                            <td id="enrollment-status-{{ $data['examInfo']['courseId'] }}">
+                                                            <td @if($data['examInfo']['id'] !== config('exams.BASIC.id')) id="enrollment-status-{{ $data['examInfo']['courseId'] }}" @endif>
                                                                 @if($hasPassed)
                                                                     <strong style="color: #39683a"><em><i
                                                                                 class="fas fa-check-double"></i> Course
