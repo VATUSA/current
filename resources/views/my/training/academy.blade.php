@@ -23,20 +23,13 @@
                             <strong>{{ $attempt['attempt'] }}</strong>:
                             @switch($attempt['state'])
                                 @case('finished')
-                                @if(round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) >= $data['examInfo']['passingPercent'])
+                                @if($attempt['grade'] >= $data['examInfo']['passingPercent'])
                                     @php $hasPassed = 1; @endphp
-                                    <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}" style="text-decoration: none"><span
-                                            class="label label-success"
-                                            rel="tooltip"
-                                            title="{{ $attempt['sumgrades'] }}/{{ $data['examInfo']['numQuestions'] }} ({{ round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) }}%)"><i
-                                                class="fas fa-check" style="font-size: inherit !important;"></i> Passed</span></a>
+                                    <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}" style="text-decoration: none" target="_blank"><span
+                                            class="label label-success"><i class="fas fa-check" style="font-size: inherit !important;"></i> Passed ({{ $attempt['grade'] }}%)</span></a>
                                 @else
-                                    <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}" style="text-decoration: none"><span
-                                            class="label label-danger"
-                                            rel="tooltip"
-                                            title="{{ $attempt['sumgrades'] }}/{{ $data['examInfo']['numQuestions'] }} ({{ round($attempt['sumgrades'] / $data['examInfo']['numQuestions'] * 100) }}%)"><i
-                                                class="fas fa-times"
-                                                style="font-size: inherit !important;"></i> Failed</span></a>
+                                    <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}" style="text-decoration: none" target="_blank"><span
+                                            class="label label-danger"><i class="fas fa-times" style="font-size: inherit !important;"></i> Failed ({{ $attempt['grade'] }}%)</span></a>
                                 @endif
                                 @break
                                 @case('inprogress')

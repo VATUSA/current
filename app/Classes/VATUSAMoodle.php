@@ -539,7 +539,7 @@ class VATUSAMoodle extends MoodleRest
      *
      * @return array
      */
-    public function getQuizAttempts(int $quizid, ?int $cid, ?int $uid = null): array
+    public function getQuizAttempts(int $quizid, ?int $cid, ?int $uid = null, $includeGrades = true): array
     {
         try {
             $userid = $uid ?? $this->getUserId($cid);
@@ -547,8 +547,17 @@ class VATUSAMoodle extends MoodleRest
                 return [];
             }
 
-            return $this->request("mod_quiz_get_user_attempts",
-                ["quizid" => $quizid, "userid" => $userid])['attempts'] ?? [];
+            $attempts = $this->request("mod_quiz_get_user_attempts", ["quizid" => $quizid, "userid" => $userid])['attempts'] ?? [];
+
+            for ($i = 0; $i < count($attempts); $i++) {
+                $review = $this->request("mod_quiz_get_attempt_review",
+                        ["attemptid" => $attempts[$i]['id']]) ?? [];
+                if (!empty($review)) {
+                    $attempts[$i]['grade'] = round(floatval($review['grade']));
+                }
+            }
+
+            return $attempts;
         } catch (Exception $e) {
             return [];
         }
