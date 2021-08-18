@@ -53,8 +53,9 @@
                 @elseif ($data['assignDate'] || $data['examInfo']['id'] === config('exams.BASIC.id') || $data['examInfo']['rating'] <= Auth::user()->rating)
                     <strong class="text-success"><i
                             class="fas fa-user-check"></i> Enrolled</strong>
-                    on
-                    {{ $data['assignDate'] }}
+                    @if($data['assignDate']) on 
+                        {{ $data['assignDate'] }}
+                    @endif
                 @elseif($data['examInfo']['rating'] - 1 <= Auth::user()->rating)
                     <span
                         class="label label-danger"><i class="fas fa-times-circle"
