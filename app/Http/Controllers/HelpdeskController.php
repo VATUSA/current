@@ -343,8 +343,8 @@ class HelpdeskController
                 // Send to all in ZHQ
                 if ($ticket->facility == "ZHQ") {
                     $roles = Role::where('facility', 'ZHQ')->where('role', 'LIKE', "US%")->get();
-                    foreach ($roles as $user) {
-                        $emails[] = "vat" . strtolower(str_replace("US", "usa", $roles->role)) . "@vatusa.net";
+                    foreach ($roles as $role) {
+                        $emails[] = "vat" . strtolower(str_replace("US", "usa", $role->role)) . "@vatusa.net";
                     }
                 } elseif ($ticket->facility == "ZAE") {
                     $emails[] = "vatusa3@vatusa.net";
