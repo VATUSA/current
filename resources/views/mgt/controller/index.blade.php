@@ -595,7 +595,7 @@
                                                                         <button
                                                                             class="btn btn-success btn-sm enrol-exam-course"
                                                                             data-id="{{ $data['examInfo']['courseId'] }}"
-                                                                            data-name="{{ $exam }}" disabled><i
+                                                                            data-name="{{ $exam }}"><i
                                                                                 class="fas fa-user-plus"></i> Enroll
                                                                         </button>
                                                                     @else
