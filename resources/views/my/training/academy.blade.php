@@ -46,7 +46,7 @@
                     @endforeach
                 @endif
             </td>
-            <td id="enrollment-status-{{ $data['examInfo']['courseId'] }}">
+            <td>
                 @if($hasPassed)
                     <strong style="color: #39683a"><em><i
                                 class="fas fa-check-double"></i> Course Complete</em></strong>
