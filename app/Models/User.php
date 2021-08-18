@@ -386,7 +386,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function selectionEligible()
     {
-        if ($this->flag_homecontroller == 0) {
+        if ($this->flag_homecontroller == 0 || $this->facility != "ZAE") {
             return false;
         }
 
@@ -396,10 +396,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $this->save();
         }
 
-        if ($this->facility == "ZAE" && !$this->flag_needbasic && !Transfers::where('cid', $this->cid)->where('to',
-                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists()) {
-            return true;
-        }
+        return !$this->flag_needbasic && !Transfers::where('cid', $this->cid)->where('to',
+                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists();
     }
 
     public function promotionEligible()
@@ -430,8 +428,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.BASIC.legacyId'))->where('passed',
-                1)->exists() || ExamHelper::academyPassedExam($this->cid, "BASIC");
+        return !$this->flag_needbasic;
     }
 
     public function isS2Eligible()
@@ -440,7 +437,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.S2.legacyId'))->where('passed', 1)->exists() || ExamHelper::academyPassedExam($this->cid, "S2");
+        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.S2.legacyId'))->where('passed',
+                1)->exists() || ExamHelper::academyPassedExam($this->cid, "S2");
     }
 
     public function isS3Eligible()
@@ -449,7 +447,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.S3.legacyId'))->where('passed', 1)->exists() || ExamHelper::academyPassedExam($this->cid, "S3");
+        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.S3.legacyId'))->where('passed',
+                1)->exists() || ExamHelper::academyPassedExam($this->cid, "S3");
 
     }
 
@@ -459,7 +458,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.C1.legacyId'))->where('passed', 1)->exists() || ExamHelper::academyPassedExam($this->cid, "C1");
+        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.C1.legacyId'))->where('passed',
+                1)->exists() || ExamHelper::academyPassedExam($this->cid, "C1");
 
     }
 

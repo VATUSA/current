@@ -188,7 +188,7 @@ class ExamHelper
         }
         foreach ($attempts as $attempt) {
             if ($attempt['state'] === "finished"
-                && round($attempt['sumgrades'] / $config['numQuestions'] * 100) >= $config['passingPercent']) {
+                && $attempt['grade'] >= $config['passingPercent']) {
                 if ($intervalDays && $attempt['timefinish'] < time() - $intervalDays * 86400) {
                     continue;
                 }

@@ -162,7 +162,7 @@
                             </tr>
                             <tr>
                                 <td>Have you completed the Basic ATC/S1 courses?</td>
-                                <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes <br><a href="https://www.vatusa.net/my/assignbasic">Request</a></span>' !!}</td>
+                                <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
                             </tr>
                             <tr>
                                 <td>Has it been at least 90 days since your last transfer?</td>

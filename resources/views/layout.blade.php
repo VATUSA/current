@@ -91,7 +91,7 @@
                             <i class="fas fa-home"></i> Home
                         </a></li>
                     <li><a href="https://forums.vatusa.net"><i class="fas fa-comment"></i> Forums</a></li>
-                    <!--<li><a href="https://academy.vatusa.net"><i class="fas fa-graduation-cap"></i> Academy</a></li>-->
+                    <li><a href="https://academy.vatusa.net"><i class="fas fa-graduation-cap"></i> Academy</a></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                             aria-expanded="false">
                             Facilities
