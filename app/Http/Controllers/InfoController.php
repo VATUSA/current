@@ -3,6 +3,7 @@
 use App\Models\Facility;
 use App\Classes\RoleHelper;
 use App\Classes\Helper;
+use App\Models\KnowledgebaseQuestions;
 use App\Models\Policy;
 use App\Models\User;
 
@@ -16,7 +17,12 @@ class InfoController
 
     public function getJoin()
     {
-        return View('info.join');
+        $content = KnowledgebaseQuestions::find(config('services.kb.joinQuestionId'));
+        if (!$content) {
+            abort(500);
+        }
+
+        return view('info.join', ['content' => $content->answer]);
     }
 
     public function getMembers()
@@ -28,7 +34,7 @@ class InfoController
             $orgLink = null;
         }
 
-        return view('info.members',  compact('orgLink'));
+        return view('info.members', compact('orgLink'));
     }
 
     public function getPolicies()

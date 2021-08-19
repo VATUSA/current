@@ -49,5 +49,9 @@ return [
 
     'vatsim' => [
         'apiToken' => env('VATSIM_API_TOKEN', '')
+    ],
+
+    'kb' => [
+        'joinQuestionId' => env('KB_JOIN_QUESTION_ID')
     ]
 ];
