@@ -577,7 +577,7 @@
                                                                     @endforeach
                                                                 @endif
                                                             </td>
-                                                            <td @if($data['examInfo']['id'] !== config('exams.BASIC.id')) id="enrollment-status-{{ $data['examInfo']['courseId'] }}" @endif>
+                                                            <td @if($data['examInfo']['id'] != config('exams.BASIC.id')) id="enrollment-status-{{ $data['examInfo']['courseId'] }}" @endif>
                                                                 @if($hasPassed)
                                                                     <strong style="color: #39683a"><em><i
                                                                                 class="fas fa-check-double"></i> Course
@@ -588,7 +588,7 @@
                                                                         Enrolled</strong>
                                                                     on
                                                                     {{ $data['assignDate'] }}
-                                                                @elseif($data['examInfo']['id'] === config('exams.BASIC.id') || $data['examInfo']['rating'] <= $user->rating)
+                                                                @elseif($data['examInfo']['id'] == config('exams.BASIC.id') || $data['examInfo']['rating'] <= $user->rating)
                                                                     <em>Auto-Enrolled</em>
                                                                 @elseif($data['examInfo']['rating'] - 1 <= $user->rating)
                                                                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor())

@@ -50,7 +50,7 @@
                 @if($hasPassed)
                     <strong style="color: #39683a"><em><i
                                 class="fas fa-check-double"></i> Course Complete</em></strong>
-                @elseif ($data['assignDate'] || $data['examInfo']['id'] === config('exams.BASIC.id') || $data['examInfo']['rating'] <= Auth::user()->rating)
+                @elseif ($data['assignDate'] || $data['examInfo']['id'] == config('exams.BASIC.id') || $data['examInfo']['rating'] <= Auth::user()->rating)
                     <strong class="text-success"><i
                             class="fas fa-user-check"></i> Enrolled</strong>
                     @if($data['assignDate']) on 

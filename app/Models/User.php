@@ -3,9 +3,11 @@
 use App\Classes\ExamHelper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
+use App\Classes\VATUSAMoodle;
 use Carbon\Carbon;
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
+use Exception;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -205,6 +207,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                             ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
             );
+
+            /** Remove Mentor Role */
+            Role::where("cid", $this->cid)->where("facility", $facility)->where("role", "MTR")->first()->delete();
+            $moodle = new VATUSAMoodle();
+            try {
+                $moodle->unassignMentorRoles($this->cid);
+            } catch (Exception $e) {
+            }
         }
 
         if ($by > 800000) {
@@ -256,15 +266,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         // SMFHelper::createPost(7262, 82, "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility, "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
     }
 
-    public function purge($alltables = false)
-    {
+    public
+    function purge(
+        $alltables = false
+    ) {
         //$this->delete();
 
         //TODO: Purge from All Tables
     }
 
-    public function transferEligible(&$checks = null)
-    {
+    public
+    function transferEligible(
+        &$checks = null
+    ) {
         if ($checks === null) {
             $checks = [];
         }
@@ -306,12 +320,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         } else {
             $checks['is_first'] = 0;
         }
-        $transfer = Transfers::where('cid', $this->cid)->where('status', 1)->where('to', 'NOT LIKE', 'ZAE')->where('to',
+        $transfer = Transfers::where('cid', $this->cid)->where('status', 1)->where('to', 'NOT LIKE',
+            'ZAE')->where('to',
             'NOT LIKE', 'ZZN')->where('status', 1)->orderBy('created_at', 'DESC')->first();
         if (!$transfer) {
             $checks['90days'] = 1;
         } else {
-            $checks['days'] = Carbon::createFromFormat('Y-m-d H:i:s', $transfer->updated_at)->diffInDays(new Carbon());
+            $checks['days'] = Carbon::createFromFormat('Y-m-d H:i:s',
+                $transfer->updated_at)->diffInDays(new Carbon());
             if ($checks['days'] >= 90) {
                 $checks['90days'] = 1;
             } else {
@@ -378,13 +394,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function toggleBasic()
+    public
+    function toggleBasic()
     {
         $this->flag_needbasic = (($this->flag_needbasic) ? 0 : 1);
         $this->save();
     }
 
-    public function selectionEligible()
+    public
+    function selectionEligible()
     {
         if ($this->flag_homecontroller == 0 || $this->facility != "ZAE") {
             return false;
@@ -400,7 +418,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists();
     }
 
-    public function promotionEligible()
+    public
+    function promotionEligible()
     {
         if ($this->flag_homecontroller == 0) {
             return false;
@@ -422,7 +441,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return false;
     }
 
-    public function isS1Eligible()
+    public
+    function isS1Eligible()
     {
         if ($this->rating > Helper::ratingIntFromShort("OBS")) {
             return false;
@@ -431,7 +451,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return !$this->flag_needbasic;
     }
 
-    public function isS2Eligible()
+    public
+    function isS2Eligible()
     {
         if ($this->rating != Helper::ratingIntFromShort("S1")) {
             return false;
@@ -441,7 +462,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 1)->exists() || ExamHelper::academyPassedExam($this->cid, "S2");
     }
 
-    public function isS3Eligible()
+    public
+    function isS3Eligible()
     {
         if ($this->rating != Helper::ratingIntFromShort("S2")) {
             return false;
@@ -452,7 +474,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     }
 
-    public function isC1Eligible()
+    public
+    function isC1Eligible()
     {
         if ($this->rating != Helper::ratingIntFromShort("S3")) {
             return false;
@@ -463,24 +486,28 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     }
 
-    public function lastActivityWebsite()
+    public
+    function lastActivityWebsite()
     {
         return $this->lastactivity->diffInDays(null);
     }
 
-    public function lastActivityForum()
+    public
+    function lastActivityForum()
     {
         $f = \DB::connection('forum')->table("smf_members")->where("member_name", $this->cid)->first();
 
         return ($f) ? Carbon::createFromTimestamp($f->last_login)->diffInDays(null) : "Unknown";
     }
 
-    public function lastPromotion()
+    public
+    function lastPromotion()
     {
         return $this->hasMany(Promotions::class, 'cid', 'cid')->latest()->first();
     }
 
-    public function isActive()
+    public
+    function isActive()
     {
         $website = false;
         $forum = false;
@@ -499,7 +526,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return false;
     }
 
-    public function getTrainingActivitySparkline()
+    public
+    function getTrainingActivitySparkline()
     {
         $vals = [];
         for ($i = 10; $i >= 0; $i--) {
@@ -514,7 +542,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return implode(",", $vals);
     }
 
-    public function checkPromotionCriteria(
+    public
+    function checkPromotionCriteria(
         &$trainingRecordStatus,
         &$otsEvalStatus,
         &$examPosition,

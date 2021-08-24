@@ -203,6 +203,12 @@ class MgtController extends Controller
 
             return redirect("/mgt/controller/$cid")->with("success", "Successfully set as mentor");
         } else {
+            $moodle = new VATUSAMoodle();
+            try {
+                $moodle->unassignMentorRoles($cid);
+            } catch (Exception $e) {
+                return redirect("/mgt/controller")->with("error", "Unable to remove roles from Moodle. Please try again later.");
+            }
             $role->delete();
             $log = new Actions();
             $log->to = $user->cid;

@@ -24,13 +24,15 @@ class VATUSAMoodle extends MoodleRest
         'FACCBT' => 11
     ];
 
-    /** @var int Category Contexts */
+    /** @var int VATUSA Category Context */
     public const CATEGORY_CONTEXT_VATUSA = 43;
-    public const CATEGORY_CONTEXT_OBS = 44;
-    public const CATEGORY_CONTEXT_S1 = 45;
-    public const CATEGORY_CONTEXT_S2 = 115;
-    public const CATEGORY_CONTEXT_S3 = 47;
-    public const CATEGORY_CONTEXT_C1 = 48;
+
+    /** @var int Exam Course Context */
+    public const EXAM_CONTEXT_OBS = -1;
+    public const EXAM_CONTEXT_S1 = 3024;
+    public const EXAM_CONTEXT_S2 = 3044;
+    public const EXAM_CONTEXT_S3 = 3046;
+    public const EXAM_CONTEXT_C1 = 3048;
 
     /** @var int Category IDs */
     public const CATEGORY_ID_VATUSA = 2;
@@ -436,6 +438,21 @@ class VATUSAMoodle extends MoodleRest
                 ]
             ]
         ]);
+    }
+
+    /**
+     * Unassign all Mentor roles
+     *
+     * @param int|null      $cid VATSIM ID
+     * @param int|null $uid Moodle UID
+     *
+     * @return int
+     * @throws \Exception
+     */
+    public function unassignMentorRoles(?int $cid, ?int $uid = null)
+    {
+        return DB::connection('moodle')->table('role_assignments')->where('userid',
+            $uid ?? $this->getUserId($cid))->where('roleid', $this->roleIds['MTR'])->delete();
     }
 
     /**
