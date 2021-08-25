@@ -56,7 +56,7 @@
                     @if($data['assignDate']) on 
                         {{ $data['assignDate'] }}
                     @endif
-                @elseif($data['examInfo']['rating'] - 1 <= Auth::user()->rating)
+                @elseif($data['examInfo']['rating'] - 1 == Auth::user()->rating)
                     <span
                         class="label label-danger"><i class="fas fa-times-circle"
                                                       style="font-size: inherit !important;"></i> Not Enrolled</span>

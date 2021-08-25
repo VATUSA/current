@@ -210,11 +210,14 @@
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#csp" aria-controls="csp" role="tab"
                                                               data-toggle="tab">Summary</a></li>
-                    @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
-                        <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab" data-toggle="tab">Ratings
-                                &amp; Transfers</a></li>
+                    @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                        @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility))
+                            <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab"
+                                                       data-toggle="tab">Ratings
+                                    &amp; Transfers</a></li>
+                        @endif
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
-                                                   data-toggle="tab">Exams</a></li>
+                                                   data-toggle="tab">Academy Transcript</a></li>
                     @endif
                     @php $canViewTraining = $user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists() || $user->trainingRecords()->where('facility_id', Auth::user()->facility)->exists() || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
                     <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
@@ -415,7 +418,7 @@
                             </div>
                         @endif
                     </div>
-                    @if (!\App\Classes\RoleHelper::isMentor() || (\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()))
+                    @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
                         <div class="tab-pane" role="tabpanel" id="ratings">
                             <div class="row">
                                 <div class="col-md-6">
@@ -495,36 +498,43 @@
                                         <!-- Nav tabs -->
                                         <ul class="nav nav-tabs nav-justified text-centers" id="exam-tabs"
                                             role="tablist">
-                                            <li role="presentation" class="active"><a href="#"
-                                                                                      data-target="legacy"
-                                                                                      aria-controls="home" role="tab"
-                                                                                      data-toggle="tab"
-                                                                                      class="text-warning">Legacy</a>
-                                            </li>
-                                            <li role="presentation"><a href="#" data-target="academy"
-                                                                       aria-controls="academy"
-                                                                       role="tab" data-toggle="tab"
-                                                                       class="text-success">Academy</a></li>
+                                            @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility))
+                                                <li role="presentation" class="active"><a href="#"
+                                                                                          data-target="legacy"
+                                                                                          aria-controls="home"
+                                                                                          role="tab"
+                                                                                          data-toggle="tab"
+                                                                                          class="text-warning">Legacy</a>
+                                                </li>
+                                            @endif
+                                            <li role="presentation"
+                                                @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)) class="active" @endif><a
+                                                    href="#" data-target="academy"
+                                                    aria-controls="academy"
+                                                    role="tab" data-toggle="tab"
+                                                    class="text-success">Academy</a></li>
                                         </ul>
 
                                         <!-- Tab panes -->
                                         <div class="tab-content" id="exam-tab-content">
-                                            <div role="tabpanel" class="tab-pane active" id="legacy">
-                                                <table class="table table-striped">
-                                                    @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
-                                                        <tr style="text-align: center">
-                                                            <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
-                                                            <td style="width: 70%; text-align: left"><a
-                                                                    href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a>
-                                                            </td>
-                                                            <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
-                                                                %
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </table>
-                                            </div>
-                                            <div role="tabpanel" class="tab-pane" id="academy">
+                                            @if(!\App\Classes\RoleHelper::isMentor())
+                                                <div role="tabpanel" class="tab-pane active" id="legacy">
+                                                    <table class="table table-striped">
+                                                        @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
+                                                            <tr style="text-align: center">
+                                                                <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
+                                                                <td style="width: 70%; text-align: left"><a
+                                                                        href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a>
+                                                                </td>
+                                                                <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
+                                                                    %
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                </div>
+                                            @endif
+                                            <div role="tabpanel" class="tab-pane @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)) active @endif" id="academy">
                                                 {{-- -<pre>@dump($examAttempts)</pre> --}}
                                                 <table class="table table-striped">
                                                     <thead>
@@ -555,11 +565,18 @@
                                                                                 @if(round($attempt['grade'] >= $data['examInfo']['passingPercent']))
                                                                                     @php $hasPassed = 1; @endphp
                                                                                     <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}"
-                                                                                       style="text-decoration: none" target="_blank"><span
-                                                                                            class="label label-success"><i class="fas fa-check" style="font-size: inherit !important;"></i> Passed ({{ $attempt['grade'] }}%)</span></a>
+                                                                                       style="text-decoration: none"
+                                                                                       target="_blank"><span
+                                                                                            class="label label-success"><i
+                                                                                                class="fas fa-check"
+                                                                                                style="font-size: inherit !important;"></i> Passed ({{ $attempt['grade'] }}%)</span></a>
                                                                                 @else
                                                                                     <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}"
-                                                                                       style="text-decoration: none" target="_blank"><span class="label label-danger"><i class="fas fa-times" style="font-size: inherit !important;"></i> Failed ({{ $attempt['grade'] }}%)</span></a>
+                                                                                       style="text-decoration: none"
+                                                                                       target="_blank"><span
+                                                                                            class="label label-danger"><i
+                                                                                                class="fas fa-times"
+                                                                                                style="font-size: inherit !important;"></i> Failed ({{ $attempt['grade'] }}%)</span></a>
                                                                                 @endif
                                                                                 @break
                                                                                 @case('inprogress')
@@ -590,12 +607,13 @@
                                                                     {{ $data['assignDate'] }}
                                                                 @elseif($data['examInfo']['id'] == config('exams.BASIC.id') || $data['examInfo']['rating'] <= $user->rating)
                                                                     <em>Auto-Enrolled</em>
-                                                                @elseif($data['examInfo']['rating'] - 1 <= $user->rating)
-                                                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor())
+                                                                @elseif($data['examInfo']['rating'] - 1 == $user->rating)
+                                                                    @if(\App\Classes\RoleHelper::isMentor() && $data['examInfo']['rating'] <= Auth::user()->rating)
                                                                         <button
                                                                             class="btn btn-success btn-sm enrol-exam-course"
                                                                             data-id="{{ $data['examInfo']['courseId'] }}"
-                                                                            data-name="{{ $exam }}"><i
+                                                                            data-name="{{ $exam }}">
+                                                                            <i
                                                                                 class="fas fa-user-plus"></i> Enroll
                                                                         </button>
                                                                     @else
@@ -614,7 +632,6 @@
                                                 </table>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
