@@ -210,12 +210,13 @@
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#csp" aria-controls="csp" role="tab"
                                                               data-toggle="tab">Summary</a></li>
-                    @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
-                        @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility))
-                            <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab"
-                                                       data-toggle="tab">Ratings
-                                    &amp; Transfers</a></li>
-                        @endif
+                    @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
+                        || \App\Classes\RoleHelper::isFacilitySeniorStaff()
+                        || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM")
+                        || \App\Classes\RoleHelper::isInstructor(Auth::user()->facility, $user->facility))
+                        <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab"
+                                                   data-toggle="tab">Ratings
+                                &amp; Transfers</a></li>
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Academy Transcript</a></li>
                     @endif
@@ -418,7 +419,10 @@
                             </div>
                         @endif
                     </div>
-                    @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                    @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
+                        || \App\Classes\RoleHelper::isFacilitySeniorStaff()
+                        || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM")
+                        || \App\Classes\RoleHelper::isInstructor(Auth::user()->facility, $user->facility))
                         <div class="tab-pane" role="tabpanel" id="ratings">
                             <div class="row">
                                 <div class="col-md-6">
@@ -450,40 +454,45 @@
                                         @endforeach
                                     </table>
                                 </div>
-                                <div class="col-md-6">
-                                    <table class="table table-striped panel panel-default">
-                                        <thead>
-                                        <tr style="background:#F5F5F5" class="panel-heading">
-                                            <td colspan="5" style="text-align:center"><h3 class="panel-title">Transfer
-                                                    History</h3>
-                                            </td>
-                                        </tr>
-                                        </thead>
-                                        @foreach(\App\Models\Transfers::where('cid', $user->cid)->orderby('id', 'desc')->get() as $t)
-                                            <tr style="text-align: center">
-                                                <td>{{substr($t->updated_at, 0,10)}}</td>
-                                                <td><strong>{{$t->from}}</strong></td>
-                                                <td class="text-{{($t->status == 2 ? 'danger' : ($t->status == 1 ? 'success' : 'warning'))}}">
-                                                    <i class="fa fa-arrow-right" data-toggle="tooltip"
-                                                       data-original-title="{{($t->status == 2 ? 'Declined - '.$t->actiontext.' by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : ($t->status == 1 ? 'Approved by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : 'Pending'))}}"
-                                                       style="cursor: pointer"></i></td>
-                                                <td><strong>{{$t->to}}</strong></td>
-                                                <td><a href="#" onClick="viewXfer({{$t->id}})"><i
-                                                            class="fa fa-search"></i></a>
+                                @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
+                                                    || \App\Classes\RoleHelper::isFacilitySeniorStaff()
+                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
+                                    <div class="col-md-6">
+                                        <table class="table table-striped panel panel-default">
+                                            <thead>
+                                            <tr style="background:#F5F5F5" class="panel-heading">
+                                                <td colspan="5" style="text-align:center"><h3 class="panel-title">
+                                                        Transfer
+                                                        History</h3>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                        @if(\App\Classes\RoleHelper::isVATUSAStaff())
-                                            <tr>
-                                                <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
-                                                            id="waivertogglei"
-                                                            class="fa {{(($user->flag_xferOverride==1) ? "fa-toggle-on text-success" : "fa-toggle-off text-danger")}}"></i></span>
-                                                    <a href="/mgt/transfer?cid={{$user->cid}}">Submit TR</a>
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    </table>
-                                </div>
+                                            </thead>
+                                            @foreach(\App\Models\Transfers::where('cid', $user->cid)->orderby('id', 'desc')->get() as $t)
+                                                <tr style="text-align: center">
+                                                    <td>{{substr($t->updated_at, 0,10)}}</td>
+                                                    <td><strong>{{$t->from}}</strong></td>
+                                                    <td class="text-{{($t->status == 2 ? 'danger' : ($t->status == 1 ? 'success' : 'warning'))}}">
+                                                        <i class="fa fa-arrow-right" data-toggle="tooltip"
+                                                           data-original-title="{{($t->status == 2 ? 'Declined - '.$t->actiontext.' by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : ($t->status == 1 ? 'Approved by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : 'Pending'))}}"
+                                                           style="cursor: pointer"></i></td>
+                                                    <td><strong>{{$t->to}}</strong></td>
+                                                    <td><a href="#" onClick="viewXfer({{$t->id}})"><i
+                                                                class="fa fa-search"></i></a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                                <tr>
+                                                    <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
+                                                                id="waivertogglei"
+                                                                class="fa {{(($user->flag_xferOverride==1) ? "fa-toggle-on text-success" : "fa-toggle-off text-danger")}}"></i></span>
+                                                        <a href="/mgt/transfer?cid={{$user->cid}}">Submit TR</a>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </table>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="exams">
@@ -498,7 +507,9 @@
                                         <!-- Nav tabs -->
                                         <ul class="nav nav-tabs nav-justified text-centers" id="exam-tabs"
                                             role="tablist">
-                                            @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility))
+                                            @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
+                                                    || \App\Classes\RoleHelper::isFacilitySeniorStaff()
+                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
                                                 <li role="presentation" class="active"><a href="#"
                                                                                           data-target="legacy"
                                                                                           aria-controls="home"
@@ -508,7 +519,10 @@
                                                 </li>
                                             @endif
                                             <li role="presentation"
-                                                @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)) class="active" @endif><a
+                                                @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
+                                                    && !(\App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->facility, $user->facility)
+                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))) class="active" @endif>
+                                                <a
                                                     href="#" data-target="academy"
                                                     aria-controls="academy"
                                                     role="tab" data-toggle="tab"
@@ -517,7 +531,9 @@
 
                                         <!-- Tab panes -->
                                         <div class="tab-content" id="exam-tab-content">
-                                            @if(!\App\Classes\RoleHelper::isMentor())
+                                            @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
+                                                    || \App\Classes\RoleHelper::isFacilitySeniorStaff()
+                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
                                                 <div role="tabpanel" class="tab-pane active" id="legacy">
                                                     <table class="table table-striped">
                                                         @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
@@ -534,7 +550,11 @@
                                                     </table>
                                                 </div>
                                             @endif
-                                            <div role="tabpanel" class="tab-pane @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)) active @endif" id="academy">
+                                            <div role="tabpanel"
+                                                 class="tab-pane @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
+                                                    && !(\App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->facility, $user->facility)
+                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))) active @endif"
+                                                 id="academy">
                                                 {{-- -<pre>@dump($examAttempts)</pre> --}}
                                                 <table class="table table-striped">
                                                     <thead>
@@ -608,7 +628,8 @@
                                                                 @elseif($data['examInfo']['id'] == config('exams.BASIC.id') || $data['examInfo']['rating'] <= $user->rating)
                                                                     <em>Auto-Enrolled</em>
                                                                 @elseif($data['examInfo']['rating'] - 1 == $user->rating)
-                                                                    @if(\App\Classes\RoleHelper::isMentor() && $data['examInfo']['rating'] <= Auth::user()->rating)
+                                                                    @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility) && $data['examInfo']['rating'] <= Auth::user()->rating ||
+                                                                          !\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility))
                                                                         <button
                                                                             class="btn btn-success btn-sm enrol-exam-course"
                                                                             data-id="{{ $data['examInfo']['courseId'] }}"
