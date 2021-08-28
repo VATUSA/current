@@ -213,7 +213,7 @@
                     @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
                         || \App\Classes\RoleHelper::isFacilitySeniorStaff()
                         || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM")
-                        || \App\Classes\RoleHelper::isInstructor(Auth::user()->facility, $user->facility))
+                        || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility))
                         <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab"
                                                    data-toggle="tab">Ratings
                                 &amp; Transfers</a></li>
@@ -422,7 +422,7 @@
                     @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
                         || \App\Classes\RoleHelper::isFacilitySeniorStaff()
                         || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM")
-                        || \App\Classes\RoleHelper::isInstructor(Auth::user()->facility, $user->facility))
+                        || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility))
                         <div class="tab-pane" role="tabpanel" id="ratings">
                             <div class="row">
                                 <div class="col-md-6">
