@@ -175,13 +175,12 @@
                                 </div>
                                 <div class="form-actions">
                                     @if ($ticket->status == "Open")
-                                        <input type="submit" name="replySubmit" class="btn btn-primary" value="Reply"
-                                               data-loading-text="Submitting...">
+                                        <input type="submit" name="replySubmit" class="btn btn-primary" value="Reply">
                                         <input type="submit" name="replyAndCloseSubmit" class="btn btn-success"
-                                               value="Reply and Close" data-loading-text="Submitting...">
+                                               value="Reply and Close">
                                     @else
                                         <input type="submit" name="replyAndOpenSubmit" class="btn btn-info"
-                                               value="Reply and Reopen" data-loading-text="Submitting...">
+                                               value="Reply and Reopen">
                                     @endif
                                 </div>
                             </div>
@@ -207,76 +206,76 @@
             </div>
     </div>
 
-    @if(\App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor())
-        <script type="text/javascript">
+    <script type="text/javascript">
 
-          $('#tFacility').change(function () {
-            // Show Waiting Dialog
-            waitingDialog.show('Loading... make sure to change "Assigned To" drop-down to save!', {
-              dialogsize  : 'sm',
-              progressType: 'ogblue'
-            })
-
-            $('#tAssignTo').prop('disabled', 'disabled')
-            $.ajax({
-              method: 'GET',
-              url   : '/ajax/help/staffc/' + $('#tFacility').val()
-            }).done(function (r) {
-              $('#tAssignTo').replaceOptions($.parseJSON(r))
-              $('#tAssignTo').prop('disabled', false)
-              waitingDialog.hide()
-            })
+        @if(\App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor())
+        $('#tFacility').change(function () {
+          // Show Waiting Dialog
+          waitingDialog.show('Loading... make sure to change "Assigned To" drop-down to save!', {
+            dialogsize  : 'sm',
+            progressType: 'ogblue'
           })
 
-          $('#tAssignTo').change(function () {
-            if ($('#tassignto').val() == '-1') {
-              // Show Error Alert
-              bootbox.alert('You must change the "Assigned To" box to save!')
-              return
-            }
+          $('#tAssignTo').prop('disabled', 'disabled')
+          $.ajax({
+            method: 'GET',
+            url   : '/ajax/help/staffc/' + $('#tFacility').val()
+          }).done(function (r) {
+            $('#tAssignTo').replaceOptions($.parseJSON(r))
+            $('#tAssignTo').prop('disabled', false)
+            waitingDialog.hide()
+          })
+        })
 
-            // Show Waiting Dialog
-            waitingDialog.show('Saving', {
-              dialogSize  : 'sm',
-              progressType: 'ogblue'
-            })
+        $('#tAssignTo').change(function () {
+          if ($('#tassignto').val() == '-1') {
+            // Show Error Alert
+            bootbox.alert('You must change the "Assigned To" box to save!')
+            return
+          }
 
-            // Post Ticket Data
-            $.ajax({
-              method: 'POST',
-              url   : '/help/ticket/ajax/{{$ticket->id}}',
-              data  : {facility: $('#tFacility').val(), assign: $('#tAssignTo').val()}
-            }).done(function () {
-              location.reload(true)
-            })
+          // Show Waiting Dialog
+          waitingDialog.show('Saving', {
+            dialogSize  : 'sm',
+            progressType: 'ogblue'
           })
 
-          $('.btnNotes').click(function () {
-            // Show Waiting Dialog
-            waitingDialog.show('Saving...', {
-              dialogsize  : 'sm',
-              progressType: 'ogblue'
-            })
+          // Post Ticket Data
+          $.ajax({
+            method: 'POST',
+            url   : '/help/ticket/ajax/{{$ticket->id}}',
+            data  : {facility: $('#tFacility').val(), assign: $('#tAssignTo').val()}
+          }).done(function () {
+            location.reload(true)
+          })
+        })
 
-            // Post Ticket Data
-            $.ajax({
-              method: 'POST',
-              url   : '/help/ticket/ajax/{{$ticket->id}}',
-              data  : {note: $('#notes').val()}
-            }).done(function (r) {
-              waitingDialog.hide()
-            })
+        $('.btnNotes').click(function () {
+          // Show Waiting Dialog
+          waitingDialog.show('Saving...', {
+            dialogsize  : 'sm',
+            progressType: 'ogblue'
           })
 
-          $('button[type=submit]').click(function (e) {
-            let btn = $(this)
-            if ($('#tReply').val().length) {
-              btn.html('<i class=\'fa fa-spinner fa-spin\'></i> Submitting...').attr('disabled', true)
-            } else {
-              e.preventDefault()
-              alert('Reply cannot be empty.')
-            }
+          // Post Ticket Data
+          $.ajax({
+            method: 'POST',
+            url   : '/help/ticket/ajax/{{$ticket->id}}',
+            data  : {note: $('#notes').val()}
+          }).done(function (r) {
+            waitingDialog.hide()
           })
-        </script>
-    @endif
+        })
+        @endif
+
+        $('input[type=submit]').click(function (e) {
+          let btn = $(this)
+          if ($('#tReply').val().length) {
+            btn.html('<i class=\'fa fa-spinner fa-spin\'></i> Submitting...').attr('disabled', true)
+          } else {
+            e.preventDefault()
+            alert('Reply cannot be empty.')
+          }
+        })
+    </script>
 @endsection

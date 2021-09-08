@@ -413,7 +413,7 @@ class HelpdeskController
                     $history->save();
 
                     if ($ticket->facility == "ZHQ") {
-                        $users = Role::where('facility', 'ZHQ')->where('role', 'LIKE', "US%");
+                        $users = Role::where('facility', 'ZHQ')->where('role', 'LIKE', "US%")->get();
                         foreach ($users as $user) {
                             $emails[] = "vat" . strtolower(str_replace("US", "usa", $user->role)) . "@vatusa.net";
                         }
@@ -421,297 +421,312 @@ class HelpdeskController
                         // Find Specific ZAE Member
                         $user = Role::where('facility', 'ZHQ')
                             ->where('role', 'LIKE', "%3")
-                            ->where('cid', $request->input("assign"));
+                            ->get();
 
-                        $emails[] = $user->email;
-                    } else {
-                        $fac = Facility::find($ticket->facility);
-                        if (!$fac) {
-                            $ticket->delete();
-
-                            return redirect('/help/ticket/new')->with("error", "Invalid facility specified");
+                        foreach ($user as $u) {
+                            $emails[] = $u->user->email;
                         }
-                        $emails[] = $fac->id . "-atm@vatusa.net";
-                        $emails[] = $fac->id . "-datm@vatusa.net";
-                        $emails[] = $fac->id . "-ta@vatusa.net";
-                        $emails[] = $fac->id . "-fe@vatusa.net";
-                        $emails[] = $fac->id . "-ec@vatusa.net";
-                        $emails[] = $fac->id . "-wm@vatusa.net";
-                        EmailHelper::sendSupportEmail(array_unique($emails), $id, "Ticket Assigned to Facility",
-                            "emails.help.assignedfacility", ["ticket" => $ticket]);
-                    }
                 } else {
-                    $ticket->assigned_to = $request->input("assign");
-                    $ticket->save();
+                    $fac = Facility::find($ticket->facility);
+                    if (!$fac) {
+                        $ticket->delete();
 
-                    $user = User::find($request->input("assign"));
-
-                    $history = new TicketHistory();
-                    $history->ticket_id = $ticket->id;
-                    $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned the ticket to " . $user->fullname() . " (" . $user->cid . ").";
-                    $history->save();
-
-                    EmailHelper::sendSupportEmail($user->email, $id, "Ticket Assigned to You", "emails.help.assigned",
-                        ["ticket" => $ticket]);
+                        return redirect('/help/ticket/new')->with("error", "Invalid facility specified");
+                    }
+                    $emails[] = $fac->id . "-atm@vatusa.net";
+                    $emails[] = $fac->id . "-datm@vatusa.net";
+                    $emails[] = $fac->id . "-ta@vatusa.net";
+                    $emails[] = $fac->id . "-fe@vatusa.net";
+                    $emails[] = $fac->id . "-ec@vatusa.net";
+                    $emails[] = $fac->id . "-wm@vatusa.net";
+                    EmailHelper::sendSupportEmail(array_unique($emails), $id, "Ticket Assigned to Facility",
+                        "emails.help.assignedfacility", ["ticket" => $ticket]);
                 }
-            }
-            if (isset($_POST['note'])) {
-                $ticket->notes = $_POST['note'];
+            } else {
+                $ticket->assigned_to = $request->input("assign");
                 $ticket->save();
+
+                $user = User::find($request->input("assign"));
+
+                $history = new TicketHistory();
+                $history->ticket_id = $ticket->id;
+                $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned the ticket to " . $user->fullname() . " (" . $user->cid . ").";
+                $history->save();
+
+                EmailHelper::sendSupportEmail($user->email, $id, "Ticket Assigned to You", "emails.help.assigned",
+                    ["ticket" => $ticket]);
             }
-        } else {
-            abort(403);
         }
+        if (isset($_POST['note'])) {
+            $ticket->notes = $_POST['note'];
+            $ticket->save();
+        }
+    } else
+{
+abort(403);
+}
+}
+
+// Knowledgebase Editor - Categories
+
+public
+function getKBE()
+{
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
     }
 
-    // Knowledgebase Editor - Categories
+    return view('help.kbe.index');
+}
 
-    public function getKBE()
-    {
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        return view('help.kbe.index');
+public
+function deleteKBECategory(Request $request, $id)
+{
+    if (!$request->ajax()) {
+        abort(403);
+    }
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
     }
 
-    public function deleteKBECategory(Request $request, $id)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
+    $kbc = KnowledgebaseCategories::find($id);
+    if (!$kbc) {
+        abort(404);
+    }
+    $kbc->delete();
+}
 
-        $kbc = KnowledgebaseCategories::find($id);
-        if (!$kbc) {
-            abort(404);
-        }
-        $kbc->delete();
+public
+function postKBECategory(Request $request, $id)
+{
+    if (!$request->ajax()) {
+        abort(403);
+    }
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
     }
 
-    public function postKBECategory(Request $request, $id)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $kbc = KnowledgebaseCategories::find($id);
-        if (!$kbc) {
-            abort(404);
-        }
-        if (isset($_POST["name"])) {
-            $kbc->name = $_POST["name"];
-            $kbc->save();
-            echo 1;
-
-            return;
-        }
-
-        abort(503);
+    $kbc = KnowledgebaseCategories::find($id);
+    if (!$kbc) {
+        abort(404);
     }
-
-    public function putKBECategory(Request $request)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $kbc = new KnowledgebaseCategories();
+    if (isset($_POST["name"])) {
+        $kbc->name = $_POST["name"];
         $kbc->save();
+        echo 1;
 
-        return $kbc->id;
+        return;
     }
 
-    // Knowledgebase Editor - Questions
-    public function getKBECategory(Request $request, $id)
-    {
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
+    abort(503);
+}
 
-        $kbc = KnowledgebaseCategories::find($id);
-        if (!$kbc) {
-            return redirect('/help/kbe')->with("error", "Category not found");
-        }
-
-        return view('help.kbe.question', ['category' => $kbc]);
+public
+function putKBECategory(Request $request)
+{
+    if (!$request->ajax()) {
+        abort(403);
+    }
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
     }
 
-    public function getKBEQuestion(Request $request, $qid)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        //if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
+    $kbc = new KnowledgebaseCategories();
+    $kbc->save();
 
-        $kbq = KnowledgebaseQuestions::find($qid);
-        if (!$kbq) {
-            return redirect('/help/kbe/$id')->with("error", "Question not found");
-        }
-        $ret['question'] = $kbq->question;
-        $ret['answer'] = $kbq->answer;
+    return $kbc->id;
+}
 
-        return json_encode($ret, JSON_HEX_APOS);
+// Knowledgebase Editor - Questions
+public
+function getKBECategory(Request $request, $id)
+{
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
     }
 
-    public function deleteKBEQuestion(Request $request, $id)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
+    $kbc = KnowledgebaseCategories::find($id);
+    if (!$kbc) {
+        return redirect('/help/kbe')->with("error", "Category not found");
+    }
 
+    return view('help.kbe.question', ['category' => $kbc]);
+}
+
+public
+function getKBEQuestion(Request $request, $qid)
+{
+    if (!$request->ajax()) {
+        abort(403);
+    }
+    //if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(403);
+
+    $kbq = KnowledgebaseQuestions::find($qid);
+    if (!$kbq) {
+        return redirect('/help/kbe/$id')->with("error", "Question not found");
+    }
+    $ret['question'] = $kbq->question;
+    $ret['answer'] = $kbq->answer;
+
+    return json_encode($ret, JSON_HEX_APOS);
+}
+
+public
+function deleteKBEQuestion(Request $request, $id)
+{
+    if (!$request->ajax()) {
+        abort(403);
+    }
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
+    }
+
+    $question = KnowledgebaseQuestions::find($id);
+    if (!$question) {
+        abort(404);
+    }
+
+    $cat = $question->category;
+    $question->delete();
+
+    $o = 1;
+    $qs = KnowledgebaseQuestions::where('category_id', $cat->id)->orderBy('order', 'asc')->get();
+    if (!$qs) {
+        return;
+    }
+    foreach ($qs as $q) {
+        $q->order = $o;
+        $q->save();
+        $o++;
+    }
+}
+
+public
+function postKBEQuestionOrder(Request $request, $id)
+{
+    if (!$request->ajax()) {
+        abort(403);
+    }
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
+    }
+
+    $o = 1;
+    foreach ($_POST['kbe'] as $id) {
+        $q = KnowledgebaseQuestions::find($id);
+        $q->order = $o;
+        $q->save();
+        $o++;
+    }
+}
+
+public
+function getKBEeditQuestion($cid, $id)
+{
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
+    }
+    $question = null;
+    if ($id != 0) {
         $question = KnowledgebaseQuestions::find($id);
         if (!$question) {
-            abort(404);
-        }
-
-        $cat = $question->category;
-        $question->delete();
-
-        $o = 1;
-        $qs = KnowledgebaseQuestions::where('category_id', $cat->id)->orderBy('order', 'asc')->get();
-        if (!$qs) {
-            return;
-        }
-        foreach ($qs as $q) {
-            $q->order = $o;
-            $q->save();
-            $o++;
+            return redirect('/help/kbe/' . $cid)->with("error", "Question not found.");
         }
     }
-
-    public function postKBEQuestionOrder(Request $request, $id)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $o = 1;
-        foreach ($_POST['kbe'] as $id) {
-            $q = KnowledgebaseQuestions::find($id);
-            $q->order = $o;
-            $q->save();
-            $o++;
-        }
+    $cat = KnowledgebaseCategories::find($cid);
+    if (!$cat) {
+        return direct('/help/kbe')->with("error", "Category not found");
     }
 
-    public function getKBEeditQuestion($cid, $id)
-    {
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-        $question = null;
-        if ($id != 0) {
-            $question = KnowledgebaseQuestions::find($id);
-            if (!$question) {
-                return redirect('/help/kbe/' . $cid)->with("error", "Question not found.");
-            }
-        }
-        $cat = KnowledgebaseCategories::find($cid);
-        if (!$cat) {
-            return direct('/help/kbe')->with("error", "Category not found");
-        }
+    return view('help.kbe.editquestion', ['question' => $question, 'cat' => $cat]);
+}
 
-        return view('help.kbe.editquestion', ['question' => $question, 'cat' => $cat]);
+public
+function postKBEeditQuestion($cid, $id)
+{
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
     }
-
-    public function postKBEeditQuestion($cid, $id)
-    {
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
+    $question = null;
+    if ($id != 0) {
+        $question = KnowledgebaseQuestions::find($id);
+        if (!$question) {
+            return redirect('/help/kbe/' . $cid)->with("error", "Question not found.");
         }
-        $question = null;
-        if ($id != 0) {
-            $question = KnowledgebaseQuestions::find($id);
-            if (!$question) {
-                return redirect('/help/kbe/' . $cid)->with("error", "Question not found.");
-            }
-        } else {
-            $question = new KnowledgebaseQuestions();
-            $question->category_id = $cid;
-            $oh = KnowledgebaseQuestions::where('category_id', $cid)->orderBy('order', 'DESC')->first();
-            if ($oh) {
-                $oh = $oh->order + 1;
-            } else {
-                $oh = 1;
-            }
-            $question->order = $oh;
-        }
-        $cat = KnowledgebaseCategories::find($cid);
-        if (!$cat) {
-            return direct('/help/kbe')->with("error", "Category not found");
-        }
-
-        $question->updated_by = Auth::user()->cid;
-        $question->question = $_POST['question'];
-        $question->answer = $_POST['answer'];
-        $question->save();
-
-        return redirect("/help/kbe/$cid")->with("success", "Question saved successfully.");
-    }
-
-    public function putKBEQuestion(Request $request, $id)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $vars = [];
-        parse_str(file_get_contents("php://input"), $vars);
-        if (!$vars['question'] || !$vars['answer']) {
-            abort(403);
-        }
-
-        $oh = KnowledgebaseQuestions::where('category_id', $id)->orderBy('order', 'DESC')->first();
+    } else {
+        $question = new KnowledgebaseQuestions();
+        $question->category_id = $cid;
+        $oh = KnowledgebaseQuestions::where('category_id', $cid)->orderBy('order', 'DESC')->first();
         if ($oh) {
             $oh = $oh->order + 1;
         } else {
             $oh = 1;
         }
-
-        $q = new KnowledgebaseQuestions();
-        $q->category_id = $id;
-        $q->question = $vars['question'];
-        $q->answer = $vars['answer'];
-        $q->order = $oh;
-        $q->updated_by = Auth::user()->cid;
-        $q->save();
+        $question->order = $oh;
+    }
+    $cat = KnowledgebaseCategories::find($cid);
+    if (!$cat) {
+        return direct('/help/kbe')->with("error", "Category not found");
     }
 
-    public function postKBEQuestion(Request $request, $id)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
+    $question->updated_by = Auth::user()->cid;
+    $question->question = $_POST['question'];
+    $question->answer = $_POST['answer'];
+    $question->save();
 
-        $q = KnowledgebaseQuestions::find($id);
-        if (!$q) {
-            abort(404);
-        }
+    return redirect("/help/kbe/$cid")->with("success", "Question saved successfully.");
+}
 
-        $q->question = $_POST['question'];
-        $q->answer = $_POST['answer'];
-        $q->updated_by = Auth::user()->cid;
-        $q->save();
+public
+function putKBEQuestion(Request $request, $id)
+{
+    if (!$request->ajax()) {
+        abort(403);
     }
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
+    }
+
+    $vars = [];
+    parse_str(file_get_contents("php://input"), $vars);
+    if (!$vars['question'] || !$vars['answer']) {
+        abort(403);
+    }
+
+    $oh = KnowledgebaseQuestions::where('category_id', $id)->orderBy('order', 'DESC')->first();
+    if ($oh) {
+        $oh = $oh->order + 1;
+    } else {
+        $oh = 1;
+    }
+
+    $q = new KnowledgebaseQuestions();
+    $q->category_id = $id;
+    $q->question = $vars['question'];
+    $q->answer = $vars['answer'];
+    $q->order = $oh;
+    $q->updated_by = Auth::user()->cid;
+    $q->save();
+}
+
+public
+function postKBEQuestion(Request $request, $id)
+{
+    if (!$request->ajax()) {
+        abort(403);
+    }
+    if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        abort(403);
+    }
+
+    $q = KnowledgebaseQuestions::find($id);
+    if (!$q) {
+        abort(404);
+    }
+
+    $q->question = $_POST['question'];
+    $q->answer = $_POST['answer'];
+    $q->updated_by = Auth::user()->cid;
+    $q->save();
+}
 }
