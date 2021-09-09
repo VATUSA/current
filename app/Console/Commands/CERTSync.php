@@ -205,7 +205,7 @@ class CERTSync extends Command
         EmailHelper::sendEmail([
             "vatusa1@vatusa.net",
             "vatusa2@vatusa.net",
-            "vatusa12@vatusa.net",
+           // "vatusa12@vatusa.net",
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
 
         $this->info("Completed in " . (microtime(true) - $start) . " seconds.");
