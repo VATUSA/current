@@ -161,7 +161,7 @@
             </div>
         </div>
         @if(\Auth::user()->cid == $ticket->cid || \App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility))
-            <form method="post" action="{{ secure_url("/help/ticket/{$ticket->id}") }}" class="form">
+            <form method="post" action="{{ secure_url("/help/ticket/{$ticket->id}") }}" class="form" id="reply-form">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
                 <div class="row">
@@ -268,14 +268,12 @@
         })
         @endif
 
-        $('input[type=submit]').click(function (e) {
-          let btn = $(this)
-          if ($('#tReply').val().length) {
-            btn.html('<i class=\'fa fa-spinner fa-spin\'></i> Submitting...').attr('disabled', true)
-          } else {
+        $('#reply-form').submit(function (e) {
+          if ($(this).hasClass('form-submitted')) {
             e.preventDefault()
-            alert('Reply cannot be empty.')
+            return
           }
+          $(this).addClass('form-submitted')
         })
     </script>
 @endsection

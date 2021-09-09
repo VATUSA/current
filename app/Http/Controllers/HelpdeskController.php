@@ -332,7 +332,7 @@ class HelpdeskController
             $ticket->save();
 
             $emails = [];
-            $emails[] = "vatusa6@vatusa.net"; // During debug period
+            //$emails[] = "vatusa6@vatusa.net"; // During debug period
             $emails[] = Auth::user()->email;
             if (Auth::user()->cid != $ticket->cid) {
                 $emails[] = $ticket->submitter->email;
