@@ -66,6 +66,16 @@ class VATUSAMoodle extends MoodleRest
     }
 
     /**
+     * Set token type
+     *
+     * @param bool $isSSO
+     */
+    public function setSSO(bool $isSSO = true)
+    {
+        $this->setToken($isSSO ? config('services.moodle.token_sso') : config('services.moodle.token'));
+    }
+
+    /**
      * Get all Cohorts
      * @return mixed
      * @throws \Exception
@@ -247,6 +257,21 @@ class VATUSAMoodle extends MoodleRest
         }
 
         return $user["id"];
+    }
+
+    /**
+     * Get CID from Moodle UID
+     *
+     * @param int $uid
+     *
+     * @return null|int
+     * @throws \Exception
+     */
+    public function getCidFromUserId(int $uid): ?int
+    {
+        $user = DB::connection('moodle')->table('user')->where('id', $uid)->first();
+
+        return $user ? $user->idnumber : null;
     }
 
     /**
@@ -441,30 +466,37 @@ class VATUSAMoodle extends MoodleRest
     }
 
     /**
-     * Unassign all Mentor roles
-     *
-     * @param int|null      $cid VATSIM ID
-     * @param int|null $uid Moodle UID
-     *
-     * @return int
-     * @throws \Exception
-     */
-    public function unassignMentorRoles(?int $cid, ?int $uid = null)
-    {
-        return DB::connection('moodle')->table('role_assignments')->where('userid',
-            $uid ?? $this->getUserId($cid))->where('roleid', $this->roleIds['MTR'])->delete();
-    }
-
-    /**
      * Clear User's roles
      *
-     * @param int $uid User ID
+     * @param int        $uid User ID
+     * @param bool       $isMtr
+     * @param array|null $contexts
      *
-     * @return int
+     * @return void
      */
-    public function clearUserRoles(int $uid): int
+    public function clearUserRoles(int $uid, bool $isMtr = false, array $contexts = null)
     {
-        return DB::connection('moodle')->table('role_assignments')->where('userid', $uid)->delete();
+        if (is_array($contexts)) {
+            foreach ($contexts as $context) {
+                if ($isMtr) {
+                    DB::connection('moodle')->table('role_assignments')->where('userid', $uid)->where('contextid',
+                        $context)->where('roleId', '!=', $this->roleIds['MTR'])->delete();
+                } else {
+                    DB::connection('moodle')->table('role_assignments')->where('userid', $uid)->where('contextid',
+                        $context)->delete();
+                }
+            }
+        } else {
+            $assignments = DB::connection('moodle')->table('role_assignments')->selectRaw(config('database.connections.moodle.prefix') . 'role_assignments.id')
+                ->leftJoin('context', 'role_assignments.contextid', '=', 'context.id')
+                ->where('role_assignments.userid', $uid)
+                ->where('context.contextlevel', self::CONTEXT_COURSECAT)
+                ->where('role_assignments.component', '!=', 'enrol_cohort')
+                ->get()->pluck('id');
+            foreach ($assignments as $id) {
+                DB::connection('moodle')->table('role_assignments')->where('id', $id)->delete();
+            }
+        }
     }
 
     /**
@@ -475,8 +507,11 @@ class VATUSAMoodle extends MoodleRest
      *
      * @return mixed
      */
-    public function getContext(int $id, string $type)
-    {
+    public
+    function getContext(
+        int $id,
+        string $type
+    ) {
         $level = "CONTEXT_" . strtoupper($type);
 
         return DB::connection('moodle')->table('context')->where('instanceid', $id)->where('contextlevel',
@@ -491,19 +526,23 @@ class VATUSAMoodle extends MoodleRest
      * @return mixed
      * @throws \Exception
      */
-    public function getCoursesInCategory(int $catid = null)
-    {
+    public
+    function getCoursesInCategory(
+        int $catid = null
+    ) {
         $params = $catid ? ["field" => "category", "value" => $catid] : [];
 
         return $this->request("core_course_get_courses_by_field", $params)["courses"];
     }
 
-    public function getAcademyCategoryIds()
+    public
+    function getAcademyCategoryIds()
     {
         return $this->getAllSubcategories(self::CATEGORY_ID_VATUSA, true);
     }
 
-    public function getConstants()
+    public
+    function getConstants()
     {
         return (new ReflectionClass(self::class))->getConstants();
     }
@@ -515,12 +554,15 @@ class VATUSAMoodle extends MoodleRest
      *
      * @return int|null
      */
-    public function getConstant(string $constant): ?int
-    {
+    public
+    function getConstant(
+        string $constant
+    ): ?int {
         return $this->getConstants()[$constant] ?? null;
     }
 
-    public function getAcademyCategoryContexts()
+    public
+    function getAcademyCategoryContexts()
     {
         return array_filter((new ReflectionClass(self::class))->getConstants(), function ($key) {
             return str_contains($key, "CATEGORY_CONTEXT");
@@ -537,13 +579,41 @@ class VATUSAMoodle extends MoodleRest
      * @return mixed
      * @throws \Exception
      */
-    public function enrolUser(int $uid, int $cid, ?int $rid = null)
-    {
+    public
+    function enrolUser(
+        int $uid,
+        int $cid,
+        ?int $rid = null
+    ) {
         if (is_null($rid)) {
             $rid = $this->roleIds['STU'];
         }
 
         return $this->request("enrol_manual_enrol_users",
+            ["enrolments" => [0 => ["roleid" => $rid, "userid" => $uid, "courseid" => $cid]]]);
+    }
+
+    /**
+     * Unenrol User from Course
+     *
+     * @param int      $uid User ID
+     * @param int      $cid Course ID
+     * @param int|null $rid Role ID
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public
+    function unenrolUser(
+        int $uid,
+        int $cid,
+        ?int $rid = null
+    ) {
+        if (is_null($rid)) {
+            $rid = $this->roleIds['STU'];
+        }
+
+        return $this->request("enrol_manual_unenrol_users",
             ["enrolments" => [0 => ["roleid" => $rid, "userid" => $uid, "courseid" => $cid]]]);
     }
 
@@ -556,8 +626,12 @@ class VATUSAMoodle extends MoodleRest
      *
      * @return array
      */
-    public function getQuizAttempts(int $quizid, ?int $cid, ?int $uid = null): array
-    {
+    public
+    function getQuizAttempts(
+        int $quizid,
+        ?int $cid,
+        ?int $uid = null
+    ): array {
         try {
             $userid = $uid ?? $this->getUserId($cid);
             if (!$userid) {
@@ -583,16 +657,22 @@ class VATUSAMoodle extends MoodleRest
         }
     }
 
-    public function getUserEnrolmentInfo(?int $uid, int $enrolmentId)
-    {
+    public
+    function getUserEnrolmentInfo(
+        ?int $uid,
+        int $enrolmentId
+    ) {
         return DB::connection('moodle')->table('user_enrolments')
             ->where('userid', $uid)
             ->where('enrolid', $enrolmentId)
             ->first();
     }
 
-    public function getUserEnrolmentTimestamp(?int $uid, int $enrolmentId)
-    {
+    public
+    function getUserEnrolmentTimestamp(
+        ?int $uid,
+        int $enrolmentId
+    ) {
         $info = $this->getUserEnrolmentInfo($uid, $enrolmentId);
 
         return $info->timecreated ?? false;
