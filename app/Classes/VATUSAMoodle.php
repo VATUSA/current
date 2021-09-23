@@ -679,5 +679,28 @@ class VATUSAMoodle extends MoodleRest
 
     }
 
+    /**
+     * Remove user from all Mentor roles.
+     *
+     * @param int      $cid
+     * @param int|null $uid User ID
+     *
+     * @return int
+     */
+    public function unassignMentorRoles(int $cid, ?int $uid = null): int
+    {
+        try {
+            $userid = $uid ?? $this->getUserId($cid);
+            if (!$userid) {
+                return 0;
+            }
+        } catch (Exception $e) {
+            return 0;
+        }
+
+        return DB::connection('moodle')->table('role_assignments')->where('userid', $userid)->where('roleid',
+            $this->roleIds['MTR'])->delete();
+    }
+
 
 }
