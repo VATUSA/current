@@ -26,15 +26,20 @@
                             <td>{{$cert->position}}</td>
                             <td>{{$cert->expires}}</td>
                             <td>
-                                <button type="button" class="btn btn-danger delete-solo" data-id="{{ $cert->id }}"><i
-                                        class="fa fa-times"></i></button>
+                                @if($cert->user->facility == Auth::user()->facility || \App\Classes\RoleHelper::isVATUSAStaff())
+                                    <button type="button" class="btn btn-danger delete-solo" data-id="{{ $cert->id }}">
+                                        <i class="fa fa-times"></i></button>
+                                @else
+                                    &nbsp;
+                                @endif
                             </td>
                         </tr>
                     @endforeach
                     <form action="/mgt/solo" id="add-solo-form">
                         <input type="hidden" name="_token" value="{{csrf_token()}}">
                         <tr>
-                            <td colspan="2"><input type="text" name="cid" id="cidsearch" placeholder="CID or Last Name" class="form-control"
+                            <td colspan="2"><input type="text" name="cid" id="cidsearch" placeholder="CID or Last Name"
+                                                   class="form-control"
                                                    style="width:200px;"></td>
                             <td><input type="text" name="position" placeholder="Position" class="form-control"
                                        style="width:150px"></td>
@@ -85,28 +90,28 @@
         })
 
         $('#cidsearch').devbridgeAutocomplete({
-          lookup: [],
+          lookup  : [],
           onSelect: (suggestion) => {
-              $('#cidsearch').val(suggestion.data);
+            $('#cidsearch').val(suggestion.data)
           }
-      });
-      var prevVal = '';
-      $('#cidsearch').on('change keydown keyup paste', function() {
-          let newVal = $(this).val();
+        })
+        var prevVal = ''
+        $('#cidsearch').on('change keydown keyup paste', function () {
+          let newVal = $(this).val()
           if (newVal.length === 4 && newVal !== prevVal) {
-              let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/');
-              prevVal = newVal;
-              $.get($.apiUrl() + url + newVal)
+            let url = '/v2/user/' + (isNaN(newVal) ? 'filterlname/' : 'filtercid/')
+            prevVal = newVal
+            $.get($.apiUrl() + url + newVal)
               .success((data) => {
-                  $('#cidsearch').devbridgeAutocomplete().setOptions({
-                      lookup: $.map(data.data, (item) => {
-                          return { value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid };
-                      })
-                  });
-                  $('#cidsearch').focus();
-              });
+                $('#cidsearch').devbridgeAutocomplete().setOptions({
+                  lookup: $.map(data.data, (item) => {
+                    return {value: item.fname + ' ' + item.lname + ' (' + item.cid + ')', data: item.cid}
+                  })
+                })
+                $('#cidsearch').focus()
+              })
           }
-      });
+        })
 
       })
     </script>
