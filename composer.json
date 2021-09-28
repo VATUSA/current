@@ -11,7 +11,7 @@
 		"predis/predis": "^1.1",
 		"fideloper/proxy": "^4.0",
         "ext-simplexml": "*",
-		"sentry/sentry-laravel": "^2.7",
+		"sentry/sentry-laravel": "^2.8",
 		"fzaninotto/faker": "~1.4",
 		"laravel/socialite": "5.*",
 		"socialiteproviders/discord": "4.1.*",
