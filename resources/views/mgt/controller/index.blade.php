@@ -217,6 +217,12 @@
                         <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab"
                                                    data-toggle="tab">Ratings
                                 &amp; Transfers</a></li>
+                    @endif
+                    @if(App\Classes\RoleHelper::isVATUSAStaff() || ($user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists()) &&
+                        (\App\Classes\RoleHelper::isMentor()
+                        || \App\Classes\RoleHelper::isFacilitySeniorStaff()
+                        || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")
+                        || \App\Classes\RoleHelper::isInstructor()))
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Academy Transcript</a></li>
                     @endif
@@ -495,6 +501,12 @@
                                 @endif
                             </div>
                         </div>
+                    @endif
+                    @if(App\Classes\RoleHelper::isVATUSAStaff() || ($user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists()) &&
+                       (\App\Classes\RoleHelper::isMentor()
+                       || \App\Classes\RoleHelper::isFacilitySeniorStaff()
+                       || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")
+                       || \App\Classes\RoleHelper::isInstructor()))
                         <div class="tab-pane" role="tabpanel" id="exams">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
