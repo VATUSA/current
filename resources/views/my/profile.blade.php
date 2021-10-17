@@ -52,6 +52,8 @@
                                                data-toggle="tab">Training Records</a></li>
                     <li role="presentation"><a href="#academy" aria-controls="academy" role="tab"
                                                data-toggle="tab">Academy Transcript</a></li>
+                    <li role="presentation"><a href="#notifications" aria-controls="notifications" role="tab"
+                                               data-toggle="tab">Notification Settings</a></li>
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="info"><br>
@@ -207,6 +209,9 @@
                     </div>
                     <div role="tabpanel" class="tab-pane" id="academy"><br>
                         @include('my.training.academy')
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="notifications"><br>
+                        @include('my.notifications')
                     </div>
                 </div>
             </div>

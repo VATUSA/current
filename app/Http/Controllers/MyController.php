@@ -3,9 +3,9 @@
 use App\Classes\EmailHelper;
 use App\Classes\ExamHelper;
 use App\Classes\Helper;
-use App\Classes\RoleHelper;
+use App\Classes\NotificationFactory;
 use App\Classes\VATUSAMoodle;
-use App\Models\Promotions;
+use App\Models\NotificationSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Transfers;
@@ -14,8 +14,7 @@ use App\Models\Actions;
 use App\Models\User;
 use App\Models\Facility;
 use Laravel\Socialite\Facades\Socialite;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use Wohali\OAuth2\Client\Provider\Discord;
+use Throwable;
 
 class MyController
     extends Controller
@@ -88,8 +87,11 @@ class MyController
                 ['attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)]),
         ];
 
+        $notifications = (new NotificationFactory())->getAllUserOptions(Auth::user());
+
         return view('my.profile',
-            compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist', 'examAttempts'));
+            compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist',
+                'examAttempts', 'notifications'));
     }
 
     public function getAssignBasic()
@@ -267,7 +269,7 @@ class MyController
                 $user->saveOrFail();
 
                 return response()->json(true);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 return response()->json(false);
             }
         } elseif ($mode === "return") {
@@ -279,7 +281,7 @@ class MyController
                     $user->saveOrFail();
 
                     return redirect()->to('/my/profile')->with('discordError', false);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     return redirect()->to('/my/profile')->with('discordError', true);
                 }
 
@@ -289,5 +291,23 @@ class MyController
         }
 
         abort(400, "Invalid Mode");
+    }
+
+    public function ajaxUpdateNotificationSetting(Request $request)
+    {
+        $type = $request->input('type');
+        $option = $request->input('option');
+
+        if (!$type || is_null($option)) {
+            abort(400);
+        }
+
+        if (!$option) {
+            NotificationSetting::where('cid', Auth::user()->cid)->where('type', $type)->delete();
+        } else {
+            NotificationSetting::updateOrCreate(['cid' => Auth::user()->cid, 'type' => $type], ['option' => $option]);
+        }
+
+        return 1;
     }
 }

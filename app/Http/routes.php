@@ -152,6 +152,7 @@ Route::group([
                 Route::post('transfer/do', 'MyController@doTransfer');
                 Route::get('assignbasic', 'MyController@getAssignBasic');
                 Route::get('discord/{mode}', 'MyController@linkDiscord');
+                Route::post('ajax/notificationSetting','MyController@ajaxUpdateNotificationSetting');
             });
 
             /* * * * * * * * *
