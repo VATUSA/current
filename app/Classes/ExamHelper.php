@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 
+use App\Mail\ExamAssigned;
 use App\Models\ExamAssignment;
 use App\Models\ExamQuestions;
 use App\Models\Exam;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 use DB;
 use DateTime;
 use Auth;
+use Illuminate\Support\Facades\Mail;
 
 define("BASIC_EXAM", 7);
 
@@ -107,7 +109,8 @@ class ExamHelper
         if ($fac == "ZAE") {
             $fac = \App\Models\User::find($cid)->facility;
         }
-        EmailHelper::sendEmailFacilityTemplate($to, "Exam Assigned", $fac, "examassigned", $data);
+
+        Mail::to($to)->queue(new ExamAssigned($data));
 
         $log = new Actions();
         $log->to = $cid;

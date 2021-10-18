@@ -1,10 +1,10 @@
 @extends('emails.layout')
 @section('title','Exam Assigned')
 @section('content')
-    Hello {{ $student_name }},
+    Hello {{ $data['student_name'] }},
     <br><br>
-    This email is to inform you that you have been assigned exam <em>{{ $exam_name }}</em> by instructor {{ $instructor_name }}.  You have
-    until {{ $end_date }} US Central Time to complete the examination before it expires.
+    This email is to inform you that you have been assigned exam <em>{{ $data['exam_name'] }}</em> by instructor {{ $data['instructor_name'] }}.  You have
+    until {{ $data['end_date'] }} US Central Time to complete the examination before it expires.
     <br><br>
     <table class="button success float-center" align="center" style="border-collapse: collapse; border-spacing: 0; float: none; padding: 0; text-align: center; vertical-align: top; width: auto;">
         <tbody>
@@ -22,12 +22,12 @@
         </tbody>
     </table>
     <br><br>
-    Prior to taking the exam, be sure to read all materials assigned to you in your {{ $facility }} welcome email.
-    @if($cbt_required)
+    Prior to taking the exam, be sure to read all materials assigned to you in your {{ $data['facility'] }} welcome email.
+    @if($data['cbt_required'])
         <br><br>
-        Before attempting the exam, you must complete {{$cbt_facility}}'s {{$cbt_block}} Computer Based Training (CBT) course.  You
+        Before attempting the exam, you must complete {{$data['cbt_facility']}}'s {{$data['cbt_block']}} Computer Based Training (CBT) course.  You
         can access that by visiting <a
-            href="https://www.vatusa.net/cbt/{{$cbt_facility}}">https://www.vatusa.net/cbt/{{$cbt_facility}}</a>.
+            href="https://www.vatusa.net/cbt/{{$data['cbt_facility']}}">https://www.vatusa.net/cbt/{{$data['cbt_facility']}}</a>.
     @endif
     <br><br>
     If you have any questions, please contact your instructor.
