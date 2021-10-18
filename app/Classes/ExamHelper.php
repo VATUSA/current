@@ -7,7 +7,9 @@ use App\Models\ExamAssignment;
 use App\Models\ExamQuestions;
 use App\Models\Exam;
 use App\Models\Actions;
+use App\Models\Facility;
 use App\Models\TrainingBlock;
+use App\Models\User;
 use Carbon\Carbon;
 use DB;
 use DateTime;
@@ -65,15 +67,15 @@ class ExamHelper
         $end_date = $date->format("m/d/Y");
         $end_time = $date->format("h:ia");
 
-        DB::table('exam_assignments')->insert(
-            [
-                'cid'           => $cid,
-                'exam_id'       => $exam,
-                'instructor_id' => $instructor,
-                'assigned_date' => DB::raw('NOW()'),
-                'expire_date'   => DB::raw("DATE_ADD(NOW(), INTERVAL $expire_period DAY)")
-            ]
-        );
+//        DB::table('exam_assignments')->insert(
+//            [
+//                'cid'           => $cid,
+//                'exam_id'       => $exam,
+//                'instructor_id' => $instructor,
+//                'assigned_date' => DB::raw('NOW()'),
+//                'expire_date'   => DB::raw("DATE_ADD(NOW(), INTERVAL $expire_period DAY)")
+//            ]
+//        );
 
 
         $exam = Exam::find($exam);
@@ -98,19 +100,49 @@ class ExamHelper
             'cbt_facility'    => $cbt_facility,
             'cbt_block'       => $cbt_block
         ];
-        $to[] = Helper::emailFromCID($cid);
-        if ($instructor > 0) {
-            $to[] = Helper::emailFromCID($instructor);
+
+        $notify = new NotificationFactory();
+        $to = array();
+        $staffIds = array();
+        $instructor = User::find($instructor);
+        $student = User::find($cid);
+        $ta = Facility::find($fac)->ta;
+        if (!$ta || $ta->cid == $instructor->cid) {
+            $ta = null;
+        }
+
+        if ($notify->wantsNotification($student, "legacy_exam_assigned", "email")) {
+            $to[] = Helper::emailFromCID($cid);
+        }
+        if ($notify->wantsNotification($instructor, "legacy_exam_assigned", "email")) {
+            $to[] = $instructor->email;
         }
         if ($exam->facility_id != "ZAE") {
-            $to[] = $exam->facility_id . "-TA@vatusa.net";
+            if ($ta && $notify->wantsNotification($ta, "legacy_exam_assigned", "email")) {
+                $to[] = $exam->facility_id . "-TA@vatusa.net";
+            }
         }
 
         if ($fac == "ZAE") {
-            $fac = \App\Models\User::find($cid)->facility;
+            $fac = $student->facility;
         }
 
         Mail::to($to)->queue(new ExamAssigned($data));
+
+
+        if ($notify->wantsNotification($student, "legacy_exam_assigned", "discord")) {
+            $student_id = $student->discord_id;
+        } else {
+            $student_id = 0;
+        }
+        if ($notify->wantsNotification($instructor, "legacy_exam_assigned", "discord")) {
+            $staffIds[] = $instructor->discord_id;
+        }
+        if ($ta && $notify->wantsNotification($ta, "legacy_exam_assigned", "discord")) {
+            $staffIds[] = $ta->discord_id;
+        }
+        $notify->sendNotification('legacyExamAssigned',
+            array_merge($data, ['student_id' => $student_id, 'staff_ids' => implode(',', $staffIds)]));
 
         $log = new Actions();
         $log->to = $cid;
@@ -124,8 +156,11 @@ class ExamHelper
      * @param string $cid
      * @param int    $exam
      */
-    public static function unassign($cid, $exam)
-    {
+    public
+    static function unassign(
+        $cid,
+        $exam
+    ) {
         if (!static::isAssigned($cid, $exam)) {
             return;
         }
@@ -140,18 +175,22 @@ class ExamHelper
         $log->save();
     }
 
-    public static function validRetakes()
+    public
+    static function validRetakes()
     {
         return [1, 3, 5, 7, 14, 21, 28, 35];
     }
 
-    public static function expireOptions()
+    public
+    static function expireOptions()
     {
         return [7, 14, 21, 28, 35];
     }
 
-    public static function generateRandomQuestions($examid)
-    {
+    public
+    static function generateRandomQuestions(
+        $examid
+    ) {
         $list = [];
         $questions = ExamQuestions::where('exam_id', $examid)->orderByRaw("RAND()")->get();
         foreach ($questions as $question) {
@@ -161,8 +200,10 @@ class ExamHelper
         return $list;
     }
 
-    public static function examCBTComplete($exam)
-    {
+    public
+    static function examCBTComplete(
+        $exam
+    ) {
         if (!$exam->cbt_required) {
             return true;
         }
@@ -178,8 +219,13 @@ class ExamHelper
         return true;
     }
 
-    public static function academyPassedExam($cid, $rating, $intervalDays = 0, $intervalMonths = 0): bool
-    {
+    public
+    static function academyPassedExam(
+        $cid,
+        $rating,
+        $intervalDays = 0,
+        $intervalMonths = 0
+    ): bool {
         $moodle = new VATUSAMoodle();
         $config = config("exams." . strtoupper($rating));
         if (!$config || empty($config)) {
