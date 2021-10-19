@@ -106,9 +106,15 @@ class ExamHelper
         $staffIds = array();
         $instructor = User::find($instructor);
         $student = User::find($cid);
-        $ta = Facility::find($fac)->ta;
+        $ta = Facility::find($fac)->ta();
+        if (!$ta) {
+            $ta = Facility::find($fac)->datm();
+        }
+        if (!$ta) {
+            $ta = Facility::find($fac)->atm();
+        }
         if (!$ta || $ta->cid == $instructor->cid) {
-            $ta = null;
+            //$ta = null;
         }
 
         if ($notify->wantsNotification($student, "legacy_exam_assigned", "email")) {
@@ -135,14 +141,13 @@ class ExamHelper
         } else {
             $student_id = 0;
         }
-        if ($notify->wantsNotification($instructor, "legacy_exam_assigned", "discord")) {
-            $staffIds[] = $instructor->discord_id;
-        }
         if ($ta && $notify->wantsNotification($ta, "legacy_exam_assigned", "discord")) {
-            $staffIds[] = $ta->discord_id;
+            $staffId = $ta->discord_id;
+        } else {
+            $staffId = 0;
         }
         $notify->sendNotification('legacyExamAssigned',
-            array_merge($data, ['student_id' => $student_id, 'staff_ids' => implode(',', $staffIds)]));
+            array_merge($data, ['student_id' => $student_id, 'staff_id' => $staffId]));
 
         $log = new Actions();
         $log->to = $cid;

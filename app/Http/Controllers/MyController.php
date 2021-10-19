@@ -7,6 +7,8 @@ use App\Classes\NotificationFactory;
 use App\Classes\VATUSAMoodle;
 use App\Models\NotificationSetting;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use App\Models\Transfers;
 use Auth;
@@ -261,7 +263,7 @@ class MyController
     public function linkDiscord($mode = "link")
     {
         if ($mode === "link") {
-            return Socialite::driver('discord')->setScopes(['identify'])->redirect();
+            return Socialite::driver('discord')->setScopes(['identify', 'guilds.join'])->redirect();
         } elseif ($mode === "unlink") {
             $user = Auth::user();
             $user->discord_id = null;
@@ -277,6 +279,16 @@ class MyController
                 $dUser = Socialite::driver('discord')->user();
                 $user = Auth::user();
                 $user->discord_id = $dUser->getId();
+                $token = $dUser->token;
+                try {
+                    (new Client())->request("PUT",
+                        "https://discord.com/api/v9/guilds/" . config('services.discord.guildId') . "/members/" . $dUser->getId(),
+                        [
+                            'json'    => ['access_token' => $token, 'nick' => $user->fullname()],
+                            'headers' => ['Authorization' => 'Bot ' . config('services.discord.botToken')]
+                        ]);
+                } catch (GuzzleException $e) {
+                }
                 try {
                     $user->saveOrFail();
 
