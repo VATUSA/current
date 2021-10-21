@@ -38,7 +38,7 @@ class FacMgtController extends Controller
             if (RoleHelper::isVATUSAStaff()) {
                 $fac = "PCF";
             } else {
-                $fac = \Auth::user()->facility;
+                $fac = Auth::user()->facility;
             }
         }
 
@@ -61,10 +61,14 @@ class FacMgtController extends Controller
             }
         }
 
-        $discord = new VATUSADiscord();
-        $userGuilds = $discord->getUserAdminGuilds(Auth::user());
-        $guildChannels = $facility->discord_guild ? $discord->getGuildChannels($facility->discord_guild) : [];
-        $notificationChannels = $discord->getAllFacilityNotificationChannels($facility);
+        $userGuilds = $guildChannels = $notificationChannels = null;
+        if (RoleHelper::hasRole(Auth::user()->cid, $fac, "WM") || RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
+                $fac)) {
+            $discord = new VATUSADiscord();
+            $userGuilds = $discord->getUserAdminGuilds(Auth::user());
+            $guildChannels = $facility->discord_guild ? $discord->getGuildChannels($facility->discord_guild) : [];
+            $notificationChannels = $discord->getAllFacilityNotificationChannels($facility);
+        }
 
         return view('mgt.facility.index',
             compact('fac', 'facility', 'promotionEligible', 'userGuilds', 'notificationChannels', 'guildChannels'));

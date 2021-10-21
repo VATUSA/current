@@ -38,10 +38,11 @@ return [
         'client_id'      => env('DISCORD_CLIENT_ID'),
         'client_secret'  => env('DISCORD_CLIENT_SECRET'),
         'redirect'       => env('DISCORD_REDIRECT'),
-        'botserver'      => env('DISCORD_BOT_SERVER', 'http://discord-bot:3000'),
+        'botServer'      => env('DISCORD_BOT_SERVER', 'http://discord-bot:3000'),
         'guildId'        => env('DISCORD_GUILD_ID'),
         'botToken'       => env('DISCORD_BOT_TOKEN'),
-        'botPermissions' => env('DISCORD_BOT_PERMISSIONS')
+        'botPermissions' => env('DISCORD_BOT_PERMISSIONS'),
+        'botSecret'      => env('DISCORD_BOT_SERVER_SECRET')
     ],
 
     'moodle' => [

@@ -11,8 +11,10 @@ use App\Models\FacilityNotificationChannel;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Exception;
+use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Carbon;
 use Psr\Http\Message\ResponseInterface;
 
 class VATUSADiscord
@@ -26,7 +28,7 @@ class VATUSADiscord
 
     public function __construct()
     {
-        $this->guzzle = new Client(['base_uri' => config('services.discord.botserver')]);
+        $this->guzzle = new Client(['base_uri' => config('services.discord.botServer')]);
     }
 
     public function getNotificationOption(User $user, string $type): int
@@ -82,6 +84,7 @@ class VATUSADiscord
         } catch (Exception $e) {
             return 0;
         }
+
         return 1;
     }
 
@@ -163,8 +166,17 @@ class VATUSADiscord
      */
     private function sendRequest(string $method, string $uri, ?array $data = null): ResponseInterface
     {
+        $iss = Carbon::now();
+        $jwt = JWT::encode([
+            'iat' => $iss->getTimestamp(),
+            'iss' => config('app.url'),
+            'aud' => config('services.discord.botServer'),
+            'nbf' => $iss->getTimestamp(),
+            'exp' => $iss->addMinute()->getTimestamp()
+        ], config('services.discord.botSecret'), 'HS512');
         try {
-            return $this->guzzle->request($method, $uri, ['json' => $data ?? []]);
+            return $this->guzzle->request($method, $uri,
+                ['json' => $data ?? [], 'headers' => ['Authorization' => 'Bearer ' . $jwt]]);
         } catch (GuzzleException $e) {
             throw new Exception("Unable to make request to the Discord Bot Server. " . $e->getMessage());
         }

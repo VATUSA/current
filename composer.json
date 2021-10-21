@@ -18,7 +18,8 @@
 		"llagerlof/moodlerest": "^2.3",
     	"ext-json": "*",
 		"laravel/helpers": "^1.4",
-		"fruitcake/laravel-cors": "^2.0"
+		"fruitcake/laravel-cors": "^2.0",
+		"firebase/php-jwt": "^5.4"
     },
 	"require-dev": {
 		"phpunit/phpunit": "^9.0",

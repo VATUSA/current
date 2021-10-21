@@ -258,7 +258,7 @@
         $('#assign-roles').click(function (e) {
           e.preventDefault()
           let btn = $(this).button('loading')
-          $.post("{{ config('services.discord.botserver') . "/assignRoles/" . Auth::user()->discord_id}}", result => {
+          $.post("{{ config('services.discord.botServer') . "/assignRoles/" . Auth::user()->discord_id}}", result => {
             btn.button('reset')
             if (result.hasOwnProperty('status') && result.hasOwnProperty('msg') && result.status === 'OK') {
               let content = document.createElement('p')

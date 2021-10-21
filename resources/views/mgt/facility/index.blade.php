@@ -33,7 +33,7 @@
                                                        aria-controls="training"><i class="fas fa-chart-line"></i>
                                     Training</a></li>
                         @endif
-                        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <li role="presentation"><a href="#uls" aria-controls="uls" role="tab" data-toggle="tab"><i
                                         class="fas fa-server"></i> Tech
                                     Conf</a>
