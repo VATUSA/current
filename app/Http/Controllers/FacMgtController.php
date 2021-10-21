@@ -3,6 +3,8 @@
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\SMFHelper;
+use App\Classes\VATUSADiscord;
+use App\Models\FacilityNotificationChannel;
 use Auth;
 use App\Models\Transfers;
 use Illuminate\Http\Request;
@@ -59,8 +61,13 @@ class FacMgtController extends Controller
             }
         }
 
+        $discord = new VATUSADiscord();
+        $userGuilds = $discord->getUserAdminGuilds(Auth::user());
+        $guildChannels = $facility->discord_guild ? $discord->getGuildChannels($facility->discord_guild) : [];
+        $notificationChannels = $discord->getAllFacilityNotificationChannels($facility);
+
         return view('mgt.facility.index',
-            ['fac' => $fac, 'facility' => $facility, 'promotionEligible' => $promotionEligible]);
+            compact('fac', 'facility', 'promotionEligible', 'userGuilds', 'notificationChannels', 'guildChannels'));
     }
 
     public function postAPIGenerate(Request $request, $facility)
@@ -473,5 +480,41 @@ class FacMgtController extends Controller
             'wm'   => RoleHelper::getNameFromRole('WM', $id, 1),
             'fac'  => $facility->id
         ]);
+    }
+
+    public function updateDiscordGuild(Request $request, string $facility)
+    {
+        $facility = Facility::find($facility);
+        if (!$facility) {
+            abort(404);
+        }
+
+        $facility->discord_guild = $request->guild ?: null;
+        $facility->save();
+
+        FacilityNotificationChannel::where('facility', $facility->id)->delete();
+
+        return redirect("/mgt/facility/$facility->id#discord");
+    }
+
+    public function updateDiscordNotificationChannel(Request $request, string $facility)
+    {
+        $facility = Facility::find($facility);
+        if (!$facility) {
+            abort(404);
+        }
+        $type = $request->input('type');
+        $channel = $request->input('channel');
+        if (!$type || is_null($channel)) {
+            abort(400);
+        }
+        if (!$channel) {
+            FacilityNotificationChannel::where('facility', $facility->id)->where('type', $type)->delete();
+        } else {
+            FacilityNotificationChannel::updateOrCreate(['facility' => $facility->id, 'type' => $type],
+                ['channel' => $channel]);
+        }
+
+        return 1;
     }
 }

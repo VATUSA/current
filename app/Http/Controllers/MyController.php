@@ -3,7 +3,7 @@
 use App\Classes\EmailHelper;
 use App\Classes\ExamHelper;
 use App\Classes\Helper;
-use App\Classes\NotificationFactory;
+use App\Classes\VATUSADiscord;
 use App\Classes\VATUSAMoodle;
 use App\Models\NotificationSetting;
 use Carbon\Carbon;
@@ -89,7 +89,7 @@ class MyController
                 ['attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)]),
         ];
 
-        $notifications = (new NotificationFactory())->getAllUserOptions(Auth::user());
+        $notifications = (new VATUSADiscord())->getAllUserNotificationOptions(Auth::user());
 
         return view('my.profile',
             compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist',

@@ -101,30 +101,31 @@ class ExamHelper
             'cbt_block'       => $cbt_block
         ];
 
-        $notify = new NotificationFactory();
+        $notify = new VATUSADiscord();
         $to = array();
         $staffIds = array();
         $instructor = User::find($instructor);
         $student = User::find($cid);
-        $ta = Facility::find($fac)->ta();
+        $facility = Facility::find($fac);
+        $ta = $facility->ta();
         if (!$ta) {
-            $ta = Facility::find($fac)->datm();
+            $ta = $facility->datm();
         }
         if (!$ta) {
-            $ta = Facility::find($fac)->atm();
+            $ta = $facility->atm();
         }
         if (!$ta || $ta->cid == $instructor->cid) {
-            //$ta = null;
+            $ta = null;
         }
 
-        if ($notify->wantsNotification($student, "legacy_exam_assigned", "email")) {
+        if ($notify->userWantsNotification($student, "legacy_exam_assigned", "email")) {
             $to[] = Helper::emailFromCID($cid);
         }
-        if ($notify->wantsNotification($instructor, "legacy_exam_assigned", "email")) {
+        if ($notify->userWantsNotification($instructor, "legacy_exam_assigned", "email")) {
             $to[] = $instructor->email;
         }
         if ($exam->facility_id != "ZAE") {
-            if ($ta && $notify->wantsNotification($ta, "legacy_exam_assigned", "email")) {
+            if ($ta && $notify->userWantsNotification($ta, "legacy_exam_assigned", "email")) {
                 $to[] = $exam->facility_id . "-TA@vatusa.net";
             }
         }
@@ -136,18 +137,24 @@ class ExamHelper
         Mail::to($to)->queue(new ExamAssigned($data));
 
 
-        if ($notify->wantsNotification($student, "legacy_exam_assigned", "discord")) {
+        if ($notify->userWantsNotification($student, "legacy_exam_assigned", "discord")) {
             $student_id = $student->discord_id;
         } else {
             $student_id = 0;
         }
-        if ($ta && $notify->wantsNotification($ta, "legacy_exam_assigned", "discord")) {
-            $staffId = $ta->discord_id;
+        if ($ta && $notify->userWantsNotification($ta, "legacy_exam_assigned", "discord")) {
+            $staff_id = $ta->discord_id;
         } else {
-            $staffId = 0;
+            $staff_id = 0;
         }
-        $notify->sendNotification('legacyExamAssigned',
-            array_merge($data, ['student_id' => $student_id, 'staff_id' => $staffId]));
+        if ($student_id || $staff_id) {
+            $notify->sendNotification('legacyExamAssigned', "dm",
+                array_merge($data, compact('staff_id', 'student_id')));
+        }
+        if ($channel = $notify->getFacilityNotificationChannel($facility, "legacy_exam_assigned")) {
+            $notify->sendNotification("legacyExamAssigned", "channel",
+                array_merge($data, ['guildId' => $facility->discord_guild, 'channelId' => $channel]));
+        }
 
         $log = new Actions();
         $log->to = $cid;

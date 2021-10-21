@@ -25,11 +25,9 @@
                                         class="fas fa-exchange-alt"></i> Transfers</a>
                             </li>
                         @endif
-                        <li role="presentation"><a href="#hroster" aria-controls="hroster" role="tab"
-                                                   data-toggle="tab"><i class="fas fa-users"></i> Home Roster</a></li>
-                        <li role="presentation"><a href="#vroster" aria-controls="vroster" role="tab"
-                                                   data-toggle="tab"><i class="fas fa-door-open"></i> Visiting
-                                Roster</a></li>
+                        <li role="presentation"><a href="#rosters" aria-controls="rosters" role="tab"
+                                                   data-toggle="tab"><i class="fas fa-clipboard-list"></i> Rosters</a>
+                        </li>
                         @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
                             <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}"
                                                        aria-controls="training"><i class="fas fa-chart-line"></i>
@@ -40,24 +38,19 @@
                                         class="fas fa-server"></i> Tech
                                     Conf</a>
                             </li>
+                            <li role="presentation"><a href="#discord" aria-controls="discord" role="tab"
+                                                       data-toggle="tab"><i class="fab fa-discord"></i> Discord Bot</a>
+                            </li>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
                             <li role="presentation"><a href="#email" aria-controls="email" role="tab" data-toggle="tab"><i
                                         class="fas fa-envelope"></i> Email
                                     Conf</a>
                             </li>
-                            @if($facility->hosted_email_domain != "")
-                                <li role="presentation"><a href="#hosted" aria-controls="hosted" role="tab"
-                                                           data-toggle="tab"><i class="fas fa-mail-bulk"></i> Hosted
-                                        Email
-                                        Conf</a>
-                                </li>
-                            @endif
                         @endif
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#emailtemplates" aria-controls="emailtemplates" role="tab"
-                                                       data-toggle="tab"><i class="fas fa-envelope-open-text"></i> Email
-                                    Templates</a></li>
+                            <li role="presentation"><a href="{{ secure_url('/mgt/mail/welcome') }}"><i
+                                        class="fas fa-envelope-open-text"></i> Welcome Email</a></li>
                     @endif
                     <!--<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>-->
                     </ul>
@@ -129,55 +122,76 @@
                                 </table>
                             </div>
                         @endif
-                        <div role="tabpanel" class="tab-pane" id="hroster">
-                            <div id="hrosterloading">
-                                <center><img src="/img/gears.gif"><br><br>Loading home roster...</center>
-                            </div>
-                            <table class="table table-hover table-condensed tablesorter" id="hrostertable"
-                                   style="display: none;">
-                                <thead>
-                                <tr>
-                                    <th>CID</th>
-                                    <th>Name</th>
-                                    <th>Rating</th>
-                                    <th>Join Date</th>
-                                    <th>Last Promotion</th>
-                                    <td class="text-right">Options</td>
-                                </tr>
-                                </thead>
-                                <tbody id="hrostertablebody">
-                                </tbody>
-                            </table>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="vroster">
-                            <br>
-                            @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
-                                <div class="text-center">
-                                    <button class="btn btn-success" data-toggle="modal" data-target="#addVisitorModal">
-                                        <i
-                                            class="fa fa-plus"></i> Add Visitor
-                                    </button>
+                        <div role="tabpanel" class="tab-pane" id="rosters">
+                            <div>
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-pills nav-justified" role="tablist"
+                                    style="border-bottom: 2px solid #ccc;">
+                                    <li role="presentation" class="active" style="border-right: 2px solid #ccc;"><a
+                                            href="#home" aria-controls="home"
+                                            role="tab" data-toggle="tab"><i
+                                                class="fas fa-home"></i> Home</a></li>
+                                    <li role="presentation"><a href="#visit" aria-controls="visit" role="tab"
+                                                               data-toggle="tab"><i class="fas fa-door-open"></i>
+                                            Visitors</a></li>
+                                </ul>
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="home">
+                                        <div id="hrosterloading">
+                                            <center><img src="/img/gears.gif"><br><br>Loading home roster...</center>
+                                        </div>
+                                        <table class="table table-hover table-condensed tablesorter" id="hrostertable"
+                                               style="display: none;">
+                                            <thead>
+                                            <tr>
+                                                <th>CID</th>
+                                                <th>Name</th>
+                                                <th>Rating</th>
+                                                <th>Join Date</th>
+                                                <th>Last Promotion</th>
+                                                <td class="text-right">Options</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="hrostertablebody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane" id="visit"><br>
+                                        @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+                                            <div class="text-center">
+                                                <button class="btn btn-success" data-toggle="modal"
+                                                        data-target="#addVisitorModal">
+                                                    <i
+                                                        class="fa fa-plus"></i> Add Visitor
+                                                </button>
+                                            </div>
+                                        @endif
+                                        <br>
+                                        <div id="vrosterloading">
+                                            <center><img src="/img/gears.gif"><br><br>Loading visiting roster...
+                                            </center>
+                                        </div>
+                                        <table class="table table-hover table-condensed tablesorter" id="vrostertable"
+                                               style="display: none;">
+                                            <thead>
+                                            <tr>
+                                                <th>CID</th>
+                                                <th>Name</th>
+                                                <th>Rating</th>
+                                                <th>Home Facility</th>
+                                                <th>Date Added</th>
+                                                <td class="text-right">Options</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="vrostertablebody">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            @endif
-                            <br>
-                            <div id="vrosterloading">
-                                <center><img src="/img/gears.gif"><br><br>Loading visiting roster...</center>
+
                             </div>
-                            <table class="table table-hover table-condensed tablesorter" id="vrostertable"
-                                   style="display: none;">
-                                <thead>
-                                <tr>
-                                    <th>CID</th>
-                                    <th>Name</th>
-                                    <th>Rating</th>
-                                    <th>Home Facility</th>
-                                    <th>Date Added</th>
-                                    <td class="text-right">Options</td>
-                                </tr>
-                                </thead>
-                                <tbody id="vrostertablebody">
-                                </tbody>
-                            </table>
+
                         </div>
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
                             <div role="tabpanel" class="tab-pane" id="uls">
@@ -251,7 +265,8 @@
                                 <h1>API (v2)</h1>
                                 <fieldset>
                                     <legend>Live</legend>
-                                    <b>API JSON Web Key (JWK):</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page
+                                    <b>API JSON Web Key (JWK):</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a>
+                                    page
                                     38) --
                                     symmetric key<br>
                                     <input class="form-control" type="text" id="textapiv2jwk"
@@ -265,7 +280,8 @@
                                 <br>
                                 <fieldset>
                                     <legend>Development</legend>
-                                    <b>Sandbox API JSON Web Key (JWK):</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC
+                                    <b>Sandbox API JSON Web Key (JWK):</b> (<a
+                                        href="https://tools.ietf.org/html/rfc7515">RFC
                                         7515</a> page
                                     38) --
                                     symmetric key<br>
@@ -284,9 +300,15 @@
                                     <button class="btn btn-primary" onClick="apiSBGen()">Generate New</button>
                                 </fieldset>
                             </div>
+                            <div role="tabpanel" class="tab-pane" id="discord">
+                                @include('mgt.facility.discord')
+                            </div>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
                             <div role="tabpanel" class="tab-pane" id="email">
+                                <div class="alert alert-danger"><i class="fas fa-warning-triangle"></i> <strong>This
+                                        functionality will be removed very soon. Ensure that you are no longer utilizing
+                                        the email forwarders.</strong></div>
                                 <select class="form-control" id="facilityEmail">
                                     <option value=0>Select an address</option>
                                     @foreach(['atm','datm','ta','ec','fe','wm'] as $role)
@@ -307,37 +329,8 @@
                                             <option value="0">No</option>
                                         </select>
                                     </div>
-                                    <button class="btnEmailSave btn btn-primary">Save</button>
+                                    <button class="btnEmailSave btn btn-primary" disabled>Save</button>
                                 </div>
-                            </div>
-
-                            <div role="tabpanel" class="tab-pane" id="hosted">
-                                <div id="ehloading">
-                                    <center><img src="/img/gears.gif"><br><br>Loading hosted emails table...
-                                    </center>
-                                </div>
-                                <table class="table table-bordered" id="ehtable" style="display: none;">
-                                    <thead>
-                                    <tr>
-                                        <th>Email Username (before @)</th>
-                                        <th>Associated CID</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <td><input class="form-control" type="test" id="nhemail"
-                                                   placeholder="New Address (before @ only)"></td>
-                                        <td><input class="form-control" type="number" id="nhcid"
-                                                   placeholder="CERT ID">
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-primary nhbtn">Add Account</button>
-                                        </td>
-                                    </tr>
-                                    </tfoot>
-                                </table>
                             </div>
                         @endif
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))

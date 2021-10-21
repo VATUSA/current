@@ -1815,3 +1815,33 @@ div#mcbox input {
     }
   }
 }
+
+#channel-notifications-table {
+  text-align: center;
+  margin: 0 auto;
+
+
+  th {
+    text-align: center;
+  }
+
+  td {
+    vertical-align: middle;
+
+    select {
+      width: 80%;
+      text-align: center;
+      margin: 0 auto;
+    }
+  }
+}
+
+tr:not(.notification-group) td {
+  padding: 0
+}
+
+.notification-group {
+  td:not(:first-child) {
+    font-weight: bold;
+  }
+}

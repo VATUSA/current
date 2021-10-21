@@ -152,7 +152,7 @@ Route::group([
                 Route::post('transfer/do', 'MyController@doTransfer');
                 Route::get('assignbasic', 'MyController@getAssignBasic');
                 Route::get('discord/{mode}', 'MyController@linkDiscord');
-                Route::post('ajax/notificationSetting','MyController@ajaxUpdateNotificationSetting');
+                Route::post('ajax/notificationSetting', 'MyController@ajaxUpdateNotificationSetting');
             });
 
             /* * * * * * * * *
@@ -223,6 +223,8 @@ Route::group([
             // * * * * * * Facility * * * * * *
             Route::group(['prefix' => 'facility'], function () {
                 Route::get('{fac?}', 'FacMgtController@getIndex');
+                Route::post('{facility}/discord', 'FacMgtController@updateDiscordGuild');
+                Route::post('{facility}/ajaxDiscordNotificationChannel', 'FacMgtController@updateDiscordNotificationChannel');
                 Route::group(['prefix' => '{fac}'], function () {
                     Route::delete('{cid}', 'FacMgtController@deleteController');
                     Route::post('api/generate', 'FacMgtController@postAPIGenerate');
