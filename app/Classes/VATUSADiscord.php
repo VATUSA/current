@@ -24,13 +24,23 @@ class VATUSADiscord
     public const NOTIFY_EMAIL = 1;
     public const NOTIFY_DISCORD = 2;
     public const NOTIFY_BOTH = 3;
-    public const NOTFIY_NONE = 0;
 
+    /**
+     * VATUSA Discord constructor.
+     */
     public function __construct()
     {
         $this->guzzle = new Client(['base_uri' => config('services.discord.botServer')]);
     }
 
+    /**
+     * Get the user's Notification option for a type.
+     *
+     * @param User   $user
+     * @param string $type
+     *
+     * @return int
+     */
     public function getNotificationOption(User $user, string $type): int
     {
         $record = NotificationSetting::where('cid', $user->cid)->where('type', $type)->first();
@@ -38,13 +48,28 @@ class VATUSADiscord
         return $record ? $record->option : 0;
     }
 
-    public function getFacilityNotificationChannel(Facility $facility, string $type)
+    /**
+     * Get the facility's Notification channel for a type.
+     *
+     * @param Facility $facility
+     * @param string   $type
+     *
+     * @return int
+     */
+    public function getFacilityNotificationChannel(Facility $facility, string $type): int
     {
         $record = FacilityNotificationChannel::where('facility', $facility->id)->where('type', $type)->first();
 
         return $record && $facility->discord_guild ? $record->channel : 0;
     }
 
+    /**
+     * Get an array of all the user's notification options.
+     *
+     * @param User $user
+     *
+     * @return array
+     */
     public function getAllUserNotificationOptions(User $user): array
     {
         $records = NotificationSetting::where('cid', $user->cid)->get();
@@ -56,6 +81,12 @@ class VATUSADiscord
         return $return;
     }
 
+    /**
+     * Get an array of all the facility's notification channels.
+     * @param Facility $facility
+     *
+     * @return array
+     */
     public function getAllFacilityNotificationChannels(Facility $facility): array
     {
         $records = FacilityNotificationChannel::where('facility', $facility->id)->get();
@@ -151,7 +182,13 @@ class VATUSADiscord
         return [];
     }
 
-    public function getGuildChannels(string $guild)
+    /**
+     * Get an array of all the channels in a Guild.
+     * @param string $guild
+     *
+     * @return array
+     */
+    public function getGuildChannels(string $guild): array
     {
         try {
             $response = $this->sendRequest("GET", "/guild/$guild/channels");

@@ -54,9 +54,9 @@
     </tr>
     <tr>
         <td>Academy Exam Course Enrolled</td>
-        @php $val = $notificationChannels['academy_exam_course_enrolled'] ?? 0; @endphp
+        @php $val = $notificationChannels['academyExamCourseEnrolled'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="academy_exam_course_enrolled" class="form-control notification-channel-select"
+            <div><select name="academyExamCourseEnrolled" class="form-control notification-channel-select"
                          autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
@@ -84,10 +84,19 @@
             <div><select name="academyExamResult" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -99,10 +108,19 @@
             <div><select name="legacyExamAssigned" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -114,10 +132,19 @@
             <div><select name="legacyExamResult" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -133,10 +160,19 @@
             <div><select name="transferNew" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -148,10 +184,19 @@
             <div><select name="transferAction" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -163,10 +208,19 @@
             <div><select name="rosterRemoval" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -178,10 +232,19 @@
             <div><select name="transferPending" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -197,10 +260,19 @@
             <div><select name="ticketNew" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -212,10 +284,19 @@
             <div><select name="ticketAssigned" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -227,10 +308,19 @@
             <div><select name="ticketReply" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -242,10 +332,19 @@
             <div><select name="ticketReopened" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
@@ -257,10 +356,19 @@
             <div><select name="ticketClosed" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
-                    @foreach($guildChannels as $channel)
+                    @php $currentGroup = 0; @endphp
+                    @for($i = 0; $i < count($guildChannels); $i++)
+                    @php $channel = $guildChannels[$i]; @endphp
+                    @if($channel['parentId'] && $channel['parentId'] !== $currentGroup)
+                    @php $currentGroup = $channel['parentId']; @endphp
+                    @if($guildChannels[$i + 1]['parentId'] ?? 0 != $currentGroup)
+                    </optgroup>
+                    @endif
+                    <optgroup label="{{ $channel['parentName'] }}">
+                        @endif
                         <option value="{{ $channel['id'] }}"
                                 @if($val === $channel['id']) selected @endif>{{ $channel['name'] }}</option>
-                    @endforeach
+                    @endfor
                 </select>
             </div>
         </td>
