@@ -79,9 +79,9 @@
     </tr>
     <tr>
         <td>Academy Exam Result</td>
-        @php $val = $notificationChannels['academy_exam_result'] ?? 0; @endphp
+        @php $val = $notificationChannels['academyExamResult'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="academy_exam_result" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="academyExamResult" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -94,9 +94,9 @@
     </tr>
     <tr>
         <td>Legacy Exam Assigned</td>
-        @php $val = $notificationChannels['legacy_exam_assigned'] ?? 0; @endphp
+        @php $val = $notificationChannels['legacyExamAssigned'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="legacy_exam_assigned" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="legacyExamAssigned" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -109,9 +109,9 @@
     </tr>
     <tr>
         <td>Legacy Exam Result</td>
-        @php $val = $notificationChannels['legacy_exam_result'] ?? 0; @endphp
+        @php $val = $notificationChannels['legacyExamResult'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="legacy_exam_result" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="legacyExamResult" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -128,9 +128,9 @@
     </tr>
     <tr>
         <td>New Transfer Request</td>
-        @php $val = $notificationChannels['transfer_new'] ?? 0; @endphp
+        @php $val = $notificationChannels['transferNew'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="transfer_new" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="transferNew" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -143,9 +143,9 @@
     </tr>
     <tr>
         <td>Transfer Accepted/Denied</td>
-        @php $val = $notificationChannels['transfer_action'] ?? 0; @endphp
+        @php $val = $notificationChannels['transferAction'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="transfer_action" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="transferAction" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -158,9 +158,9 @@
     </tr>
     <tr>
         <td>Roster Removal</td>
-        @php $val = $notificationChannels['roster_removal'] ?? 0; @endphp
+        @php $val = $notificationChannels['rosterRemoval'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="roster_removal" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="rosterRemoval" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -173,9 +173,9 @@
     </tr>
     <tr>
         <td>Pending Transfers (more than {{ config('tattlers.transfers.maxdays', 7) }} days)</td>
-        @php $val = $notificationChannels['transfer_pending'] ?? 0; @endphp
+        @php $val = $notificationChannels['transferPending'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="transfer_pending" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="transferPending" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -192,9 +192,9 @@
     </tr>
     <tr>
         <td>New Ticket</td>
-        @php $val = $notificationChannels['ticket_new'] ?? 0; @endphp
+        @php $val = $notificationChannels['ticketNew'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="ticket_new" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="ticketNew" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -207,9 +207,9 @@
     </tr>
     <tr>
         <td>Ticket Assigned to You</td>
-        @php $val = $notificationChannels['ticket_assigned'] ?? 0; @endphp
+        @php $val = $notificationChannels['ticketAssigned'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="ticket_assigned" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="ticketAssigned" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -222,9 +222,9 @@
     </tr>
     <tr>
         <td>Ticket Reply</td>
-        @php $val = $notificationChannels['ticket_reply'] ?? 0; @endphp
+        @php $val = $notificationChannels['ticketReply'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="ticket_reply" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="ticketReply" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -237,9 +237,9 @@
     </tr>
     <tr>
         <td>Ticket Reopened</td>
-        @php $val = $notificationChannels['ticket_reopened'] ?? 0; @endphp
+        @php $val = $notificationChannels['ticketReopened'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="ticket_reopened" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="ticketReopened" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)
@@ -252,9 +252,9 @@
     </tr>
     <tr>
         <td>Ticket Closed</td>
-        @php $val = $notificationChannels['ticket_closed'] ?? 0; @endphp
+        @php $val = $notificationChannels['ticketClosed'] ?? 0; @endphp
         <td class="notification-setting-cell">
-            <div><select name="ticket_closed" class="form-control notification-channel-select" autocomplete="off"
+            <div><select name="ticketClosed" class="form-control notification-channel-select" autocomplete="off"
                          @if(!$guildChannels) disabled @endif>
                     <option value="0" @if(!$val) selected @endif>--- None ---</option>
                     @foreach($guildChannels as $channel)

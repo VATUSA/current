@@ -70,15 +70,26 @@ class VATUSADiscord
     /**
      * Send Notification to Bot Server
      *
-     * @param string      $type   The notification identifier.
-     * @param string      $medium The medium of notification, dm | discord.
-     * @param array       $data   The notification data.
-     * @param string|null $id     The user's ID.
+     * @param string      $type      The notification identifier.
+     * @param string      $medium    The medium of notification, dm | discord.
+     * @param array       $data      The notification data.
+     * @param string|null $guildId   The guild's ID.
+     * @param string|null $channelId The channel's ID.
+     * @param string|null $id        The user's ID.
      *
      * @return bool
      */
-    public function sendNotification(string $type, string $medium, array $data, ?string $id = null): bool
-    {
+    public function sendNotification(
+        string $type,
+        string $medium,
+        array $data,
+        ?string $guildId = null,
+        ?string $channelId = null,
+        ?string $id = null
+    ): bool {
+        if ($guildId && $channelId) {
+            $data = array_merge($data, compact('guildId', 'channelId'));
+        }
         try {
             $this->sendRequest('POST', "notifications/$medium/$type" . ($id ? "/$id" : ""), ['json' => $data]);
         } catch (Exception $e) {

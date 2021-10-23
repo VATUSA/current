@@ -17,86 +17,86 @@
         </tr>
         <tr>
             <td>Academy Exam Course Enrolled</td>
-            @php $val = $notifications['academy_exam_course_enrolled'] ?? 0; @endphp
+            @php $val = $notifications['academyCourseEnrolled'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academy_exam_course_enrolled" value="1" autocomplete="off"
+                           name="academyCourseEnrolled" value="1" autocomplete="off"
                            @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academy_exam_course_enrolled" value="2" autocomplete="off"
+                           name="academyCourseEnrolled" value="2" autocomplete="off"
                            @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academy_exam_course_enrolled" value="3" autocomplete="off"
+                           name="academyCourseEnrolled" value="3" autocomplete="off"
                            @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academy_exam_course_enrolled" value="0" autocomplete="off"
+                           name="academyCourseEnrolled" value="0" autocomplete="off"
                            @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Academy Exam Result</td>
-            @php $val = $notifications['academy_exam_result'] ?? 0; @endphp
+            @php $val = $notifications['academyExamResult'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academy_exam_result" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="academyExamResult" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academy_exam_result" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="academyExamResult" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academy_exam_result" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="academyExamResult" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academy_exam_result" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="academyExamResult" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Legacy Exam Assigned</td>
-            @php $val = $notifications['legacy_exam_assigned'] ?? 0; @endphp
+            @php $val = $notifications['legacyExamAssigned'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="legacy_exam_assigned" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="legacyExamAssigned" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="legacy_exam_assigned" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="legacyExamAssigned" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="legacy_exam_assigned" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="legacyExamAssigned" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="legacy_exam_assigned" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="legacyExamAssigned" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Legacy Exam Result</td>
-            @php $val = $notifications['legacy_exam_result'] ?? 0; @endphp
+            @php $val = $notifications['legacyExamResult'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="legacy_exam_result" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="legacyExamResult" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="legacy_exam_result" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="legacyExamResult" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="legacy_exam_result" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="legacyExamResult" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="legacy_exam_result" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="legacyExamResult" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr class="notification-group">
@@ -108,82 +108,82 @@
         </tr>
         <tr>
             <td>New Transfer Request</td>
-            @php $val = $notifications['transfer_new'] ?? 0; @endphp
+            @php $val = $notifications['transferNew'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_new" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="transferNew" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_new" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="transferNew" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_new" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="transferNew" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_new" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="transferNew" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Transfer Accepted/Denied</td>
-            @php $val = $notifications['transfer_action'] ?? 0; @endphp
+            @php $val = $notifications['transferAction'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_action" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="transferAction" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_action" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="transferAction" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_action" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="transferAction" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_action" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="transferAction" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Roster Removal</td>
-            @php $val = $notifications['roster_removal'] ?? 0; @endphp
+            @php $val = $notifications['rosterRemoval'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="roster_removal" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="rosterRemoval" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="roster_removal" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="rosterRemoval" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="roster_removal" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="rosterRemoval" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="roster_removal" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="rosterRemoval" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Pending Transfers (more than {{ config('tattlers.transfers.maxdays', 7) }} days)</td>
-            @php $val = $notifications['transfer_pending'] ?? 0; @endphp
+            @php $val = $notifications['transferPending'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_pending" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="transferPending" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_pending" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="transferPending" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_pending" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="transferPending" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="transfer_pending" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="transferPending" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr class="notification-group">
@@ -196,102 +196,102 @@
         </tr>
         <tr>
             <td>New Ticket</td>
-            @php $val = $notifications['ticket_new'] ?? 0; @endphp
+            @php $val = $notifications['ticketNew'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_new" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="ticketNew" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_new" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="ticketNew" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_new" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="ticketNew" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_new" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="ticketNew" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Ticket Assigned to You</td>
-            @php $val = $notifications['ticket_assigned'] ?? 0; @endphp
+            @php $val = $notifications['ticketAssigned'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_assigned" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="ticketAssigned" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_assigned" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="ticketAssigned" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_assigned" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="ticketAssigned" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_assigned" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="ticketAssigned" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Ticket Reply</td>
-            @php $val = $notifications['ticket_reply'] ?? 0; @endphp
+            @php $val = $notifications['ticketReply'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_reply" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="ticketReply" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_reply" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="ticketReply" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_reply" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="ticketReply" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_reply" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="ticketReply" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Ticket Reopened</td>
-            @php $val = $notifications['ticket_reopened'] ?? 0; @endphp
+            @php $val = $notifications['ticketReopened'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_reopened" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="ticketReopened" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_reopened" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="ticketReopened" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_reopened" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="ticketReopened" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_reopened" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="ticketReopened" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         <tr>
             <td>Ticket Closed</td>
-            @php $val = $notifications['ticket_closed'] ?? 0; @endphp
+            @php $val = $notifications['ticketClosed'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_closed" value="1" autocomplete="off" @if($val == 1) checked @endif>
+                           name="ticketClosed" value="1" autocomplete="off" @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_closed" value="2" autocomplete="off" @if($val == 2) checked @endif>
+                           name="ticketClosed" value="2" autocomplete="off" @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_closed" value="3" autocomplete="off" @if($val == 3) checked @endif>
+                           name="ticketClosed" value="3" autocomplete="off" @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="ticket_closed" value="0" autocomplete="off" @if($val == 0) checked @endif>
+                           name="ticketClosed" value="0" autocomplete="off" @if($val == 0) checked @endif>
                 </label></td>
         </tr>
         </tbody>
