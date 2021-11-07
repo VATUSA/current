@@ -138,17 +138,9 @@ class ExamHelper
             Mail::to($to)->queue(new ExamAssigned($data));
         }
 
-
-        if ($notify->userWantsNotification($student, "legacyExamAssigned", "discord")) {
-            $student_id = $student->discord_id;
-        } else {
-            $student_id = 0;
-        }
-        if ($ta && $notify->userWantsNotification($ta, "legacyExamAssigned", "discord")) {
-            $staff_id = $ta->discord_id;
-        } else {
-            $staff_id = 0;
-        }
+        $student_id = $notify->userWantsNotification($student, "legacyExamAssigned",
+            "discord") ? $student->discord_id : 0;
+        $staff_id = $ta && $notify->userWantsNotification($ta, "legacyExamAssigned", "discord") ? $ta->discord_id : 0;
         if ($student_id || $staff_id) {
             $notify->sendNotification('legacyExamAssigned', "dm",
                 array_merge($data, compact('staff_id', 'student_id')));

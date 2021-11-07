@@ -17,25 +17,25 @@
         </tr>
         <tr>
             <td>Academy Exam Course Enrolled</td>
-            @php $val = $notifications['academyCourseEnrolled'] ?? 0; @endphp
+            @php $val = $notifications['academyExamCourseEnrolled'] ?? 0; @endphp
             <td class="notification-setting-cell @if($val == 1) warning @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academyCourseEnrolled" value="1" autocomplete="off"
+                           name="academyExamCourseEnrolled" value="1" autocomplete="off"
                            @if($val == 1) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 2) info @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academyCourseEnrolled" value="2" autocomplete="off"
+                           name="academyExamCourseEnrolled" value="2" autocomplete="off"
                            @if($val == 2) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 3) success @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academyCourseEnrolled" value="3" autocomplete="off"
+                           name="academyExamCourseEnrolled" value="3" autocomplete="off"
                            @if($val == 3) checked @endif>
                 </label></td>
             <td class="notification-setting-cell @if($val == 0) danger @endif"><label>
                     <input class="form-control notification-setting-select" type="radio"
-                           name="academyCourseEnrolled" value="0" autocomplete="off"
+                           name="academyExamCourseEnrolled" value="0" autocomplete="off"
                            @if($val == 0) checked @endif>
                 </label></td>
         </tr>
