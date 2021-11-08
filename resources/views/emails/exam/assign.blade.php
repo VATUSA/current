@@ -4,7 +4,7 @@
     Hello {{ $data['student_name'] }},
     <br><br>
     This email is to inform you that you have been assigned exam <em>{{ $data['exam_name'] }}</em> by instructor {{ $data['instructor_name'] }}.  You have
-    until {{ $data['end_date'] }} UTC to complete the examination before it expires.
+    until {{ $data['end_date']->toDayDateTimeString() }} UTC to complete the examination before it expires.
     <br><br>
     <table class="button success float-center" align="center" style="border-collapse: collapse; border-spacing: 0; float: none; padding: 0; text-align: center; vertical-align: top; width: auto;">
         <tbody>

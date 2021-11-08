@@ -62,20 +62,15 @@ class ExamHelper
             $expire_period = 7;
         }
 
-        $date = new DateTime();
-        $date->modify("+$expire_period day");
-        $end_date = $date->format("m/d/Y");
-        $end_time = $date->format("h:ia");
+        $endDate = Carbon::now()->addDays($expire_period);
 
-//        DB::table('exam_assignments')->insert(
-//            [
-//                'cid'           => $cid,
-//                'exam_id'       => $exam,
-//                'instructor_id' => $instructor,
-//                'assigned_date' => DB::raw('NOW()'),
-//                'expire_date'   => DB::raw("DATE_ADD(NOW(), INTERVAL $expire_period DAY)")
-//            ]
-//        );
+        $ea = new ExamAssignment();
+        $ea->cid = $cid;
+        $ea->instructor_id = $instructor;
+        $ea->exam_id = $exam;
+        $ea->assigned_date = Carbon::now();
+        $ea->expire_date = Carbon::now()->addDays($expire_period);
+        $ea->save();
 
 
         $exam = Exam::find($exam);
@@ -93,7 +88,7 @@ class ExamHelper
         $data = [
             'exam_name'       => "(" . $exam->facility_id . ") " . $exam->name,
             'instructor_name' => Helper::nameFromCID($instructor),
-            'end_date'        => $end_date . " " . $end_time,
+            'end_date'        => $endDate,
             'student_name'    => Helper::nameFromCID($cid),
             'facility'        => $fac,
             'cbt_required'    => $cbt_required,
@@ -103,7 +98,6 @@ class ExamHelper
 
         $notify = new VATUSADiscord();
         $to = array();
-        $staffIds = array();
         $instructor = User::find($instructor);
         $student = User::find($cid);
         $facility = Facility::find($fac);
@@ -118,20 +112,16 @@ class ExamHelper
             $ta = null;
         }
 
-        if ($notify->userWantsNotification($student, "legacy_exam_assigned", "email")) {
-            $to[] = Helper::emailFromCID($cid);
+        if ($notify->userWantsNotification($student, "legacyExamAssigned", "email")) {
+            $to[] = $student->email;
         }
-        if ($notify->userWantsNotification($instructor, "legacy_exam_assigned", "email")) {
+        if ($notify->userWantsNotification($instructor, "legacyExamAssigned", "email")) {
             $to[] = $instructor->email;
         }
         if ($exam->facility_id != "ZAE") {
-            if ($ta && $notify->userWantsNotification($ta, "legacy_exam_assigned", "email")) {
+            if ($ta && $notify->userWantsNotification($ta, "legacyExamAssigned", "email")) {
                 $to[] = $ta->email;
             }
-        }
-
-        if ($fac == "ZAE") {
-            $fac = $student->facility;
         }
 
         if (count($to)) {
@@ -151,7 +141,7 @@ class ExamHelper
 
         $log = new Actions();
         $log->to = $cid;
-        $log->log = "Exam " . $data['exam_name'] . " assigned, set to expire on $end_date at $end_time.";
+        $log->log = "Exam {$data['exam_name']} assigned by {$data['instructor_name']}, expires {$endDate->format('m/d/Y H:i')}.";
         $log->save();
     }
 
