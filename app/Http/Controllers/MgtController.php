@@ -77,8 +77,8 @@ class MgtController extends Controller
                     $trainingfac = $trainingfaclist->first()->facility_id;
                     $trainingfacname = Helper::facShtLng($trainingfac);
                 } else {
-                    $trainingfac = $user->facility()->id;
-                    $trainingfacname = $user->facility()->name;
+                    $trainingfac = $user->facilityObj->id;
+                    $trainingfacname = $user->facilityObj->name;
                 }
             } else {
                 if (Facility::find($trainingfac)) {
@@ -86,6 +86,14 @@ class MgtController extends Controller
                 } else {
                     abort(500);
                 }
+            }
+            $trainingFacListArray = array();
+            foreach ($trainingfaclist as $tr) {
+                $trainingFacListArray[$tr->facility_id] = $tr->facility->name;
+            }
+            if (!in_array($user->facility, ["ZHQ", "ZAE", "ZZN"])) {
+                $trainingFacListArray = array_merge($trainingFacListArray,
+                    [$user->facility => $user->facilityObj->name]);
             }
             $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility || $user->visits()->where('facility',
                 Auth::user()->facility)->exists() || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
@@ -169,7 +177,7 @@ class MgtController extends Controller
             ];
 
             return view('mgt.controller.index',
-                compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingfaclist', 'trainingfac',
+                compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingFacListArray', 'trainingfac',
                     'trainingfacname', 'ins', 'canAddTR', 'examAttempts'));
         } else {
             return view('mgt.controller.404');
@@ -207,7 +215,8 @@ class MgtController extends Controller
             try {
                 $moodle->unassignMentorRoles($cid);
             } catch (Exception $e) {
-                return redirect("/mgt/controller")->with("error", "Unable to remove roles from Moodle. Please try again later.");
+                return redirect("/mgt/controller")->with("error",
+                    "Unable to remove roles from Moodle. Please try again later.");
             }
             $role->delete();
             $log = new Actions();

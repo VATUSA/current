@@ -36,11 +36,12 @@ class MyController
 
         if (!$trainingfac) {
             if ($trainingfaclist->count() == 1) {
-                $trainingfac = $trainingfaclist->first()->facility_id;
-                $trainingfacname = Helper::facShtLng($trainingfac);
+                $facility = $trainingfaclist->first()->facility;
+                $trainingfac = $facility->id;
+                $trainingfacname = $facility->name;
             } else {
                 $trainingfac = Auth::user()->facility;
-                $trainingfacname = Auth::user()->facility()->name;
+                $trainingfacname = Auth::user()->facilityObj->name;
             }
         } else {
             if (Facility::find($trainingfac)) {
@@ -48,6 +49,15 @@ class MyController
             } else {
                 abort(500);
             }
+        }
+
+        $trainingFacListArray = array();
+        foreach ($trainingfaclist as $tr) {
+            $trainingFacListArray[$tr->facility_id] = $tr->facility->name;
+        }
+        if (!in_array(Auth::user()->facility, ["ZHQ", "ZAE", "ZZN"])) {
+            $trainingFacListArray = array_merge($trainingFacListArray,
+                [Auth::user()->facility => Auth::user()->facilityObj->name]);
         }
         $trainingRecords = Auth::user()->trainingRecords()->with('instructor:cid,fname,lname')->where('facility_id',
             $trainingfac)->get();
@@ -89,7 +99,7 @@ class MyController
         ];
 
         return view('my.profile',
-            compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist', 'examAttempts'));
+            compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist', 'trainingFacListArray', 'examAttempts'));
     }
 
     public function getAssignBasic()
