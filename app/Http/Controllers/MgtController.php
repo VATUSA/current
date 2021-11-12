@@ -69,7 +69,7 @@ class MgtController extends Controller
                 $user
             ) {
                 return Auth::user()->facility === $record->facility_id || Auth::user()->facility === $user->facility || $user->visits()->where('facility',
-                        Auth::user()->facility)->exists();
+                        Auth::user()->facility)->exists() || RoleHelper::isVATUSAStaff();
             });
 
             if (!$trainingfac) {
