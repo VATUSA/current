@@ -62,6 +62,7 @@ class MgtController extends Controller
             $user = $user->first();
             $checks = [];
             $eligible = $user->transferEligible($checks);
+            $user->promotionEligible();
 
             /** Training Records */
             $trainingfac = $request->input('fac', null);

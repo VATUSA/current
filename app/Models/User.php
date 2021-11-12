@@ -14,6 +14,7 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -421,24 +422,28 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public
     function promotionEligible()
     {
-        if ($this->flag_homecontroller == 0) {
+        if (!$this->flag_homecontroller) {
+            Cache::set("promotionEligible-$this->cid", false);
+
             return false;
         }
 
+        $result = false;
         if ($this->rating == Helper::ratingIntFromShort("OBS")) {
-            return $this->isS1Eligible();
+            $result = $this->isS1Eligible();
         }
         if ($this->rating == Helper::ratingIntFromShort("S1")) {
-            return $this->isS2Eligible();
+            $result = $this->isS2Eligible();
         }
         if ($this->rating == Helper::ratingIntFromShort("S2")) {
-            return $this->isS3Eligible();
+            $result = $this->isS3Eligible();
         }
         if ($this->rating == Helper::ratingIntFromShort("S3")) {
-            return $this->isC1Eligible();
+            $result = $this->isC1Eligible();
         }
 
-        return false;
+        Cache::set("promotionEligible-$this->cid", $result);
+        return $result;
     }
 
     public

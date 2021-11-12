@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Facility;
 use App\Classes\RoleHelper;
 use App\Models\Actions;
+use Illuminate\Support\Facades\Cache;
 
 class FacMgtController extends Controller
 {
@@ -50,14 +51,8 @@ class FacMgtController extends Controller
         }
 
         $facility = Facility::find($fac);
-
-        $users = User::where('facility', $fac)->where('rating', '<', Helper::ratingIntFromShort("C1"))->get();
-        $promotionEligible = 0;
-        foreach ($users as $user) {
-            if ($user->promotionEligible()) {
-                $promotionEligible++;
-            }
-        }
+        
+        $promotionEligible = Cache::get("promotionEligible-$fac") ?? "N/A";
 
         return view('mgt.facility.index',
             ['fac' => $fac, 'facility' => $facility, 'promotionEligible' => $promotionEligible]);
