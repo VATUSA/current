@@ -183,6 +183,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ]);
 
             $this->visits()->where('facility', $fac)->delete();
+            Cache::forget("roster-$facility-home");
+            Cache::forget("roster-$facility-both");
         }
     }
 
@@ -248,6 +250,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $this->facility_join = \DB::raw("NOW()");
         $this->facility = $newfac;
         $this->save();
+
+        Cache::forget("roster-$facility-home");
+        Cache::forget("roster-$facility-both");
 
         $t = new Transfers();
         $t->cid = $this->cid;

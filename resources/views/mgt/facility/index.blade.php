@@ -251,7 +251,8 @@
                                 <h1>API (v2)</h1>
                                 <fieldset>
                                     <legend>Live</legend>
-                                    <b>API JSON Web Key (JWK):</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page
+                                    <b>API JSON Web Key (JWK):</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC7515</a>
+                                    page
                                     38) --
                                     symmetric key<br>
                                     <input class="form-control" type="text" id="textapiv2jwk"
@@ -265,7 +266,8 @@
                                 <br>
                                 <fieldset>
                                     <legend>Development</legend>
-                                    <b>Sandbox API JSON Web Key (JWK):</b> (<a href="https://tools.ietf.org/html/rfc7515">RFC
+                                    <b>Sandbox API JSON Web Key (JWK):</b> (<a
+                                        href="https://tools.ietf.org/html/rfc7515">RFC
                                         7515</a> page
                                     38) --
                                     symmetric key<br>
@@ -777,6 +779,7 @@
                 method: 'DELETE'
               }).done(() => {
                 waitingDialog.hide()
+                window.location.hash = '#uls';
                 location.reload()
               }).error(data => {
                 waitingDialog.hide()
@@ -869,7 +872,10 @@
             if (r) {
               $.post('{{ secure_url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
                 if (data == 1)
-                  swal('Success!', 'The transfer has been successfully approved.', 'success').then(_ => location.reload())
+                  swal('Success!', 'The transfer has been successfully approved.', 'success').then(_ => {
+                    window.location.hash = '#trans';
+                    location.reload()
+                  })
                 else
                   swal('Error!', 'The transfer could not be approved. It may have already been processed.', 'error')
               }).error(_ => {
@@ -899,7 +905,10 @@
             if (r) {
               $.post('{{ secure_url('/mgt/ajax/transfers/2') }}', {id: id, reason: r}, function (data) {
                 if (data == 1)
-                  swal('Success!', 'The transfer has been successfully rejected.', 'success').then(_ => location.reload())
+                  swal('Success!', 'The transfer has been successfully rejected.', 'success').then(_ => {
+                    window.location.hash = '#trans';
+                    location.reload()
+                  })
                 else
                   swal('Error!', 'The transfer could not be rejected. It may have already been processed.', 'error')
               }).error(_ => {
@@ -930,7 +939,10 @@
                 type: 'DELETE',
                 data: {'reason': r}
               }).success(function () {
-                swal('Success!', 'The controller has been deleted.', 'success').then(_ => location.reload(true))
+                swal('Success!', 'The controller has been deleted.', 'success').then(_ => {
+                  window.location.hash = '#hroster'
+                  location.reload()
+                })
               }).error(_ => {
                 swal('Error!', 'Unable to delete controller. A server error has occurred.', 'error')
               })
@@ -1040,7 +1052,8 @@
               type: 'DELETE',
               data: {'reason': result}
             }).success(function () {
-              location.reload(true)
+              window.location.hash = '#vroster';
+              location.reload()
             }).error(error => {
               waitingDialog.hide()
               bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
@@ -1057,7 +1070,8 @@
           url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
           type: 'POST',
         }).success(function (res) {
-          location.reload(true)
+          window.location.hash = '#vroster';
+          location.reload()
         }).error(function () {
           alert('Error occurred')
         })
