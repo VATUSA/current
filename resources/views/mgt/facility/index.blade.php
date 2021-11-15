@@ -488,7 +488,7 @@
               @endif
                 html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ', \'' + resp.data[i].fname + ' ' + resp.data[i].lname + '\')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
@@ -519,7 +519,7 @@
             html += '<td class="text-right">'
             html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + resp.data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + resp.data[i].cid + ', \'' + resp.data[i].fname + ' ' + resp.data[i].lname + '\')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
@@ -918,10 +918,10 @@
           })
       }
 
-      function deleteController (cid) {
+      function deleteController (cid, name) {
         swal({
-          title     : 'Deleting Controller',
-          text      : 'Are you sure you want to delete this controller? This can only be undone by VATUSA Staff.',
+          title     : 'Deleting Controller - ' + name,
+          text      : 'Are you sure you want to delete this home controller? This can only be undone by VATUSA Staff.',
           icon      : 'warning',
           content   : {
             element   : 'input',
@@ -1042,24 +1042,36 @@
       @endif
       @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
 
-      function deleteVisitor (cid) {
-        bootbox.prompt('Reason for delete:', function (result) {
-          if (result === null) {
-            return
-          } else {
-            $.ajax({
-              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
-              type: 'DELETE',
-              data: {'reason': result}
-            }).success(function () {
-              window.location.hash = '#vroster';
-              location.reload()
-            }).error(error => {
-              waitingDialog.hide()
-              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
-            })
-          }
+      function deleteVisitor (cid, name) {
+        swal({
+          title     : 'Deleting Visitor - ' + name,
+          text      : 'Are you sure you want to delete this visiting controller?',
+          icon      : 'warning',
+          content   : {
+            element   : 'input',
+            attributes: {
+              placeholder: 'Reason for deletion...'
+            }
+          },
+          buttons   : true,
+          dangerMode: true,
         })
+          .then((r) => {
+            if (r) {
+              $.ajax({
+                url : $.apiUrl() +  '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
+                type: 'DELETE',
+                data: {'reason': r}
+              }).success(function () {
+                swal('Success!', 'The controller has been deleted.', 'success').then(_ => {
+                  window.location.hash = '#vroster'
+                  location.reload()
+                })
+              }).error(_ => {
+                swal('Error!', 'Unable to delete controller. A server error has occurred.', 'error')
+              })
+            }
+          })
       }
 
       $('#addButton').click(function () {
