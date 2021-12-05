@@ -25,7 +25,8 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\CERTCorrect',
         'App\Console\Commands\CERTErr',
         'App\Console\Commands\MoodleSync',
-        'App\Console\Commands\CachePromotionEligibility'
+        'App\Console\Commands\CachePromotionEligibility',
+        'App\Console\Commands\ProcessOBSList'
     ];
 
     /**
