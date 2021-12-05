@@ -11,9 +11,9 @@
             <label for="tng-artcc-select">ARTCC:</label>
             <select class="form-control" id="tng-artcc-select" autocomplete="off" name="fac">
                 <option value="" @if(!$trainingfac) selected @endif>-- Select One --</option>
-                @foreach($trainingfaclist as $fac)
-                    <option value="{{ $fac->facility->id }}"
-                            @if($trainingfac == $fac->facility->id) selected @endif>{{ $fac->facility->name }}</option>
+                @foreach($trainingFacListArray as $fac => $facName)
+                    <option value="{{ $fac }}"
+                            @if($trainingfac === $fac) selected @endif>{{ $facName }}</option>
                 @endforeach
             </select>
         </div>
@@ -48,7 +48,7 @@
         <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
         @php $postypes = ['OTS', 'DEL', 'GND', 'TWR', 'APP', 'CTR']; @endphp
         <div role="tabpanel" class="tab-pane active" id="all">
-            @if($trainingRecords->count() && $trainingfaclist->count())
+            @if($trainingRecords->count())
                 <table class="training-records-list table table-striped" id="training-records-all">
                     <thead>
                     <tr>
@@ -104,10 +104,6 @@
                     @endforeach
                     </tbody>
                 </table>
-            @elseif($trainingfaclist->count() > 1)
-                <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> You have
-                    records from multiple facilities. Please select a facility from the left.
-                </div>
             @else
                 <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> You have no
                     training records.
@@ -118,7 +114,7 @@
         @foreach($postypes as $postype)
             <div role="tabpanel" class="tab-pane"
                  id="{{strtolower($postype)}}">
-                @if($trainingRecords->count() && $trainingfaclist->count())
+                @if($trainingRecords->count())
                     @php $records = $trainingRecords->filter(function($record) use ($postype) {
                                                                     return $postype == "OTS" ? in_array($record->ots_status, [1,2]) : preg_match("/$postype\$/", $record->position);
                                                                     })
@@ -165,7 +161,8 @@
                                     <div class="btn-group">
                                         <button class="btn btn-primary view-tr"
                                                 data-id="{{ $record->id }}"><span
-                                                class="glyphicon glyphicon-eye-open"></span> View</button>
+                                                class="glyphicon glyphicon-eye-open"></span> View
+                                        </button>
                                     </div>
                                 </td>
                                 <td>@switch($record->location)
@@ -178,11 +175,6 @@
                         @endforeach
                         </tbody>
                     </table>
-                @elseif($trainingfaclist->count() > 1)
-                    <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span>
-                        You have records from multiple facilities. Please select a facility from the
-                        left.
-                    </div>
                 @else
                     <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span>
                         You have no training records.

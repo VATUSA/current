@@ -23,7 +23,9 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\TransferEmails',
         'App\Console\Commands\ExpireNotices',
         'App\Console\Commands\CERTErr',
-        'App\Console\Commands\MoodleSync'
+        'App\Console\Commands\MoodleSync',
+        'App\Console\Commands\CachePromotionEligibility',
+        'App\Console\Commands\ProcessOBSList'
     ];
 
     /**
@@ -43,6 +45,7 @@ class Kernel extends ConsoleKernel
         $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00");
         $schedule->command('rolesync')->cron('45 * * * *');
         $schedule->command('ntos:expire')->weekly();
+        $schedule->command('promos:cacheeligible')->dailyAt('05:00');
     }
 
 }

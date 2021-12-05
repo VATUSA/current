@@ -479,7 +479,7 @@
               @endif
                 html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ', \'' + resp.data[i].fname + ' ' + resp.data[i].lname + '\')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
@@ -510,7 +510,7 @@
             html += '<td class="text-right">'
             html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
               @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + resp.data[i].cid + ')"><i class="text-danger fa fa-times"></i></a>'
+                html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + resp.data[i].cid + ', \'' + resp.data[i].fname + ' ' + resp.data[i].lname + '\')"><i class="text-danger fa fa-times"></i></a>'
               @endif
                 html += '</td></tr>'
           })
@@ -770,6 +770,7 @@
                 method: 'DELETE'
               }).done(() => {
                 waitingDialog.hide()
+                window.location.hash = '#uls';
                 location.reload()
               }).error(data => {
                 waitingDialog.hide()
@@ -862,7 +863,10 @@
             if (r) {
               $.post('{{ secure_url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
                 if (data == 1)
-                  swal('Success!', 'The transfer has been successfully approved.', 'success').then(_ => location.reload())
+                  swal('Success!', 'The transfer has been successfully approved.', 'success').then(_ => {
+                    window.location.hash = '#trans';
+                    location.reload()
+                  })
                 else
                   swal('Error!', 'The transfer could not be approved. It may have already been processed.', 'error')
               }).error(_ => {
@@ -892,7 +896,10 @@
             if (r) {
               $.post('{{ secure_url('/mgt/ajax/transfers/2') }}', {id: id, reason: r}, function (data) {
                 if (data == 1)
-                  swal('Success!', 'The transfer has been successfully rejected.', 'success').then(_ => location.reload())
+                  swal('Success!', 'The transfer has been successfully rejected.', 'success').then(_ => {
+                    window.location.hash = '#trans';
+                    location.reload()
+                  })
                 else
                   swal('Error!', 'The transfer could not be rejected. It may have already been processed.', 'error')
               }).error(_ => {
@@ -902,10 +909,10 @@
           })
       }
 
-      function deleteController (cid) {
+      function deleteController (cid, name) {
         swal({
-          title     : 'Deleting Controller',
-          text      : 'Are you sure you want to delete this controller? This can only be undone by VATUSA Staff.',
+          title     : 'Deleting Controller - ' + name,
+          text      : 'Are you sure you want to delete this home controller? This can only be undone by VATUSA Staff.',
           icon      : 'warning',
           content   : {
             element   : 'input',
@@ -923,7 +930,10 @@
                 type: 'DELETE',
                 data: {'reason': r}
               }).success(function () {
-                swal('Success!', 'The controller has been deleted.', 'success').then(_ => location.reload(true))
+                swal('Success!', 'The controller has been deleted.', 'success').then(_ => {
+                  window.location.hash = '#hroster'
+                  location.reload()
+                })
               }).error(_ => {
                 swal('Error!', 'Unable to delete controller. A server error has occurred.', 'error')
               })
@@ -1023,23 +1033,36 @@
       @endif
       @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
 
-      function deleteVisitor (cid) {
-        bootbox.prompt('Reason for delete:', function (result) {
-          if (result === null) {
-            return
-          } else {
-            $.ajax({
-              url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
-              type: 'DELETE',
-              data: {'reason': result}
-            }).success(function () {
-              location.reload(true)
-            }).error(error => {
-              waitingDialog.hide()
-              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong><br><code>' + error.responseJSON.msg + '</code></div>')
-            })
-          }
+      function deleteVisitor (cid, name) {
+        swal({
+          title     : 'Deleting Visitor - ' + name,
+          text      : 'Are you sure you want to delete this visiting controller?',
+          icon      : 'warning',
+          content   : {
+            element   : 'input',
+            attributes: {
+              placeholder: 'Reason for deletion...'
+            }
+          },
+          buttons   : true,
+          dangerMode: true,
         })
+          .then((r) => {
+            if (r) {
+              $.ajax({
+                url : $.apiUrl() +  '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
+                type: 'DELETE',
+                data: {'reason': r}
+              }).success(function () {
+                swal('Success!', 'The controller has been deleted.', 'success').then(_ => {
+                  window.location.hash = '#vroster'
+                  location.reload()
+                })
+              }).error(_ => {
+                swal('Error!', 'Unable to delete controller. A server error has occurred.', 'error')
+              })
+            }
+          })
       }
 
       $('#addButton').click(function () {
@@ -1050,7 +1073,8 @@
           url : $.apiUrl() + '/v2/facility/{{$fac}}/roster/manageVisitor/' + cid,
           type: 'POST',
         }).success(function (res) {
-          location.reload(true)
+          window.location.hash = '#vroster';
+          location.reload()
         }).error(function () {
           alert('Error occurred')
         })

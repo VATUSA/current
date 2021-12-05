@@ -15,13 +15,10 @@
                     <label for="tng-artcc-select">ARTCC:</label>
                     <select class="form-control" id="tng-artcc-select" autocomplete="off" name="fac">
                         <option value="" @if(!$trainingfac) selected @endif>-- Select One --</option>
-                        @foreach($trainingfaclist as $fac)
-                            <option value="{{ $fac->facility->id }}"
-                                    @if($trainingfac == $fac->facility->id) selected @endif>{{ $fac->facility->name }}</option>
+                        @foreach($trainingFacListArray as $fac => $facname)
+                            <option value="{{ $fac }}"
+                                    @if($trainingfac === $fac) selected @endif>{{ $facname }}</option>
                         @endforeach
-                        @if(!$trainingfaclist->count())
-                            <option value="{{ $trainingfac }}" selected>{{ $trainingfacname }}</option>
-                        @endif
                     </select>
                 </div>
             </form>
@@ -55,7 +52,20 @@
                 <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
                 @php $postypes = ['OTS', 'DEL', 'GND', 'TWR', 'APP', 'CTR']; @endphp
                 <div role="tabpanel" class="tab-pane active" id="all">
-                    @if(!is_array($trainingRecords) && $trainingRecords->count() && $trainingfaclist->count())
+                    @if(is_array($trainingRecords) || !$trainingRecords->count())
+                        <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
+                            controller has no training records.
+                            <br>
+                        </div>
+                        @if($canAddTR)
+                            <div class="text-center">
+                                <button class="btn btn-success add-new-record"><span
+                                        class="glyphicon glyphicon-plus"></span> Add New
+                                    Record
+                                </button>
+                            </div>
+                        @endif
+                    @else
                         <table class="training-records-list table table-striped" id="training-records-all">
                             <thead>
                             <tr>
@@ -125,23 +135,6 @@
                             @endforeach
                             </tbody>
                         </table>
-                    @elseif($trainingfaclist->count() > 1)
-                        <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
-                            controller has records from multiple facilities. Please select a facility from the left.
-                        </div>
-                    @else
-                        <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
-                            controller has no training records.
-                            <br>
-                        </div>
-                            @if($canAddTR)
-                                <div class="text-center">
-                                    <button class="btn btn-success add-new-record"><span
-                                            class="glyphicon glyphicon-plus"></span> Add New
-                                        Record
-                                    </button>
-                                </div>
-                            @endif
                     @endif
                     <input type="hidden" id="cid" value="{{ $user->cid }}">
                     <input type="hidden" id="fac" value="{{ $trainingfac }}">
@@ -149,9 +142,9 @@
                 @foreach($postypes as $postype)
                     <div role="tabpanel" class="tab-pane"
                          id="{{strtolower($postype)}}">
-                        @if(!is_array($trainingRecords) && $trainingRecords->count() && $trainingfaclist->count())
+                        @if(!is_array($trainingRecords) && $trainingRecords->count())
                             @php $records = $trainingRecords->filter(function($record) use ($postype) {
-                                                                    return $postype == "OTS" ? in_array($record->ots_status, [1,2]) : preg_match("/$postype\$/", $record->position);
+                                                                    return $postype === "OTS" ? in_array($record->ots_status, [1,2]) : preg_match("/$postype\$/", $record->position);
                                                                     })
                             @endphp
                             <table class="training-records-list table table-striped" id="training-records-{{$postype}}">
@@ -220,10 +213,6 @@
                                 @endforeach
                                 </tbody>
                             </table>
-                        @elseif($trainingfaclist->count() > 1)
-                            <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
-                                controller has records from multiple facilities. Please select a facility from the left.
-                            </div>
                         @else
                             <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span> This
                                 controller has no training records.
