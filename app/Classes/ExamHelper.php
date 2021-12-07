@@ -2,15 +2,19 @@
 
 namespace App\Classes;
 
+use App\Mail\ExamAssigned;
 use App\Models\ExamAssignment;
 use App\Models\ExamQuestions;
 use App\Models\Exam;
 use App\Models\Actions;
+use App\Models\Facility;
 use App\Models\TrainingBlock;
+use App\Models\User;
 use Carbon\Carbon;
 use DB;
 use DateTime;
 use Auth;
+use Illuminate\Support\Facades\Mail;
 
 define("BASIC_EXAM", 7);
 
@@ -58,20 +62,15 @@ class ExamHelper
             $expire_period = 7;
         }
 
-        $date = new DateTime();
-        $date->modify("+$expire_period day");
-        $end_date = $date->format("m/d/Y");
-        $end_time = $date->format("h:ia");
+        $endDate = Carbon::now()->addDays($expire_period);
 
-        DB::table('exam_assignments')->insert(
-            [
-                'cid'           => $cid,
-                'exam_id'       => $exam,
-                'instructor_id' => $instructor,
-                'assigned_date' => DB::raw('NOW()'),
-                'expire_date'   => DB::raw("DATE_ADD(NOW(), INTERVAL $expire_period DAY)")
-            ]
-        );
+        $ea = new ExamAssignment();
+        $ea->cid = $cid;
+        $ea->instructor_id = $instructor;
+        $ea->exam_id = $exam;
+        $ea->assigned_date = Carbon::now();
+        $ea->expire_date = Carbon::now()->addDays($expire_period);
+        $ea->save();
 
 
         $exam = Exam::find($exam);
@@ -89,29 +88,60 @@ class ExamHelper
         $data = [
             'exam_name'       => "(" . $exam->facility_id . ") " . $exam->name,
             'instructor_name' => Helper::nameFromCID($instructor),
-            'end_date'        => $end_date . " " . $end_time,
+            'end_date'        => $endDate,
             'student_name'    => Helper::nameFromCID($cid),
             'facility'        => $fac,
             'cbt_required'    => $cbt_required,
             'cbt_facility'    => $cbt_facility,
             'cbt_block'       => $cbt_block
         ];
-        $to[] = Helper::emailFromCID($cid);
-        if ($instructor > 0) {
-            $to[] = Helper::emailFromCID($instructor);
+
+        $notify = new VATUSADiscord();
+        $to = array();
+        $instructor = User::find($instructor);
+        $student = User::find($cid);
+        $facility = Facility::find($fac);
+        $ta = $facility->ta();
+        if (!$ta) {
+            $ta = $facility->datm();
         }
-        if ($exam->facility_id != "ZAE") {
-            $to[] = $exam->facility_id . "-TA@vatusa.net";
+        if (!$ta) {
+            $ta = $facility->atm();
+        }
+        if (!$ta || $ta->cid == $instructor->cid) {
+            $ta = null;
         }
 
-        if ($fac == "ZAE") {
-            $fac = \App\Models\User::find($cid)->facility;
+        if ($notify->userWantsNotification($student, "legacyExamAssigned", "email")) {
+            $to[] = $student->email;
         }
-        EmailHelper::sendEmailFacilityTemplate($to, "Exam Assigned", $fac, "examassigned", $data);
+        if ($notify->userWantsNotification($instructor, "legacyExamAssigned", "email")) {
+            $to[] = $instructor->email;
+        }
+        if ($exam->facility_id != "ZAE") {
+            if ($ta && $notify->userWantsNotification($ta, "legacyExamAssigned", "email")) {
+                $to[] = $ta->email;
+            }
+        }
+
+        if (count($to)) {
+            Mail::to($to)->queue(new ExamAssigned($data));
+        }
+
+        $student_id = $notify->userWantsNotification($student, "legacyExamAssigned",
+            "discord") ? $student->discord_id : 0;
+        $staff_id = $ta && $notify->userWantsNotification($ta, "legacyExamAssigned", "discord") ? $ta->discord_id : 0;
+        if ($student_id || $staff_id) {
+            $notify->sendNotification('legacyExamAssigned', "dm",
+                array_merge($data, compact('staff_id', 'student_id')));
+        }
+        if ($channel = $notify->getFacilityNotificationChannel($facility, "legacyExamAssigned")) {
+            $notify->sendNotification("legacyExamAssigned", "channel", $data, $facility->discord_guild, $channel);
+        }
 
         $log = new Actions();
         $log->to = $cid;
-        $log->log = "Exam " . $data['exam_name'] . " assigned, set to expire on $end_date at $end_time.";
+        $log->log = "Exam {$data['exam_name']} assigned by {$data['instructor_name']}, expires {$endDate->format('m/d/Y H:i')}.";
         $log->save();
     }
 
@@ -121,8 +151,11 @@ class ExamHelper
      * @param string $cid
      * @param int    $exam
      */
-    public static function unassign($cid, $exam)
-    {
+    public
+    static function unassign(
+        $cid,
+        $exam
+    ) {
         if (!static::isAssigned($cid, $exam)) {
             return;
         }
@@ -137,18 +170,22 @@ class ExamHelper
         $log->save();
     }
 
-    public static function validRetakes()
+    public
+    static function validRetakes()
     {
         return [1, 3, 5, 7, 14, 21, 28, 35];
     }
 
-    public static function expireOptions()
+    public
+    static function expireOptions()
     {
         return [7, 14, 21, 28, 35];
     }
 
-    public static function generateRandomQuestions($examid)
-    {
+    public
+    static function generateRandomQuestions(
+        $examid
+    ) {
         $list = [];
         $questions = ExamQuestions::where('exam_id', $examid)->orderByRaw("RAND()")->get();
         foreach ($questions as $question) {
@@ -158,8 +195,10 @@ class ExamHelper
         return $list;
     }
 
-    public static function examCBTComplete($exam)
-    {
+    public
+    static function examCBTComplete(
+        $exam
+    ) {
         if (!$exam->cbt_required) {
             return true;
         }
@@ -175,8 +214,13 @@ class ExamHelper
         return true;
     }
 
-    public static function academyPassedExam($cid, $rating, $intervalDays = 0, $intervalMonths = 0): bool
-    {
+    public
+    static function academyPassedExam(
+        $cid,
+        $rating,
+        $intervalDays = 0,
+        $intervalMonths = 0
+    ): bool {
         $moodle = new VATUSAMoodle();
         $config = config("exams." . strtoupper($rating));
         if (!$config || empty($config)) {
