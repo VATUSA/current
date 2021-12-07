@@ -60,7 +60,7 @@ class VATUSADiscord
     {
         $record = FacilityNotificationChannel::where('facility', $facility->id)->where('type', $type)->first();
 
-        return $record && $facility->discord_guild ? $record->channel : 0;
+        return $record && ($facility->discord_guild || $facility->id === "ZHQ") ? $record->channel : 0;
     }
 
     /**
@@ -83,6 +83,7 @@ class VATUSADiscord
 
     /**
      * Get an array of all the facility's notification channels.
+     *
      * @param Facility $facility
      *
      * @return array
@@ -133,15 +134,18 @@ class VATUSADiscord
     /**
      * Determine if the User has configured the Notification.
      *
-     * @param \App\Models\User $user
-     * @param string           $type
-     * @param string           $medium
+     * @param \App\Models\User|int $user
+     * @param string               $type
+     * @param string               $medium
      *
      * @return bool
      */
-    public function userWantsNotification(User $user, string $type, string $medium): bool
+    public function userWantsNotification($user, string $type, string $medium): bool
     {
-        if (!$user->discord_id) {
+        if (!($user instanceof User)) {
+            $user = User::find($user);
+        }
+        if (!$user || !$user->discord_id) {
             return false;
         }
         $option = $this->getNotificationOption($user, $type);
@@ -184,6 +188,7 @@ class VATUSADiscord
 
     /**
      * Get an array of all the channels in a Guild.
+     *
      * @param string $guild
      *
      * @return array

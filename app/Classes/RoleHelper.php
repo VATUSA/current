@@ -190,11 +190,11 @@ class RoleHelper
      */
     public static function isVATUSAStaff($cid = null, $isApi = false, $skipWebTeam = false)
     {
-        if (!\Auth::check() && !$isApi) {
+        if (!Auth::check() && !$isApi) {
             return false;
         }
         if ($cid == null || $cid == 0) {
-            $cid = \Auth::user()->cid;
+            $cid = Auth::user()->cid;
         }
 
         $user = User::where('cid', $cid)->first();
@@ -228,8 +228,8 @@ class RoleHelper
     public static function isWebTeam($cid = null)
     {
         if ($cid == null || $cid == 0) {
-            $cid = \Auth::user()->cid;
-            $user = \Auth::user();
+            $cid = Auth::user()->cid;
+            $user = Auth::user();
         } else {
             $user = User::where('cid', $cid)->first();
         }
@@ -245,14 +245,14 @@ class RoleHelper
 
     public static function isFacilityStaff($cid = null, $facility = null, $isApi = false)
     {
-        if (!\Auth::check() && !$isApi) {
+        if (!Auth::check() && !$isApi) {
             return false;
         }
         if ($cid == null || $cid == 0) {
-            $cid = \Auth::user()->cid;
+            $cid = Auth::user()->cid;
         }
         if ($facility == null) {
-            $facility = \Auth::user()->facility;
+            $facility = Auth::user()->facility;
         }
 
         if (static::isVATUSAStaff($cid)) {
@@ -292,14 +292,18 @@ class RoleHelper
         $isApi = false,
         bool $includeVATUSA = true
     ) {
-        if (!\Auth::check() && !$isApi) {
+        if (!Auth::check() && !$isApi) {
             return false;
         }
         if (($cid == null || $cid == 0)) {
             $cid = Auth::user()->cid;
         }
-        if ($facility == null) {
-            $facility = \Auth::user()->facility;
+        $user = User::find($cid);
+        if (!$user) {
+            return false;
+        }
+        if (!$facility) {
+            $facility = $user->facility;
         }
         if ($facility instanceof Facility) {
             $facility = $facility->id;
@@ -334,14 +338,14 @@ class RoleHelper
 
     public static function isFacilitySeniorStaffExceptTA($cid = null, $facility = null, $isApi = false)
     {
-        if (!\Auth::check() && !$isApi) {
+        if (!Auth::check() && !$isApi) {
             return false;
         }
         if (($cid == null || $cid == 0)) {
             $cid = Auth::user()->cid;
         }
         if ($facility == null) {
-            $facility = \Auth::user()->facility;
+            $facility = Auth::user()->facility;
         }
 
         if (static::isVATUSAStaff($cid)) {
@@ -422,10 +426,10 @@ class RoleHelper
      */
     public static function isInstructor(int $cid = null, string $facility = null, bool $includeVATUSA = true)
     {
-        if (!Auth::check() && !($cid || $facility)) {
+        if (!Auth::check() && !$cid) {
             return false;
         }
-        if (is_null($cid) || !$cid) {
+        if (!$cid) {
             $cid = Auth::user()->cid;
             $user = Auth::user();
         } else {
@@ -465,17 +469,17 @@ class RoleHelper
 
     public static function isMentor($cid = null, $facility = null)
     {
-        if (!Auth::check()) {
+        if (!Auth::check() && !$cid) {
             return false;
         }
-        if ($cid == null || $cid == 0) {
+        if (!$cid) {
             $cid = Auth::user()->cid;
         }
         $user = User::find($cid);
         if (!$user || !$user->flag_homecontroller) {
             return false;
         }
-        $facility = $facility ?? $user->facility;
+        $facility ??= $user->facility;
         if (!$user->facility()->active && $user->facility != "ZHQ") {
             return false;
         }
@@ -487,31 +491,56 @@ class RoleHelper
         return false;
     }
 
-    public static function getStaff($facility = null, $getVATUSA = true)
+    public static function getStaff(?string $facility = null, bool $getVATUSA = true, bool $fullRoleTitles = true)
     {
         if (!$facility) {
-            $facility = \Auth::user()->facility;
+            $facility = Auth::user()->facility;
         }
 
         $staff = [];
+        $usaStaff = [];
         $f = Facility::find($facility);
         if ($f->atm) {
-            $staff[] = ['cid' => $f->atm, 'name' => $f->atm()->fullname(), 'role' => "ATM"];
+            $staff[] = [
+                'cid'  => $f->atm,
+                'name' => $f->atm()->fullname(),
+                'role' => $fullRoleTitles ? static::roleTitle("ATM") : "ATM"
+            ];
         }
         if ($f->datm) {
-            $staff[] = ['cid' => $f->datm, 'name' => $f->datm()->fullname(), 'role' => "DATM"];
+            $staff[] = [
+                'cid'  => $f->datm,
+                'name' => $f->datm()->fullname(),
+                'role' => $fullRoleTitles ? static::roleTitle("ATM") : "DATM"
+            ];
         }
         if ($f->ta) {
-            $staff[] = ['cid' => $f->ta, 'name' => $f->ta()->fullname(), 'role' => "TA"];
+            $staff[] = [
+                'cid'  => $f->ta,
+                'name' => $f->ta()->fullname(),
+                'role' => $fullRoleTitles ? static::roleTitle("TA") : "ATM"
+            ];
         }
         if ($f->ec) {
-            $staff[] = ['cid' => $f->ec, 'name' => $f->ec()->fullname(), 'role' => "EC"];
+            $staff[] = [
+                'cid'  => $f->ec,
+                'name' => $f->ec()->fullname(),
+                'role' => $fullRoleTitles ? static::roleTitle("EC") : "EC"
+            ];
         }
         if ($f->fe) {
-            $staff[] = ['cid' => $f->fe, 'name' => $f->fe()->fullname(), 'role' => "FE"];
+            $staff[] = [
+                'cid'  => $f->fe,
+                'name' => $f->fe()->fullname(),
+                'role' => $fullRoleTitles ? static::roleTitle("FE") : "FE"
+            ];
         }
         if ($f->wm) {
-            $staff[] = ['cid' => $f->wm, 'name' => $f->wm()->fullname(), 'role' => "WM"];
+            $staff[] = [
+                'cid'  => $f->wm,
+                'name' => $f->wm()->fullname(),
+                'role' => $fullRoleTitles ? static::roleTitle("WM") : "WM"
+            ];
         }
 
         if ($facility != "ZAE") {
@@ -527,7 +556,7 @@ class RoleHelper
                     $staff[] = [
                         'cid'  => $user->cid,
                         'name' => $user->fullname(),
-                        'role' => 'INS'
+                        'role' => $fullRoleTitles ? "Instructor" : "INS"
                     ];
                 }
             }
@@ -538,7 +567,7 @@ class RoleHelper
                     $staff[] = [
                         'cid'  => $s->cid,
                         'name' => $s->user->fullname(),
-                        'role' => 'INS'
+                        'role' => $fullRoleTitles ? 'Instructor' : 'INS'
                     ];
                 }
             }
@@ -548,12 +577,16 @@ class RoleHelper
             // Eloquent: All VATUSA Staff
             foreach (\App\Models\Role::where('facility', 'ZHQ')
                          ->where('role', 'LIKE', "US%")
-                         ->orderBy("role")
+                         ->where('role', 'NOT LIKE', '%WT')
+                         ->orderBy("role", "ASC")
                          ->get() as $r) {
-                $staff[] = [
-                    'cid'  => $r->cid,
-                    'name' => $r->user->fullname() . " (" . static::roleTitle($r->role) . ")",
-                    'role' => str_replace("US", "VATUSA", $r->role)
+                $usaStaff[] = [
+                    'cid'       => $r->cid,
+                    'name'      => $r->user->fullname() . " (" . ($fullRoleTitles ? str_replace("US", "VATUSA",
+                            $r->role) : static::roleTitle($r->role)) . ")",
+                    'role'      => $fullRoleTitles ? static::roleTitle($r->role) : str_replace("US", "VATUSA",
+                        $r->role),
+                    'roleShort' => $r->role
                 ];
             }
         }
@@ -564,15 +597,22 @@ class RoleHelper
                          ->where('role', 'LIKE', "%3")
                          ->orderBy("role")
                          ->get() as $v) {
-                $staff[] = [
-                    'cid'  => $v->cid,
-                    'name' => $v->user->fullname() . " (" . static::roleTitle($v->role) . ")",
-                    'role' => str_replace("US", "VATUSA", $v->role)
+                $usaStaff[] = [
+                    'cid'       => $v->cid,
+                    'name'      => $v->user->fullname() . " (" . ($fullRoleTitles ? str_replace("US", "VATUSA",
+                            $v->role) : static::roleTitle($v->role)) . ")",
+                    'role'      => $fullRoleTitles ? static::roleTitle($v->role) : str_replace("US", "VATUSA",
+                        $v->role),
+                    'roleShort' => $r->role
                 ];
             }
         }
 
-        return $staff;
+        usort($usaStaff, function ($a, $b) {
+            return intval(str_replace("US", "", $a['roleShort'])) - intval(str_replace("US", "", $b['roleShort']));
+        });
+
+        return array_merge($usaStaff, $staff);
     }
 
     public static function deleteStaff($facility, $cid, $pos)
@@ -609,7 +649,7 @@ class RoleHelper
             $user = User::where('cid', $oldstaff)->first();
             $log = new Actions();
             $log->to = $user->cid;
-            $log->log = "User removed from " . $fu->name . " $pos by " . \Auth::user()->fullname() . ".";
+            $log->log = "User removed from " . $fu->name . " $pos by " . Auth::user()->fullname() . ".";
             $log->save();
 
             $email = $fu->id . "-" . $spos . "@vatusa.net";

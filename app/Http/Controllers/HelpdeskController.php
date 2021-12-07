@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Classes\EmailHelper;
+use App\Classes\VATUSADiscord;
 use App\Models\Facility;
 use App\Models\KnowledgebaseCategories;
 use App\Models\KnowledgebaseQuestions;
@@ -175,6 +176,7 @@ class HelpdeskController
         $ticket->assigned_to = (isset($_POST["tAssign"]) ? $request->input("tAssign") : 0);
         $ticket->priority = "normal";
         $ticket->save();
+        $ticket->load(['assignee', 'submitter']);
 
         $history = new TicketHistory();
         $history->ticket_id = $ticket->id;
@@ -182,19 +184,58 @@ class HelpdeskController
         $history->save();
 
         $emails = [];
-        $emails[] = Auth::user()->email;
+        $discord = new VATUSADiscord();
+        if ($discord->userWantsNotification(Auth::user(), "ticketNew", "email")) {
+            $emails[] = Auth::user()->email;
+        }
 
-        // Build emails array
+        $assignList = RoleHelper::getStaff($ticket->facility);
         if ($ticket->assigned_to == 0) {
             // Send to all in ZHQ
             if ($ticket->facility == "ZHQ") {
                 $users = Role::where('facility', 'ZHQ')->where('role', 'LIKE', "US%")->get();
                 foreach ($users as $user) {
-                    $emails[] = "vat" . strtolower(str_replace("US", "usa", $user->role)) . "@vatusa.net";
+                    $roleUser = User::find($user->cid);
+                    if (!$roleUser) {
+                        continue;
+                    }
+                    if ($discord->userWantsNotification($roleUser, "ticketNew", "email")) {
+                        $emails[] = "vat" . strtolower(str_replace("US", "usa", $user->role)) . "@vatusa.net";
+                    }
+                    if ($discord->userWantsNotification($roleUser, "ticketNew", "discord")) {
+                        $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                            'staffId'    => $roleUser->discord_id,
+                            'assignList' => $assignList
+                        ]));
+                    }
                 }
+                if ($channel = $discord->getFacilityNotificationChannel($ticket->facility()->first(), "ticketNew")) {
+                    $discord->sendNotification("ticketNew", "channel", array_merge($ticket->toArray(), [
+                        'assignList' => $assignList
+                    ]), config('services.discord.guildId'), $channel);
+                }
+                dd();
             } elseif ($ticket->facility == "ZAE") {
-                $emails[] = "vatusa3@vatusa.net";
-                $emails[] = "vatusa13@vatusa.net";
+                $us3 = Role::where('role', 'US3')->first();
+                $us13 = Role::where('role', 'US13')->first();
+                if ($discord->userWantsNotification($us3, "ticketNew", "email")) {
+                    $emails[] = "vatusa3@vatusa.net";
+                }
+                if ($discord->userWantsNotification($us3, "ticketNew", "discord")) {
+                    $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                        'staffId'    => $us3->discord_id,
+                        'assignList' => $assignList
+                    ]));
+                }
+                if ($discord->userWantsNotification($us13, "ticketNew", "email")) {
+                    $emails[] = "vatusa13@vatusa.net";
+                }
+                if ($discord->userWantsNotification($us13, "ticketNew", "discord")) {
+                    $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                        'staffId'    => $us13->discord_id,
+                        'assignList' => $assignList
+                    ]));
+                }
             } else {
                 $fac = Facility::find($ticket->facility);
                 if (!$fac) {
@@ -202,12 +243,61 @@ class HelpdeskController
 
                     return redirect('/help/ticket/new')->with("error", "Invalid facility specified");
                 }
-                $emails[] = $fac->id . "-atm@vatusa.net";
-                $emails[] = $fac->id . "-datm@vatusa.net";
-                $emails[] = $fac->id . "-ta@vatusa.net";
-                $emails[] = $fac->id . "-fe@vatusa.net";
-                $emails[] = $fac->id . "-ec@vatusa.net";
-                $emails[] = $fac->id . "-wm@vatusa.net";
+                if ($discord->userWantsNotification($fac->atm, "ticketNew", "email")) {
+                    $emails[] = $fac->id . "-atm@vatusa.net";
+                }
+                if ($discord->userWantsNotification($fac->atm, "ticketNew", "discord")) {
+                    $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                        'staffId'    => $fac->atm()->discord_id,
+                        'assignList' => $assignList
+                    ]));
+                }
+                if ($discord->userWantsNotification($fac->datm, "ticketNew", "email")) {
+                    $emails[] = $fac->id . "-datm@vatusa.net";
+                }
+                if ($discord->userWantsNotification($fac->datm, "ticketNew", "discord")) {
+                    $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                        'staffId'    => $fac->datm()->discord_id,
+                        'isUSAStaff' => false,
+                        'assignList' => $assignList
+                    ]));
+                }
+                if ($discord->userWantsNotification($fac->ta, "ticketNew", "email")) {
+                    $emails[] = $fac->id . "-ta@vatusa.net";
+                }
+                if ($discord->userWantsNotification($fac->ta, "ticketNew", "discord")) {
+                    $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                        'staffId'    => $fac->ta()->discord_id,
+                        'assignList' => $assignList
+                    ]));
+                }
+                if ($discord->userWantsNotification($fac->fe, "ticketNew", "email")) {
+                    $emails[] = $fac->id . "-fe@vatusa.net";
+                }
+                if ($discord->userWantsNotification($fac->fe, "ticketNew", "discord")) {
+                    $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                        'staffId'    => $fac->fe()->discord_id,
+                        'assignList' => $assignList
+                    ]));
+                }
+                if ($discord->userWantsNotification($fac->ec, "ticketNew", "email")) {
+                    $emails[] = $fac->id . "-ec@vatusa.net";
+                }
+                if ($discord->userWantsNotification($fac->ec, "ticketNew", "discord")) {
+                    $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                        'staffId'    => $fac->ec()->discord_id,
+                        'assignList' => $assignList
+                    ]));
+                }
+                if ($discord->userWantsNotification($fac->wm, "ticketNew", "email")) {
+                    $emails[] = $fac->id . "-wm@vatusa.net";
+                }
+                if ($discord->userWantsNotification($fac->wm, "ticketNew", "discord")) {
+                    $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
+                        'staffId'    => $fac->wm()->discord_id,
+                        'assignList' => $assignList
+                    ]));
+                }
             }
         } else {
             $u = User::find($ticket->assigned_to);
@@ -216,7 +306,9 @@ class HelpdeskController
 
                 return redirect('/help/ticket/new')->with("error", "Invalid assignedTo user");
             }
-            $emails[] = $u->email;
+            if ($discord->userWantsNotification($u, "ticketNew", "email")) {
+                $emails[] = $u->email;
+            }
         }
 
         EmailHelper::sendSupportEmail(array_unique($emails), $ticket->id, "New Ticket", "emails.help.newticket",
@@ -225,8 +317,10 @@ class HelpdeskController
         return redirect("/help/ticket/" . $ticket->id)->with("success", "Ticket successfully submitted");
     }
 
-    public function getTicketToggleStatus($id)
-    {
+    public
+    function getTicketToggleStatus(
+        $id
+    ) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -262,8 +356,11 @@ class HelpdeskController
             "Ticket status set to \"" . $ticket->status . "\"");
     }
 
-    public function getTicket(Request $request, $id)
-    {
+    public
+    function getTicket(
+        Request $request,
+        $id
+    ) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -281,8 +378,11 @@ class HelpdeskController
         }
     }
 
-    public function postTicket(Request $request, $id)
-    {
+    public
+    function postTicket(
+        Request $request,
+        $id
+    ) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -380,8 +480,11 @@ class HelpdeskController
         abort(403);
     }
 
-    public function postTicketAjax(Request $request, $id)
-    {
+    public
+    function postTicketAjax(
+        Request $request,
+        $id
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -391,7 +494,8 @@ class HelpdeskController
             abort(404);
         }
 
-        if (RoleHelper::isFacilityStaff(null, $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility)) {
+        if (RoleHelper::isFacilityStaff(null, $ticket->facility) || RoleHelper::isInstructor(null,
+                $ticket->facility)) {
             if ($request->input("facility")) {
                 $ticket->facility = $request->input("facility");
                 $ticket->save();
@@ -452,7 +556,8 @@ class HelpdeskController
                     $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned the ticket to " . $user->fullname() . " (" . $user->cid . ").";
                     $history->save();
 
-                    EmailHelper::sendSupportEmail($user->email, $id, "Ticket Assigned to You", "emails.help.assigned",
+                    EmailHelper::sendSupportEmail($user->email, $id, "Ticket Assigned to You",
+                        "emails.help.assigned",
                         ["ticket" => $ticket]);
                 }
             }
