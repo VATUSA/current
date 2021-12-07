@@ -849,7 +849,7 @@
                                         <label class="col-sm-2 control-label">Instructor</label>
                                         <div class="col-sm-10">
                                             <p class="form-control-static" style="cursor:default;">
-                                                @if(\App\Classes\RoleHelper::isInstructor($user->cid, $user->facility))
+                                                @if(\App\Classes\RoleHelper::isInstructor($user->cid, $user->facility, false))
                                                     <strong style="color:green">Yes</strong>
                                                 @else <strong style="color:#e72828">No</strong>
                                                 @endif

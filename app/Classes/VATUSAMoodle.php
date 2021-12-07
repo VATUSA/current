@@ -26,6 +26,7 @@ class VATUSAMoodle extends MoodleRest
 
     /** @var int VATUSA Category Context */
     public const CATEGORY_CONTEXT_VATUSA = 43;
+    public const CATEGORY_CONTEXT_VATUSA_EXAMS = 3020;
 
     /** @var int Exam Course Context */
     public const EXAM_CONTEXT_OBS = -1;
@@ -490,7 +491,14 @@ class VATUSAMoodle extends MoodleRest
             $assignments = DB::connection('moodle')->table('role_assignments')->selectRaw(config('database.connections.moodle.prefix') . 'role_assignments.id')
                 ->leftJoin('context', 'role_assignments.contextid', '=', 'context.id')
                 ->where('role_assignments.userid', $uid)
-                ->where('context.contextlevel', self::CONTEXT_COURSECAT)
+                ->where(function ($query) {
+                    $query->where('context.contextlevel', self::CONTEXT_COURSECAT);
+                    $query->orWhere(function ($query) {
+                        $query->where('context.contextlevel', self::CONTEXT_COURSE);
+                        $query->where('context.path', 'LIKE',
+                            '%' . self::CATEGORY_CONTEXT_VATUSA . '/' . self::CATEGORY_CONTEXT_VATUSA_EXAMS . '/%');
+                    });
+                })
                 ->where('role_assignments.component', '!=', 'enrol_cohort')
                 ->get()->pluck('id');
             foreach ($assignments as $id) {
