@@ -497,6 +497,7 @@ class VATUSAMoodle extends MoodleRest
                         $query->where('context.contextlevel', self::CONTEXT_COURSE);
                         $query->where('context.path', 'LIKE',
                             '%' . self::CATEGORY_CONTEXT_VATUSA . '/' . self::CATEGORY_CONTEXT_VATUSA_EXAMS . '/%');
+                        $query->where('role_assignments.roleid', '!=', $this->roleIds['STU']);
                     });
                 })
                 ->where('role_assignments.component', '!=', 'enrol_cohort')
