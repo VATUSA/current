@@ -500,6 +500,7 @@ class VATUSAMoodle extends MoodleRest
                     });
                 })
                 ->where('role_assignments.component', '!=', 'enrol_cohort')
+                ->where('role_assignments.component', '!=', 'enrol_coursecompleted')
                 ->get()->pluck('id');
             foreach ($assignments as $id) {
                 DB::connection('moodle')->table('role_assignments')->where('id', $id)->delete();
