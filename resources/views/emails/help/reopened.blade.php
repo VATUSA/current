@@ -1,7 +1,7 @@
 @extends('emails.layout')
 @section('title','Ticket Reopened')
 @section('content')
-    <p>Your support ticket has been reopened by {{ $closer }}.</p>
+    <p>Your support ticket has been reopened by {{ $by }}.</p>
 
     <p>Subject: {{$ticket->subject}}<br>
         Facility: {{$ticket->facility}}<br>

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Classes\EmailHelper;
 use App\Classes\VATUSADiscord;
+use App\Mail\NewTicket;
+use App\Mail\TicketClosed;
+use App\Mail\TicketReopened;
 use App\Models\Facility;
 use App\Models\KnowledgebaseCategories;
 use App\Models\KnowledgebaseQuestions;
@@ -15,6 +18,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Classes\RoleHelper;
 use Auth;
+use Illuminate\Support\Facades\Mail;
 
 class HelpdeskController
     extends Controller
@@ -183,10 +187,10 @@ class HelpdeskController
         $history->entry = "Ticket created by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ")";
         $history->save();
 
-        $emails = [];
+        $emailRecips = collect();
         $discord = new VATUSADiscord();
         if ($discord->userWantsNotification(Auth::user(), "ticketNew", "email")) {
-            $emails[] = Auth::user()->email;
+            $emailRecips->push(Auth::user());
         }
 
         $assignList = RoleHelper::getStaff($ticket->facility);
@@ -200,7 +204,7 @@ class HelpdeskController
                         continue;
                     }
                     if ($discord->userWantsNotification($roleUser, "ticketNew", "email")) {
-                        $emails[] = "vat" . strtolower(str_replace("US", "usa", $user->role)) . "@vatusa.net";
+                        $emailRecips->push($roleUser);
                     }
                     if ($discord->userWantsNotification($roleUser, "ticketNew", "discord")) {
                         $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -214,12 +218,18 @@ class HelpdeskController
                         'assignList' => $assignList
                     ]), config('services.discord.guildId'), $channel);
                 }
-                dd();
             } elseif ($ticket->facility == "ZAE") {
                 $us3 = Role::where('role', 'US3')->first();
+                $us3User = User::find($us3->cid);
                 $us13 = Role::where('role', 'US13')->first();
-                if ($discord->userWantsNotification($us3, "ticketNew", "email")) {
-                    $emails[] = "vatusa3@vatusa.net";
+                $us13User = User::find($us13->cid);
+                if ($discord->userWantsNotification($us3User, "ticketNew", "email")) {
+                    $emailRecips->push($us3User);
+                }
+                if ($channel = $discord->getFacilityNotificationChannel($ticket->facility()->first(), "ticketNew")) {
+                    $discord->sendNotification("ticketNew", "channel", array_merge($ticket->toArray(), [
+                        'assignList' => $assignList
+                    ]), config('services.discord.guildId'), $channel);
                 }
                 if ($discord->userWantsNotification($us3, "ticketNew", "discord")) {
                     $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -227,8 +237,8 @@ class HelpdeskController
                         'assignList' => $assignList
                     ]));
                 }
-                if ($discord->userWantsNotification($us13, "ticketNew", "email")) {
-                    $emails[] = "vatusa13@vatusa.net";
+                if ($discord->userWantsNotification($us13User, "ticketNew", "email")) {
+                    $emailRecips->push($us13User);
                 }
                 if ($discord->userWantsNotification($us13, "ticketNew", "discord")) {
                     $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -244,7 +254,7 @@ class HelpdeskController
                     return redirect('/help/ticket/new')->with("error", "Invalid facility specified");
                 }
                 if ($discord->userWantsNotification($fac->atm, "ticketNew", "email")) {
-                    $emails[] = $fac->id . "-atm@vatusa.net";
+                    $emailRecips->push($fac->atm);
                 }
                 if ($discord->userWantsNotification($fac->atm, "ticketNew", "discord")) {
                     $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -253,7 +263,7 @@ class HelpdeskController
                     ]));
                 }
                 if ($discord->userWantsNotification($fac->datm, "ticketNew", "email")) {
-                    $emails[] = $fac->id . "-datm@vatusa.net";
+                    $emailRecips->push($fac->datm);
                 }
                 if ($discord->userWantsNotification($fac->datm, "ticketNew", "discord")) {
                     $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -263,7 +273,7 @@ class HelpdeskController
                     ]));
                 }
                 if ($discord->userWantsNotification($fac->ta, "ticketNew", "email")) {
-                    $emails[] = $fac->id . "-ta@vatusa.net";
+                    $emailRecips->push($fac->ta);
                 }
                 if ($discord->userWantsNotification($fac->ta, "ticketNew", "discord")) {
                     $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -272,7 +282,7 @@ class HelpdeskController
                     ]));
                 }
                 if ($discord->userWantsNotification($fac->fe, "ticketNew", "email")) {
-                    $emails[] = $fac->id . "-fe@vatusa.net";
+                    $emailRecips->push($fac->fe);
                 }
                 if ($discord->userWantsNotification($fac->fe, "ticketNew", "discord")) {
                     $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -281,7 +291,7 @@ class HelpdeskController
                     ]));
                 }
                 if ($discord->userWantsNotification($fac->ec, "ticketNew", "email")) {
-                    $emails[] = $fac->id . "-ec@vatusa.net";
+                    $emailRecips->push($fac->ec);
                 }
                 if ($discord->userWantsNotification($fac->ec, "ticketNew", "discord")) {
                     $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -290,7 +300,7 @@ class HelpdeskController
                     ]));
                 }
                 if ($discord->userWantsNotification($fac->wm, "ticketNew", "email")) {
-                    $emails[] = $fac->id . "-wm@vatusa.net";
+                    $emailRecips->push($fac->wm);
                 }
                 if ($discord->userWantsNotification($fac->wm, "ticketNew", "discord")) {
                     $discord->sendNotification("ticketNew", "dm", array_merge($ticket->toArray(), [
@@ -307,12 +317,12 @@ class HelpdeskController
                 return redirect('/help/ticket/new')->with("error", "Invalid assignedTo user");
             }
             if ($discord->userWantsNotification($u, "ticketNew", "email")) {
-                $emails[] = $u->email;
+                $emailRecips->push($u);
             }
         }
-
-        EmailHelper::sendSupportEmail(array_unique($emails), $ticket->id, "New Ticket", "emails.help.newticket",
-            ["ticket" => $ticket]);
+        if (!$emailRecips->isEmpty()) {
+            Mail::bcc($emailRecips)->queue(new NewTicket($ticket));
+        }
 
         return redirect("/help/ticket/" . $ticket->id)->with("success", "Ticket successfully submitted");
     }
@@ -332,22 +342,45 @@ class HelpdeskController
 
         if ($ticket->cid == Auth::user()->cid || RoleHelper::isFacilityStaff(null,
                 $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility)) {
+            $discord = new VATUSADiscord();
             if ($ticket->status == "Open") {
                 $ticket->status = "Closed";
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
                 $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") closed the ticket.";
                 $history->save();
-                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Closed",
-                    "emails.help.closed", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
+
+
+                if ($channel = $discord->getFacilityNotificationChannel($ticket->facility()->first(), "ticketClosed")) {
+                    $discord->sendNotification("tickedClosed", "channel", array_merge($ticket->toArray(),
+                        ['closedBy' => Auth::user()->fullname()]),
+                        $ticket->facility()->first()->discord_guild, $channel);
+                }
+                if ($discord->userWantsNotification($ticket->submitter, "ticketClosed", "discord")) {
+                    $discord->sendNotification("ticketClosed", "dm", array_merge($ticket->toArray(),
+                        ['closedBy' => Auth::user()->fullname()]));
+                }
+                if ($discord->userWantsNotification($ticket->submitter, "ticketClosed", "email")) {
+                    Mail::to($ticket->submitter)->queue(new TicketClosed($ticket, Auth::user()->fullname()));
+                }
             } else {
                 $ticket->status = "Open";
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
                 $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") opened the ticket.";
                 $history->save();
-                EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Reopened",
-                    "emails.help.reopened", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
+                if ($channel = $discord->getFacilityNotificationChannel($ticket->facility()->first(), "ticketReopened")) {
+                    $discord->sendNotification("ticketReopened", "channel", array_merge($ticket->toArray(),
+                        ['openedBy' => Auth::user()->fullname()]),
+                        $ticket->facility()->first()->discord_guild, $channel);
+                }
+                if ($discord->userWantsNotification($ticket->submitter, "ticketReopened", "discord")) {
+                    $discord->sendNotification("ticketReopened", "dm", array_merge($ticket->toArray(),
+                        ['openedBy' => Auth::user()->fullname()]));
+                }
+                if ($discord->userWantsNotification($ticket->submitter, "ticketReopened", "email")) {
+                    Mail::to($ticket->submitter)->queue(new TicketReopened($ticket, Auth::user()->fullname()));
+                }
             }
             $ticket->save();
         }

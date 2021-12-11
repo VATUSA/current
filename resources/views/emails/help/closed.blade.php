@@ -3,7 +3,7 @@
 @section('content')
     Hello,
 
-    <p>Your ticket has been marked as closed by {{$closer}}. </p>
+    <p>Your ticket has been marked as closed by {{$by}}. </p>
 
     <p>Subject: {{$ticket->subject}}<br>
         Facility: {{$ticket->facility}}<br>

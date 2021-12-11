@@ -47,6 +47,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $lf ? $this->lname . ", " . $this->fname : $this->fname . " " . $this->lname;
     }
 
+    public function getFullnameAttribute()
+    {
+        return $this->fullname();
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->fullname();
+    }
+
     public function facility()
     {
         return $this->belongsTo(Facility::class, 'facility')->first();
@@ -448,6 +458,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         Cache::set("promotionEligible-$this->cid", $result);
+
         return $result;
     }
 
