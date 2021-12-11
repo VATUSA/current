@@ -223,7 +223,7 @@
                             - {{$user->cid}}</div>
                         <form class="form-inline" id="controllerForm">
                             <div class="col-md-4 text-right form-group">
-                                <input type="text" id="cidsearch" class="form-control" placeholder="CID or Last Name">
+                                <input type="text" id="cidsearch" class="form-control" placeholder="CID, Discord ID, Last Name">
                                 <button type="button" class="btn btn-primary" id="cidsearchbtn"><i
                                         class="fa fa-search"></i></button>
                             </div>
