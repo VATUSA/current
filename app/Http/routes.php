@@ -255,7 +255,7 @@ Route::group([
                 Route::get('/', 'MgtController@getController');
 
                 Route::group(['prefix' => '{cid}'], function () {
-                    Route::get('/', 'MgtController@getController');
+                    Route::get('/', 'MgtController@getController')->name('mgt.controller.index');
                     Route::post('/', 'MgtController@getController');
                     Route::get('mentor', 'MgtController@getControllerMentor');
                     Route::get('exams', 'MgtController@getControllerExams');

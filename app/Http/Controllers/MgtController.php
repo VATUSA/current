@@ -181,6 +181,10 @@ class MgtController extends Controller
                 compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingFacListArray', 'trainingfac',
                     'trainingfacname', 'ins', 'canAddTR', 'examAttempts'));
         } else {
+            if ($user = User::where('discord_id', $cid)->first()) {
+                return redirect()->route('mgt.controller.index', ['cid' => $user->cid]);
+            }
+
             return view('mgt.controller.404');
         }
     }
@@ -1093,6 +1097,7 @@ class MgtController extends Controller
 
         return "1";
     }
+
     public
     function toggleSMTRole(
         Request $request
