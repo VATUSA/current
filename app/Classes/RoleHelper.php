@@ -164,7 +164,7 @@ class RoleHelper
     {
         if (static::isVATUSAStaff($cid, $isApi) && $facility == "ZHQ") {
             return true;
-        } elseif ($facility == "ZHQ" && $role != "ACE") {
+        } elseif ($facility == "ZHQ" && $role != "ACE" && $role != "SMT") {
             return false;
         }
 

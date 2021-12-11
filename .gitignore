@@ -16,3 +16,7 @@ yarn-error.log
 build.modified.sh
 supervisord.log
 supervisord.pid
+*.meta.php
+*_helper.php
+*_helper_models.php
+changeauthor.sh

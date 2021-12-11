@@ -1093,6 +1093,41 @@ class MgtController extends Controller
 
         return "1";
     }
+    public
+    function toggleSMTRole(
+        Request $request
+    ) {
+        $cid = $request->cid;
+
+        if (!RoleHelper::isVATUSAStaff()) {
+            abort(403);
+        }
+
+        $user = User::findOrFail($cid);
+        $currentRole = Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "SMT");
+        if ($currentRole->count()) {
+            //Delete role
+            $currentRole->first()->delete();
+            $log = new Actions();
+            $log->to = $cid;
+            $log->log = "SMT role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+            $log->save();
+        } else {
+            //Create role
+            $role = new Role();
+            $role->cid = $cid;
+            $role->facility = "ZHQ";
+            $role->role = "SMT";
+            $role->save();
+
+            $log = new Actions();
+            $log->to = $cid;
+            $log->log = "SMT role added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+            $log->save();
+        }
+
+        return "1";
+    }
 
 
     public

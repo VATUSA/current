@@ -82,7 +82,7 @@
           if (result === '1') {
             //Success
             icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
-              ' text-' + (currentlyOn ? 'info' : 'danger'))
+              ' text-' + (currentlyOn ? 'success' : 'danger'))
             panel.removeClass(currentlyOn ? 'panel-warning' : 'panel-default')
             panel.addClass(currentlyOn ? 'panel-default' : 'panel-warning')
           } else {
@@ -110,7 +110,7 @@
           if (result === '1') {
             //Success
             icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
-              ' text-' + (currentlyOn ? 'info' : 'danger'))
+              ' text-' + (currentlyOn ? 'info' : 'success'))
             panel.removeClass(currentlyOn ? 'panel-warning' : 'panel-default')
             panel.addClass(currentlyOn ? 'panel-default' : 'panel-warning')
           } else {
@@ -138,7 +138,7 @@
           if (result === '1') {
             //Success
             icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
-              ' text-' + (currentlyOn ? 'info' : 'danger'))
+              ' text-' + (currentlyOn ? 'info' : 'success'))
             panel.removeClass(currentlyOn ? 'panel-warning' : 'panel-default')
             panel.addClass(currentlyOn ? 'panel-default' : 'panel-warning')
           } else {
@@ -166,7 +166,7 @@
           if (result === '1') {
             //Success
             icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
-              ' text-' + (currentlyOn ? 'danger' : 'success'))
+              ' text-' + (currentlyOn ? 'info' : 'success'))
           } else {
             bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle instructor role.')
           }
@@ -174,6 +174,31 @@
           .error(function (result) {
             spinner.hide()
             bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle instructor role.')
+          })
+      })
+      $('#toggleSMT').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on'),
+            spinner     = $(this).find('i.spinner-icon')
+
+        spinner.show()
+        $.ajax({
+          type: 'POST',
+          url : "{{ secure_url("/mgt/controller/ajax/toggleSMTRole") }}",
+          data: {cid: "{{ $user->cid }}"}
+        }).success(function (result) {
+          spinner.hide()
+          if (result === '1') {
+            //Success
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'info' : 'success'))
+          } else {
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle SMT role.')
+          }
+        })
+          .error(function (result) {
+            spinner.hide()
+            bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle SMT role.')
           })
       })
 
@@ -791,87 +816,108 @@
                     @endif
                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
                         <div class="tab-pane" role="tabpanel" id="roles">
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
-                                    <div class="col-sm-10">
+                            @if(\App\Classes\RoleHelper::isVATUSAStaff($user->cid))
+                                <div class="alert alert-info"><i class="fas fa-info-circle"></i> This user has all roles
+                                    as VATUSA Staff.
+                                </div>
+                            @else
+                                @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
+                                        <div class="col-sm-10">
                                     <span id="toggleStaffPrevent" style="font-size:1.8em;">
                                         <i class="toggle-icon fa fa-toggle-{{ $user->flag_preventStaffAssign ? "on text-danger" : "off text-info"}} "></i>
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
-                                        <p class="help-block">This will prevent the controller from being assigned a
-                                            staff role by facility staff. <br> Only a VATUSA Staff Member will be able
-                                            to
-                                            assign him or her a role.</p>
+                                            <p class="help-block">This will prevent the controller from being assigned a
+                                                staff role by facility staff. <br> Only a VATUSA Staff Member will be
+                                                able
+                                                to
+                                                assign him or her a role.</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Academy Material Editor</label>
-                                    <div class="col-sm-10">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Academy Material Editor</label>
+                                        <div class="col-sm-10">
                                     <span id="toggleAcademyEditor" style="font-size:1.8em;">
-                                        <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, "ZAE", "CBT") ? "on text-danger" : "off text-info"}} "></i>
+                                        <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, "ZAE", "CBT") ? "on text-success" : "off text-info"}} "></i>
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
-                                        <p class="help-block">This will assign the Editor role to the user in Moodle,
-                                            and will allow him or her to edit VATUSA Training Academy material.</p>
+                                            <p class="help-block">This will assign the Editor role to the user in
+                                                Moodle,
+                                                and will allow him or her to edit VATUSA Training Academy material.</p>
+                                        </div>
                                     </div>
-                                </div>
-                                @if($user->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">Instructor</label>
+                                        <label class="col-sm-2 control-label">Social Media Team</label>
                                         <div class="col-sm-10">
+                                    <span id="toggleSMT" style="font-size:1.8em;">
+                                        <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, "ZHQ", "SMT") ? "on text-success" : "off text-info"}} "></i>
+                                        <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                                    </span>
+                                            <p class="help-block">This will allow the user to receive the proper roles
+                                                in Discord.</p>
+                                        </div>
+                                    </div>
+                                    @if($user->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Instructor</label>
+                                            <div class="col-sm-10">
                                         <span id="toggleInsRole" style="font-size:1.8em;">
-                                            <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::isInstructor($user->cid, $user->facility) ? "on text-success" : "off text-danger"}} "></i>
+                                            <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::isInstructor($user->cid, $user->facility, false) ? "on text-success" : "off text-danger"}} "></i>
                                             <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                         </span>
-                                            <p class="help-block">This will grant the supervisor Instructor
-                                                privileges.</p>
+                                                <p class="help-block">This will grant the supervisor Instructor
+                                                    privileges.</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                @endif
-                            @else
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
-                                    <div class="col-sm-10">
-                                        <p class="form-control-static" style="cursor:default;">
-                                            @if($user->flag_preventStaffAssign) <strong
-                                                style="color:#e72828">Yes</strong>
-                                            @else <strong style="color:green">No</strong>
-                                            @endif
-                                        </p>
-                                        <p class="help-block">This will prevent the controller from being assigned a
-                                            staff role by facility staff. <br>Only a VATUSA Staff Member will be able to
-                                            assign him or her a role.</p>
-                                    </div>
-                                </div>
-                                @if($user->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                    @endif
+                                @else
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">Instructor</label>
+                                        <label class="col-sm-2 control-label">Prevent Staff Role Assignment</label>
                                         <div class="col-sm-10">
                                             <p class="form-control-static" style="cursor:default;">
-                                                @if(\App\Classes\RoleHelper::isInstructor($user->cid, $user->facility, false))
-                                                    <strong style="color:green">Yes</strong>
-                                                @else <strong style="color:#e72828">No</strong>
+                                                @if($user->flag_preventStaffAssign) <strong
+                                                    style="color:#e72828">Yes</strong>
+                                                @else <strong style="color:green">No</strong>
                                                 @endif
                                             </p>
-                                            <p class="help-block">This will grant the supervisor Instructor
-                                                privileges.</p>
+                                            <p class="help-block">This will prevent the controller from being assigned a
+                                                staff role by facility staff. <br>Only a VATUSA Staff Member will be
+                                                able to
+                                                assign him or her a role.</p>
                                         </div>
                                     </div>
+                                    @if($user->rating == \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Instructor</label>
+                                            <div class="col-sm-10">
+                                                <p class="form-control-static" style="cursor:default;">
+                                                    @if(\App\Classes\RoleHelper::isInstructor($user->cid, $user->facility, false))
+                                                        <strong style="color:green">Yes</strong>
+                                                    @else <strong style="color:#e72828">No</strong>
+                                                    @endif
+                                                </p>
+                                                <p class="help-block">This will grant the supervisor Instructor
+                                                    privileges.</p>
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endif
-                            @endif
-                            @if(!\App\Classes\RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true))
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Academy Material Editor (Facility)</label>
-                                    <div class="col-sm-10">
+                                @if(!\App\Classes\RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true))
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Academy Material Editor (Facility)</label>
+                                        <div class="col-sm-10">
                                     <span id="toggleAcademyEditorFacility" style="font-size:1.8em;">
                                         <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, $user->facility, "FACCBT") ? "on text-danger" : "off text-info"}} "></i>
                                         <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                     </span>
-                                        <p class="help-block">This will assign the Editor role to the user in Moodle,
-                                            and will allow him or her to edit the facility Moodle material.</p>
+                                            <p class="help-block">This will assign the Editor role to the user in
+                                                Moodle,
+                                                and will allow him or her to edit the facility Moodle material.</p>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endif
                         </div>
                     @endif

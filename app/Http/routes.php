@@ -273,9 +273,10 @@ Route::group([
                 });
 
                 Route::group(['prefix' => 'ajax'], function () {
-                    Route::post('toggleStaffPrevent', 'MgtController@toggleStaffPrevent');
-                    Route::post('toggleInsRole', 'MgtController@toggleInsRole');
+                    Route::post('toggleStaffPrevent', 'MgtController@toggleStaffPrevent')->middleware('vatusastaff');
+                    Route::post('toggleInsRole', 'MgtController@toggleInsRole')->middleware('vatusastaff');
                     Route::post('toggleAcademyEditor', 'MgtController@toggleAcademyEditor');
+                    Route::post('toggleSMTRole', 'MgtController@toggleSMTRole')->middleware('vatusastaff');
                 });
                 Route::post('action/add', 'MgtController@addLog');
                 Route::delete('action/delete/{log}', 'MgtController@deleteActionLog')->where('id', '[0-9]+');
