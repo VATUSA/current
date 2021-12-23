@@ -49,7 +49,7 @@
                                 <label class="col-sm-2 control-label">Assigned To:</label>
                                 <div class="col-sm-10">
                                     @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
-                                        <select id="tAssignTo" class="form-control">
+                                        <select id="tAssignTo" class="form-control" autocomplete="off">
                                             <option value="0">Unassigned</option>
                                             @foreach(\App\Classes\RoleHelper::getStaff($ticket->facility, true) as $s)
                                                 <option
