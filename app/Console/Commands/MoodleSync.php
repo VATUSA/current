@@ -95,9 +95,9 @@ class MoodleSync extends Command
 
         //Assign Cohorts
         $this->moodle->clearUserCohorts($id);
+        $this->moodle->assignCohort($id,
+            Helper::ratingShortFromInt($user->rating)); //VATUSA level rating
         if ($user->flag_homecontroller) {
-            $this->moodle->assignCohort($id,
-                Helper::ratingShortFromInt($user->rating)); //VATUSA level rating (home controllers)
             $this->moodle->assignCohort($id,
                 "$user->facility-" . Helper::ratingShortFromInt($user->rating)); //Facility level rating
             if (RoleHelper::isVATUSAStaff($user->cid, $user->facility, true) || RoleHelper::isInstructor($user->cid) || RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true) || RoleHelper::isMentor($user->cid)) {
