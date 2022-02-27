@@ -282,7 +282,7 @@ class MyController
             }
         } elseif ($mode === "return") {
             try {
-                $dUser = Socialite::driver('discord')->user();
+                $dUser = Socialite::driver('discord')->stateless()->user();
                 $user = Auth::user();
                 $user->discord_id = $dUser->getId();
                 try {

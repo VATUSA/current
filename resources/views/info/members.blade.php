@@ -139,12 +139,7 @@
                                         <select class="form-control" id="facility">
                                             <option value="0">Select a Facility</option>
                                             <optgroup label="Western Region">
-                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 4])->orderBy('name')->get() as $facility)
-                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
-                                                @endforeach
-                                            </optgroup>
-                                            <optgroup label="South Central Region">
-                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderBy('name')->get() as $facility)
+                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 8])->orderBy('name')->get() as $facility)
                                                     <option value="{{$facility->id}}">{{$facility->name}}</option>
                                                 @endforeach
                                             </optgroup>
@@ -153,13 +148,13 @@
                                                     <option value="{{$facility->id}}">{{$facility->name}}</option>
                                                 @endforeach
                                             </optgroup>
-                                            <optgroup label="Northeastern Region">
-                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 7])->orderBy('name')->get() as $facility)
+                                            <optgroup label="Southern Region">
+                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderBy('name')->get() as $facility)
                                                     <option value="{{$facility->id}}">{{$facility->name}}</option>
                                                 @endforeach
                                             </optgroup>
-                                            <optgroup label="Southeastern Region">
-                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 8])->orderBy('name')->get() as $facility)
+                                            <optgroup label="Northeastern Region">
+                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 7])->orderBy('name')->get() as $facility)
                                                     <option value="{{$facility->id}}">{{$facility->name}}</option>
                                                 @endforeach
                                             </optgroup>

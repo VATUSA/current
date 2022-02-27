@@ -51,11 +51,8 @@ class InfoController
                 $id = $facility->id;
                 $regid = $facility->region;
                 switch ($regid) {
-                    case 4:
-                        $region = "Western";
-                        break;
                     case 5:
-                        $region = "South Central";
+                        $region = "Southern";
                         break;
                     case 6:
                         $region = "Midwestern";
@@ -64,7 +61,7 @@ class InfoController
                         $region = "Northeastern";
                         break;
                     case 8:
-                        $region = "Southeastern";
+                        $region = "Western";
                         break;
                     default:
                         $region = "Unknown";
@@ -72,7 +69,7 @@ class InfoController
                 }
                 echo '<h2 class="text-center">' . $facility->name . '</h2>';
                 echo '<h4 class="text-center">' . "$region Region" . '</h4>';
-                echo '<h4 class="text-center">' . "ATD: " . RoleHelper::getNameFromRole("US{$regid}") . " (USA$regid)" . '</h4>';
+                echo '<h4 class="text-center">' . "ATD: " . RoleHelper::getNameFromRole("US$regid") . " (USA$regid)" . '</h4>';
                 echo '<h4>Facility Staff</h4><table class="table table-hover"><thead><tr><th>Position</th><th>Name</th><th>Email</th></tr>
                                 </thead>
                                 <tbody>
