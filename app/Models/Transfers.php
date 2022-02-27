@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Classes\Helper;
@@ -31,7 +32,7 @@ class Transfers
         $this->actionby = $by;
         $this->save();
 
-        $user = User::where('cid',$this->cid)->first();
+        $user = User::where('cid', $this->cid)->first();
         $user->addToFacility($this->to);
         EmailHelper::sendEmail(
             [
@@ -47,9 +48,9 @@ class Transfers
             [
                 'fname' => $this->user()->fname,
                 'lname' => $this->user()->lname,
-                'cid' => $this->user()->cid,
-                'to' => $this->to,
-                'from' => $this->from,
+                'cid'   => $this->user()->cid,
+                'to'    => $this->to,
+                'from'  => $this->from,
             ]
         );
 
@@ -82,14 +83,14 @@ class Transfers
             "Transfer request rejected",
             "emails.transfers.rejected",
             [
-                'fname' => $this->user()->fname,
-                'lname' => $this->user()->lname,
-                'cid' => $this->cid,
+                'fname'   => $this->user()->fname,
+                'lname'   => $this->user()->lname,
+                'cid'     => $this->cid,
                 'facname' => $this->to()->name,
-                'facid' => $this->to()->id,
-                'region' => $this->to()->region,
-                'by' => Helper::nameFromCID($by),
-                'msg' => $msg
+                'facid'   => $this->to()->id,
+                'region'  => $this->to()->region,
+                'by'      => Helper::nameFromCID($by),
+                'msg'     => $msg
             ]
         );
 

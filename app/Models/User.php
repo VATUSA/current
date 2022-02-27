@@ -183,6 +183,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             ]);
 
             $this->visits()->where('facility', $fac)->delete();
+
+            /** Remove Mentor Role */
+            Role::where("cid", $this->cid)->where("facility", $oldfac->id)->where("role", "MTR")->delete();
+            $moodle = new VATUSAMoodle();
+            try {
+                $moodle->unassignMentorRoles($this->cid);
+            } catch (Exception $e) {
+            }
+
             Cache::forget("roster-$facility-home");
             Cache::forget("roster-$facility-both");
         }
@@ -448,6 +457,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         Cache::set("promotionEligible-$this->cid", $result);
+
         return $result;
     }
 
