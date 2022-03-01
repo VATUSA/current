@@ -100,15 +100,7 @@
                             <li class="dropdown-header"><h5
                                     style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5>
                             </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 4])->orderby('name', 'ASC')->get() as $f)
-                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
-                            @endforeach
-                            <li class="nav-divider"></li>
-                            <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">South Central
-                                    Region</h5>
-                            </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
@@ -128,10 +120,9 @@
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southeastern
-                                    Region</h5>
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southern Region</h5>
                             </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                         </ul>
@@ -144,9 +135,11 @@
                             <li><a href="https://discord.gg/a7Qcse7" target="_blank"><i class="fab fa-discord"></i>
                                     Official Discord</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{ secure_url('info/members') }}"><i class="fas fa-users"></i> Members and Staff</a>
+                            <li><a href="{{ secure_url('info/members') }}"><i class="fas fa-users"></i> Members and
+                                    Staff</a>
                             </li>
-                            <li><a href="{{ secure_url('info/policies') }}"><i class="fas fa-clipboard"></i> Policies and
+                            <li><a href="{{ secure_url('info/policies') }}"><i class="fas fa-clipboard"></i> Policies
+                                    and
                                     Downloads</a>
                             </li>
                             <li class="divider"></li>
@@ -154,7 +147,8 @@
                                     Events Calendar</a></li>
                             <li class="divider"></li>
                             <li><a href="{{ secure_url('info/ace') }}"><i class="fas fa-star"></i> ACE Team</a></li>
-                            <li><a href="{{ secure_url('info/solo') }}"><i class="fas fa-certificate"></i> Solo Certs</a>
+                            <li><a href="{{ secure_url('info/solo') }}"><i class="fas fa-certificate"></i> Solo
+                                    Certs</a>
                             </li>
                         </ul>
                     </li>
@@ -254,9 +248,12 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="https://status.vatusa.net">System Status</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i> Knowledgebase/FAQ</a></li>
-                            <li><a href="{{ secure_url("/help/ticket/new") }}"><i class="fas fa-life-ring"></i> Open New Ticket</a></li>
-                            <li><a href="{{ secure_url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My Tickets</a></li>
+                            <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i>
+                                    Knowledgebase/FAQ</a></li>
+                            <li><a href="{{ secure_url("/help/ticket/new") }}"><i class="fas fa-life-ring"></i> Open New
+                                    Ticket</a></li>
+                            <li><a href="{{ secure_url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My
+                                    Tickets</a></li>
                             @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
                                 <li class="divider"></li>
                                 <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
@@ -264,7 +261,8 @@
                                                                 aria-expanded="false"><i
                                             class="fas fa-hands-helping"></i> Ticket Manager</a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="{{ secure_url("/help/ticket/myassigned") }}">My Assigned Tickets</a></li>
+                                        <li><a href="{{ secure_url("/help/ticket/myassigned") }}">My Assigned
+                                                Tickets</a></li>
                                         <li><a href="{{ secure_url("/help/ticket/open") }}">Open Tickets</a></li>
                                         <li><a href="{{ secure_url("/help/ticket/closed") }}">Closed Tickets</a></li>
                                         <li><a href="{{ secure_url("/help/ticket/search") }}">Search Tickets</a></li>
@@ -286,7 +284,8 @@
                                 <li><a href="{{ secure_url('my/profile') }}"><i class="fas fa-id-badge"></i> Profile</a>
                                 </li>
                                 @if(Auth::user()->selectionEligible())
-                                    <li><a href="{{ secure_url('my/select') }}"><i class="fas fa-star"></i> Join Facility</a>
+                                    <li><a href="{{ secure_url('my/select') }}"><i class="fas fa-star"></i> Join
+                                            Facility</a>
                                     </li>
                                 @elseif(Auth::user()->transferEligible())
                                     <li><a href="{{ secure_url('my/transfer') }}"><i class="fas fa-exchange-alt"></i>
@@ -296,7 +295,8 @@
                                             Why can I not join
                                             a facility or transfer?</a></li>
                                 @endif
-                                <li><a href="{{ secure_url('exam') }}"><i class="fas fa-school"></i> Exam Center (Legacy)</a>
+                                <li><a href="{{ secure_url('exam') }}"><i class="fas fa-school"></i> Exam Center
+                                        (Legacy)</a>
                                 </li>
                                 <li><a href="{{ secure_url("cbt") }}"><i class="fas fa-desktop"></i> Computer Based
                                         Training (Legacy)</a></li>
