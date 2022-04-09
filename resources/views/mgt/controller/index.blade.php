@@ -243,15 +243,15 @@
                                                    data-toggle="tab">Ratings
                                 &amp; Transfers</a></li>
                     @endif
-                    @if(App\Classes\RoleHelper::isVATUSAStaff() || ($user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists()) &&
-                        (\App\Classes\RoleHelper::isMentor()
-                        || \App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")
-                        || \App\Classes\RoleHelper::isInstructor()))
+                    @php $canViewTraining = ($user->facility == Auth::user()->facility
+                                            || $user->visits()->where('facility', Auth::user()->facility)->exists()
+                                            || $user->trainingRecords()->where('facility_id', Auth::user()->facility)->exists()
+                                            || \App\Classes\RoleHelper::isVATUSAStaff()
+                                            || \App\Classes\RoleHelper::isFacilitySeniorStaff()) @endphp
+                    @if($canViewTraining)
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Academy Transcript</a></li>
                     @endif
-                    @php $canViewTraining = $user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists() || $user->trainingRecords()->where('facility_id', Auth::user()->facility)->exists() || \App\Classes\RoleHelper::isVATUSAStaff() @endphp
                     <li role="presentation" @if(!$canViewTraining) class="disabled" rel="tooltip"
                         title="Not a home or visiting controller at your ARTCC or does not have any records from your ARTCC." @endif>
                         <a href="#training"
@@ -527,11 +527,7 @@
                             </div>
                         </div>
                     @endif
-                    @if(App\Classes\RoleHelper::isVATUSAStaff() || ($user->facility == Auth::user()->facility || $user->visits()->where('facility', Auth::user()->facility)->exists()) &&
-                       (\App\Classes\RoleHelper::isMentor()
-                       || \App\Classes\RoleHelper::isFacilitySeniorStaff()
-                       || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")
-                       || \App\Classes\RoleHelper::isInstructor()))
+                    @if($canViewTraining)
                         <div class="tab-pane" role="tabpanel" id="exams">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
@@ -544,21 +540,14 @@
                                         <!-- Nav tabs -->
                                         <ul class="nav nav-tabs nav-justified text-centers" id="exam-tabs"
                                             role="tablist">
-                                            @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                                                    || \App\Classes\RoleHelper::isFacilitySeniorStaff()
-                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
-                                                <li role="presentation" class="active"><a href="#"
-                                                                                          data-target="legacy"
-                                                                                          aria-controls="home"
-                                                                                          role="tab"
-                                                                                          data-toggle="tab"
-                                                                                          class="text-warning">Legacy</a>
-                                                </li>
-                                            @endif
-                                            <li role="presentation"
-                                                @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                                                    && !(\App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->facility, $user->facility)
-                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))) class="active" @endif>
+                                            <li role="presentation" class="active"><a href="#"
+                                                                      data-target="legacy"
+                                                                      aria-controls="home"
+                                                                      role="tab"
+                                                                      data-toggle="tab"
+                                                                      class="text-warning">Legacy</a>
+                                            </li>
+                                            <li role="presentation">
                                                 <a
                                                     href="#" data-target="academy"
                                                     aria-controls="academy"
@@ -568,29 +557,23 @@
 
                                         <!-- Tab panes -->
                                         <div class="tab-content" id="exam-tab-content">
-                                            @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                                                    || \App\Classes\RoleHelper::isFacilitySeniorStaff()
-                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
-                                                <div role="tabpanel" class="tab-pane active" id="legacy">
-                                                    <table class="table table-striped">
-                                                        @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
-                                                            <tr style="text-align: center">
-                                                                <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
-                                                                <td style="width: 70%; text-align: left"><a
-                                                                        href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a>
-                                                                </td>
-                                                                <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
-                                                                    %
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </table>
-                                                </div>
-                                            @endif
+                                            <div role="tabpanel" class="tab-pane active" id="legacy">
+                                                <table class="table table-striped">
+                                                    @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
+                                                        <tr style="text-align: center">
+                                                            <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
+                                                            <td style="width: 70%; text-align: left"><a
+                                                                    href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a>
+                                                            </td>
+                                                            <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
+                                                                %
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </table>
+                                            </div>
                                             <div role="tabpanel"
-                                                 class="tab-pane @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                                                    && !(\App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->facility, $user->facility)
-                                                    || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))) active @endif"
+                                                 class="tab-pane"
                                                  id="academy">
                                                 {{-- -<pre>@dump($examAttempts)</pre> --}}
                                                 <table class="table table-striped">
