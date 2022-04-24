@@ -43,8 +43,9 @@ class MgtController extends Controller
 
     public function getController(Request $request, $cid = null)
     {
-        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff() && !RoleHelper::hasRole(Auth::user()->cid,
-                Auth::user()->facility, "WM")) {
+        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()
+            && !RoleHelper::isVATUSAStaff()
+            && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")) {
             abort(401);
         }
 
@@ -69,8 +70,9 @@ class MgtController extends Controller
             $trainingfaclist = $user->trainingRecords()->groupBy('facility_id')->get()->filter(function ($record) use (
                 $user
             ) {
-                return Auth::user()->facility === $record->facility_id || Auth::user()->facility === $user->facility || $user->visits()->where('facility',
-                        Auth::user()->facility)->exists() || RoleHelper::isVATUSAStaff();
+                return Auth::user()->facility === $record->facility_id || Auth::user()->facility === $user->facility
+                        || $user->visits()->where('facility', Auth::user()->facility)->exists()
+                        || RoleHelper::isVATUSAStaff() || RoleHelper::isFacilitySeniorStaff();
             });
 
             if (!$trainingfac) {
@@ -96,9 +98,10 @@ class MgtController extends Controller
                 $trainingFacListArray = array_merge($trainingFacListArray,
                     [$user->facility => $user->facilityObj->name]);
             }
-            $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility || $user->visits()->where('facility',
-                Auth::user()->facility)->exists() || RoleHelper::isVATUSAStaff() ? $user->trainingRecords()->where('facility_id',
-                $trainingfac)->get() : [];
+            $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility
+                                || $user->visits()->where('facility', Auth::user()->facility)->exists()
+                                || RoleHelper::isVATUSAStaff() || RoleHelper::isFacilitySeniorStaff() ?
+                            $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
                     $user->facility) && $user->cid !== Auth::user()->cid;
             if (!$canAddTR) {
@@ -147,14 +150,10 @@ class MgtController extends Controller
             } catch (Exception $e) {
                 $uid = -1;
             }
-            $basicAssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
-                config('exams.BASIC.enrolId'));
-            $s2AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
-                config('exams.S2.enrolId'));
-            $s3AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
-                config('exams.S3.enrolId'));
-            $c1AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid,
-                config('exams.C1.enrolId'));
+            $basicAssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.BASIC.enrolId'));
+            $s2AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.S2.enrolId'));
+            $s3AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.S3.enrolId'));
+            $c1AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.C1.enrolId'));
 
             $examAttempts = [
                 'Basic ATC/S1 Exam'                   => array_merge([
