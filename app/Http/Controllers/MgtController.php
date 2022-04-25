@@ -1225,7 +1225,7 @@ class MgtController extends Controller
             abort(403);
         }
 
-        $globalAccess = RoleHelper::isVATUSAStaff();
+        $globalAccess = RoleHelper::isFacilitySeniorStaff();
 
         $instructor = $request->input('instructor', null);
         $facility = $request->input('facility', null);
