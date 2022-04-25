@@ -16,8 +16,7 @@ use Auth;
 /**
  *
  */
-class AppController extends Controller
-{
+class AppController extends Controller {
   const STATUS_SUCCESS = 1;
   const STATUS_ERROR = 2;
   public $http_codes = [

@@ -12,11 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-class TMUController
-    extends Controller
-{
-    function getCoords($fac)
-    {
+class TMUController extends Controller {
+    function getCoords($fac) {
         $fac = tmu_facilities::find($fac);
         if (!$fac) {
             abort(404);
@@ -47,13 +44,11 @@ class TMUController
         return json_encode($geo, JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION);
     }
 
-    function getMapDark($fac)
-    {
+    function getMapDark($fac) {
         return $this->getMap($fac, true);
     }
 
-    function getMap($fac, $dark = false)
-    {
+    function getMap($fac, $dark = false) {
         $fac = tmu_facilities::find($fac);
         if (!$fac) {
             abort(404);
@@ -142,8 +137,7 @@ class TMUController
         ]);
     }
 
-    function genColor($apts, $color, &$colors)
-    {
+    function genColor($apts, $color, &$colors) {
         global $default;
 
         if (strlen($apts) == 0) {
@@ -164,8 +158,7 @@ class TMUController
         }
     }
 
-    function getMgtIndex($fac = null)
-    {
+    function getMgtIndex($fac = null) {
         if (!Auth::check()) {
             abort(401);
         }
@@ -193,8 +186,7 @@ class TMUController
         return view('tmu.mgt', ['facilities' => $tmufac, 'fac' => $fac, 'facname' => $fac, 'notices' => $notices]);
     }
 
-    function postMgtCoords(Request $request, $ofac = null)
-    {
+    function postMgtCoords(Request $request, $ofac = null) {
         if (!Auth::check()) {
             abort(401);
         }
@@ -232,8 +224,7 @@ class TMUController
             "Facility coordinates saved. <a href='/tmu/map/{$ofac}'>Click here</a> to view the map.");
     }
 
-    function getMgtColors($ofac = null)
-    {
+    function getMgtColors($ofac = null) {
         if (!Auth::check()) {
             abort(401);
         }
@@ -271,8 +262,7 @@ class TMUController
         return view('tmu.mgt_colors', ['colors' => $colors, 'facname' => $tmufac->name, 'fac' => $tmufac->id]);
     }
 
-    function postMgtColors(Request $request, $ofac = null)
-    {
+    function postMgtColors(Request $request, $ofac = null) {
         if (!Auth::check()) {
             abort(401);
         }
@@ -322,8 +312,7 @@ class TMUController
             "TMU Map Colors saved. <a href=\"/tmu/$ofac\">Click here</a> to view map.");
     }
 
-    function getMgtMapping($fac, $id)
-    {
+    function getMgtMapping($fac, $id) {
         if (!RoleHelper::isFacilitySeniorStaff(null, $fac) && !RoleHelper::hasRole(Auth::user()->cid, $fac,
                 "WM") && !RoleHelper::hasRole(Auth::user()->cid, $fac, "FE")) {
             abort(401);
@@ -349,8 +338,7 @@ class TMUController
         return view('tmu.mgt_mapping', ['fac' => $fac, 'facname' => $fac, 'map' => $map]);
     }
 
-    function postMgtMapping(Request $request, $fac, $id)
-    {
+    function postMgtMapping(Request $request, $fac, $id) {
         $map = tmu_maps::find($id);
         if ($fac != $map->parent_facility) {
             abort(401);
@@ -368,8 +356,7 @@ class TMUController
         return redirect("/mgt/tmu/$fac#mapping")->with("success", "Map " . $map->name . " saved successfully.");
     }
 
-    public function getNotices(string $sector = null)
-    {
+    public function getNotices(string $sector = null) {
         $notices = TMUNotice::where(function ($q) {
             $q->where('expire_date', '>=', Carbon::now('utc'));
             $q->orWhereNull('expire_date');

@@ -12,11 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-class PolicyController extends Controller
-{
+class PolicyController extends Controller {
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('bindings');
         $this->middleware('vatusastaff')->except(['index', 'show']);
     }
@@ -26,8 +24,7 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function index()
-    {
+    public function index() {
         $categories = PolicyCategory::with('policies')->get();
 
         return view('info.policies', compact('categories'));
@@ -40,8 +37,7 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Http\Response|string
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'category'  => 'required|exists:policy_categories,id',
             'ident'     => 'required|regex:/^[\s\w.]*$/|max:10',
@@ -91,8 +87,7 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\View\View
      */
-    public function storeCategory(Request $request)
-    {
+    public function storeCategory(Request $request) {
         //Create default category
 
         $last = PolicyCategory::orderByDesc('order')->first();
@@ -114,8 +109,7 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function show(string $slug)
-    {
+    public function show(string $slug) {
         $policy = Policy::where('slug', $slug)->first();
         if (!RoleHelper::canView($policy)) {
             abort(403, "You are not allowed to access that file.");
@@ -132,8 +126,7 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
-    public function edit()
-    {
+    public function edit() {
         $categories = PolicyCategory::with('policies')->orderBy('order')->get();
 
         return view('mgt.policies', compact('categories'));
@@ -147,8 +140,7 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Http\Response|string
      */
-    public function update(Request $request, Policy $policy)
-    {
+    public function update(Request $request, Policy $policy) {
         if ($request->has('order')) {
             $policy->timestamps = false;
             $policy->order = $request->order;
@@ -230,11 +222,7 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public
-    function updateCategory(
-        Request $request,
-        PolicyCategory $category
-    ) {
+    public function updateCategory(Request $request, PolicyCategory $category) {
         if ($request->input('name')) {
             $category->name = $request->name;
         }
@@ -254,10 +242,7 @@ class PolicyController extends Controller
      *
      * @return \Illuminate\Http\Response|string
      */
-    public
-    function destroy(
-        Policy $policy
-    ) {
+    public function destroy(Policy $policy) {
         if (Storage::disk('public')->delete('docs/' . $policy->slug . "." . $policy->extension)) {
             try {
                 $order = $policy->order;
@@ -285,10 +270,7 @@ class PolicyController extends Controller
      * @return \Illuminate\Foundation\Application
      * @throws \Exception
      */
-    public
-    function destroyCategory(
-        PolicyCategory $category
-    ) {
+    public function destroyCategory(PolicyCategory $category) {
         $order = $category->order;
         $category->delete();
 
@@ -301,11 +283,7 @@ class PolicyController extends Controller
         return redirect('/mgt/policies');
     }
 
-    public
-    function getPolicy(
-        Request $request,
-        Policy $policy
-    ) {
+    public function getPolicy(Request $request, Policy $policy) {
         if (!$request->ajax()) {
             abort(400);
         }

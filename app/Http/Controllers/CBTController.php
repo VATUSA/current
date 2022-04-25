@@ -9,9 +9,7 @@ use App\Models\TrainingProgress;
 use Auth;
 use Illuminate\Support\Facades\DB;
 
-class CBTController
-    extends Controller
-{
+class CBTController extends Controller {
     /********* Viewer Stuff *********/
     public function getIndex($fac = "ZAE") {
         $blocks = TrainingBlock::where("facility", $fac)->where("visible", 1)->orderBy("order", "ASC")->get();
@@ -71,8 +69,7 @@ class CBTController
         return View('cbt.editorchapter', ['fac' => $fac, 'facname' => $facname, 'blockname' => $blockname, 'chapters' => $chapters, 'blockid' => $blockid]);
     }
 
-    public function ajaxBlockToggle($id)
-    {
+    public function ajaxBlockToggle($id) {
         $this->accessCheck();
 
         $block = TrainingBlock::where('id',$id)->first();
@@ -90,8 +87,7 @@ class CBTController
         echo $block->visible;
     }
 
-    public function ajaxChangeAccess($id)
-    {
+    public function ajaxChangeAccess($id) {
         $this->accessCheck();
 
         $block = TrainingBlock::where('id',$id)->first();
@@ -110,8 +106,7 @@ class CBTController
         $block->save();
     }
 
-    public function ajaxDeleteBlock($id)
-    {
+    public function ajaxDeleteBlock($id) {
         $this->accessCheck();
 
         $block = TrainingBlock::where('id',$id)->first();
@@ -136,8 +131,7 @@ class CBTController
         }
     }
 
-    public function ajaxPutBlock($fac)
-    {
+    public function ajaxPutBlock($fac) {
         $this->accessCheck($fac);
 
         $facility = Facility::where('id',$fac)->first();
@@ -161,8 +155,7 @@ class CBTController
         }
     }
 
-    public function ajaxRenameBlock($id)
-    {
+    public function ajaxRenameBlock($id) {
         $block = TrainingBlock::find($id);
         $this->accessCheck($block->facility);
         $block->name = $_POST['name'];
@@ -170,8 +163,7 @@ class CBTController
         echo "1";
     }
 
-    public function ajaxOrderBlock($fac)
-    {
+    public function ajaxOrderBlock($fac) {
         $this->accessCheck();
 
         $x = 1;
@@ -279,8 +271,7 @@ class CBTController
         }
     }
 
-    public function accessCheck($fac = null)
-    {
+    public function accessCheck($fac = null) {
         if (!Auth::check()) abort(401);
 
         if (RoleHelper::isVATUSAStaff()) return true;

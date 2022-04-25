@@ -15,21 +15,16 @@ use Illuminate\Http\Request;
 use App\Classes\RoleHelper;
 use Auth;
 
-class HelpdeskController
-    extends Controller
-{
-    public function getIndex()
-    {
+class HelpdeskController extends Controller {
+    public function getIndex() {
         return view('help.index');
     }
 
-    public function getKBIndex()
-    {
+    public function getKBIndex() {
         return view('help.kb');
     }
 
-    public function getList(Request $request, $status)
-    {
+    public function getList(Request $request, $status) {
         if (!Auth::check()) {
             return redirect('/')->with("error", "Must be logged in to visit ticket center");
         }
@@ -108,8 +103,7 @@ class HelpdeskController
         ]);
     }
 
-    public function postList($status)
-    {
+    public function postList($status) {
         if (!Auth::check()) {
             return redirect('/')->with("error", "Must be logged in to visit ticket center");
         }
@@ -144,8 +138,7 @@ class HelpdeskController
         return view('help.list', ["tickets" => $tickets, "status" => "Searched"]);
     }
 
-    public function getNew()
-    {
+    public function getNew() {
         if (!Auth::check()) {
             return redirect('/')->with('error', "Must be logged in to submit a ticket");
         }
@@ -153,8 +146,7 @@ class HelpdeskController
         return view('help.openticket');
     }
 
-    public function postNew(Request $request)
-    {
+    public function postNew(Request $request) {
         if (!Auth::check()) {
             return redirect('/')->with('error', "Must be logged in to submit a ticket");
         }
@@ -225,8 +217,7 @@ class HelpdeskController
         return redirect("/help/ticket/" . $ticket->id)->with("success", "Ticket successfully submitted");
     }
 
-    public function getTicketToggleStatus($id)
-    {
+    public function getTicketToggleStatus($id) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -262,8 +253,7 @@ class HelpdeskController
             "Ticket status set to \"" . $ticket->status . "\"");
     }
 
-    public function getTicket(Request $request, $id)
-    {
+    public function getTicket(Request $request, $id) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -281,8 +271,7 @@ class HelpdeskController
         }
     }
 
-    public function postTicket(Request $request, $id)
-    {
+    public function postTicket(Request $request, $id) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -380,8 +369,7 @@ class HelpdeskController
         abort(403);
     }
 
-    public function postTicketAjax(Request $request, $id)
-    {
+    public function postTicketAjax(Request $request, $id) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -467,9 +455,7 @@ class HelpdeskController
 
 // Knowledgebase Editor - Categories
 
-    public
-    function getKBE()
-    {
+    public function getKBE() {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -477,11 +463,7 @@ class HelpdeskController
         return view('help.kbe.index');
     }
 
-    public
-    function deleteKBECategory(
-        Request $request,
-        $id
-    ) {
+    public function deleteKBECategory(Request $request, $id) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -496,11 +478,7 @@ class HelpdeskController
         $kbc->delete();
     }
 
-    public
-    function postKBECategory(
-        Request $request,
-        $id
-    ) {
+    public function postKBECategory(Request $request, $id) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -523,10 +501,7 @@ class HelpdeskController
         abort(503);
     }
 
-    public
-    function putKBECategory(
-        Request $request
-    ) {
+    public function putKBECategory(Request $request) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -541,11 +516,7 @@ class HelpdeskController
     }
 
 // Knowledgebase Editor - Questions
-    public
-    function getKBECategory(
-        Request $request,
-        $id
-    ) {
+    public function getKBECategory(Request $request, $id) {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -558,11 +529,7 @@ class HelpdeskController
         return view('help.kbe.question', ['category' => $kbc]);
     }
 
-    public
-    function getKBEQuestion(
-        Request $request,
-        $qid
-    ) {
+    public function getKBEQuestion(Request $request, $qid) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -578,11 +545,7 @@ class HelpdeskController
         return json_encode($ret, JSON_HEX_APOS);
     }
 
-    public
-    function deleteKBEQuestion(
-        Request $request,
-        $id
-    ) {
+    public function deleteKBEQuestion(Request $request, $id) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -610,11 +573,7 @@ class HelpdeskController
         }
     }
 
-    public
-    function postKBEQuestionOrder(
-        Request $request,
-        $id
-    ) {
+    public function postKBEQuestionOrder(Request $request, $id) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -631,11 +590,7 @@ class HelpdeskController
         }
     }
 
-    public
-    function getKBEeditQuestion(
-        $cid,
-        $id
-    ) {
+    public function getKBEeditQuestion($cid, $id) {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -654,11 +609,7 @@ class HelpdeskController
         return view('help.kbe.editquestion', ['question' => $question, 'cat' => $cat]);
     }
 
-    public
-    function postKBEeditQuestion(
-        $cid,
-        $id
-    ) {
+    public function postKBEeditQuestion($cid, $id) {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -692,11 +643,7 @@ class HelpdeskController
         return redirect("/help/kbe/$cid")->with("success", "Question saved successfully.");
     }
 
-    public
-    function putKBEQuestion(
-        Request $request,
-        $id
-    ) {
+    public function putKBEQuestion(Request $request, $id) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -726,11 +673,7 @@ class HelpdeskController
         $q->save();
     }
 
-    public
-    function postKBEQuestion(
-        Request $request,
-        $id
-    ) {
+    public function postKBEQuestion(Request $request, $id) {
         if (!$request->ajax()) {
             abort(403);
         }

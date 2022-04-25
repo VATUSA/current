@@ -17,16 +17,12 @@ use Laravel\Socialite\Facades\Socialite;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Wohali\OAuth2\Client\Provider\Discord;
 
-class MyController
-    extends Controller
-{
-    public function __construct()
-    {
+class MyController extends Controller {
+    public function __construct() {
         $this->middleware('auth');
     }
 
-    public function getProfile(Request $request)
-    {
+    public function getProfile(Request $request) {
         $checks = [];
         $eligible = Auth::user()->transferEligible($checks);
 
@@ -102,8 +98,7 @@ class MyController
             compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist', 'trainingFacListArray', 'examAttempts'));
     }
 
-    public function getAssignBasic()
-    {
+    public function getAssignBasic() {
         if (Auth::user()->flag_needbasic) {
             if (!ExamHelper::isAssigned(Auth::user()->cid, BASIC_EXAM, true)) {
                 ExamHelper::assign(Auth::user()->cid, BASIC_EXAM, 0, 14);
@@ -117,8 +112,7 @@ class MyController
         }
     }
 
-    public function getSelect()
-    {
+    public function getSelect() {
         if (Auth::user()->selectionEligible()) {
             return View('my.facilityselect');
         }
@@ -130,8 +124,7 @@ class MyController
         return redirect('/info/join')->with('error', "You are not eligible to select a facility yet.");
     }
 
-    public function postSelect(Request $request)
-    {
+    public function postSelect(Request $request) {
         $facility = $request->facility;
 
         if (!Auth::user()->selectionEligible()) {
@@ -165,8 +158,7 @@ class MyController
         return redirect('/my/profile')->with('success', 'You have successfully joined ' . $facility->name);
     }
 
-    public function getTransfer()
-    {
+    public function getTransfer() {
         $user = User::where('cid', Auth::user()->cid)->first();
         if ($user->transferEligible()) {
             return view('my.transfer');
@@ -175,8 +167,7 @@ class MyController
         return redirect('/my/profile')->with('error', 'You are not currently eligible to transfer.');
     }
 
-    public function doTransfer(Request $request)
-    {
+    public function doTransfer(Request $request) {
         $user = User::where('cid', Auth::user()->cid)->first();
 
         if (!$user->transferEligible()) {
@@ -240,13 +231,11 @@ class MyController
         return redirect('/')->with('success', 'You have initiated a transfer to ' . $data->to);
     }
 
-    public function getExamIndex()
-    {
+    public function getExamIndex() {
         return view('my.exams.index');
     }
 
-    public function toggleBroadcastEmails(Request $request)
-    {
+    public function toggleBroadcastEmails(Request $request) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -266,8 +255,7 @@ class MyController
         return "1";
     }
 
-    public function linkDiscord($mode = "link")
-    {
+    public function linkDiscord($mode = "link") {
         if ($mode === "link") {
             return Socialite::driver('discord')->setScopes(['identify'])->redirect();
         } elseif ($mode === "unlink") {

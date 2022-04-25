@@ -25,8 +25,7 @@ use Illuminate\Support\Facades\Session;
 
 class ExamController extends Controller
 {
-    public function getResult($id)
-    {
+    public function getResult($id) {
         if (!Auth::check()) {
             abort(401);
         }
@@ -56,8 +55,7 @@ class ExamController extends Controller
         return view('exams.result', ['user' => $user, 'result' => $result, 'resultdata' => $resultdata]);
     }
 
-    public function getIndex()
-    {
+    public function getIndex() {
         /*if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff())
             abort(401);*/
 
@@ -68,8 +66,7 @@ class ExamController extends Controller
         return View('exams.index');
     }
 
-    public function getDownload(Request $request, $id)
-    {
+    public function getDownload(Request $request, $id) {
         if (!Auth::check()) {
             abort(401);
         }
@@ -102,8 +99,7 @@ class ExamController extends Controller
 
     /** Take Exam area **/
 
-    public function getTakeExam(Request $request, $id)
-    {
+    public function getTakeExam(Request $request, $id) {
         if (!Auth::check()) {
             abort(401);
         }
@@ -174,8 +170,7 @@ class ExamController extends Controller
         return View('exams.take', ['json' => $json]);
     }
 
-    public function putTakeExam(Request $request, $id)
-    {
+    public function putTakeExam(Request $request, $id) {
         if (!Auth::check() || !$request->ajax() || $id == 0) {
             abort(401, "You are not logged in or your session has timed out");
         }
@@ -315,8 +310,7 @@ class ExamController extends Controller
 
     /** Assignment Functions **/
 
-    public function getAssign()
-    {
+    public function getAssign() {
         $this->canAssignExam();
 
         if (RoleHelper::isVATUSAStaff()) {
@@ -349,8 +343,7 @@ class ExamController extends Controller
         return View('exams.assign', ['exams' => $examArr, 'expireoptions' => ExamHelper::expireOptions()]);
     }
 
-    public function postAssign(Request $request)
-    {
+    public function postAssign(Request $request) {
         $examid = $request->exam;
         $exam = Exam::find($examid);
         $expire = $request->expire;
@@ -385,10 +378,7 @@ class ExamController extends Controller
     }
 
     /** Assignment Handlers **/
-    public
-    function getAssignments(
-        $fac = null
-    ) {
+    public function getAssignments($fac = null) {
         $this->canAssignExam();
 
         if ($fac == null && !RoleHelper::isVATUSAStaff() && !RoleHelper::isAcademyStaff()) {
@@ -406,10 +396,7 @@ class ExamController extends Controller
         return View('exams.assignments', ['fac' => $fac, 'exams' => $exams]);
     }
 
-    public
-    function deleteAssignment(
-        $id
-    ) {
+    public function deleteAssignment($id) {
         $assignment = ExamAssignment::find($id);
         if ($assignment == null) {
             abort(500);
@@ -427,10 +414,7 @@ class ExamController extends Controller
         $assignment->delete();
     }
 
-    public
-    function deleteReassignment(
-        $id
-    ) {
+    public function deleteReassignment($id) {
         $assignment = ExamReassignment::find($id);
         if ($assignment == null) {
             abort(500);
@@ -450,9 +434,7 @@ class ExamController extends Controller
 
     /** Editor Functions **/
 
-    public
-    function getEdit()
-    {
+    public function getEdit() {
         $this->accessCheckExam();
 
         if (RoleHelper::isVATUSAStaff()) // Run model for all exams
@@ -465,8 +447,7 @@ class ExamController extends Controller
         return View('exams.edit')->with('exams', $exams);
     }
 
-    public function getDeleteExam($id)
-    {
+    public function getDeleteExam($id) {
         $exam = Exam::find($id);
         $this->accessCheckExam(Auth::user()->cid, $exam->facility_id);
 
@@ -481,11 +462,7 @@ class ExamController extends Controller
         return redirect('/exam/edit')->with("success", "Exam '$name' successfully deleted");
     }
 
-    public
-    function getEditQuestion(
-        $examid,
-        $questionid
-    ) {
+    public function getEditQuestion($examid, $questionid) {
         $exam = Exam::find($examid);
         $this->accessCheckExam(null, $exam->facility_id);
         if ($questionid > 0) {
@@ -506,11 +483,7 @@ class ExamController extends Controller
         return View('exams.editquestion', ['exam' => $exam, 'question' => $question]);
     }
 
-    public
-    function postEditQuestion(
-        $examid,
-        $questionid
-    ) {
+    public function postEditQuestion($examid, $questionid) {
         if ($questionid == 0) {
             abort(401);
         }
@@ -541,10 +514,7 @@ class ExamController extends Controller
         return View('exams.editquestion', ['exam' => $exam, 'question' => $question, 'success' => 1]);
     }
 
-    public
-    function editExam(
-        $id = null
-    ) {
+    public function editExam($id = null) {
         if ($id == null && isset($_POST['exam'])) {
             $id = $_POST['exam'];
         } elseif ($id) {
@@ -570,10 +540,7 @@ class ExamController extends Controller
             ['exam' => $exam, 'questions' => $questions, 'blocks' => $blocks, 'retakes' => ExamHelper::validRetakes()]);
     }
 
-    public
-    function postEditExam(
-        $id
-    ) {
+    public function postEditExam($id) {
         $exam = Exam::find($id);
         $this->accessCheckExam(null, $exam->facility_id);
 
@@ -602,9 +569,7 @@ class ExamController extends Controller
         $exam->save();
     }
 
-    public
-    function getCreate()
-    {
+    public function getCreate() {
         $exam = new Exam();
         $exam->facility_id = (Auth::user()->facility == "ZHQ") ? "ZAE" : Auth::user()->facility;
         $exam->is_active = 0;
@@ -617,11 +582,7 @@ class ExamController extends Controller
         return redirect('/exam/edit/' . $exam->id);
     }
 
-    public
-    function deleteQuestion(
-        $examid,
-        $qid
-    ) {
+    public function deleteQuestion($examid, $qid) {
         $exam = Exam::find($examid);
         if ($exam == null) {
             abort(401);
@@ -639,11 +600,7 @@ class ExamController extends Controller
 
     /** Security Checks **/
 
-    private
-    function canAssignExam(
-        $cid = null,
-        Exam $exam = null
-    ) {
+    private function canAssignExam($cid = null, Exam $exam = null) {
         if (!Auth::check()) {
             abort(401);
         }
@@ -672,11 +629,7 @@ class ExamController extends Controller
         abort(401);
     }
 
-    private
-    function accessCheckExam(
-        $cid = null,
-        $fac = null
-    ) {
+    private function accessCheckExam($cid = null, $fac = null) {
         if (!Auth::check()) {
             abort(401);
         }

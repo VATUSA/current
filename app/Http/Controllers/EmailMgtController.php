@@ -268,8 +268,7 @@ class EmailMgtController extends Controller
         }
     }
 
-    public function postTemplate(Request $request, $template)
-    {
+    public function postTemplate(Request $request, $template) {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
         if (!in_array($template, ["examassigned","exampassed","examfailed"]))

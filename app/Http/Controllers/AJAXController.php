@@ -8,9 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class AJAXController
-    extends Controller
-{
+class AJAXController extends Controller {
 
     public function getNews()
     {

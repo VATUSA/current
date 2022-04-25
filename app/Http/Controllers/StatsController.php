@@ -9,9 +9,7 @@ use App\Models\Transfers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
-class StatsController
-    extends Controller
-{
+class StatsController extends Controller {
     public function getExportOverview() {
         header("Content-Type: text/csv");
         $response = "facility,atm,datm,ta,ec,fa,wm,transfers,controllers,\n";
@@ -57,8 +55,7 @@ class StatsController
         ]);
     }
 
-    public function getDetails(Request $request, $facility)
-    {
+    public function getDetails(Request $request, $facility) {
         if ($facility == "overview") {
             $data = [
                 'OBS' => [],
@@ -120,8 +117,7 @@ class StatsController
         echo json_encode($data, JSON_HEX_APOS);
     }
 
-    public function getIndex()
-    {
+    public function getIndex() {
         $zae = Facility::where('id', 'ZAE')->get();
         $west = Facility::where('active', 1)->where('region', 8)->orderBy('name')->get();
         $midwest = Facility::where('active', 1)->where('region', 6)->orderBy('name')->get();

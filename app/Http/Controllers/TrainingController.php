@@ -17,12 +17,8 @@ use App\Models\Promotions;
 use App\Models\Role;
 use App\Models\OTSEvalForm;
 
-class TrainingController extends Controller
-{
-    public
-    function ajaxCanModifyRecord(
-        $record
-    ) {
+class TrainingController extends Controller {
+    public function ajaxCanModifyRecord($record) {
         $record = TrainingRecord::find($record);
         if (!$record->count()) {
             return response()->json(false);
@@ -35,12 +31,7 @@ class TrainingController extends Controller
                     && $record->instructor_id == Auth::user()->cid)));
     }
 
-    public
-    function getOTSEval(
-        Request $request,
-        int $cid,
-        $form = null
-    ) {
+    public function getOTSEval(Request $request, int $cid, $form = null) {
         $student = User::find($cid);
         if (!$student) {
             abort(404);
@@ -64,11 +55,7 @@ class TrainingController extends Controller
 
     }
 
-    public
-    function viewOTSEval(
-        Request $request,
-        int $eval
-    ) {
+    public function viewOTSEval(Request $request, int $eval) {
         $eval = OTSEval::withAll()->find($eval);
         if (!$eval) {
             abort(404, "The OTS evaluation form is invalid.");
@@ -97,10 +84,7 @@ class TrainingController extends Controller
             compact('student', 'eval', 'attempt', 'recs'));
     }
 
-    public
-    function viewTrainingStatistics(
-        Request $request
-    ) {
+    public function viewTrainingStatistics(Request $request) {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -637,10 +621,7 @@ class TrainingController extends Controller
                 'recordsPerTypeData', 'recordsPerMonthData', 'trainingRecords', 'facilities'));
     }
 
-    public
-    function viewEvals(
-        Request $request
-    ) {
+    public function viewEvals(Request $request) {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -674,11 +655,7 @@ class TrainingController extends Controller
             compact('evals', 'trainingfac', 'trainingfacname', 'facilities'));
     }
 
-    public
-    function viewOTSEvalStatistics(
-        Request $request,
-        int $form
-    ) {
+    public function viewOTSEvalStatistics(Request $request, int $form) {
         $form = OTSEvalForm::withAll()->find($form);
         if (!$form) {
             abort(404, "The OTS evaluation form is invalid.");

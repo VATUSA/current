@@ -2,21 +2,16 @@
 
 use App\Models\Facility;
 use App\Classes\RoleHelper;
-use App\Classes\Helper;
 use App\Models\KnowledgebaseQuestions;
 use App\Models\Policy;
 use App\Models\User;
 
-class InfoController
-    extends Controller
-{
-    public function getACE()
-    {
+class InfoController extends Controller {
+    public function getACE() {
         return view('info.ace');
     }
 
-    public function getJoin()
-    {
+    public function getJoin() {
         $content = KnowledgebaseQuestions::find(config('services.kb.joinQuestionId'));
         if (!$content) {
             abort(500);
@@ -25,8 +20,7 @@ class InfoController
         return view('info.join', ['content' => $content->answer]);
     }
 
-    public function getMembers()
-    {
+    public function getMembers() {
         $orgchart = Policy::where('ident', 'ORG')->first();
         if ($orgchart) {
             $orgLink = secure_url("/info/policies/" . $orgchart->slug);
@@ -37,13 +31,11 @@ class InfoController
         return view('info.members', compact('orgLink'));
     }
 
-    public function getPolicies()
-    {
+    public function getPolicies() {
         return view('info.policies');
     }
 
-    public function ajaxFacilityInfo()
-    {
+    public function ajaxFacilityInfo() {
         if (isset($_POST['fac'])) {
             $fac = $_POST['fac'];
             if (ctype_alpha($fac) && strlen($fac) == 3) {
