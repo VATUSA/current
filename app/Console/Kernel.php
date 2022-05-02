@@ -43,7 +43,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('UpdateVATSIM')->everyMinute();
         $schedule->command('ExamReassign')->hourly();
         $schedule->command('TattlerTransfers')->cron('15 0 * * *');
-        $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00");
+        // $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00");
         $schedule->command('rolesync')->cron('45 * * * *');
         $schedule->command('ntos:expire')->weekly();
         $schedule->command('promos:cacheeligible')->dailyAt('05:00');
