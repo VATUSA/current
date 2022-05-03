@@ -467,7 +467,7 @@
           $.each(resp.data, function (i) {
             if (resp.data[i].cid == undefined) return
             html += '<tr><td>' + resp.data[i].cid + '</td>'
-            html += '<td>'
+            html += '<td data-sort-value="'+resp.data[i].lname + ', ' + resp.data[i].fname+'">'
             if (resp.data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
             html += resp.data[i].lname + ', ' + resp.data[i].fname
             html += '</td>'
@@ -495,7 +495,11 @@
           $('#hrostertablebody').html(html)
           $('#hrostertable').toggle()
           $('#hrosterloading').toggle()
-          $('#hrostertable').tablesorter()
+          $('#hrostertable').tablesorter({
+            textExtraction: function(node) {
+              return $(node).attr('data-sort-value') || $(node).text();
+            }
+          })
         })
 
         $.ajax({
