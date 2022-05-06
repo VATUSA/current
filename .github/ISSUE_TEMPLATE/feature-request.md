@@ -3,7 +3,6 @@ name: Feature Request
 about: Suggest a new idea or feature for the VATUSA frontend.
 title: "[FEAT] "
 labels: enhancement
-assignees: bnahin
 
 ---
 

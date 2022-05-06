@@ -3,7 +3,6 @@ name: Bug Report
 about: Submit a bug report for the VATUSA frontend.
 title: "[BUG] "
 labels: bug
-assignees: bnahin
 
 ---
 
