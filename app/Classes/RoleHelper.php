@@ -547,9 +547,9 @@ class RoleHelper
         if ($getVATUSA && $facility == "ZHQ") {
             // Eloquent: All VATUSA Staff
             foreach (\App\Models\Role::where('facility', 'ZHQ')
-                         ->where('role', 'LIKE', "US%")
-                         ->orderBy("role")
-                         ->get() as $r) {
+                        ->where('role', 'LIKE', "US%")
+                        ->orderBy("role")
+                        ->get() as $r) {
                 $staff[] = [
                     'cid'  => $r->cid,
                     'name' => $r->user->fullname() . " (" . static::roleTitle($r->role) . ")",
@@ -561,9 +561,12 @@ class RoleHelper
         if ($facility == "ZAE") {
             // Eloquent: VATUSA Training Staff (%3 [e.g. 3/13])
             foreach (\App\Models\Role::where('facility', 'ZHQ')
-                         ->where('role', 'LIKE', "%3")
-                         ->orderBy("role")
-                         ->get() as $v) {
+                        ->where(function($query) {
+                            return $query->where('role', 'LIKE', '%3')
+                                         ->orWhere('role', 'LIKE', 'US14');
+                        })
+                        ->orderBy("role")
+                        ->get() as $v) {
                 $staff[] = [
                     'cid'  => $v->cid,
                     'name' => $v->user->fullname() . " (" . static::roleTitle($v->role) . ")",
