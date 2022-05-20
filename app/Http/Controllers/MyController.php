@@ -193,7 +193,7 @@ class MyController
         }
 
         $this->validate($request, [
-            'reason'   => 'required',
+            'reason'   => 'required|max:2048',
             'facility' => 'required|max:3|min:3',
         ]);
 
