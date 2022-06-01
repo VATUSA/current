@@ -79,12 +79,12 @@
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US7")}}</td>
                                     <td><a href="mailto:vatusa7@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td>VATUSA8</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US8")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US8")}}</td>
                                     <td><a href="mailto:vatusa8@vatusa.net"><i class="fa fa-envelope"></i></a></td>
-                                </tr>
+                                </tr> -->
                                 <tr>
                                     <td>VATUSA9</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US9")}}</td>

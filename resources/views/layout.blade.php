@@ -100,29 +100,21 @@
                             <li class="dropdown-header"><h5
                                     style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5>
                             </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 8])->orderby('name', 'ASC')->get() as $f)
-                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
-                            @endforeach
-                            <li class="nav-divider"></li>
-                            <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Midwestern Region</h5>
-                            </li>
                             @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 6])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Northeastern
-                                    Region</h5>
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Central Region</h5>
                             </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                             <li class="nav-divider"></li>
                             <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Southern Region</h5>
+                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Eastern Region</h5>
                             </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                         </ul>
