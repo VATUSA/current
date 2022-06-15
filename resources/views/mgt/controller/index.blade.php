@@ -825,7 +825,7 @@
                     @endif
                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
                         <div class="tab-pane" role="tabpanel" id="roles">
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff($user->cid))
+                            @if(\App\Classes\RoleHelper::isVATUSAStaff($user->cid, false, true))
                                 <div class="alert alert-info"><i class="fas fa-info-circle"></i> This user has all roles
                                     as VATUSA Staff.
                                 </div>
