@@ -113,8 +113,7 @@ class SMFHelper
                 $addl .= static::findGroup("Web Team");
             }
         }
-        if (RoleHelper::hasRole($cid, $user->facility,
-                "INS") || ($user->rating >= Helper::ratingIntFromShort("I1") && $user->rating < Helper::ratingIntFromShort("SUP"))) {
+        if (RoleHelper::isInstructor($cid)) {
             if ($addl) {
                 $addl .= ",";
             }
