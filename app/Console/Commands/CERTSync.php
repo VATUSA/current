@@ -266,6 +266,7 @@ class CERTSync extends Command
         $start = microtime(true);
         $roster = array();
         $perPage = 500;
+        $pagesPerChunk = 20;
         $url = "https://api.vatsim.net/api/divisions/USA/members/?page_size=$perPage&paginated";
 
         if (Storage::exists('roster.json') && $testing) {
@@ -295,32 +296,38 @@ class CERTSync extends Command
         $recursiveCount += count($response["results"]);
 
         $pages = ceil($count / $perPage);
-        $promises = [];
-        for ($i = 2; $i <= $pages; $i++) {
-            $promises[] = $this->guzzle->getAsync($url . "&page=$i", [
-                'headers' => [
-                    'Authorization' => 'Token ' . config('services.vatsim.apiToken')
-                ]
-            ]);
-        }
-        try {
-            $responses = Utils::settle($promises)->wait();
-            $i = 2;
-            foreach ($responses as $response) {
-                if ($response['state'] !== "fulfilled") {
-                    $this->error("$i Rejected");
-                    var_dump($response);
-                    exit(0);
-                } else {
-                    $rosterPage = json_decode($response['value']->getBody(), true)["results"];
-                    $roster[] = $rosterPage;
-                    $recursiveCount += count($rosterPage);
-                }
-                $i++;
+        $chunks = ceil($pages / $pagesPerChunk); // Only get 20 pages at a time, for memory efficiency
+        for ($c = 0; $c < $chunks; $c++) {
+            $promises = [];
+            for ($i = 1; $i <= $pagesPerChunk; $i++) {
+                $pageId = 1 + ($chunks * $pagesPerChunk) + $i;
+                if ($pageId > $pages)
+                    break;
+                $promises[] = $this->guzzle->getAsync($url . "&page=$pageId", [
+                    'headers' => [
+                        'Authorization' => 'Token ' . config('services.vatsim.apiToken')
+                    ]
+                ]);
             }
-        } catch (ConnectException $e) {
-            $this->error($e->getMessage());
-            exit(1);
+            try {
+                $responses = Utils::settle($promises)->wait();
+                $i = 2;
+                foreach ($responses as $response) {
+                    if ($response['state'] !== "fulfilled") {
+                        $this->error("$i Rejected");
+                        var_dump($response);
+                        exit(0);
+                    } else {
+                        $rosterPage = json_decode($response['value']->getBody(), true)["results"];
+                        $roster[] = $rosterPage;
+                        $recursiveCount += count($rosterPage);
+                    }
+                    $i++;
+                }
+            } catch (ConnectException $e) {
+                $this->error($e->getMessage());
+                exit(1);
+            }
         }
 
         $this->info("Roster retrieved. Processed Pages: " . count($roster) . "/" . $pages);
