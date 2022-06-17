@@ -300,7 +300,7 @@ class CERTSync extends Command
         for ($c = 0; $c < $chunks; $c++) {
             $promises = [];
             for ($i = 1; $i <= $pagesPerChunk; $i++) {
-                $pageId = 1 + ($chunks * $pagesPerChunk) + $i;
+                $pageId = 1 + ($c * $pagesPerChunk) + $i;
                 if ($pageId > $pages)
                     break;
                 $promises[] = $this->guzzle->getAsync($url . "&page=$pageId", [
@@ -311,10 +311,9 @@ class CERTSync extends Command
             }
             try {
                 $responses = Utils::settle($promises)->wait();
-                $i = 2;
                 foreach ($responses as $response) {
                     if ($response['state'] !== "fulfilled") {
-                        $this->error("$i Rejected");
+                        $this->error("Page Rejected");
                         var_dump($response);
                         exit(0);
                     } else {
@@ -322,7 +321,6 @@ class CERTSync extends Command
                         $roster[] = $rosterPage;
                         $recursiveCount += count($rosterPage);
                     }
-                    $i++;
                 }
             } catch (ConnectException $e) {
                 $this->error($e->getMessage());
