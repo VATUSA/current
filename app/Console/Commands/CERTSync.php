@@ -309,6 +309,7 @@ class CERTSync extends Command
             foreach ($responses as $response) {
                 if ($response['state'] !== "fulfilled") {
                     $this->error("$i Rejected");
+                    var_dump($response);
                     exit(0);
                 } else {
                     $rosterPage = json_decode($response['value']->getBody(), true)["results"];
