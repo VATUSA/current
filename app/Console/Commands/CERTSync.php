@@ -265,7 +265,7 @@ class CERTSync extends Command
 
         $start = microtime(true);
         $roster = array();
-        $perPage = 100;
+        $perPage = 500;
         $url = "https://api.vatsim.net/api/divisions/USA/members/?page_size=$perPage&paginated";
 
         if (Storage::exists('roster.json') && $testing) {
