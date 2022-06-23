@@ -137,6 +137,8 @@
                             <li class="divider"></li>
                             <li><a href="https://forums.vatusa.net/?action=calendar"><i class="fas fa-calendar"></i>
                                     Events Calendar</a></li>
+                            <li><a href="/info/feedback"><i class="fas fa-comment"></i>
+                                    Send Feedback</a></li>
                             <li class="divider"></li>
                             <li><a href="{{ secure_url('info/ace') }}"><i class="fas fa-star"></i> ACE Team</a></li>
                             <li><a href="{{ secure_url('info/solo') }}"><i class="fas fa-certificate"></i> Solo

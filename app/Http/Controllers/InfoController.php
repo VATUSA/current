@@ -129,4 +129,38 @@ class InfoController
             }
         }
     }
+
+    public function feedback()
+    {
+        return view(info.feedback);
+    }
+
+    public function sendFeedback(Request $request)
+    {
+        $name = (strlen($request->fName)) > 0 ? $request->fName : 'Anonymous';
+        $replyEmail = (strlen($request->fEmail > 0)) ? $request->fEmail : 'None provided';
+        switch($request->gradingScale) {
+            case '5' : $scale = 'Excellent';
+            case '4' : $scale = 'Above average';
+            case '3' : $scale = 'Average';
+            case '2' : $scale = 'Below average';
+            case '1' : $scale = 'Poor';
+            break;
+            default : $scale = 'Not rated';
+        }
+        $facilityId = $request->fFacility;
+        $msg = $request->fMessage;
+        if(empty($msg))
+            return back()->with('error', 'The feedback message field is required.');
+
+        $payload = array("name"=>$name,"reply"=>$replyEmail,"rating"=>$scale,"msg"=>$msg);
+        $emails = array();
+        $emails[] = $facilityId . '-atm@vatusa.net';
+        $fac = Facility::find($facilityId);
+        $regionId = (!$fac) ? '4' : $fac->region; //Send to VATUSA4 if region ATS can't be found
+        $emails[] = 'vatusa' . $regionId . '@vatusa.net';
+
+        EmailHelper::sendEmail($emails,"$facilityId ARTCC Feedback","emails.feedback.artcc",$payload);
+        return redirect('/')->with("success", "Feedback submitted - thank you!");
+    }
 }

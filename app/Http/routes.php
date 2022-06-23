@@ -203,6 +203,8 @@ Route::group([
         Route::group(['prefix' => 'info'], function () {
             Route::get('ace', 'InfoController@getACE');
             Route::get('join', 'InfoController@getJoin');
+            Route::get('feedback', 'InfoController@feedback');
+            Route::get('feedback/new', 'InfoController@sendFeedback');
             Route::get('members', 'InfoController@getMembers');
             Route::get('policies', 'PolicyController@index');
             Route::get('policies/{slug}', 'PolicyController@show');
