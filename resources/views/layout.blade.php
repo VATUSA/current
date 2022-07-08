@@ -90,7 +90,7 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="https://academy.vatusa.net"><i class="fas fa-graduation-cap"></i> Academy</a></li>
-                    <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i>FAQ</a></li>
+                    <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i> FAQ</a></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                             aria-expanded="false">
                             Facilities
