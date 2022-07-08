@@ -152,12 +152,12 @@
                             <li class="dropdown-header">
                                 <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">VATSIM Resources</h5>
                             </li>
-                            <li><a href="https://www.vatsim.net/pilots/getting-started" target="_blank"><i
+                            <li><a href="https://vatsim.net/docs/basics/getting-started" target="_blank"><i
                                         class="fas fa-star"></i> Getting
                                     Started</a></li>
-                            <li><a href="http://www.vatsim.net/pilots/training" target="_blank"><i
+                            <li><a href="https://my.vatsim.net/learn" target="_blank"><i
                                         class="fas fa-school"></i> Training</a></li>
-                            <li><a href="http://www.vatsim.net/pilots/virtual-airlines" target="_blank"><i
+                            <li><a href="https://my.vatsim.net/virtual-airlines" target="_blank"><i
                                         class="fas fa-plane"></i> Virtual
                                     Airlines</a></li>
                             <li><a href="http://stats.vatsim.net/" target="_blank"><i class="fas fa-chart-line"></i>
