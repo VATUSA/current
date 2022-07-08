@@ -3,35 +3,20 @@
 @section('content')
     <p>Welcome to the VATUSA Division.</p>
 
-    <p>If you desire to be an Air Traffic Controller within the VATUSA division, please continue reading this email. If
-        you
-        desire only to fly, you do not need to read this email and can discard it.</p>
+    <p>If you desire to be an Air Traffic Controller within the VATUSA division, please continue reading this email.
+        If you desire only to fly, you do not need to read this email and can discard it.</p>
 
-    <p>Firstly, thank you for taking the time to join the division and we look forward to working the scopes with you.
-        Firstly, to continue the signup process you need to complete Blocks 1 and 2 (Basic/S1) of the Computer Based
-        Training (CBT) courses located under "My VATUSA" and "Computer Based Training" (CBT).
-        Then you will need to complete the Basic ATC Exam. <strong>The two CBT blocks must be completed before you can
-            take
-            the exam.</strong> When you are ready to take this exam, please click "My VATUSA" then "Assign Basic ATC
-        Exam".
-        Take your time with this exam, and remember it is open book. If you do not pass, you will need to wait 3 days to
-        retake so take your time.
-        <em><strong>Returning controllers</strong> who completed the exam more than 6 months ago must retake the
-            exam.</em></p>
+    <p>All initial training is done through the VATUSA Academy which can be found at
+        <a href="https://academy.vatusa.net/"></a>https://academy.vatusa.net/</p>
 
-    <p>Until you have completed the Basic ATC Exam, you have been assigned to the Academy facility. After completion of
-        the
-        examination, you will be permitted to select your initial facility. Please choose carefully, as transfers out of
-        the
-        facility will need to be in accordance with division transfer policy. This policy can be found at
-        www.vatusa.net, Division
-        Info, Policies and then reading "Transferring and Visiting Controllers Policy".</p>
+    <p>Still having issues? Your best reference before asking a question will be the FAQ. You can find that at
+        <a href="https://www.vatusa.net/help/kb">https://www.vatusa.net/help/kb</a></p>
 
-    <p>Finally, questions about training should be done through the VATUSA ticketing system, not e-mail.</p>
+    <p>Additionally, the VATUSA Discord is a great way to meet other controllers and ask or find answers to some of
+        your questions. Learn how to join at <a href="https://discord.gg/a7Qcse7">https://discord.gg/a7Qcse7</a></p>
 
-    <p>If you have any questions, your current point of contact until you transfer to your first facility is VATUSA3.
-        They
-        can be reached at vatusa3@vatusa.net.</p>
+    <p>If you have any questions, your point of contact until you finish initial training and transfer to your first
+        facility is the VATUSA Training Department. They can be reached via email at training@vatusa.net</p>
 
     <p>Good luck!</p>
 @endsection

@@ -55,7 +55,9 @@
     <div class="head">
         <div class="layer">
             <div class="container">
-                <img src="/img/logo-alt.png" class="logo"/>
+                <a href="/">
+                    <img src="/img/logo-alt.png" class="logo"/>
+                </a>
                 @if(Auth::check())
                     <div class="pull-right hidden-xs">
                         <div class="wb-usr">
@@ -87,11 +89,8 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/">
-                            <i class="fas fa-home"></i> Home
-                        </a></li>
-                    <li><a href="https://forums.vatusa.net"><i class="fas fa-comment"></i> Forums</a></li>
                     <li><a href="https://academy.vatusa.net"><i class="fas fa-graduation-cap"></i> Academy</a></li>
+                    <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i>FAQ</a></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                             aria-expanded="false">
                             Facilities
@@ -126,6 +125,7 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="https://discord.gg/a7Qcse7" target="_blank"><i class="fab fa-discord"></i>
                                     Official Discord</a></li>
+                            <li><a href="https://forums.vatusa.net"><i class="fas fa-comment"></i> Forums</a></li>
                             <li class="divider"></li>
                             <li><a href="{{ secure_url('info/members') }}"><i class="fas fa-users"></i> Members and
                                     Staff</a>
