@@ -56,7 +56,7 @@
         <div class="layer">
             <div class="container">
                 <a href="/">
-                    <img src="/img/logo-alt.png" class="logo"/>
+                    <img src="/img/logo-alt.png" class="logo" alt="VATUSA Home"/>
                 </a>
                 @if(Auth::check())
                     <div class="pull-right hidden-xs">
