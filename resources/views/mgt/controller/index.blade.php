@@ -352,19 +352,19 @@
                                         <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
                                         <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
-                                        {{--<li>Needs Basic ATC Exam:
+                                        <li>Needs Basic ATC Exam:
                                             @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 <a href="/mgt/controller/{{$user->cid}}/togglebasic">
-                                                    @endif
+                                            @endif
                                                     @if ($user->flag_needbasic)
                                                         Yes
                                                     @else
                                                         No
                                                     @endif
-                                                    @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                            @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 </a>
                                             @endif
-                                        </li>--}}
+                                        </li>
                                         <br>
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
                                             $user->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
