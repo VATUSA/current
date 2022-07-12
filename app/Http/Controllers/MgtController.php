@@ -44,7 +44,7 @@ class MgtController extends Controller
     public function getController(Request $request, $cid = null)
     {
         if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()
-            && !RoleHelper::isVATUSAStaff()
+            && !RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam()
             && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")) {
             abort(401);
         }
@@ -72,7 +72,7 @@ class MgtController extends Controller
             ) {
                 return Auth::user()->facility === $record->facility_id || Auth::user()->facility === $user->facility
                         || $user->visits()->where('facility', Auth::user()->facility)->exists()
-                        || RoleHelper::isVATUSAStaff() || RoleHelper::isFacilitySeniorStaff();
+                        || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff();
             });
 
             if (!$trainingfac) {
@@ -100,7 +100,7 @@ class MgtController extends Controller
             }
             $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility
                                 || $user->visits()->where('facility', Auth::user()->facility)->exists()
-                                || RoleHelper::isVATUSAStaff() || RoleHelper::isFacilitySeniorStaff() ?
+                                || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
                             $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
                     $user->facility) && $user->cid !== Auth::user()->cid;
@@ -118,7 +118,7 @@ class MgtController extends Controller
             //Get INS at ARTCC
             $ins = ['ins' => [], 'mtr' => []];
             $users = User::where('facility',
-                RoleHelper::isVATUSAStaff() ? $user->facility : Auth::user()->facility)->where('rating', '>=',
+                $user->facility)->where('rating', '>=',
                 Helper::ratingIntFromShort("I1"))
                 ->where('rating', '<=', Helper::ratingIntFromShort("I3"))->get();
             if ($users) {
@@ -127,14 +127,14 @@ class MgtController extends Controller
                 }
             }
             $users = Role::where('facility',
-                RoleHelper::isVATUSAStaff() ? $user->facility : Auth::user()->facility)->where('role', 'INS')->get();
+                $user->facility)->where('role', 'INS')->get();
             if ($users) {
                 foreach ($users as $tUser) {
                     $ins['ins'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
                 }
             }
             $users = Role::where('facility',
-                RoleHelper::isVATUSAStaff() ? $user->facility : Auth::user()->facility)->where('role', 'MTR')->get();
+                $user->facility)->where('role', 'MTR')->get();
             if ($users) {
                 foreach ($users as $tUser) {
                     $ins['mtr'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
@@ -241,7 +241,8 @@ class MgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilityStaff() && !RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilityStaff() && !RoleHelper::isVATUSAStaff()
+            && !RoleHelper::isWebTeam()) {
             abort(401);
         }
 
@@ -360,7 +361,7 @@ class MgtController extends Controller
     function getControllerToggleBasic(
         $cid
     ) {
-        if (!RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam()) {
             abort(401);
         }
         $user = User::find($cid);
@@ -676,7 +677,8 @@ class MgtController extends Controller
 
     function getSolo()
     {
-        if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isInstructor() && !RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isInstructor() && !RoleHelper::isVATUSAStaff()
+            && !RoleHelper::isWebTeam()) {
             abort(401);
         }
 

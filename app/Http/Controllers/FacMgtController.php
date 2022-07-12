@@ -28,13 +28,13 @@ class FacMgtController extends Controller
 
     public function getIndex($fac = null)
     {
-        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff() && !RoleHelper::hasRole(Auth::user()->cid,
+        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam() && !RoleHelper::hasRole(Auth::user()->cid,
                 $fac ?? Auth::user()->facility, "WM")) {
             abort(401);
         }
 
         if ($fac === null) {
-            if (RoleHelper::isVATUSAStaff()) {
+            if (\Auth::user()->facility == "ZHQ") {
                 $fac = "PCF";
             } else {
                 $fac = \Auth::user()->facility;
