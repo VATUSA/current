@@ -35,7 +35,10 @@
                         </select>
                     </div>
                 </div>
-                @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
+                @if(\App\Classes\RoleHelper::isFacilityStaff()
+                    || \App\Classes\RoleHelper::isVATUSAStaff()
+                    || \App\Classes\RoleHelper::isWebTeam()
+                    )
                     <div class="form-group">
                         <label for="tAssign" class="col-sm-2 control-label">Assign To</label>
                         <div class="col-sm-10">
