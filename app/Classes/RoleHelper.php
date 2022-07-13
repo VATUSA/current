@@ -188,7 +188,7 @@ class RoleHelper
      *
      * @return bool
      */
-    public static function isVATUSAStaff($cid = null, $isApi = false, $skipWebTeam = true)
+    public static function isVATUSAStaff($cid = null, $isApi = false)
     {
         if (!\Auth::check() && !$isApi) {
             return false;
