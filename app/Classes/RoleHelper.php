@@ -184,7 +184,7 @@ class RoleHelper
     }
 
     /**
-     * @param null|integer $cid`
+     * @param null|integer $cid
      *
      * @return bool
      */
@@ -223,6 +223,9 @@ class RoleHelper
      */
     public static function isWebTeam($cid = null)
     {
+        if (!\Auth::check()) {
+            return false;
+        }
         if ($cid == null || $cid == 0) {
             $cid = \Auth::user()->cid;
             $user = \Auth::user();
