@@ -100,7 +100,7 @@ class MoodleSync extends Command
         if ($user->flag_homecontroller) {
             $this->moodle->assignCohort($id,
                 "$user->facility-" . Helper::ratingShortFromInt($user->rating)); //Facility level rating
-            if (RoleHelper::isVATUSAStaff($user->cid) || RoleHelper::isInstructor($user->cid) || RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true) || RoleHelper::isMentor($user->cid)) {
+            if (RoleHelper::isVATUSAStaff($user->cid, $user->facility, true) || RoleHelper::isInstructor($user->cid) || RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true) || RoleHelper::isMentor($user->cid)) {
                 $this->moodle->assignCohort($id, "TNG"); //Training staff
             }
         }
@@ -120,10 +120,10 @@ class MoodleSync extends Command
         }
 
         //Assign Category Permissions
-        if (RoleHelper::isVATUSAStaff($user->cid) || RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true)) {
+        if (RoleHelper::isVATUSAStaff($user->cid, false, true) || RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true)) {
             $this->moodle->assignRole($id, VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "INS", "coursecat");
         }
-        if (RoleHelper::isVATUSAStaff($user->cid) || RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true)) {
+        if (RoleHelper::isVATUSAStaff($user->cid, false, true) || RoleHelper::isFacilitySeniorStaff($user->cid, $user->facility, true)) {
             $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "TA",
                 "coursecat");
             $artccCategories = $this->moodle->getAllSubcategories($this->moodle->getCategoryFromShort($user->facility),
@@ -135,19 +135,19 @@ class MoodleSync extends Command
                 }
             }
         }
-        if (RoleHelper::isVATUSAStaff($user->cid) || RoleHelper::hasRole($user->cid, "ZAE", "CBT")) {
+        if (RoleHelper::isVATUSAStaff($user->cid, false, true) || RoleHelper::hasRole($user->cid, "ZAE", "CBT")) {
             $this->moodle->assignRole($id, VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "CBT", "coursecat");
         }
-        if (RoleHelper::isVATUSAStaff($user->cid) || RoleHelper::hasRole($user->cid, $user->facility, "FACCBT")) {
+        if (RoleHelper::isVATUSAStaff($user->cid, false, true) || RoleHelper::hasRole($user->cid, $user->facility, "FACCBT")) {
             $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "FACCBT",
                 "coursecat");
         }
-        if (RoleHelper::isVATUSAStaff($user->cid) || RoleHelper::isInstructor($user->cid)) {
+        if (RoleHelper::isVATUSAStaff($user->cid, false, true) || RoleHelper::isInstructor($user->cid)) {
             $this->moodle->assignRole($id, VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, "INS", "coursecat");
             $this->moodle->assignRole($id, $this->moodle->getCategoryFromShort($user->facility, true), "INS",
                 "coursecat");
         }
-        if (RoleHelper::isVATUSAStaff($user->cid) || RoleHelper::isMentor($user->cid)) {
+        if (RoleHelper::isVATUSAStaff($user->cid, false, true) || RoleHelper::isMentor($user->cid)) {
             for ($i = Helper::ratingIntFromShort("S1"); $i <= $user->rating; $i++) {
                 $context = "EXAM_CONTEXT_" . Helper::ratingShortFromInt($i);
                 $this->moodle->assignRole($id, $this->moodle->getConstant($context), "MTR", "course");

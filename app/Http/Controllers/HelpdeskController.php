@@ -47,7 +47,7 @@ class HelpdeskController
             $status = "My Assigned";
         } elseif ($status == "open") {
             $status = "Open";
-            if (RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam()) {
+            if (RoleHelper::isVATUSAStaff()) {
                 $tickets = Ticket::where('status', 'Open')->orderBy('created_at', 'asc')->get();
             } else {
                 $tickets = Ticket::where('status', 'Open')->where(function ($query) {
@@ -61,11 +61,13 @@ class HelpdeskController
             // Build query
             $tickets = new Ticket;
             $tickets = $tickets->where('status', 'Closed');
-            if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam()) {
-                $tickets = $tickets->where(function ($query) {
-                    $query->where('facility', Auth::user()->facility)
-                        ->orwhere('assigned_to', Auth::user()->cid);
-                });
+            if (!RoleHelper::isVATUSAStaff()) {
+                if (!RoleHelper::isVATUSAStaff()) {
+                    $tickets = $tickets->where(function ($query) {
+                        $query->where('facility', Auth::user()->facility)
+                            ->orwhere('assigned_to', Auth::user()->cid);
+                    });
+                }
             }
             // Add sort row
             $sort = $request->input("sort", "created_at");
