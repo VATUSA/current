@@ -3,7 +3,11 @@
 
 @section('content')
     <div class="container">
-        @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
+        @if(\App\Classes\RoleHelper::isFacilityStaff()
+        || \App\Classes\RoleHelper::isInstructor()
+        || \App\Classes\RoleHelper::isVATUSAStaff()
+        || \App\Classes\RoleHelper::isWebTeam()
+        )
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <a href="/help/ticket/myassigned" class="btn btn-primary">My Assigned Tickets</a>

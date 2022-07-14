@@ -188,7 +188,7 @@ class RoleHelper
      *
      * @return bool
      */
-    public static function isVATUSAStaff($cid = null, $isApi = false, $skipWebTeam = false)
+    public static function isVATUSAStaff($cid = null, $isApi = false)
     {
         if (!\Auth::check() && !$isApi) {
             return false;
@@ -206,15 +206,11 @@ class RoleHelper
             return true;
         }*/
 
-        if (!$skipWebTeam) {
-            if (Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "LIKE", "US%")->count() >= 1) {
-                return true;
-            }
-        } else {
-            if (Role::where('facility', 'ZHQ')->where("cid", $cid)->where("role", "LIKE", "US%")->where("role",
-                    "NOT LIKE", "USWT")->count() >= 1) {
-                return true;
-            }
+        if (Role::where('facility', 'ZHQ')
+                ->where("cid", $cid)
+                ->where("role", "LIKE", "US%")
+                ->where("role", "NOT LIKE", "USWT")->count() >= 1) {
+            return true;
         }
 
         return false;
@@ -227,6 +223,9 @@ class RoleHelper
      */
     public static function isWebTeam($cid = null)
     {
+        if (!\Auth::check()) {
+            return false;
+        }
         if ($cid == null || $cid == 0) {
             $cid = \Auth::user()->cid;
             $user = \Auth::user();
