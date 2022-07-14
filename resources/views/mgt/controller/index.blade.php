@@ -291,10 +291,7 @@
                         <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
                                 Log</a></li>
                     @endif
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::isVATUSAStaff()
-                        || \App\Classes\RoleHelper::isWebTeam()
-                        )
+                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
                         <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
                                                    data-toggle="tab">Roles</a></li>
                     @endif
@@ -356,8 +353,7 @@
                                         <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
                                         <li>Needs Basic ATC Exam:
-                                            @if (\App\Classes\RoleHelper::isVATUSAStaff()
-                                                || \App\Classes\RoleHelper::isWebTeam())
+                                            @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 <a href="/mgt/controller/{{$user->cid}}/togglebasic">
                                             @endif
                                                     @if ($user->flag_needbasic)
@@ -365,8 +361,7 @@
                                                     @else
                                                         No
                                                     @endif
-                                            @if (\App\Classes\RoleHelper::isVATUSAStaff()
-                                                || \App\Classes\RoleHelper::isWebTeam())
+                                            @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 </a>
                                             @endif
                                         </li>
@@ -828,12 +823,9 @@
                             </div>
                         </div>
                     @endif
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::isVATUSAStaff()
-                        || \App\Classes\RoleHelper::isWebTeam()
-                        )
+                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
                         <div class="tab-pane" role="tabpanel" id="roles">
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff($user->cid))
+                            @if(\App\Classes\RoleHelper::isVATUSAStaff($user->cid, false, true))
                                 <div class="alert alert-info"><i class="fas fa-info-circle"></i> This user has all roles
                                     as VATUSA Staff.
                                 </div>

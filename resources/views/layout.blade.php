@@ -246,8 +246,7 @@
                                     Ticket</a></li>
                             <li><a href="{{ secure_url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My
                                     Tickets</a></li>
-                            @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()
-                                || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isWebTeam())
+                            @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
                                 <li class="divider"></li>
                                 <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
                                                                 data-toggle="dropdown" role="button"

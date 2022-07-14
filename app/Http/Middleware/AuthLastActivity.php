@@ -23,8 +23,7 @@ class AuthLastActivity
             $user->lastactivity = Carbon::now();
             $user->save();
 
-            if (app()->environment("livedev") && !RoleHelper::isVATUSAStaff($user->cid)
-                && !RoleHelper::isWebTeam() && !in_array($user->cid,
+            if (app()->environment("livedev") && !RoleHelper::isVATUSAStaff($user->cid) && !in_array($user->cid,
                     explode(',', env("LIVEDEV_CIDS", "")))) {
                 \Auth::logout();
 
