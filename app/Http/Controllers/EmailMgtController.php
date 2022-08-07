@@ -12,20 +12,24 @@ use App\Classes\Helper;
 
 class EmailMgtController extends Controller
 {
-    public function getIndex() {
+    public function getIndex()
+    {
         return redirect('/mgt/mail/conf');
     }
 
-    public function getConfig() {
+    public function getConfig()
+    {
         return redirect("/mgt/mail/account");
     }
 
-    public function getAccount() {
+    public function getAccount()
+    {
         if (!Auth::check()) abort(401);
         return view('mgt.mail.email');
     }
 
-    public function postConfig(Request $request) {
+    public function postConfig(Request $request)
+    {
         if (!Auth::check()) abort(401);
 
         $role = Auth::user()->getPrimaryRole();
@@ -68,38 +72,42 @@ class EmailMgtController extends Controller
         }
     }
 
-    public function getType($user) {
+    public function getType($user)
+    {
         $data = cPanelHelper::getType("$user@vatusa.net");
         var_dump($data);
         return;
     }
 
-    public function getIndividual($cid) {
+    public function getIndividual($cid)
+    {
         return view('mgt.mail.broadcast', ['cid' => $cid]);
     }
 
-    public function getBroadcast($cid = null) {
+    public function getBroadcast($cid = null)
+    {
         if (!Auth::check() || !RoleHelper::isFacilityStaff()) abort(401);
         return view('mgt.mail.broadcast', ['cid' => $cid]);
     }
 
-    public function postBroadcast(Request $request) {
+    public function postBroadcast(Request $request)
+    {
         if (!Auth::check() || !RoleHelper::isFacilityStaff()) abort(401);
         $rcpts = $request->recipients;
         $subj = $request->subject;
         $msg = $request->email;
         $single = $request->single;
 
-        if((empty($rcpts) && empty($single)) || empty($subj) || empty($msg))
+        if ((empty($rcpts) && empty($single)) || empty($subj) || empty($msg))
             return back()->with('broadcastError', 'All fields are required.');
 
         // Send to single person.
         if (empty($rcpts) && !empty($single)) {
-            if(!EmailHelper::isOptedIn($single))
+            if (!EmailHelper::isOptedIn($single))
                 return redirect("/mgt/mail/$single")
                     ->with('broadcastError', 'Could not send email. User is not opted in to broadcast emails.');
             $email = Helper::emailFromCID($single);
-            EmailHelper::sendEmailFrom($email, Auth::user()->email, Auth::user()->fname . " " . Auth::user()->lname, $subj, 'emails.mass', array('msg' => nl2br(strip_tags($msg, '<b><i>')), 'init' => Auth::user()->fname." ".Auth::user()->lname." (".Auth::user()->cid.")"));
+            EmailHelper::sendEmailFrom($email, Auth::user()->email, Auth::user()->fname . " " . Auth::user()->lname, $subj, 'emails.mass', array('msg' => nl2br(strip_tags($msg, '<b><i>')), 'init' => Auth::user()->fname . " " . Auth::user()->lname . " (" . Auth::user()->cid . ")"));
             return redirect("/mgt/mail/$single")->with('broadcastSuccess', 'Email sent.');
         } else {
             // Handle Recipients
@@ -139,18 +147,18 @@ class EmailMgtController extends Controller
             } elseif ($rcpts == "DRCTR") {
                 $rcpts = "Facility ATM/DATM";
                 foreach (Facility::get() as $f) {
-                    if(EmailHelper::isOptedIn($f->atm)) $emails[] = $f->id . "-atm@vatusa.net";
-                    if(EmailHelper::isOptedIn($f->datm)) $emails[] = $f->id . "-datm@vatusa.net";
+                    if (EmailHelper::isOptedIn($f->atm)) $emails[] = $f->id . "-atm@vatusa.net";
+                    if (EmailHelper::isOptedIn($f->datm)) $emails[] = $f->id . "-datm@vatusa.net";
                 }
             } elseif ($rcpts == "WM") {
                 $rcpts = "Facility Webmasters";
                 foreach (Facility::get() as $f) {
-                    if(EmailHelper::isOptedIn($f->wm)) $emails[] = $f->id . "-wm@vatusa.net";
+                    if (EmailHelper::isOptedIn($f->wm)) $emails[] = $f->id . "-wm@vatusa.net";
                 }
             } elseif ($rcpts == "VATUSA") {
                 $rcpts = "VATUSA Staff";
                 foreach (Role::where('facility', 'ZHQ')->get() as $f) {
-                    if(EmailHelper::isOptedIn($f->cid)) $emails[] = Helper::emailFromCID($f->cid);
+                    if (EmailHelper::isOptedIn($f->cid)) $emails[] = Helper::emailFromCID($f->cid);
                 }
             } elseif ($rcpts == "INS") {
                 $rcpts = "Instructional staff";
@@ -162,7 +170,7 @@ class EmailMgtController extends Controller
             } elseif ($rcpts == "ACE") {
                 $rcpts = "ACE Team Members";
                 foreach (Role::where('facility', 'ZHQ')->where('role', 'ACE')->get() as $f) {
-                    if(EmailHelper::isOptedIn($f->cid)) $emails[] = Helper::emailFromCID($f->cid);
+                    if (EmailHelper::isOptedIn($f->cid)) $emails[] = Helper::emailFromCID($f->cid);
                 }
             } else {
                 foreach (User::where('facility', $rcpts)->where('flag_broadcastOptedIn', true)->get() as $u) {
@@ -172,34 +180,38 @@ class EmailMgtController extends Controller
             EmailHelper::sendEmailBCC(Auth::user()->email, Auth::user()->fname . " " . Auth::user()->lname, $emails, $subj, 'emails.mass', array('msg' => nl2br(strip_tags($msg, '<b><i>')), 'init' => Auth::user()->fname . " " . Auth::user()->lname . " (" . Auth::user()->cid . ")"));
         }
         $count = count($emails);
-        if(!$count)
+        if (!$count)
             return redirect("/mgt/mail/broadcast")->with('broadcastError', 'No emails were sent.');
-        return redirect("/mgt/mail/broadcast")->with('broadcastSuccess', 'Email sent to ' . count($emails) . ' member' . ($count == 1 ? '' : 's') );
+        return redirect("/mgt/mail/broadcast")->with('broadcastSuccess', 'Email sent to ' . count($emails) . ' member' . ($count == 1 ? '' : 's'));
     }
 
-    public function getWelcome() {
+    public function getWelcome()
+    {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
         $fac = Facility::find(Auth::user()->facility);
         return view('mgt.mail.welcome', ['welcome' => $fac->welcome_text]);
     }
 
-    public function postWelcome(Request $request) {
+    public function postWelcome(Request $request)
+    {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
         $fac = Facility::find(Auth::user()->facility);
         $fac->welcome_text = $request->input("welcome");
         $fac->save();
-        return redirect("/mgt/mail/welcome")->with("success","Welcome email set.");
+        return redirect("/mgt/mail/welcome")->with("success", "Welcome email set.");
     }
 
-    public function getTemplates() {
+    public function getTemplates()
+    {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
         return view('mgt.mail.templatelist');
     }
 
-    public function getTemplateAction($template, $action) {
+    public function getTemplateAction($template, $action)
+    {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
         $fac = Auth::user()->facility;
@@ -207,9 +219,11 @@ class EmailMgtController extends Controller
         if ($action == "delete") {
             if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
-            if (!in_array($template, ["examassigned","exampassed","examfailed"])) { return redirect("/mgt/mail/template")->with("error", "Invalid template"); }
+            if (!in_array($template, ["examassigned", "exampassed", "examfailed"])) {
+                return redirect("/mgt/mail/template")->with("error", "Invalid template");
+            }
 
-            if(view()->exists("emails.facility.$fac.$template")) {
+            if (view()->exists("emails.facility.$fac.$template")) {
                 unlink(base_path() . "/resources/views/emails/facility/$fac/$template.blade.php");
             }
 
@@ -258,7 +272,7 @@ class EmailMgtController extends Controller
             if (!file_exists(base_path() . "/resources/views/emails/facility/$fac"))
                 mkdir(base_path() . "/resources/views/emails/facility/$fac");
 
-            if(view()->exists("emails.facility.$fac.$template")) {
+            if (view()->exists("emails.facility.$fac.$template")) {
                 $data = file_get_contents(base_path() . "/resources/views/emails/facility/$fac/$template.blade.php");
             } else {
                 $data = file_get_contents(base_path() . "/resources/views/emails/$mastertemplate");
@@ -272,11 +286,11 @@ class EmailMgtController extends Controller
     {
         if (!RoleHelper::isFacilitySeniorStaff()) abort(401);
 
-        if (!in_array($template, ["examassigned","exampassed","examfailed"]))
+        if (!in_array($template, ["examassigned", "exampassed", "examfailed"]))
             return redirect("/mgt/mail/template")->with("error", "Invalid template");
 
         $data = $request->template;
-        $data = preg_replace(array('/<(\?|\%)\=?(php)?/', '/(\%|\?)>/'), array('',''), $data);
+        $data = preg_replace(array('/<(\?|\%)\=?(php)?/', '/(\%|\?)>/'), array('', ''), $data);
         $fac = Auth::user()->facility;
 
         if (!file_exists(base_path() . "/resources/views/emails/facility/$fac"))

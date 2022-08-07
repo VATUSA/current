@@ -43,14 +43,14 @@ class PolicyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category'  => 'required|exists:policy_categories,id',
-            'ident'     => 'required|regex:/^[\s\w.]*$/|max:10',
-            'title'     => 'required|unique:policies',
-            'slug'      => 'required|unique:policies|alpha_dash',
-            'perms'     => 'required',
-            'file'      => 'required|file|max:1000000',
+            'category' => 'required|exists:policy_categories,id',
+            'ident' => 'required|regex:/^[\s\w.]*$/|max:10',
+            'title' => 'required|unique:policies',
+            'slug' => 'required|unique:policies|alpha_dash',
+            'perms' => 'required',
+            'file' => 'required|file|max:1000000',
             'effective' => 'date_format:m/d/Y',
-            'desc'      => 'max:255'
+            'desc' => 'max:255'
         ]);
 
         $prevPolicy = Policy::where('category', $request->category)->orderByDesc('order')->first();
@@ -143,7 +143,7 @@ class PolicyController extends Controller
      * Update the policy.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Policy       $policy
+     * @param \App\Models\Policy $policy
      *
      * @return \Illuminate\Http\Response|string
      */
@@ -165,13 +165,13 @@ class PolicyController extends Controller
 
         $request->validate([
             'category_edit' => 'required|exists:policy_categories,id',
-            'ident'         => 'required|regex:/^[\s\w.]*$/|max:10',
-            'title'         => 'required',
+            'ident' => 'required|regex:/^[\s\w.]*$/|max:10',
+            'title' => 'required',
             //   'slug'        => 'required|unique:policies|alpha_dash',
-            'perms'         => 'required',
-            'file'          => 'max:1000000',
-            'effective'     => 'date_format:m/d/Y',
-            'desc'          => 'max:255'
+            'perms' => 'required',
+            'file' => 'max:1000000',
+            'effective' => 'date_format:m/d/Y',
+            'desc' => 'max:255'
         ]);
 
         $policy->ident = $request->ident;
@@ -225,16 +225,17 @@ class PolicyController extends Controller
     /**
      * Update the policy category.
      *
-     * @param \Illuminate\Http\Request   $request
+     * @param \Illuminate\Http\Request $request
      * @param \App\Models\PolicyCategory $category
      *
      * @return \Illuminate\Http\Response
      */
     public
     function updateCategory(
-        Request $request,
+        Request        $request,
         PolicyCategory $category
-    ) {
+    )
+    {
         if ($request->input('name')) {
             $category->name = $request->name;
         }
@@ -257,7 +258,8 @@ class PolicyController extends Controller
     public
     function destroy(
         Policy $policy
-    ) {
+    )
+    {
         if (Storage::disk('public')->delete('docs/' . $policy->slug . "." . $policy->extension)) {
             try {
                 $order = $policy->order;
@@ -288,7 +290,8 @@ class PolicyController extends Controller
     public
     function destroyCategory(
         PolicyCategory $category
-    ) {
+    )
+    {
         $order = $category->order;
         $category->delete();
 
@@ -304,8 +307,9 @@ class PolicyController extends Controller
     public
     function getPolicy(
         Request $request,
-        Policy $policy
-    ) {
+        Policy  $policy
+    )
+    {
         if (!$request->ajax()) {
             abort(400);
         }

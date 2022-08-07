@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
@@ -13,16 +14,18 @@ class CBTController
     extends Controller
 {
     /********* Viewer Stuff *********/
-    public function getIndex($fac = "ZAE") {
+    public function getIndex($fac = "ZAE")
+    {
         $blocks = TrainingBlock::where("facility", $fac)->where("visible", 1)->orderBy("order", "ASC")->get();
         $facility = Facility::find($fac);
 
         return View('cbt.index', ['blocks' => $blocks, 'facname' => $facility->name, 'fac' => $fac]);
     }
 
-    public function putIndex($chid) {
+    public function putIndex($chid)
+    {
         if (!Auth::check()) return;
-        $progress = TrainingProgress::where("cid",Auth::user()->cid)->where("chapterid", $chid)->first();
+        $progress = TrainingProgress::where("cid", Auth::user()->cid)->where("chapterid", $chid)->first();
         if ($progress == null) {
             $progress = new TrainingProgress();
             $progress->cid = Auth::user()->cid;
@@ -35,7 +38,8 @@ class CBTController
     }
 
     /******** Editor Stuff *********/
-    public function getEditor($fac = null) {
+    public function getEditor($fac = null)
+    {
         $this->accessCheck();
 
         if (($fac == null && \App\Classes\RoleHelper::isVATUSAStaff()) ||
@@ -49,19 +53,20 @@ class CBTController
 
         $this->accessCheck($fac);
 
-        $blocks = TrainingBlock::where('facility',$fac)->orderBy("order")->get();
-        $facmodel = Facility::where('id',$fac)->first();
+        $blocks = TrainingBlock::where('facility', $fac)->orderBy("order")->get();
+        $facmodel = Facility::where('id', $fac)->first();
         $facname = $facmodel->name;
 
         return View('cbt.editorhome', ['blocks' => $blocks, 'fac' => $fac, 'facname' => $facname]);
     }
 
-    public function getEditorBlock($id) {
+    public function getEditorBlock($id)
+    {
         $block = TrainingBlock::find($id);
         $this->accessCheck($block->facility);
 
         $chapters = TrainingChapter::where("blockid", $id)->orderBy("order")->get();
-        $facmodel = Facility::where('id',$block->facility)->first();
+        $facmodel = Facility::where('id', $block->facility)->first();
 
         $facname = $facmodel->name;
         $fac = $facmodel->id;
@@ -75,7 +80,7 @@ class CBTController
     {
         $this->accessCheck();
 
-        $block = TrainingBlock::where('id',$id)->first();
+        $block = TrainingBlock::where('id', $id)->first();
         if ($block->facility == "ZAE" && !RoleHelper::isAcademyStaff()) {
             abort(401);
         }
@@ -83,8 +88,11 @@ class CBTController
             abort(401);
         }
 
-        if ($block->visible == 0) { $block->visible = 1; }
-        else { $block->visible = 0; }
+        if ($block->visible == 0) {
+            $block->visible = 1;
+        } else {
+            $block->visible = 0;
+        }
         $block->save();
 
         echo $block->visible;
@@ -94,7 +102,7 @@ class CBTController
     {
         $this->accessCheck();
 
-        $block = TrainingBlock::where('id',$id)->first();
+        $block = TrainingBlock::where('id', $id)->first();
         if ($block->facility == "ZAE" && !RoleHelper::isAcademyStaff()) {
             abort(401);
         }
@@ -102,7 +110,7 @@ class CBTController
             abort(401);
         }
 
-        if (in_array($_POST['access'], ['Senior Staff','Staff','I1','C1','S1','ALL'])) {
+        if (in_array($_POST['access'], ['Senior Staff', 'Staff', 'I1', 'C1', 'S1', 'ALL'])) {
             $block->level = $_POST['access'];
         } else {
             abort(400);
@@ -114,7 +122,7 @@ class CBTController
     {
         $this->accessCheck();
 
-        $block = TrainingBlock::where('id',$id)->first();
+        $block = TrainingBlock::where('id', $id)->first();
         if ($block->facility == "ZAE" && !RoleHelper::isAcademyStaff()) {
             abort(401);
         }
@@ -128,7 +136,7 @@ class CBTController
 
         // Renumber the order list.
         $x = 1;
-        $blocks = TrainingBlock::where('facility',$fac)->get();
+        $blocks = TrainingBlock::where('facility', $fac)->get();
         foreach ($blocks as $block) {
             $block->order = $x;
             $block->save();
@@ -140,12 +148,15 @@ class CBTController
     {
         $this->accessCheck($fac);
 
-        $facility = Facility::where('id',$fac)->first();
+        $facility = Facility::where('id', $fac)->first();
         if ($facility->id == "ZAE" || $facility->active == 1) {
             if (RoleHelper::isVATUSAStaff() || RoleHelper::isFacilitySeniorStaff(Auth::user()->id, $fac) || ($facility->id == "ZAE" && RoleHelper::isAcademyStaff())) {
-                $highBlock = TrainingBlock::where('facility', $fac)->orderBy('order','DESC')->first();
-                if ($highBlock) { $order = $highBlock->order + 1; }
-                else { $order = 1; }
+                $highBlock = TrainingBlock::where('facility', $fac)->orderBy('order', 'DESC')->first();
+                if ($highBlock) {
+                    $order = $highBlock->order + 1;
+                } else {
+                    $order = 1;
+                }
                 $block = new TrainingBlock();
                 $block->facility = $facility->id;
                 $block->name = "New Training Block";
@@ -176,7 +187,7 @@ class CBTController
 
         $x = 1;
 
-        foreach($_POST['cbt'] as $block) {
+        foreach ($_POST['cbt'] as $block) {
             $blockModel = TrainingBlock::find($block);
             $blockModel->order = $x;
             $blockModel->save();
@@ -186,7 +197,8 @@ class CBTController
         echo 1;
     }
 
-    public function ajaxChapterNew($blockid) {
+    public function ajaxChapterNew($blockid)
+    {
         $block = TrainingBlock::find($blockid);
         $this->accessCheck($block->facility);
 
@@ -194,12 +206,17 @@ class CBTController
         // we have to pull data differently.
         $vars = array();
         parse_str(file_get_contents("php://input"), $vars);
-        if (!isset($vars['name'])) { $vars['name'] = "New Training Chapter"; }
+        if (!isset($vars['name'])) {
+            $vars['name'] = "New Training Chapter";
+        }
 
         // Get Highest Order #
         $highCh = TrainingChapter::where('blockid', $blockid)->orderBy('order', 'DESC')->first();
-        if ($highCh) { $order = $highCh->order + 1; }
-        else { $order = 1; }
+        if ($highCh) {
+            $order = $highCh->order + 1;
+        } else {
+            $order = 1;
+        }
 
         $chapter = new TrainingChapter();
         $chapter->blockid = $blockid;
@@ -212,14 +229,18 @@ class CBTController
         echo $chapter->id;
     }
 
-    public function ajaxChapterModify($id) {
+    public function ajaxChapterModify($id)
+    {
         $chapter = TrainingChapter::find($id);
         $block = TrainingBlock::find($chapter->blockid);
         $this->accessCheck($block->facility);
 
         if (isset($_POST['toggle'])) {
-            if ($chapter->visible == 0) { $chapter->visible = 1; }
-            else { $chapter->visible = 0; }
+            if ($chapter->visible == 0) {
+                $chapter->visible = 1;
+            } else {
+                $chapter->visible = 0;
+            }
             $chapter->save();
             echo $chapter->visible;
             return;
@@ -262,7 +283,8 @@ class CBTController
         }
     }
 
-    public function ajaxChapterDelete($id) {
+    public function ajaxChapterDelete($id)
+    {
         $chapter = TrainingChapter::find($id);
         $block = TrainingBlock::find($chapter->blockid);
         $this->accessCheck($block->facility);

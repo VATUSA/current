@@ -84,14 +84,14 @@ class ExamController extends Controller
         foreach ($questions as $q) {
 
             $data = [
-                'id'       => $q->id,
-                'exam_id'  => $q->exam_id,
+                'id' => $q->id,
+                'exam_id' => $q->exam_id,
                 'question' => '"' . preg_replace("/[\n\r]/", "", str_replace('"', '""', $q->question)) . '"',
-                'type'     => (($q->type) ? "TF" : "MC"),
-                'answer'   => '"' . $q->answer . '"',
-                'alt1'     => '"' . $q->alt1 . '"',
-                'alt2'     => '"' . $q->alt2 . '"',
-                'alt3'     => '"' . $q->alt3 . '"',
+                'type' => (($q->type) ? "TF" : "MC"),
+                'answer' => '"' . $q->answer . '"',
+                'alt1' => '"' . $q->alt1 . '"',
+                'alt2' => '"' . $q->alt2 . '"',
+                'alt3' => '"' . $q->alt3 . '"',
             ];
             $csv .= implode(",", $data) . ",\n";
         }
@@ -136,9 +136,9 @@ class ExamController extends Controller
             $questions = $exam->questions()->orderBy(\DB::raw('RAND()'))->get();
         }
         $json = [
-            'id'           => $exam->id,
-            'name'         => $exam->name,
-            'facility'     => $exam->facility_id,
+            'id' => $exam->id,
+            'name' => $exam->name,
+            'facility' => $exam->facility_id,
             'facilityName' => $exam->facility()->first()->name
         ];
         $x = 0;
@@ -147,10 +147,10 @@ class ExamController extends Controller
         } else {
             foreach ($questions as $question) {
                 $questiontemp = [
-                    'id'           => $question->id,
-                    'question'     => preg_replace("/\r?\n/", '<br>', $question->question),
+                    'id' => $question->id,
+                    'question' => preg_replace("/\r?\n/", '<br>', $question->question),
                     'illustration' => $question->illustration,
-                    'type'         => $question->type
+                    'type' => $question->type
                 ];
                 if ($question->type == 0) {
                     $questiontemp['one'] = preg_replace("/\r?\n/", '<br>', $question->answer);
@@ -265,13 +265,13 @@ class ExamController extends Controller
         $request->session()->forget('examid');
 
         $data = [
-            'exam_name'       => "(" . $exam->facility_id . ") " . $exam->name,
+            'exam_name' => "(" . $exam->facility_id . ") " . $exam->name,
             'instructor_name' => Helper::nameFromCID($exam->instructor_id),
-            'correct'         => $correct,
-            'possible'        => $possible,
-            'score'           => $score,
-            'student_name'    => Helper::nameFromCID(Auth::user()->cid),
-            'reassign'        => $exam->retake_period
+            'correct' => $correct,
+            'possible' => $possible,
+            'score' => $score,
+            'student_name' => Helper::nameFromCID(Auth::user()->cid),
+            'reassign' => $exam->retake_period
         ];
 
         $log = new Actions();
@@ -340,7 +340,7 @@ class ExamController extends Controller
         $examArr = array();
         foreach ($exams as $exam) {
             $examArr[$exam->facility->name][] = array(
-                'id'   => $exam->id,
+                'id' => $exam->id,
                 'name' => $exam->name
             );
         }
@@ -388,7 +388,8 @@ class ExamController extends Controller
     public
     function getAssignments(
         $fac = null
-    ) {
+    )
+    {
         $this->canAssignExam();
 
         if ($fac == null && !RoleHelper::isVATUSAStaff() && !RoleHelper::isAcademyStaff()) {
@@ -409,7 +410,8 @@ class ExamController extends Controller
     public
     function deleteAssignment(
         $id
-    ) {
+    )
+    {
         $assignment = ExamAssignment::find($id);
         if ($assignment == null) {
             abort(500);
@@ -430,7 +432,8 @@ class ExamController extends Controller
     public
     function deleteReassignment(
         $id
-    ) {
+    )
+    {
         $assignment = ExamReassignment::find($id);
         if ($assignment == null) {
             abort(500);
@@ -485,7 +488,8 @@ class ExamController extends Controller
     function getEditQuestion(
         $examid,
         $questionid
-    ) {
+    )
+    {
         $exam = Exam::find($examid);
         $this->accessCheckExam(null, $exam->facility_id);
         if ($questionid > 0) {
@@ -510,7 +514,8 @@ class ExamController extends Controller
     function postEditQuestion(
         $examid,
         $questionid
-    ) {
+    )
+    {
         if ($questionid == 0) {
             abort(401);
         }
@@ -544,7 +549,8 @@ class ExamController extends Controller
     public
     function editExam(
         $id = null
-    ) {
+    )
+    {
         if ($id == null && isset($_POST['exam'])) {
             $id = $_POST['exam'];
         } elseif ($id) {
@@ -573,7 +579,8 @@ class ExamController extends Controller
     public
     function postEditExam(
         $id
-    ) {
+    )
+    {
         $exam = Exam::find($id);
         $this->accessCheckExam(null, $exam->facility_id);
 
@@ -621,7 +628,8 @@ class ExamController extends Controller
     function deleteQuestion(
         $examid,
         $qid
-    ) {
+    )
+    {
         $exam = Exam::find($examid);
         if ($exam == null) {
             abort(401);
@@ -643,7 +651,8 @@ class ExamController extends Controller
     function canAssignExam(
         $cid = null,
         Exam $exam = null
-    ) {
+    )
+    {
         if (!Auth::check()) {
             abort(401);
         }
@@ -676,7 +685,8 @@ class ExamController extends Controller
     function accessCheckExam(
         $cid = null,
         $fac = null
-    ) {
+    )
+    {
         if (!Auth::check()) {
             abort(401);
         }

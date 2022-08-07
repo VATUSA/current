@@ -22,7 +22,8 @@ class TrainingController extends Controller
     public
     function ajaxCanModifyRecord(
         $record
-    ) {
+    )
+    {
         $record = TrainingRecord::find($record);
         if (!$record->count()) {
             return response()->json(false);
@@ -38,9 +39,10 @@ class TrainingController extends Controller
     public
     function getOTSEval(
         Request $request,
-        int $cid,
-        $form = null
-    ) {
+        int     $cid,
+                $form = null
+    )
+    {
         $student = User::find($cid);
         if (!$student) {
             abort(404);
@@ -67,8 +69,9 @@ class TrainingController extends Controller
     public
     function viewOTSEval(
         Request $request,
-        int $eval
-    ) {
+        int     $eval
+    )
+    {
         $eval = OTSEval::withAll()->find($eval);
         if (!$eval) {
             abort(404, "The OTS evaluation form is invalid.");
@@ -100,7 +103,8 @@ class TrainingController extends Controller
     public
     function viewTrainingStatistics(
         Request $request
-    ) {
+    )
+    {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -194,15 +198,15 @@ class TrainingController extends Controller
             foreach ($users as $user) {
                 $promo = Promotions::where([
                     'cid' => $user->cid,
-                    'to'  => $user->rating
+                    'to' => $user->rating
                 ])->orderBy('created_at', 'desc')
                     ->first();
                 $promoDate = $promo ? $promo->created_at->format('m/d/Y') : 'N/A';
                 $insWithSparklines['ins'][] = [
-                    'cid'       => $user->cid,
+                    'cid' => $user->cid,
                     'sparkline' => $user->getTrainingActivitySparkline(),
-                    'name'      => $user->fullname(true),
-                    'since'     => $promoDate
+                    'name' => $user->fullname(true),
+                    'since' => $promoDate
                 ];
             }
         }
@@ -214,10 +218,10 @@ class TrainingController extends Controller
         if ($users) {
             foreach ($users as $user) {
                 $insWithSparklines['ins'][] = [
-                    'cid'       => $user->cid,
+                    'cid' => $user->cid,
                     'sparkline' => $user->user->getTrainingActivitySparkline(),
-                    'name'      => $user->user->fullname(true),
-                    'since'     => $user->created_at->format('m/d/Y')
+                    'name' => $user->user->fullname(true),
+                    'since' => $user->created_at->format('m/d/Y')
                 ];
             }
         }
@@ -229,10 +233,10 @@ class TrainingController extends Controller
         if ($users) {
             foreach ($users as $user) {
                 $insWithSparklines['mtr'][] = [
-                    'cid'       => $user->cid,
+                    'cid' => $user->cid,
                     'sparkline' => $user->user->getTrainingActivitySparkline(),
-                    'name'      => $user->user->fullname(true),
-                    'since'     => $user->created_at->format('m/d/Y')
+                    'name' => $user->user->fullname(true),
+                    'since' => $user->created_at->format('m/d/Y')
                 ];
             }
         }
@@ -288,8 +292,8 @@ class TrainingController extends Controller
         foreach ($datasets as $k => $v) {
             $colors[$k] = Factory::create()->hexColor;
             $hoursPerMonthData['datasets'][] = [
-                'label'           => $v['label'],
-                'data'            => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 'backgroundColor' => $colors[$k]
             ];
         }
@@ -417,8 +421,8 @@ class TrainingController extends Controller
         foreach ($datasets as $k => $v) {
             $colors[$k] = Factory::create()->hexColor;
             $evalsPerMonthData['datasets'][] = [
-                'label'           => $v['label'],
-                'data'            => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 'backgroundColor' => $colors[$k]
             ];
         }
@@ -511,8 +515,8 @@ class TrainingController extends Controller
             foreach ($datasets as $k => $v) {
                 $colors[$k] = Factory::create()->hexColor;
                 $evalsPerMonthDataIns['datasets'][] = [
-                    'label'           => $v['label'],
-                    'data'            => $v['data'],
+                    'label' => $v['label'],
+                    'data' => $v['data'],
                     'backgroundColor' => $colors[$k]
                 ];
             }
@@ -591,8 +595,8 @@ class TrainingController extends Controller
         foreach ($datasets as $k => $v) {
             $colors[$k] = Factory::create()->hexColor;
             $recordsPerMonthData['datasets'][] = [
-                'label'       => $v['label'],
-                'data'        => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 'borderColor' => $colors[$k]
             ];
         }
@@ -640,7 +644,8 @@ class TrainingController extends Controller
     public
     function viewEvals(
         Request $request
-    ) {
+    )
+    {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -677,8 +682,9 @@ class TrainingController extends Controller
     public
     function viewOTSEvalStatistics(
         Request $request,
-        int $form
-    ) {
+        int     $form
+    )
+    {
         $form = OTSEvalForm::withAll()->find($form);
         if (!$form) {
             abort(404, "The OTS evaluation form is invalid.");
@@ -738,8 +744,8 @@ class TrainingController extends Controller
         }
         foreach ($datasets as $k => $v) {
             $numPassFailsData['datasets'][] = [
-                'label'       => $v['label'],
-                'data'        => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 'borderColor' => $colors[$k]
             ];
         }
@@ -781,8 +787,8 @@ class TrainingController extends Controller
         }
         foreach ($datasets as $k => $v) {
             $evalsPerMonthDataIns['datasets'][] = [
-                'label'                                                       => $v['label'],
-                'data'                                                        => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 $facility && !$instructor ? 'borderColor' : 'backgroundColor' => Factory::create()->hexColor
             ];
         }
@@ -802,8 +808,8 @@ class TrainingController extends Controller
                 for ($k = 30; $k <= 90; $k += 30) {
                     $evals = OTSEval::where([
                         'instructor_id' => $allIns[$i]['cid'],
-                        'form_id'       => $form->id,
-                        'facility_id'   => $facility->id,
+                        'form_id' => $form->id,
+                        'facility_id' => $facility->id,
                         ['exam_date', '>=', Carbon::now()->subDays($k)]
                     ])->get();
                     //if($allIns[$i]['cid'] == 1275302) dd(str_replace_array('?', $evals->getBindings(), $evals->toSql()));

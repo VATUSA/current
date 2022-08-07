@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\ExamResults;
@@ -20,8 +21,9 @@ use App\Models\Exam;
 class APIController
     extends Controller
 {
-    public function getConnTest(Request $request, $apikey) {
-        $data =[];
+    public function getConnTest(Request $request, $apikey)
+    {
+        $data = [];
         $data['status'] = 'OK';
         $data['ip'] = $request->ip();
         if ($request->has('test')) {
@@ -161,11 +163,11 @@ class APIController
         }
 
         if (!$request->has('test')) {
-          $progress = new TrainingProgress();
-          $progress->cid = $cid;
-          $progress->chapterid = $chapterid;
-          $progress->date = \DB::raw('NOW()');
-          $progress->save();
+            $progress = new TrainingProgress();
+            $progress->cid = $cid;
+            $progress->chapterid = $chapterid;
+            $progress->date = \DB::raw('NOW()');
+            $progress->save();
         }
         $data['status'] = "success";
         echo json_encode($data);
@@ -337,7 +339,7 @@ class APIController
         } else {
             if (RoleHelper::isFacilitySeniorStaff($vars['by'], $fac, true)) {
                 if (!$request->has('test')) {
-                  $user->removeFromFacility($vars['by'], $vars['msg']);
+                    $user->removeFromFacility($vars['by'], $vars['msg']);
                 }
                 $return['status'] = "success";
                 $return['msg'] = "User removed from facility.";
@@ -371,7 +373,8 @@ class APIController
         echo json_encode($return);
     }
 
-    public function postSolo(Request $request, $apikey, $cid, $position) {
+    public function postSolo(Request $request, $apikey, $cid, $position)
+    {
         if (!$cid || !$position) {
             $return['status'] = "error";
             $return['msg'] = "CID field required";
@@ -382,11 +385,11 @@ class APIController
                 $return['msg'] = "Malformed field data or missing field.";
             } else {
                 if (!$request->has('test')) {
-                  $solo = new SoloCert();
-                  $solo->cid = $cid;
-                  $solo->position = $position;
-                  $solo->expires = $exp;
-                  $solo->save();
+                    $solo = new SoloCert();
+                    $solo->cid = $cid;
+                    $solo->position = $position;
+                    $solo->expires = $exp;
+                    $solo->save();
                 }
                 $return['status'] = "success";
                 $return['msg'] = "Success";
@@ -396,14 +399,15 @@ class APIController
         return json_encode($return);
     }
 
-    public function deleteSolo(Request $request, $apikey, $cid, $position) {
+    public function deleteSolo(Request $request, $apikey, $cid, $position)
+    {
         if (!$cid || !$position) {
             $return['status'] = "error";
             $return['msg'] = "Missing required field.";
         } else {
             if (!$request->has('test')) {
-              $solo = SoloCert::where('cid', $cid)->where("position", $position)->first();
-              $solo->delete();
+                $solo = SoloCert::where('cid', $cid)->where("position", $position)->first();
+                $solo->delete();
             }
             $return['status'] = "success";
             $return['msg'] = "Success";
@@ -466,19 +470,19 @@ class APIController
                 } else {
                     if ($_POST['action'] == "reject") {
                         if (isset($_POST['by']) && isset($_POST['reason'])) {
-                          if (!$request->has('test')) {
-                            $transfer->reject($by, $_POST['reason']);
-                          }
-                          $return['status'] = "success";
+                            if (!$request->has('test')) {
+                                $transfer->reject($by, $_POST['reason']);
+                            }
+                            $return['status'] = "success";
                         } else {
-                          $return['status'] = "error";
-                          $return['msg'] = "Arguments by and reason are required.";
+                            $return['status'] = "error";
+                            $return['msg'] = "Arguments by and reason are required.";
                         }
                     } elseif ($_POST['action'] == "accept") {
-                      if (!$request->has('test')) {
-                        $transfer->accept($by);
-                      }
-                      $return['status'] = "success";
+                        if (!$request->has('test')) {
+                            $transfer->accept($by);
+                        }
+                        $return['status'] = "success";
                     } else {
                         $return['status'] = "error";
                         $return['msg'] = "Unknown action attempt.";
@@ -666,7 +670,7 @@ class APIController
             $return['cbts'] = [];
 
             //SELECT *,(SELECT date FROM training_progress WHERE training_progress.chapterid=training_chapters.id AND training_progress.cid=876594) FROM `training_chapters` ORDER BY blockid
-            foreach (TrainingProgress::where('cid',$cid) as $user) {
+            foreach (TrainingProgress::where('cid', $cid) as $user) {
                 $return['users'][] = [
                     'cid' => $user->cid,
                     'fname' => $user->fname,

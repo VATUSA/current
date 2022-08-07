@@ -51,7 +51,7 @@ class FacMgtController extends Controller
         }
 
         $facility = Facility::find($fac);
-        
+
         $promotionEligible = Cache::get("promotionEligible-$fac") ?? "N/A";
 
         return view('mgt.facility.index',
@@ -460,13 +460,13 @@ class FacMgtController extends Controller
         $id = $facility->id;
 
         return View('mgt.facility.partial_stafftable', [
-            'atm'  => RoleHelper::getNameFromRole('ATM', $id, 1),
+            'atm' => RoleHelper::getNameFromRole('ATM', $id, 1),
             'datm' => RoleHelper::getNameFromRole('DATM', $id, 1),
-            'ta'   => RoleHelper::getNameFromRole('TA', $id, 1),
-            'ec'   => RoleHelper::getNameFromRole('EC', $id, 1),
-            'fe'   => RoleHelper::getNameFromRole('FE', $id, 1),
-            'wm'   => RoleHelper::getNameFromRole('WM', $id, 1),
-            'fac'  => $facility->id
+            'ta' => RoleHelper::getNameFromRole('TA', $id, 1),
+            'ec' => RoleHelper::getNameFromRole('EC', $id, 1),
+            'fe' => RoleHelper::getNameFromRole('FE', $id, 1),
+            'wm' => RoleHelper::getNameFromRole('WM', $id, 1),
+            'fac' => $facility->id
         ]);
     }
 }

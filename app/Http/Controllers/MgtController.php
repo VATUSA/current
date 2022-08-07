@@ -71,8 +71,8 @@ class MgtController extends Controller
                 $user
             ) {
                 return Auth::user()->facility === $record->facility_id || Auth::user()->facility === $user->facility
-                        || $user->visits()->where('facility', Auth::user()->facility)->exists()
-                        || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff();
+                    || $user->visits()->where('facility', Auth::user()->facility)->exists()
+                    || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff();
             });
 
             if (!$trainingfac) {
@@ -99,9 +99,9 @@ class MgtController extends Controller
                     [$user->facility => $user->facilityObj->name]);
             }
             $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility
-                                || $user->visits()->where('facility', Auth::user()->facility)->exists()
-                                || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
-                            $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
+            || $user->visits()->where('facility', Auth::user()->facility)->exists()
+            || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
+                $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
                     $user->facility) && $user->cid !== Auth::user()->cid;
             if (!$canAddTR) {
@@ -156,21 +156,21 @@ class MgtController extends Controller
             $c1AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.C1.enrolId'));
 
             $examAttempts = [
-                'Basic ATC/S1 Exam'                   => array_merge([
-                    'examInfo'   => config('exams.BASIC'),
+                'Basic ATC/S1 Exam' => array_merge([
+                    'examInfo' => config('exams.BASIC'),
                     'assignDate' => $basicAssignmentDate ? Carbon::createFromTimestampUTC($basicAssignmentDate)->format('Y-m-d H:i') : false
                 ], ['attempts' => $moodle->getQuizAttempts(config('exams.BASIC.id'), null, $uid)]),
-                'S2 Rating (TWR) Controller Exam'     => array_merge([
-                    'examInfo'   => config('exams.S2'),
+                'S2 Rating (TWR) Controller Exam' => array_merge([
+                    'examInfo' => config('exams.S2'),
                     'assignDate' => $s2AssignmentDate ? Carbon::createFromTimestampUTC($s2AssignmentDate)->format('Y-m-d H:i') : false
                 ], ['attempts' => $moodle->getQuizAttempts(config('exams.S2.id'), null, $uid)]),
                 'S3 Rating (DEP/APP) Controller Exam' => array_merge([
-                    'examInfo'   => config('exams.S3'),
+                    'examInfo' => config('exams.S3'),
                     'assignDate' => $s3AssignmentDate ? Carbon::createFromTimestampUTC($s3AssignmentDate)->format('Y-m-d H:i') : false
                 ],
                     ['attempts' => $moodle->getQuizAttempts(config('exams.S3.id'), null, $uid)]),
-                'C1 Rating (CTR) Controller Exam'     => array_merge([
-                    'examInfo'   => config('exams.C1'),
+                'C1 Rating (CTR) Controller Exam' => array_merge([
+                    'examInfo' => config('exams.C1'),
                     'assignDate' => $c1AssignmentDate ? Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : false
                 ],
                     ['attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)]),
@@ -191,7 +191,8 @@ class MgtController extends Controller
     public
     function getControllerMentor(
         $cid
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff()) {
             return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
         }
@@ -236,8 +237,9 @@ class MgtController extends Controller
     public
     function getControllerTransfers(
         Request $request,
-        $cid
-    ) {
+                $cid
+    )
+    {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -250,10 +252,10 @@ class MgtController extends Controller
         $data = [];
         foreach ($transfers as $transfer) {
             $temp = [
-                'id'   => $transfer->id,
+                'id' => $transfer->id,
                 'date' => substr($transfer->updated_at, 0, 10),
                 'from' => $transfer->from,
-                'to'   => $transfer->to
+                'to' => $transfer->to
             ];
             $data[] = $temp;
         }
@@ -262,8 +264,9 @@ class MgtController extends Controller
     public
     function postControllerRating(
         Request $request,
-        $cid
-    ) {
+                $cid
+    )
+    {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -324,8 +327,9 @@ class MgtController extends Controller
     public
     function getControllerTransferWaiver(
         Request $request,
-        $cid
-    ) {
+                $cid
+    )
+    {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -360,7 +364,8 @@ class MgtController extends Controller
     public
     function getControllerToggleBasic(
         $cid
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam()) {
             abort(401);
         }
@@ -391,8 +396,9 @@ class MgtController extends Controller
     public
     function deleteAce(
         Request $request,
-        $cid
-    ) {
+                $cid
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -409,7 +415,8 @@ class MgtController extends Controller
     public
     function putAce(
         Request $request
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -453,8 +460,9 @@ class MgtController extends Controller
     public
     function deleteStaff(
         Request $request,
-        $role
-    ) {
+                $role
+    )
+    {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -500,8 +508,9 @@ class MgtController extends Controller
     public
     function putStaff(
         Request $request,
-        $role
-    ) {
+                $role
+    )
+    {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -565,12 +574,12 @@ class MgtController extends Controller
                 "Removal from {$u->facilityObj->name}",
                 "emails.user.removed",
                 [
-                    'name'        => $u->fname . " " . $u->lname,
-                    'facility'    => $u->facilityObj->name,
-                    'by'          => "Automated",
-                    'msg'         => "Auto Transfer to " . $tr->to . ": set as staff.",
-                    'facid'       => $u->facility,
-                    'region'      => $u->facilityObj->region,
+                    'name' => $u->fname . " " . $u->lname,
+                    'facility' => $u->facilityObj->name,
+                    'by' => "Automated",
+                    'msg' => "Auto Transfer to " . $tr->to . ": set as staff.",
+                    'facid' => $u->facility,
+                    'region' => $u->facilityObj->region,
                     'obsInactive' => 0
                 ]
             );
@@ -583,9 +592,10 @@ class MgtController extends Controller
     public
     function addLog(
         Request $request
-    ) {
+    )
+    {
         $this->validate($request, [
-            'to'  => 'required',
+            'to' => 'required',
             'log' => 'required|min:1',
         ]);
 
@@ -612,7 +622,8 @@ class MgtController extends Controller
     public
     function getManualTransfer(
         Request $request
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -623,7 +634,8 @@ class MgtController extends Controller
     public
     function postManualTransfer(
         Request $request
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -665,11 +677,11 @@ class MgtController extends Controller
             $tr->from . "-datm@vatusa.net",
             "vatusa" . $fac->region . "@vatusa.net"
         ], "Transfer Pending", "emails.transfers.internalpending", [
-            'fname'    => $user->fname,
-            'lname'    => $user->lname,
-            'cid'      => $tr->cid,
+            'fname' => $user->fname,
+            'lname' => $user->lname,
+            'cid' => $tr->cid,
             'facility' => $fac->id,
-            'reason'   => $_POST['reason']
+            'reason' => $_POST['reason']
         ]);
 
         return redirect("/mgt/transfer")->with("success", "Transfer for $cid - " . $user->fullname() . " submitted.");
@@ -830,7 +842,8 @@ class MgtController extends Controller
     public
     function getChecklistItems(
         $id
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -906,7 +919,8 @@ class MgtController extends Controller
     public
     function postChecklist(
         $id
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -926,7 +940,8 @@ class MgtController extends Controller
     public
     function deleteChecklist(
         $clid
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -951,7 +966,8 @@ class MgtController extends Controller
     public
     function putChecklistItem(
         $id
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -978,7 +994,8 @@ class MgtController extends Controller
     function postChecklistItem(
         $clid,
         $id
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -999,7 +1016,8 @@ class MgtController extends Controller
     function deleteChecklistItem(
         $clid,
         $id
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -1027,7 +1045,8 @@ class MgtController extends Controller
     public
     function deleteActionLog(
         $log
-    ) {
+    )
+    {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -1047,7 +1066,8 @@ class MgtController extends Controller
     public
     function toggleStaffPrevent(
         Request $request
-    ) {
+    )
+    {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1065,7 +1085,8 @@ class MgtController extends Controller
     public
     function toggleInsRole(
         Request $request
-    ) {
+    )
+    {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1102,7 +1123,8 @@ class MgtController extends Controller
     public
     function toggleSMTRole(
         Request $request
-    ) {
+    )
+    {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1138,7 +1160,8 @@ class MgtController extends Controller
     public
     function toggleTTRole(
         Request $request
-    ) {
+    )
+    {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1174,7 +1197,8 @@ class MgtController extends Controller
     public
     function ajaxCanModifyRecord(
         $record
-    ) {
+    )
+    {
         $record = TrainingRecord::find($record);
         if (!$record->count()) {
             return response()->json(false);
@@ -1190,9 +1214,10 @@ class MgtController extends Controller
     public
     function getOTSEval(
         Request $request,
-        int $cid,
-        $form = null
-    ) {
+        int     $cid,
+                $form = null
+    )
+    {
         $student = User::find($cid);
         if (!$student) {
             abort(404);
@@ -1224,8 +1249,9 @@ class MgtController extends Controller
     public
     function viewOTSEval(
         Request $request,
-        int $eval
-    ) {
+        int     $eval
+    )
+    {
         $eval = OTSEval::withAll()->find($eval);
         if (!$eval) {
             abort(404, "The OTS evaluation form is invalid.");
@@ -1257,7 +1283,8 @@ class MgtController extends Controller
     public
     function viewTrainingStatistics(
         Request $request
-    ) {
+    )
+    {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -1351,15 +1378,15 @@ class MgtController extends Controller
             foreach ($users as $user) {
                 $promo = Promotions::where([
                     'cid' => $user->cid,
-                    'to'  => $user->rating
+                    'to' => $user->rating
                 ])->orderBy('created_at', 'desc')
                     ->first();
                 $promoDate = $promo ? $promo->created_at->format('m/d/Y') : 'N/A';
                 $insWithSparklines['ins'][] = [
-                    'cid'       => $user->cid,
+                    'cid' => $user->cid,
                     'sparkline' => $user->getTrainingActivitySparkline(),
-                    'name'      => $user->fullname(true),
-                    'since'     => $promoDate
+                    'name' => $user->fullname(true),
+                    'since' => $promoDate
                 ];
             }
         }
@@ -1371,10 +1398,10 @@ class MgtController extends Controller
         if ($users) {
             foreach ($users as $user) {
                 $insWithSparklines['ins'][] = [
-                    'cid'       => $user->cid,
+                    'cid' => $user->cid,
                     'sparkline' => $user->user->getTrainingActivitySparkline(),
-                    'name'      => $user->user->fullname(true),
-                    'since'     => $user->created_at->format('m/d/Y')
+                    'name' => $user->user->fullname(true),
+                    'since' => $user->created_at->format('m/d/Y')
                 ];
             }
         }
@@ -1386,10 +1413,10 @@ class MgtController extends Controller
         if ($users) {
             foreach ($users as $user) {
                 $insWithSparklines['mtr'][] = [
-                    'cid'       => $user->cid,
+                    'cid' => $user->cid,
                     'sparkline' => $user->user->getTrainingActivitySparkline(),
-                    'name'      => $user->user->fullname(true),
-                    'since'     => $user->created_at->format('m/d/Y')
+                    'name' => $user->user->fullname(true),
+                    'since' => $user->created_at->format('m/d/Y')
                 ];
             }
         }
@@ -1440,8 +1467,8 @@ class MgtController extends Controller
         foreach ($datasets as $k => $v) {
             $colors[$k] = Factory::create()->hexColor;
             $hoursPerMonthData['datasets'][] = [
-                'label'           => $v['label'],
-                'data'            => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 'backgroundColor' => $colors[$k]
             ];
         }
@@ -1569,8 +1596,8 @@ class MgtController extends Controller
         foreach ($datasets as $k => $v) {
             $colors[$k] = Factory::create()->hexColor;
             $evalsPerMonthData['datasets'][] = [
-                'label'           => $v['label'],
-                'data'            => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 'backgroundColor' => $colors[$k]
             ];
         }
@@ -1660,8 +1687,8 @@ class MgtController extends Controller
             foreach ($datasets as $k => $v) {
                 $colors[$k] = Factory::create()->hexColor;
                 $evalsPerMonthDataIns['datasets'][] = [
-                    'label'           => $v['label'],
-                    'data'            => $v['data'],
+                    'label' => $v['label'],
+                    'data' => $v['data'],
                     'backgroundColor' => $colors[$k]
                 ];
             }
@@ -1740,8 +1767,8 @@ class MgtController extends Controller
         foreach ($datasets as $k => $v) {
             $colors[$k] = Factory::create()->hexColor;
             $recordsPerMonthData['datasets'][] = [
-                'label'       => $v['label'],
-                'data'        => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 'borderColor' => $colors[$k]
             ];
         }
@@ -1789,7 +1816,8 @@ class MgtController extends Controller
     public
     function viewEvals(
         Request $request
-    ) {
+    )
+    {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -1826,8 +1854,9 @@ class MgtController extends Controller
     public
     function viewOTSEvalStatistics(
         Request $request,
-        int $form
-    ) {
+        int     $form
+    )
+    {
         $form = OTSEvalForm::withAll()->find($form);
         if (!$form) {
             abort(404, "The OTS evaluation form is invalid.");
@@ -1887,8 +1916,8 @@ class MgtController extends Controller
         }
         foreach ($datasets as $k => $v) {
             $numPassFailsData['datasets'][] = [
-                'label'       => $v['label'],
-                'data'        => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 'borderColor' => $colors[$k]
             ];
         }
@@ -1927,8 +1956,8 @@ class MgtController extends Controller
         }
         foreach ($datasets as $k => $v) {
             $evalsPerMonthDataIns['datasets'][] = [
-                'label'                                                       => $v['label'],
-                'data'                                                        => $v['data'],
+                'label' => $v['label'],
+                'data' => $v['data'],
                 $facility && !$instructor ? 'borderColor' : 'backgroundColor' => Factory::create()->hexColor
             ];
         }
@@ -1948,8 +1977,8 @@ class MgtController extends Controller
                 for ($k = 30; $k <= 90; $k += 30) {
                     $evals = OTSEval::where([
                         'instructor_id' => $allIns[$i]['cid'],
-                        'form_id'       => $form->id,
-                        'facility_id'   => $facility->id,
+                        'form_id' => $form->id,
+                        'facility_id' => $facility->id,
                         ['exam_date', '>=', Carbon::now()->subDays($k)]
                     ])->get();
                     //if($allIns[$i]['cid'] == 1275302) dd(str_replace_array('?', $evals->getBindings(), $evals->toSql()));

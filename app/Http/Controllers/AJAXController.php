@@ -21,8 +21,8 @@ class AJAXController
         $news = [];
         foreach ($results as $result) {
             $item = [
-                'id'      => $result->id_topic,
-                'date'    => $result->poster_time,
+                'id' => $result->id_topic,
+                'date' => $result->poster_time,
                 'subject' => $result->subject
             ];
             $news[] = $item;
@@ -39,9 +39,9 @@ class AJAXController
         $events = [];
         foreach ($results as $result) {
             $item = [
-                'id'    => $result->id_topic,
+                'id' => $result->id_topic,
                 'title' => $result->title,
-                'date'  => $result->eventdate
+                'date' => $result->eventdate
             ];
             $events[] = $item;
         }
@@ -70,8 +70,8 @@ class AJAXController
 
         $ret = [];
 
-        $ret[] = [ 'text' => "Notice: Assign Member To Save", 'value' => -1 ];
-        $ret[] = [ 'text' => "Unassigned", 'value' => 0 ];
+        $ret[] = ['text' => "Notice: Assign Member To Save", 'value' => -1];
+        $ret[] = ['text' => "Unassigned", 'value' => 0];
 
         foreach ($staff as $s) {
             $ret[] = ['text' => $s['role'] . ": " . $s['name'], 'value' => $s['cid']];

@@ -48,7 +48,7 @@ class HomeController
         $facilitiesArr = [];
         foreach ($facilities as $facility) {
             $facilitiesArr[$facility->parent ?? $facility->id][] = [
-                'id'   => $facility->id,
+                'id' => $facility->id,
                 'name' => $facility->name
             ];
         }

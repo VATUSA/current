@@ -78,21 +78,21 @@ class MyController
             config('exams.C1.enrolId'));
 
         $examAttempts = [
-            'Basic ATC/S1 Exam'                   => array_merge([
-                'examInfo'   => config('exams.BASIC'),
+            'Basic ATC/S1 Exam' => array_merge([
+                'examInfo' => config('exams.BASIC'),
                 'assignDate' => $basicAssignmentDate ? Carbon::createFromTimestampUTC($basicAssignmentDate)->format('Y-m-d H:i') : false
             ], ['attempts' => $moodle->getQuizAttempts(config('exams.BASIC.id'), null, $uid)]),
-            'S2 Rating (TWR) Controller Exam'     => array_merge([
-                'examInfo'   => config('exams.S2'),
+            'S2 Rating (TWR) Controller Exam' => array_merge([
+                'examInfo' => config('exams.S2'),
                 'assignDate' => $s2AssignmentDate ? Carbon::createFromTimestampUTC($s2AssignmentDate)->format('Y-m-d H:i') : false
             ], ['attempts' => $moodle->getQuizAttempts(config('exams.S2.id'), null, $uid)]),
             'S3 Rating (DEP/APP) Controller Exam' => array_merge([
-                'examInfo'   => config('exams.S3'),
+                'examInfo' => config('exams.S3'),
                 'assignDate' => $s3AssignmentDate ? Carbon::createFromTimestampUTC($s3AssignmentDate)->format('Y-m-d H:i') : false
             ],
                 ['attempts' => $moodle->getQuizAttempts(config('exams.S3.id'), null, $uid)]),
-            'C1 Rating (CTR) Controller Exam'     => array_merge([
-                'examInfo'   => config('exams.C1'),
+            'C1 Rating (CTR) Controller Exam' => array_merge([
+                'examInfo' => config('exams.C1'),
                 'assignDate' => $c1AssignmentDate ? Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : false
             ],
                 ['attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)]),
@@ -193,7 +193,7 @@ class MyController
         }
 
         $this->validate($request, [
-            'reason'   => 'required|max:2048',
+            'reason' => 'required|max:2048',
             'facility' => 'required|max:3|min:3',
         ]);
 
@@ -230,11 +230,11 @@ class MyController
             "vatusa" . $fac->region . "@vatusa.net",
             "vatusa" . $user->facility()->region . "@vatusa.net"
         ], "Transfer Pending", "emails.transfers.internalpending", [
-            'fname'    => $user->fname,
-            'lname'    => $user->lname,
-            'cid'      => $tr->cid,
+            'fname' => $user->fname,
+            'lname' => $user->lname,
+            'cid' => $tr->cid,
             'facility' => $fac->id,
-            'reason'   => $_POST['reason']
+            'reason' => $_POST['reason']
         ]);
 
         return redirect('/')->with('success', 'You have initiated a transfer to ' . $data->to);

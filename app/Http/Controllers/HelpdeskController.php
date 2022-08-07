@@ -82,13 +82,13 @@ class HelpdeskController
             $tickets = $tickets->orderBy($sort, $sortdir)->offset($start)->limit($perpage)->get();
 
             return view('help.listclosed', [
-                "tickets"  => $tickets,
-                "status"   => $status,
-                'page'     => $page,
-                'perpage'  => $perpage,
-                'sort'     => $sort,
-                'sortdir'  => $sortdir,
-                'pages'    => $pages,
+                "tickets" => $tickets,
+                "status" => $status,
+                'page' => $page,
+                'perpage' => $perpage,
+                'sort' => $sort,
+                'sortdir' => $sortdir,
+                'pages' => $pages,
                 'osortdir' => $osortdir
             ]);
         } else {
@@ -97,12 +97,12 @@ class HelpdeskController
 
         return view('help.list', [
             "tickets" => $tickets,
-            "status"  => $status,
-            'page'    => $page,
+            "status" => $status,
+            'page' => $page,
             'perpage' => $perpage,
-            'sort'    => $sort,
+            'sort' => $sort,
             'sortdir' => $sortdir,
-            'pages'   => $pages
+            'pages' => $pages
         ]);
     }
 
@@ -158,7 +158,7 @@ class HelpdeskController
         }
 
         $this->validate($request, [
-            'tSubject'  => 'required|max:255',
+            'tSubject' => 'required|max:255',
             'tFacility' => 'required|min:3|max:3',
 
             'tMessage' => 'required'
@@ -478,8 +478,9 @@ class HelpdeskController
     public
     function deleteKBECategory(
         Request $request,
-        $id
-    ) {
+                $id
+    )
+    {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -497,8 +498,9 @@ class HelpdeskController
     public
     function postKBECategory(
         Request $request,
-        $id
-    ) {
+                $id
+    )
+    {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -524,7 +526,8 @@ class HelpdeskController
     public
     function putKBECategory(
         Request $request
-    ) {
+    )
+    {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -542,8 +545,9 @@ class HelpdeskController
     public
     function getKBECategory(
         Request $request,
-        $id
-    ) {
+                $id
+    )
+    {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -559,8 +563,9 @@ class HelpdeskController
     public
     function getKBEQuestion(
         Request $request,
-        $qid
-    ) {
+                $qid
+    )
+    {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -579,8 +584,9 @@ class HelpdeskController
     public
     function deleteKBEQuestion(
         Request $request,
-        $id
-    ) {
+                $id
+    )
+    {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -611,8 +617,9 @@ class HelpdeskController
     public
     function postKBEQuestionOrder(
         Request $request,
-        $id
-    ) {
+                $id
+    )
+    {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -633,7 +640,8 @@ class HelpdeskController
     function getKBEeditQuestion(
         $cid,
         $id
-    ) {
+    )
+    {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -656,7 +664,8 @@ class HelpdeskController
     function postKBEeditQuestion(
         $cid,
         $id
-    ) {
+    )
+    {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -693,8 +702,9 @@ class HelpdeskController
     public
     function putKBEQuestion(
         Request $request,
-        $id
-    ) {
+                $id
+    )
+    {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -727,8 +737,9 @@ class HelpdeskController
     public
     function postKBEQuestion(
         Request $request,
-        $id
-    ) {
+                $id
+    )
+    {
         if (!$request->ajax()) {
             abort(403);
         }
