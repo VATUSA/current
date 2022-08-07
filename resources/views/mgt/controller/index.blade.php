@@ -607,12 +607,14 @@
                                                  class="tab-pane"
                                                  id="academy">
                                                 {{-- -<pre>@dump($examAttempts)</pre> --}}
-                                                <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=8&userid={{$moodleUid}}"
-                                                   style="text-decoration: none"
-                                                   target="_blank"><span
-                                                            class="label label-success"><i
-                                                                class="fas fa-check"
-                                                                style="font-size: inherit !important;"></i> View Grades in Academy</span></a>
+                                                <div style="text-align: center;">
+                                                    <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=8&userid={{$moodleUid}}"
+                                                       style="text-decoration: none; font-size: 24px; "
+                                                       target="_blank"><span
+                                                                class="label label-success"><i
+                                                                    class="fas fa-check"
+                                                                    style="font-size: inherit !important;"></i> View Grades in Academy</span></a>
+                                                </div>
                                                 <table class="table table-striped">
                                                     <thead>
                                                     <tr>
