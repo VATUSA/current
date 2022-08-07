@@ -150,6 +150,7 @@ class MgtController extends Controller
             } catch (Exception $e) {
                 $uid = -1;
             }
+            $moodleUid = $uid;
             $basicAssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.BASIC.enrolId'));
             $s2AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.S2.enrolId'));
             $s3AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.S3.enrolId'));
@@ -178,7 +179,7 @@ class MgtController extends Controller
 
             return view('mgt.controller.index',
                 compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingFacListArray', 'trainingfac',
-                    'trainingfacname', 'ins', 'canAddTR', 'examAttempts'));
+                    'trainingfacname', 'ins', 'canAddTR', 'examAttempts', 'moodleUid'));
         } else {
             if ($user = User::where('discord_id', $cid)->first()) {
                 return redirect()->route('mgt.controller.index', ['cid' => $user->cid]);
