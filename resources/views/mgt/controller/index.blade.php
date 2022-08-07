@@ -607,7 +607,7 @@
                                                  class="tab-pane"
                                                  id="academy">
                                                 {{-- -<pre>@dump($examAttempts)</pre> --}}
-                                                <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=8&userid={{$data['moodleUid']}}"
+                                                <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=8&userid={{$moodleUid}}"
                                                    style="text-decoration: none"
                                                    target="_blank"><span
                                                             class="label label-success"><i
