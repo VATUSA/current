@@ -339,7 +339,7 @@
 
                                 <!-- Submit Transfer Request [VATUSA] -->
                                     @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="{{secure_url("mgt/err") }}">Submit Transfer Request</a></li>
+                                        <li><a href="{{secure_url("mgt/transfer") }}">Submit Transfer Request</a></li>
                                     @endif
 
                                     @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
