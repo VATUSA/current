@@ -348,7 +348,16 @@
                                         @if ($user->visits()->exists())
                                             <li>Visiting:</li>
                                             @foreach ($user->visits()->get() as $visit)
-                                                <li>{{$visit->fac->id}} - {{$visit->fac->name}}</li>
+                                                <li>
+                                                    {{$visit->fac->id}} - {{$visit->fac->name}} - Mentor:
+                                                    @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id))
+                                                        <a href="/mgt/controller/{{$user->cid}}/mentor">
+                                                            {{(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))?"Yes":"No"}}
+                                                        </a>
+                                                    @else
+                                                        {{(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))?"Yes":"No"}}
+                                                    @endif
+                                                </li>
                                             @endforeach
                                             <br>
                                         @endif

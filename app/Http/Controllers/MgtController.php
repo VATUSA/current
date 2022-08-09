@@ -191,7 +191,8 @@ class MgtController extends Controller
 
     public
     function getControllerMentor(
-        $cid
+        $cid,
+        $facility = null
     )
     {
         if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff()) {
@@ -203,16 +204,20 @@ class MgtController extends Controller
             return redirect("/mgt/controller")->with("error", "User not found");
         }
 
-        $role = Role::where("cid", $cid)->where("facility", $user->facility)->where("role", "MTR")->first();
+        if ($facility == null) {
+            $facility = $user->facility;
+        }
+
+        $role = Role::where("cid", $cid)->where("facility", $facility)->where("role", "MTR")->first();
         if (!$role) {
             $role = new Role();
             $role->cid = $user->cid;
             $role->role = "MTR";
-            $role->facility = $user->facility;
+            $role->facility = $facility;
             $role->save();
             $log = new Actions();
             $log->to = $user->cid;
-            $log->log = "Mentor role for " . $user->facility . " added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+            $log->log = "Mentor role for " . $facility . " added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
             $log->save();
 
             return redirect("/mgt/controller/$cid")->with("success", "Successfully set as mentor");
@@ -227,7 +232,7 @@ class MgtController extends Controller
             $role->delete();
             $log = new Actions();
             $log->to = $user->cid;
-            $log->log = "Mentor role for " . $user->facility . " deleted by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+            $log->log = "Mentor role for " . $facility . " deleted by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
             $log->save();
 
             return redirect("/mgt/controller/$cid")->with("success", "Successfully removed mentor role");
