@@ -15,7 +15,7 @@
         <hr>
         <a href="{{ secure_url("exam/assign") }}">Assign Exam</a><br>
         <a href="{{ secure_url("exam/view") }}">View Assigned Exams</a><br>
-            @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
+            @if(\App\Classes\RoleHelper::isVATUSAStaff())
             <a href="{{ secure_url("exam/edit") }}">Edit Exams</a>
             @endif
         @endif

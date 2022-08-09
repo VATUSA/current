@@ -700,9 +700,9 @@ class ExamController extends Controller
         if (RoleHelper::isVATUSAStaff($cid)) {
             return true;
         }
-        if (RoleHelper::isFacilitySeniorStaff($cid, $fac)) {
+        /*if (RoleHelper::isFacilitySeniorStaff($cid, $fac)) {
             return true;
-        }
+        }*/
 
         abort(401);
     }
