@@ -351,7 +351,7 @@
                                                 <li>
                                                     {{$visit->fac->id}} - {{$visit->fac->name}} - Mentor:
                                                     @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id))
-                                                        <a href="/mgt/controller/{{$user->cid}}/mentor">
+                                                        <a href="/mgt/controller/{{$user->cid}}/mentor/{{$visit->fac->id}}">
                                                             {{(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))?"Yes":"No"}}
                                                         </a>
                                                     @else
