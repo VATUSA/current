@@ -89,6 +89,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getPrimaryRole()
     {
+        for ($i = 1; $i <= 14; $i++) {
+            if (RoleHelper::hasRole($this->cid, "ZHQ", "US$i")) {
+                return $i;
+            }
+        }
         if ($this->facility()->atm == $this->cid) {
             return "ATM";
         }
@@ -106,12 +111,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
         if ($this->facility()->wm == $this->cid) {
             return "WM";
-        }
-
-        for ($i = 1; $i <= 14; $i++) {
-            if (RoleHelper::hasRole($this->cid, "ZHQ", "US$i")) {
-                return $i;
-            }
         }
 
         return false;
