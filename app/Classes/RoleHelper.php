@@ -162,11 +162,11 @@ class RoleHelper
      */
     public static function hasRole($cid, $facility, $role, $isApi = false)
     {
-        if (static::isVATUSAStaff($cid, $isApi) && $facility == "ZHQ") {
+        /*if (static::isVATUSAStaff($cid, $isApi) && $facility == "ZHQ") {
             return true;
         } elseif ($facility == "ZHQ" && $role != "ACE" && $role != "SMT") {
             return false;
-        }
+        }*/
 
         if (Schema::hasColumn('facilities', strtolower($role))) {
             $c = Facility::where(strtolower($role), $cid)->where('id', $facility)->count();
