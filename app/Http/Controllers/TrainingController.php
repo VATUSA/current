@@ -109,7 +109,7 @@ class TrainingController extends Controller
             abort(403);
         }
 
-        abort(500); // Disable training statistics as it's overloading the nodes, will re-enable after performance rework
+//        abort(500); // Disable training statistics as it's overloading the nodes, will re-enable after performance rework
 
 
         $globalAccess = RoleHelper::isFacilitySeniorStaff();
