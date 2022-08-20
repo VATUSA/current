@@ -203,7 +203,7 @@ class TrainingController extends Controller
             $vals = [];
             for ($i = 10; $i >= 0; $i--) {
                 $yearWeek = Carbon::now()->subWeeks($i)->format('Y-W');
-                $vals[] = floor($insWeekTimes[$ins->cid][$yearWeek] / 3600);
+                $vals[] = isset($insWeekTimes[$ins->cid]) ? floor($insWeekTimes[$ins->cid][$yearWeek] / 3600) : 0;
             }
 
             return [
