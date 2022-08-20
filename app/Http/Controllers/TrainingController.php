@@ -105,6 +105,19 @@ class TrainingController extends Controller
         Request $request
     )
     {
+        function time_to_seconds($str_time): int {
+            sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+            return isset($seconds) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
+        }
+        function seconds_to_string($seconds): string {
+            $hours = floor($seconds / 3600);
+            $minutes = floor(($seconds / 60) % 60);
+            if (!$hours) {
+                return $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+            } else {
+                return "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+            }
+        }
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -125,129 +138,129 @@ class TrainingController extends Controller
             $facility = Auth::user()->facilityObj->id;
         }
 
-        /** Summary */
+        // START NEW CODE
 
-        $colors = [];
-
-        //Total Session Time
-        $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
+        // TrainingRecord based calculations
+        $recordQuery = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
         if ($region) {
-            $records->whereIn('facility_id',
+            $recordQuery->whereIn('facility_id', Facility::where('region', $region)->get()->pluck('id')->all());
+        } elseif ($facility) {
+            $recordQuery->where('facility_id', $facility);
+        }
+
+        $allRecords = $recordQuery->get();
+        $totalTime = 0;
+        $weekTime = [];
+        $weekCount = [];
+        $insWeekTimes = [];
+        foreach ($allRecords as $record) {
+            $session_time = time_to_seconds($record->duration);
+            $totalTime += $session_time;
+            $week = $record->session_date->format('W');
+            if (!isset($weekTime[$week])) $weekTime[$week] = 0;
+            $weekTime[$week] += $session_time;
+            if (!isset($weekCount[$week])) $weekCount[$week] = 0;
+            $weekCount[$week]++;
+            $insId = $record->instructor_id;
+            $yearWeek = $record->session_date->format('Y-W');
+            if (!isset($insWeekTimes[$insId])) $insWeekTimes[$insId] = [];
+            if (!isset($insWeekTimes[$insId][$yearWeek])) $insWeekTimes[$insId][$yearWeek] = 0;
+            $insWeekTimes[$insId][$yearWeek] += $session_time;
+        }
+        $sumTotalTimeStr = seconds_to_string($totalTime);
+        $sumTotalSessions = count($allRecords);
+        $avgTime = !empty($weekTime) ? array_sum($weekTime) / count($weekTime) : 0;
+        $sumAvgTimeStr = seconds_to_string($avgTime);
+        $sumAvgSessions = !empty($weekCount) ? round(array_sum($weekCount) / count($weekCount), 2) : 0;
+
+        // OTSEval based calculations
+        $evalQuery = OTSEval::where('exam_date', '>', Carbon::now()->subDays($interval));
+        if ($region) {
+            $evalQuery = $evalQuery->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
         } elseif ($facility) {
-            $records->where('facility_id', $facility);
+            $evalQuery = $evalQuery->where('facility_id', $facility);
         }
-
-        $totalTime = $records->sum(DB::raw('TIME_TO_SEC(duration)'));
-        $hours = floor($totalTime / 3600);
-        $minutes = floor(($totalTime / 60) % 60);
-        if (!$hours) {
-            $sumTotalTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
-        } else {
-            $sumTotalTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+        $allEvals = $evalQuery->get();
+        $evalPass = 0;
+        $evalFail = 0;
+        foreach ($allEvals as $eval) {
+            if ($eval->result == 1)
+                $evalPass++;
+            elseif ($eval->result == 2)
+                $evalFail++;
         }
-        $sumTotalSessions = $records->count();
-
-        //Average Time and Sessions per Week
-        $avgTime = $records->selectRaw('SUM(TIME_TO_SEC(duration)) as total')
-            ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
-        $avgTime = !empty($avgTime) ? array_sum($avgTime) / count($avgTime) : 0;
-
-        $hours = floor($avgTime / 3600);
-        $minutes = floor(($avgTime / 60) % 60);
-        if (!$hours) {
-            $sumAvgTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
-        } else {
-            $sumAvgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
-        }
-        $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
-        if ($region) {
-            $records->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
-            $records->where('facility_id', $facility);
-        }
-        $sumAvgSessions = $records->selectRaw('COUNT(*) AS total')
-            ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
-        $sumAvgSessions = !empty($sumAvgSessions) ? round(array_sum($sumAvgSessions) / count($sumAvgSessions), 2) : 0;
-
-        //Pass Rate
-        $evals = OTSEval::where('exam_date', '>', Carbon::now()->subDays($interval));
-        if ($region) {
-            $evals = $evals->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
-            $evals = $evals->where('facility_id', $facility);
-        }
-        $sumNumEvals = $evals->count();
-        $sumNumPass = $sumNumEvals ? $evals->where('result', 1)->count() : 0;
-        $sumNumFail = $sumNumEvals ? $sumNumEvals - $sumNumPass : 0;
+        $sumNumEvals = count($allEvals);
+        $sumNumPass = $evalPass;
+        $sumNumFail = $evalFail;
         $sumPassRate = $sumNumEvals ? round($sumNumPass / $sumNumEvals * 100) : 0;
 
-        /** INS/MTR Activity */
-
-        //INS/MTR List
+        // Instructors and Mentors
         $insWithSparklines = ['ins' => [], 'mtr' => []];
-        $insActivity = [];
-        $users = User::where('rating', '>=', Helper::ratingIntFromShort("I1"))
-            ->where('rating', '<=', Helper::ratingIntFromShort("I3"))
-            ->where('flag_homecontroller', 1)
-            ->where('facility', '!=', 'ZZN');
-        if ($facility) {
-            $users->where('facility', $facility);
-        }
-        $users = $users->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $promo = Promotions::where([
-                    'cid' => $user->cid,
-                    'to' => $user->rating
-                ])->orderBy('created_at', 'desc')
-                    ->first();
-                $promoDate = $promo ? $promo->created_at->format('m/d/Y') : 'N/A';
-                $insWithSparklines['ins'][] = [
-                    'cid' => $user->cid,
-                    'sparkline' => $user->getTrainingActivitySparkline(),
-                    'name' => $user->fullname(true),
-                    'since' => $promoDate
-                ];
+
+        function make_ins_sparkline($ins) {
+            global $insWeekTimes;
+            $vals = [];
+            for ($i = 10; $i >= 0; $i--) {
+                $yearWeek = Carbon::now()->subWeeks($i)->format('Y-W');
+                $vals[] = floor($insWeekTimes[$ins->cid][$yearWeek] / 3600);
             }
+
+            return [
+                'cid' => $ins->cid,
+                'sparkline' => implode(",", $vals),
+                'name' => $ins->fullname(true),
+                'since' => $ins->created_at->format('m/d/Y')
+            ];
         }
+
+        // Instructors by Rating
+        $insQuery = User::where('rating', '>=', Helper::ratingIntFromShort("I1"))
+                        ->where('rating', '<=', Helper::ratingIntFromShort("I3"))
+                        ->where('flag_homecontroller', 1)
+                        ->where('facility', '!=', 'ZZN');
+        if ($facility) {
+            $insQuery->where('facility', $facility);
+        }
+        $instructors = $insQuery->get();
+        foreach ($instructors as $ins) {
+            $insWithSparklines['ins'][] = make_ins_sparkline($ins);
+        }
+
+        // Instructors by role (SUP/INS)
         $users = Role::where('role', 'INS');
         if ($facility) {
             $users->where('facility', $facility);
         }
         $users = $users->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $insWithSparklines['ins'][] = [
-                    'cid' => $user->cid,
-                    'sparkline' => $user->user->getTrainingActivitySparkline(),
-                    'name' => $user->user->fullname(true),
-                    'since' => $user->created_at->format('m/d/Y')
-                ];
-            }
+        foreach ($users as $user) {
+            $insWithSparklines['ins'][] = make_ins_sparkline($user->user);
         }
+
+        // Mentors by role
         $users = Role::where('role', 'MTR');
         if ($facility) {
             $users->where('facility', $facility);
         }
         $users = $users->get();
-        if ($users) {
-            foreach ($users as $user) {
-                $insWithSparklines['mtr'][] = [
-                    'cid' => $user->cid,
-                    'sparkline' => $user->user->getTrainingActivitySparkline(),
-                    'name' => $user->user->fullname(true),
-                    'since' => $user->created_at->format('m/d/Y')
-                ];
-            }
+        foreach ($users as $user) {
+            $insWithSparklines['mtr'][] = make_ins_sparkline($user->user);
         }
+
         foreach ($insWithSparklines as $k => $v) {
             usort($insWithSparklines[$k], function ($a, $b) {
                 return strcmp($a['name'], $b['name']);
             });
         }
+
+
+
+
+        // OLD CODE BELOW
+
+        /** Summary */
+
+        $colors = [];
 
         //Hours per Month
         $hoursPerMonthData = ['labels' => [], 'datasets' => []];
