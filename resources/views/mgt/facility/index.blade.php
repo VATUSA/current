@@ -1030,6 +1030,7 @@
         $('#assignStaffModal #staffPosition').text(val_lng)
         $('#assignStaffModal #staffInt').val(val)
         $('#assignStaffModal').modal('show')
+        $('#confirmAssignStaff').unbind()
         $('#confirmAssignStaff').click(function () {
           $.post("{{secure_url('mgt/ajax/position/'.$fac)}}/" + val, {
             cid: $('#assignStaffModal #staffcidsearch').val()
