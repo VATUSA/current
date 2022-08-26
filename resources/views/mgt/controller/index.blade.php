@@ -937,7 +937,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">VATUSA Discord Moderation Team</label>
                                         <div class="col-sm-10">
-                                            <span id="toggleTT" style="font-size:1.8em;">
+                                            <span id="toggleDMT" style="font-size:1.8em;">
                                                 <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, "ZHQ", "DMT") ? "on text-success" : "off text-info"}} "></i>
                                                 <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                             </span>
