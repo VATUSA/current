@@ -52,16 +52,13 @@ class InfoController
                 $regid = $facility->region;
                 switch ($regid) {
                     case 5:
-                        $region = "Southern";
+                        $region = "Central";
                         break;
                     case 6:
-                        $region = "Midwestern";
+                        $region = "Western";
                         break;
                     case 7:
-                        $region = "Northeastern";
-                        break;
-                    case 8:
-                        $region = "Western";
+                        $region = "Eastern";
                         break;
                     default:
                         $region = "Unknown";
