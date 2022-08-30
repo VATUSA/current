@@ -487,7 +487,7 @@
           })
             .then(comment => {
               if (comment == null) return
-              comment = $('.swal-content__input').val()
+              comment = $('.swal-content__textarea').val()
               if (comment.length > 255)
                 return swal('Error!', 'That comment is too long. Consider writing it in General Comments.', 'error')
               setComment($(this).data('id'), comment)
