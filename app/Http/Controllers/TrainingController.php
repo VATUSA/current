@@ -187,7 +187,7 @@ class TrainingController extends Controller
         foreach ($allEvals as $eval) {
             if ($eval->result == 1)
                 $evalPass++;
-            elseif ($eval->result == 2)
+            elseif ($eval->result == 0)
                 $evalFail++;
         }
         $sumNumEvals = count($allEvals);
