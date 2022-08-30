@@ -477,7 +477,7 @@
             icon   : 'info',
             text   : $(this).parent().siblings('.indicator-item, .indicator-header').find('.indicator-item-label, .indicator-header-label').ignore('.indicator-help-text').ignore('#indicator-comment-display-' + id).text(),
             content: {
-              element   : 'input',
+              element   : 'textarea',
               attributes: {
                 placeholder: 'ex. ' +
                   samplePerformanceComments[Math.floor(Math.random() * samplePerformanceComments.length)],
