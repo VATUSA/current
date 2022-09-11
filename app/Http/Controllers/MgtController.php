@@ -132,8 +132,7 @@ class MgtController extends Controller
                     $ins['ins'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
                 }
             }
-            $users = Role::where('facility',
-                $user->facility)->where('role', 'MTR')->get();
+            $users = Role::where('facility', $trainingfac)->where('role', 'MTR')->get();
             if ($users) {
                 foreach ($users as $tUser) {
                     $ins['mtr'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
