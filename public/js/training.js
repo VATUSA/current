@@ -620,6 +620,5 @@ const showTrainingRecordModal = btn => {
     contextmenu                  : 'link image imagetools table',
   })
   $('.ots-exam-warning').hide();
-  $('#n-training-artcc').val($('#fac').val());
   $('#new-training-record').modal('show')
 }
