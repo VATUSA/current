@@ -99,21 +99,11 @@ class MgtController extends Controller
                     [$user->facility => $user->facilityObj->name]);
             }
             $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility
-            || $user->visits()->where('facility', Auth::user()->facility)->exists()
-            || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
-                $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
-            $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
-                    $user->facility) && $user->cid !== Auth::user()->cid;
-            if (!$canAddTR) {
-                //Check Visiting Rosters
-                foreach ($user->visits as $visit) {
-                    $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true,
-                            $visit->facility) && $user->cid !== Auth::user()->cid;
-                    if ($canAddTR) {
-                        break;
-                    }
-                }
-            }
+                || $user->visits()->where('facility', Auth::user()->facility)->exists()
+                || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
+                    $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
+            $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac)
+                && $user->cid !== Auth::user()->cid;
 
             //Get INS at ARTCC
             $ins = ['ins' => [], 'mtr' => []];
