@@ -35,7 +35,7 @@ class FacMgtController extends Controller
 
         if ($fac === null) {
             if (\Auth::user()->facility == "ZHQ") {
-                $fac = "PCF";
+                $fac = "HCF";
             } else {
                 $fac = \Auth::user()->facility;
             }

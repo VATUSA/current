@@ -26,8 +26,8 @@
                     of almost all airspace operated by the real
                     world Federal Aviation Administration. The airspace comprises of 20 Air Route Traffic Control
                     Centers
-                    (contiguous US and Anchorage), 1 Control Facility (Pacific Control Facility) and 1 CERAP (Guam
-                    CERAP, under management of PCF). All
+                    (contiguous US and Anchorage), 1 Control Facility (Honolulu Control Facility) and 1 CERAP (Guam
+                    CERAP, under management of HCF). All
                     information contained within this website is designated for use with the VATSIM network and for
                     flight
                     simulation purposes. Information is not intended nor should be used for

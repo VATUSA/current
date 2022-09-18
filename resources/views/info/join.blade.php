@@ -13,8 +13,8 @@
                     on average, over 2,000,000
                     passengers traverse across the US airspace on Air Transport (followed by China at just over 1
                     million, and the UK at 350,000). VATUSA airspace comprises of 20 Air Route Traffic
-                    Control Centers (contiguous US and Anchorage), 1 Control Facility (Pacific Control Facility) and 1
-                    CERAP (Guam CERAP, under management of PCF).</p>
+                    Control Centers (contiguous US and Anchorage), 1 Control Facility (Honolulu Control Facility) and 1
+                    CERAP (Guam CERAP, under management of HCF).</p>
                 <div class="alert alert-warning"><i class="fa fa-info-circle"></i> <b>INFO:</b> Controller information
                     is updated on login. You may have to log out and log back in to see updated information from VATSIM.
                 </div>
