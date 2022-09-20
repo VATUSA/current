@@ -98,6 +98,10 @@ class MgtController extends Controller
                 $trainingFacListArray = array_merge($trainingFacListArray,
                     [$user->facility => $user->facilityObj->name]);
             }
+            foreach($user->visits()->get() as $visit) {
+                if (!in_array($visit->fac->id, $trainingFacListArray))
+                    $trainingFacListArray[] = $visit->fac->id;
+            }
             $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility
                 || $user->visits()->where('facility', Auth::user()->facility)->exists()
                 || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
