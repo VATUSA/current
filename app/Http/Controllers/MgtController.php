@@ -99,8 +99,7 @@ class MgtController extends Controller
                     [$user->facility => $user->facilityObj->name]);
             }
             foreach($user->visits()->get() as $visit) {
-                if (!in_array($visit->fac->id, $trainingFacListArray))
-                    $trainingFacListArray[] = $visit->fac->id;
+                $trainingFacListArray[$visit->fac->id] = $visit->fac->name;
             }
             $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility
                 || $user->visits()->where('facility', Auth::user()->facility)->exists()
