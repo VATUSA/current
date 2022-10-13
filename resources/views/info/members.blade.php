@@ -19,13 +19,13 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="staff">
                             @if($orgLink)
-                                <div class="text-center">
+                                {{--<div class="text-center">
                                     <a href="{{ $orgLink }}" target="_blank">
                                         <button class="btn btn-success" style="margin: 10px 0;"><i
                                                     class="fas fa-sitemap"></i> VATUSA Organizational Chart
                                         </button>
                                     </a>
-                                </div>
+                                </div>--}}
                             @endif
                             <table class="table table-hover">
                                 <thead>
