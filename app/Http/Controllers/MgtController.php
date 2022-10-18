@@ -1192,43 +1192,6 @@ class MgtController extends Controller
     }
 
     public
-    function toggleDMTRole(
-        Request $request
-    )
-    {
-        $cid = $request->cid;
-
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $user = User::findOrFail($cid);
-        $currentRole = Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "DMT");
-        if ($currentRole->count()) {
-            //Delete role
-            $currentRole->first()->delete();
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "VATUSA Discord Moderation Team role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        } else {
-            //Create role
-            $role = new Role();
-            $role->cid = $cid;
-            $role->facility = "ZHQ";
-            $role->role = "DMT";
-            $role->save();
-
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "VATUSA Discord Moderation Team role added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        }
-
-        return "1";
-    }
-
-    public
     function ajaxCanModifyRecord(
         $record
     )
