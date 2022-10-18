@@ -566,7 +566,7 @@ class MgtController extends Controller
                 [
                     "{$u->facility}-atm@vatusa.net",
                     "{$u->facility}-datm@vatusa.net",
-                    "vatusa{$u->facilityObj->region}@vatusa.net"
+                    "vatusa2@vatusa.net"
                 ],
                 "Removal from {$u->facilityObj->name}",
                 "emails.user.removed",
@@ -672,7 +672,7 @@ class MgtController extends Controller
         EmailHelper::sendEmail([
             $tr->from . "-atm@vatusa.net",
             $tr->from . "-datm@vatusa.net",
-            "vatusa" . $fac->region . "@vatusa.net"
+            "vatusa2@vatusa.net"
         ], "Transfer Pending", "emails.transfers.internalpending", [
             'fname' => $user->fname,
             'lname' => $user->lname,

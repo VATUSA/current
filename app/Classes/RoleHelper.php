@@ -617,7 +617,7 @@ class RoleHelper
             $email = $fu->id . "-" . $spos . "@vatusa.net";
             if (!EmailHelper::isStaticForward($email)) {
                 if ($spos == "atm") {
-                    $fwd = "vatusa" . $fu->region . "@vatusa.net";
+                    $fwd = "vatusa2@vatusa.net";
                 } else {
                     $fwd[] = $fu->id . "-atm@vatusa.net";
                     if ($spos != "datm") {

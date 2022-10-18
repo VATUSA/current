@@ -136,7 +136,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         if ($oldfac->id != "ZZN" && $oldfac->id != "ZAE") {
             if ($oldfac->atm == $this->cid || $oldfac->datm == $this->cid) {
-                EmailHelper::sendEmail(["vatusa" . $oldfac->region . "@vatusa.net"], "ATM or DATM discrepancy",
+                EmailHelper::sendEmail(["vatusa2@vatusa.net"], "ATM or DATM discrepancy",
                     "emails.transfers.atm", ["user" => $this, "oldfac" => $oldfac]);
                 $fc = 1;
             } elseif ($oldfac->ta == $this->cid) {
@@ -172,7 +172,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             EmailHelper::sendEmail([
                 "$fac-atm@vatusa.net",
                 "$fac-datm@vatusa.net",
-                "vatusa" . $facility->region . "@vatusa.net"
+                "vatusa2@vatusa.net"
             ], "User added to facility", "emails.user.addedtofacility", [
                 "name"     => $this->fullname(),
                 "cid"      => $this->cid,
@@ -206,7 +206,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         if ($facility != "ZAE") {
             EmailHelper::sendEmail(
-                [$this->email, "$facility-atm@vatusa.net", "$facility-datm@vatusa.net", "vatusa$region@vatusa.net"],
+                [$this->email, "$facility-atm@vatusa.net", "$facility-datm@vatusa.net", "vatusa2@vatusa.net"],
                 "Removal from $facname",
                 "emails.user.removed",
                 [
