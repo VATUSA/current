@@ -80,7 +80,7 @@ class SMFHelper
             $grp = static::findGroup("VATUSA Staff");
             $role = "";
             if (RoleHelper::hasRole($user->cid, "ZHQ", "US1")
-                || RoleHelper::hasRole($user->cid, "ZHQ", "US12")) {
+                || RoleHelper::hasRole($user->cid, "ZHQ", "US6")) {
                 $role = "Administrator";
             }
         }
