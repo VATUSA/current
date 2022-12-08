@@ -10,10 +10,10 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "airbnb-browser-shims": "^2.0.0",
-    "babel-eslint": "^8.2.3",
+    "airbnb-browser-shims": "^3.3.0",
+    "babel-eslint": "^10.1.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-preset-airbnb": "^2.4.0",
+    "babel-preset-airbnb": "^5.0.0",
     "cross-env": "^5.1.5",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
