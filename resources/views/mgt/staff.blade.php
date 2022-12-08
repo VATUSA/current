@@ -92,6 +92,7 @@
                                 "<button onClick=\"deleteStaff('US9')\" class=\"btn btn-danger\">Vacate</button>"
                                 :"<button data-toggle=\"modal\" data-target=\"#staffModal\" data-role=\"US9\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
+                        <!--
                         <tr>
                             <td>VATUSA10</td>
                             <td>{{\App\Classes\RoleHelper::getNameFromRole("US10")}}</td>
@@ -140,6 +141,7 @@
                                 "<button onClick=\"deleteStaff('US15')\" class=\"btn btn-danger\">Vacate</button>"
                                 :"<button data-toggle=\"modal\" data-target=\"#staffModal\" data-role=\"US15\" class=\"btn btn-success\">Assign</button>")!!}</td>
                         </tr>
+                        -->
                         </tbody>
                     </table>
                 </div>

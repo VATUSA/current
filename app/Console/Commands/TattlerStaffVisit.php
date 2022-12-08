@@ -60,7 +60,7 @@ class TattlerStaffVisit extends Command
                     if ($activity >= 30) {
                         EmailHelper::sendEmail(
                             [
-                                "vatusa" . $fac->region . "@vatusa.net",
+                                "vatusa2@vatusa.net",
                                 //     "vatusa6@vatusa.net"
                             ],
                             "Tattler Staff Activity: " . $fac->id . " ATM is likely inactive",
@@ -88,7 +88,7 @@ class TattlerStaffVisit extends Command
                         EmailHelper::sendEmail(
                             [
                                 $fac->id . "-atm@vatusa.net",
-                                "vatusa" . $fac->region . "@vatusa.net",
+                                "vatusa2@vatusa.net",
                                 //    "vatusa6@vatusa.net"
                             ],
                             "Tattler Staff Activity: " . $fac->id . " DATM is likely inactive",

@@ -158,7 +158,7 @@ class CERTSync extends Command
             $this->log[] = "More than 800 records are going to be deleted... possible error. Aborting.";
             $this->error("More than 800 records are going to be deleted... possible error. Aborting.");
 
-            EmailHelper::sendEmail("vatusa12@vatusa.net", "CERTSync Error", "emails.logsend",
+            EmailHelper::sendEmail("vatusa6@vatusa.net", "CERTSync Error", "emails.logsend",
                 ['log' => $this->log]);
             exit;
         }
@@ -205,7 +205,7 @@ class CERTSync extends Command
         EmailHelper::sendEmail([
             "vatusa1@vatusa.net",
             "vatusa2@vatusa.net",
-           // "vatusa12@vatusa.net",
+            "vatusa6@vatusa.net",
         ], "CERT Sync", "emails.logsend", ['log' => $this->log]);
 
         $this->info("Completed in " . (microtime(true) - $start) . " seconds.");

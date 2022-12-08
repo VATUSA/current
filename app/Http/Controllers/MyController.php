@@ -227,8 +227,7 @@ class MyController
             $tr->from . "-datm@vatusa.net",
             $tr->to . "-atm@vatusa.net",
             $tr->to . "-datm@vatusa.net",
-            "vatusa" . $fac->region . "@vatusa.net",
-            "vatusa" . $user->facility()->region . "@vatusa.net"
+            "vatusa2@vatusa.net",
         ], "Transfer Pending", "emails.transfers.internalpending", [
             'fname' => $user->fname,
             'lname' => $user->lname,

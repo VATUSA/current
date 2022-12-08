@@ -46,7 +46,7 @@ class TransferEmails extends Command
                 $email = $facility . "-" . $position . "@vatusa.net";
                 if ($facility->{$position} == 0) {
                     if ($position == "atm") {
-                        $destination = "vatusa" . $facility->region . "@vatusa.net";
+                        $destination = "vatusa2@vatusa.net";
                     } else {
                         $destination = "$facility-sstf@vatusa.net";
                     }
