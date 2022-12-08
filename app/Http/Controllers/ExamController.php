@@ -660,8 +660,11 @@ class ExamController extends Controller
         if ($cid == null) {
             $cid = Auth::user()->cid;
         }
+        if (RoleHelper::isVATUSAStaff($cid)) {
+            return true;
+        }
 
-        if ($exam == null) {
+        /*if ($exam == null) {
             if (RoleHelper::isInstructor($cid) || RoleHelper::isFacilitySeniorStaff()) {
                 return true;
             } else {
@@ -675,7 +678,7 @@ class ExamController extends Controller
             RoleHelper::isFacilitySeniorStaff($cid, $exam->facility_id)
         ) {
             return true;
-        }
+        }*/
 
         Log::warning(Auth::user()->cid . " attempted to assign exam " . $exam->id . " (401)");
         abort(401);
