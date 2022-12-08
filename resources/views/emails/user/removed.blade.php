@@ -15,6 +15,6 @@
     @endif
 
     <br><br>
-    If you have any questions regarding your removal, please contact {{$facid}}-atm@vatusa.net and/or vatusa{{$region}}@vatusa.net.
+    If you have any questions regarding your removal, please contact {{$facid}}-atm@vatusa.net and/or vatusa2@vatusa.net.
 
 @endsection

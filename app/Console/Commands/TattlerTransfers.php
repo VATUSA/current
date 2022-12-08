@@ -44,7 +44,6 @@ class TattlerTransfers extends Command
                     [
                         $transfer->to . "-atm@vatusa.net",
                         $transfer->to . "-datm@vatusa.net",
-                        "vatusa" . $to->region . "@vatusa.net",
                         "vatusa1@vatusa.net",
                         "vatusa2@vatusa.net",
                         //     "vatusa6@vatusa.net"

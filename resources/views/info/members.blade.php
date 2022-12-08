@@ -19,13 +19,13 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="staff">
                             @if($orgLink)
-                                <div class="text-center">
+                                {{--<div class="text-center">
                                     <a href="{{ $orgLink }}" target="_blank">
                                         <button class="btn btn-success" style="margin: 10px 0;"><i
                                                     class="fas fa-sitemap"></i> VATUSA Organizational Chart
                                         </button>
                                     </a>
-                                </div>
+                                </div>--}}
                             @endif
                             <table class="table table-hover">
                                 <thead>
@@ -43,12 +43,12 @@
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US1")}}</td>
                                     <td><a href="mailto:vatusa1@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
-                                <!-- <tr>
+                                <tr>
                                     <td>VATUSA2</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US2")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US2")}}</td>
                                     <td><a href="mailto:vatusa2@vatusa.net"><i class="fa fa-envelope"></i></a></td>
-                                </tr> -->
+                                </tr>
                                 <tr>
                                     <td>VATUSA3</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US3")}}</td>
@@ -79,18 +79,19 @@
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US7")}}</td>
                                     <td><a href="mailto:vatusa7@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
-                                <!-- <tr>
+                                <tr>
                                     <td>VATUSA8</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US8")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US8")}}</td>
                                     <td><a href="mailto:vatusa8@vatusa.net"><i class="fa fa-envelope"></i></a></td>
-                                </tr> -->
+                                </tr>
                                 <tr>
                                     <td>VATUSA9</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US9")}}</td>
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US9")}}</td>
                                     <td><a href="mailto:vatusa9@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
+                                <!--
                                 <tr>
                                     <td>VATUSA10</td>
                                     <td>{{\App\Classes\RoleHelper::getNameFromRole("US10")}}</td>
@@ -127,6 +128,7 @@
                                     <td>{{\App\Classes\RoleHelper::roleTitle("US15")}}</td>
                                     <td><a href="mailto:vatusa15@vatusa.net"><i class="fa fa-envelope"></i></a></td>
                                 </tr>
+                                -->
                                 </tbody>
                             </table>
                         </div>

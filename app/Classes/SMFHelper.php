@@ -60,13 +60,17 @@ class SMFHelper
 
         if ($user->facility()->atm == $user->cid || $user->facility()->datm == $user->cid) {
             $role = "ATM";
-        } elseif ($user->facility()->ta == $user->cid) {
+        }
+        if ($user->facility()->ta == $user->cid) {
             $role = "TA";
-        } elseif ($user->facility()->ec == $user->cid) {
+        }
+        if ($user->facility()->ec == $user->cid) {
             $role = "EC";
-        } elseif ($user->facility()->fe == $user->cid) {
+        }
+        if ($user->facility()->fe == $user->cid) {
             $role = "FE";
-        } elseif ($user->facility()->wm == $user->cid) {
+        }
+        if ($user->facility()->wm == $user->cid) {
             $role = "WM";
         }
 
@@ -80,7 +84,7 @@ class SMFHelper
             $grp = static::findGroup("VATUSA Staff");
             $role = "";
             if (RoleHelper::hasRole($user->cid, "ZHQ", "US1")
-                || RoleHelper::hasRole($user->cid, "ZHQ", "US12")) {
+                || RoleHelper::hasRole($user->cid, "ZHQ", "US6")) {
                 $role = "Administrator";
             }
         }

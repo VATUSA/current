@@ -566,7 +566,7 @@ class MgtController extends Controller
                 [
                     "{$u->facility}-atm@vatusa.net",
                     "{$u->facility}-datm@vatusa.net",
-                    "vatusa{$u->facilityObj->region}@vatusa.net"
+                    "vatusa2@vatusa.net"
                 ],
                 "Removal from {$u->facilityObj->name}",
                 "emails.user.removed",
@@ -672,7 +672,7 @@ class MgtController extends Controller
         EmailHelper::sendEmail([
             $tr->from . "-atm@vatusa.net",
             $tr->from . "-datm@vatusa.net",
-            "vatusa" . $fac->region . "@vatusa.net"
+            "vatusa2@vatusa.net"
         ], "Transfer Pending", "emails.transfers.internalpending", [
             'fname' => $user->fname,
             'lname' => $user->lname,
@@ -1185,43 +1185,6 @@ class MgtController extends Controller
             $log = new Actions();
             $log->to = $cid;
             $log->log = "VATUSA Tech Team role added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        }
-
-        return "1";
-    }
-
-    public
-    function toggleDMTRole(
-        Request $request
-    )
-    {
-        $cid = $request->cid;
-
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $user = User::findOrFail($cid);
-        $currentRole = Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "DMT");
-        if ($currentRole->count()) {
-            //Delete role
-            $currentRole->first()->delete();
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "VATUSA Discord Moderation Team role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        } else {
-            //Create role
-            $role = new Role();
-            $role->cid = $cid;
-            $role->facility = "ZHQ";
-            $role->role = "DMT";
-            $role->save();
-
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "VATUSA Discord Moderation Team role added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
             $log->save();
         }
 

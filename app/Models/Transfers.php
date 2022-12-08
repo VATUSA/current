@@ -38,10 +38,9 @@ class Transfers
             [
                 $this->to . "-atm@vatusa.net",
                 $this->to . "-datm@vatusa.net",
-                "vatusa" . $this->to()->region . "@vatusa.net",
+                "vatusa2@vatusa.net",
                 $this->from . "-atm@vatusa.net",
                 $this->from . "-datm@vatusa.net",
-                "vatusa" . $this->from()->region . "@vatusa.net",
             ],
             "Transfer accepted",
             "emails.transfers.accepted",
@@ -75,10 +74,9 @@ class Transfers
                 $this->user()->email,
                 $this->to . "-atm@vatusa.net",
                 $this->to . "-datm@vatusa.net",
-                "vatusa" . $this->to()->region . "@vatusa.net",
+                "vatusa2@vatusa.net",
                 $this->from . "-atm@vatusa.net",
                 $this->from . "-datm@vatusa.net",
-                "vatusa" . $this->from()->region . "@vatusa.net"
             ],
             "Transfer request rejected",
             "emails.transfers.rejected",
