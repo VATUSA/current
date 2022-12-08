@@ -15,7 +15,7 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-airbnb": "^2.4.0",
     "cross-env": "^5.1.5",
-    "eslint": "^4.19.1",
+    "eslint": "^8.29.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-loader": "^1.9.0",
     "eslint-plugin-flowtype": "^2.46.3",
