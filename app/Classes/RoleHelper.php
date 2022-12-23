@@ -561,8 +561,9 @@ class RoleHelper
             // Eloquent: VATUSA Training Staff (%3 [e.g. 3/13])
             foreach (\App\Models\Role::where('facility', 'ZHQ')
                         ->where(function($query) {
-                            return $query->where('role', 'LIKE', '%3')
-                                         ->orWhere('role', 'LIKE', 'US14');
+                            return $query->where('role', 'LIKE', 'US3')
+                                         ->orWhere('role', 'LIKE', 'US8')
+                                         ->orWhere('role', 'LIKE', 'US9');
                         })
                         ->orderBy("role")
                         ->get() as $v) {
