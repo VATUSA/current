@@ -289,10 +289,10 @@
                                             a facility or transfer?</a></li>
                                 @endif
                                 {{--<li><a href="{{ secure_url('exam') }}"><i class="fas fa-school"></i> Exam Center
-                                        (Legacy)</a>--}}
-                                </li>
-                                <li><a href="{{ secure_url("cbt") }}"><i class="fas fa-desktop"></i> Computer Based
-                                        Training (Legacy)</a></li>
+                                        (Legacy)</a>
+                                </li>--}}
+                                {{--<li><a href="{{ secure_url("cbt") }}"><i class="fas fa-desktop"></i> Computer Based
+                                        Training (Legacy)</a></li>--}}
                                 <li role="separator" class="divider"></li>
                                 <li>
                                     <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i
