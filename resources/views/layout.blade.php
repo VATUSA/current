@@ -288,8 +288,8 @@
                                             Why can I not join
                                             a facility or transfer?</a></li>
                                 @endif
-                                <li><a href="{{ secure_url('exam') }}"><i class="fas fa-school"></i> Exam Center
-                                        (Legacy)</a>
+                                {{--<li><a href="{{ secure_url('exam') }}"><i class="fas fa-school"></i> Exam Center
+                                        (Legacy)</a>--}}
                                 </li>
                                 <li><a href="{{ secure_url("cbt") }}"><i class="fas fa-desktop"></i> Computer Based
                                         Training (Legacy)</a></li>

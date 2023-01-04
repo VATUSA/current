@@ -286,8 +286,6 @@
                            role="tab"
                            data-toggle="tab" @endif>Training</a>
                     </li>
-                    <li role="presentation"><a href="#cbt" data-controls="cbt" role="tab"
-                                               data-toggle="tab">CBT Progress</a></li>
                     @if (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
                         <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
                                 Log</a></li>
@@ -578,188 +576,107 @@
                                 </div>
                                 <div class="panel-body">
                                     <div>
-                                        <!-- Nav tabs -->
-                                        <ul class="nav nav-tabs nav-justified text-centers" id="exam-tabs"
-                                            role="tablist">
-                                            <li role="presentation" class="active"><a href="#"
-                                                                      data-target="legacy"
-                                                                      aria-controls="home"
-                                                                      role="tab"
-                                                                      data-toggle="tab"
-                                                                      class="text-warning">Legacy</a>
-                                            </li>
-                                            <li role="presentation">
-                                                <a
-                                                    href="#" data-target="academy"
-                                                    aria-controls="academy"
-                                                    role="tab" data-toggle="tab"
-                                                    class="text-success">Academy</a></li>
-                                        </ul>
-
-                                        <!-- Tab panes -->
-                                        <div class="tab-content" id="exam-tab-content">
-                                            <div role="tabpanel" class="tab-pane active" id="legacy">
-                                                <table class="table table-striped">
-                                                    @foreach(\App\Models\ExamResults::where('cid',$user->cid)->orderBy('date', 'DESC')->get() as $res)
-                                                        <tr style="text-align: center">
-                                                            <td style="width:20%">{{substr($res->date, 0, 10)}}</td>
-                                                            <td style="width: 70%; text-align: left"><a
-                                                                    href="/exam/result/{{$res->id}}">{{$res->exam_name}}</a>
-                                                            </td>
-                                                            <td{!! ($res->passed)?" style=\"color: green\"":" style=\"color: red\"" !!}>{{$res->score}}
-                                                                %
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </table>
-                                            </div>
-                                            <div role="tabpanel"
-                                                 class="tab-pane"
-                                                 id="academy">
-                                                {{-- -<pre>@dump($examAttempts)</pre> --}}
-                                                @if (\App\Classes\RoleHelper::isFacilitySeniorStaff()
-                                                    || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid))
-                                                <div style="text-align: center;">
-                                                    <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=8&userid={{$moodleUid}}"
-                                                       style="text-decoration: none; font-size: 24px; "
-                                                       target="_blank"><span
-                                                                class="label label-success"><i
-                                                                    class="fas fa-check"
-                                                                    style="font-size: inherit !important;"></i> View Grades in Academy</span></a>
-                                                </div>
-                                                @endif
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>Exam Name</th>
-                                                        <th>Attempts</th>
-                                                        <th>Enrollment</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    @foreach($examAttempts as $exam => $data)
-                                                        @php $hasPassed = 0; @endphp
-                                                        <tr @if($data['examInfo']['rating'] - 1 > $user->rating) class="text-muted" @endif>
-                                                            <td>{{ $exam }}</td>
-                                                            <td>@if(empty($data['attempts']) && $data['examInfo']['rating'] - 1 <= $user->rating)
-                                                                    <span
-                                                                        class="label label-info"><i
-                                                                            class="fas fa-question-circle"
-                                                                            style="font-size: inherit !important;"></i> Not Taken</span>
-                                                                @elseif(empty($data['attempts']))
-                                                                    <em>Not Eligible</em>
-                                                                @else
-                                                                    @foreach($data['attempts'] as $attempt)
-                                                                        <p>Attempt
-                                                                            <strong>{{ $attempt['attempt'] }}</strong>:
-                                                                            @switch($attempt['state'])
-                                                                                @case('finished')
-                                                                                @if(round($attempt['grade'] >= $data['examInfo']['passingPercent']))
-                                                                                    @php $hasPassed = 1; @endphp
-                                                                                    <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}"
-                                                                                       style="text-decoration: none"
-                                                                                       target="_blank"><span
-                                                                                            class="label label-success"><i
-                                                                                                class="fas fa-check"
-                                                                                                style="font-size: inherit !important;"></i> Passed ({{ $attempt['grade'] }}%)</span></a>
-                                                                                @else
-                                                                                    <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}"
-                                                                                       style="text-decoration: none"
-                                                                                       target="_blank"><span
-                                                                                            class="label label-danger"><i
-                                                                                                class="fas fa-times"
-                                                                                                style="font-size: inherit !important;"></i> Failed ({{ $attempt['grade'] }}%)</span></a>
-                                                                                @endif
-                                                                                @break
-                                                                                @case('inprogress')
-                                                                                <span class="label label-warning"><i
-                                                                                        class="fas fa-clock"
-                                                                                        style="font-size: inherit !important;"></i> In Progress</span>
-                                                                                @break
-                                                                                @default
-                                                                                <span
-                                                                                    class="label label-danger">{{ ucwords($attempt['state']) }}</span>
-                                                                                @break
-                                                                            @endswitch
-                                                                            <br>
-                                                                        </p>
-                                                                    @endforeach
-                                                                @endif
-                                                            </td>
-                                                            <td @if($data['examInfo']['id'] != config('exams.BASIC.id')) id="enrollment-status-{{ $data['examInfo']['courseId'] }}" @endif>
-                                                                @if($hasPassed)
-                                                                    <strong style="color: #39683a"><em><i
-                                                                                class="fas fa-check-double"></i> Course
-                                                                            Complete</em></strong>
-                                                                @elseif ($data['assignDate'])
-                                                                    <strong class="text-success"><i
-                                                                            class="fas fa-user-check"></i>
-                                                                        Enrolled</strong>
-                                                                    on
-                                                                    {{ $data['assignDate'] }}
-                                                                @elseif($data['examInfo']['id'] == config('exams.BASIC.id') || $data['examInfo']['rating'] <= $user->rating)
-                                                                    <em>Auto-Enrolled</em>
-                                                                @elseif($data['examInfo']['rating'] - 1 == $user->rating)
-                                                                    @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility) && $data['examInfo']['rating'] <= Auth::user()->rating ||
-                                                                          !\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility))
-                                                                        <button
-                                                                            class="btn btn-success btn-sm enrol-exam-course"
-                                                                            data-id="{{ $data['examInfo']['courseId'] }}"
-                                                                            data-name="{{ $exam }}">
-                                                                            <i
-                                                                                class="fas fa-user-plus"></i> Enroll
-                                                                        </button>
-                                                                    @else
-                                                                        <span
-                                                                            class="label label-danger"><i
-                                                                                class="fas fa-times-circle"
-                                                                                style="font-size: inherit !important;"></i> Not Enrolled</span>
-                                                                    @endif
-                                                                @else
-                                                                    <em>Not Eligible</em>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                        {{-- -<pre>@dump($examAttempts)</pre> --}}
+                                        @if (\App\Classes\RoleHelper::isFacilitySeniorStaff()
+                                            || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid))
+                                        <div style="text-align: center;">
+                                            <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=8&userid={{$moodleUid}}"
+                                               style="text-decoration: none; font-size: 24px; "
+                                               target="_blank"><span
+                                                        class="label label-success"><i
+                                                            class="fas fa-check"
+                                                            style="font-size: inherit !important;"></i> View Grades in Academy</span></a>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                    <div class="tab-pane" role="tabpanel"
-                         id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
-                    <div class="tab-pane" role="tabpanel" id="cbt">
-                        <h3>CBT Progress</h3>
-                        <div class="panel-group" id="accordion">
-                            @foreach(\App\Models\TrainingBlock::where('visible', 1)->orderBy('facility')->orderBy('order')->get() as $block)
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">
-                                            <a href="#collapse{{$block->id}}" data-parent="#accordion"
-                                               data-toggle="collapse">({{$block->facility}}) {{$block->name}}</a>
-                                        </h3>
-                                    </div>
-                                    <div id="collapse{{$block->id}}" class="panel-collapse collapse">
-                                        <table class="table table-responsive">
+                                        @endif
+                                        <table class="table table-striped">
                                             <thead>
                                             <tr>
-                                                <th style="width: auto;">Chapter</th>
-                                                <th style="width: 100px;">Complete</th>
+                                                <th>Exam Name</th>
+                                                <th>Attempts</th>
+                                                <th>Enrollment</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach($block->chapters as $chapter)
-                                                <tr>
-                                                    <td>{{$chapter->name}}</td>
-                                                    <td>
-                                                        @if(\App\Classes\CBTHelper::isComplete($chapter->id, $user->cid))
-                                                            <i class="text-success fa fa-check"></i>
+                                            @foreach($examAttempts as $exam => $data)
+                                                @php $hasPassed = 0; @endphp
+                                                <tr @if($data['examInfo']['rating'] - 1 > $user->rating) class="text-muted" @endif>
+                                                    <td>{{ $exam }}</td>
+                                                    <td>@if(empty($data['attempts']) && $data['examInfo']['rating'] - 1 <= $user->rating)
+                                                            <span
+                                                                class="label label-info"><i
+                                                                    class="fas fa-question-circle"
+                                                                    style="font-size: inherit !important;"></i> Not Taken</span>
+                                                        @elseif(empty($data['attempts']))
+                                                            <em>Not Eligible</em>
                                                         @else
-                                                            <i class="text-danger fa fa-times"></i>
+                                                            @foreach($data['attempts'] as $attempt)
+                                                                <p>Attempt
+                                                                    <strong>{{ $attempt['attempt'] }}</strong>:
+                                                                    @switch($attempt['state'])
+                                                                        @case('finished')
+                                                                        @if(round($attempt['grade'] >= $data['examInfo']['passingPercent']))
+                                                                            @php $hasPassed = 1; @endphp
+                                                                            <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}"
+                                                                               style="text-decoration: none"
+                                                                               target="_blank"><span
+                                                                                    class="label label-success"><i
+                                                                                        class="fas fa-check"
+                                                                                        style="font-size: inherit !important;"></i> Passed ({{ $attempt['grade'] }}%)</span></a>
+                                                                        @else
+                                                                            <a href="https://academy.vatusa.net/mod/quiz/review.php?attempt={{$attempt['id']}}"
+                                                                               style="text-decoration: none"
+                                                                               target="_blank"><span
+                                                                                    class="label label-danger"><i
+                                                                                        class="fas fa-times"
+                                                                                        style="font-size: inherit !important;"></i> Failed ({{ $attempt['grade'] }}%)</span></a>
+                                                                        @endif
+                                                                        @break
+                                                                        @case('inprogress')
+                                                                        <span class="label label-warning"><i
+                                                                                class="fas fa-clock"
+                                                                                style="font-size: inherit !important;"></i> In Progress</span>
+                                                                        @break
+                                                                        @default
+                                                                        <span
+                                                                            class="label label-danger">{{ ucwords($attempt['state']) }}</span>
+                                                                        @break
+                                                                    @endswitch
+                                                                    <br>
+                                                                </p>
+                                                            @endforeach
+                                                        @endif
+                                                    </td>
+                                                    <td @if($data['examInfo']['id'] != config('exams.BASIC.id')) id="enrollment-status-{{ $data['examInfo']['courseId'] }}" @endif>
+                                                        @if($hasPassed)
+                                                            <strong style="color: #39683a"><em><i
+                                                                        class="fas fa-check-double"></i> Course
+                                                                    Complete</em></strong>
+                                                        @elseif ($data['assignDate'])
+                                                            <strong class="text-success"><i
+                                                                    class="fas fa-user-check"></i>
+                                                                Enrolled</strong>
+                                                            on
+                                                            {{ $data['assignDate'] }}
+                                                        @elseif($data['examInfo']['id'] == config('exams.BASIC.id') || $data['examInfo']['rating'] <= $user->rating)
+                                                            <em>Auto-Enrolled</em>
+                                                        @elseif($data['examInfo']['rating'] - 1 == $user->rating)
+                                                            @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility) && $data['examInfo']['rating'] <= Auth::user()->rating ||
+                                                                  !\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility))
+                                                                <button
+                                                                    class="btn btn-success btn-sm enrol-exam-course"
+                                                                    data-id="{{ $data['examInfo']['courseId'] }}"
+                                                                    data-name="{{ $exam }}">
+                                                                    <i
+                                                                        class="fas fa-user-plus"></i> Enroll
+                                                                </button>
+                                                            @else
+                                                                <span
+                                                                    class="label label-danger"><i
+                                                                        class="fas fa-times-circle"
+                                                                        style="font-size: inherit !important;"></i> Not Enrolled</span>
+                                                            @endif
+                                                        @else
+                                                            <em>Not Eligible</em>
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -768,9 +685,11 @@
                                         </table>
                                     </div>
                                 </div>
-                            @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endif
+                    <div class="tab-pane" role="tabpanel"
+                         id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
                     @if (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
                         <div class="tab-pane" role="tabpanel" id="actions">
                             <div class="panel panel-default">

@@ -58,8 +58,8 @@ class ExamController extends Controller
 
     public function getIndex()
     {
-        /*if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff())
-            abort(401);*/
+        if (!RoleHelper::isVATUSAStaff())
+            abort(401);
 
         if (!Auth::check()) {
             return redirect('/')->with("error", "You must be logged in for that.");
