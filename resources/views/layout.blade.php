@@ -351,12 +351,12 @@
                                         </li>
 
                                         <!-- Exam Management [Instructors/ATM/DATM/TA] -->
-                                        @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
+                                        @if(\App\Classes\RoleHelper::isVATUSAStaff())
                                             <li><a href="{{secure_url("exam")}}">Exam Management (Legacy)</a></li>
                                         @endif
 
                                     <!-- CBT Editor [VATUSA/ATM/DATM/TA] -->
-                                        @if (\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
+                                        @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                             <li><a href="{{secure_url("cbt/editor") }}">CBT Editor (Legacy)</a></li>
                                         @endif
 
