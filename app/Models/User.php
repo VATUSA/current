@@ -165,8 +165,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 'emails.user.welcome',
                 [
                     'welcome' => $welcome,
-                    'fname'   => $this->fname,
-                    'lname'   => $this->lname
+                    'fname' => $this->fname,
+                    'lname' => $this->lname
                 ]
             );
             EmailHelper::sendEmail([
@@ -174,10 +174,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 "$fac-datm@vatusa.net",
                 "vatusa2@vatusa.net"
             ], "User added to facility", "emails.user.addedtofacility", [
-                "name"     => $this->fullname(),
-                "cid"      => $this->cid,
-                "email"    => $this->email,
-                "rating"   => Helper::ratingShortFromInt($this->rating),
+                "name" => $this->fullname(),
+                "cid" => $this->cid,
+                "email" => $this->email,
+                "rating" => Helper::ratingShortFromInt($this->rating),
                 "facility" => $fac
             ]);
 
@@ -210,12 +210,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 "Removal from $facname",
                 "emails.user.removed",
                 [
-                    'name'        => $this->fname . " " . $this->lname,
-                    'facility'    => $this->facname,
-                    'by'          => $by === "Automated" ? $by : Helper::nameFromCID($by),
-                    'msg'         => $msg,
-                    'facid'       => $facility,
-                    'region'      => $region,
+                    'name' => $this->fname . " " . $this->lname,
+                    'facility' => $this->facname,
+                    'by' => $by === "Automated" ? $by : Helper::nameFromCID($by),
+                    'msg' => $msg,
+                    'facid' => $facility,
+                    'region' => $region,
                     'obsInactive' => $this->rating == 1 && Str::contains($msg,
                             ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
@@ -284,19 +284,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         // SMFHelper::createPost(7262, 82, "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility, "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
     }
 
-    public
-    function purge(
+    public function purge(
         $alltables = false
-    ) {
+    )
+    {
         //$this->delete();
 
         //TODO: Purge from All Tables
     }
 
-    public
-    function transferEligible(
+    public function transferEligible(
         &$checks = null
-    ) {
+    )
+    {
         if ($checks === null) {
             $checks = [];
         }
@@ -412,15 +412,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public
-    function toggleBasic()
+    public function toggleBasic()
     {
         $this->flag_needbasic = (($this->flag_needbasic) ? 0 : 1);
         $this->save();
     }
 
-    public
-    function selectionEligible()
+    public function selectionEligible()
     {
         if ($this->flag_homecontroller == 0 || $this->facility != "ZAE") {
             return false;
@@ -436,8 +434,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists();
     }
 
-    public
-    function promotionEligible()
+    public function promotionEligible()
     {
         if (!$this->flag_homecontroller) {
             Cache::set("promotionEligible-$this->cid", false);
@@ -464,8 +461,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $result;
     }
 
-    public
-    function isS1Eligible()
+    public function isS1Eligible()
     {
         if ($this->rating > Helper::ratingIntFromShort("OBS")) {
             return false;
@@ -474,8 +470,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return !$this->flag_needbasic;
     }
 
-    public
-    function isS2Eligible()
+    public function isS2Eligible()
     {
         if ($this->rating != Helper::ratingIntFromShort("S1")) {
             return false;
@@ -485,8 +480,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 1)->exists() || ExamHelper::academyPassedExam($this->cid, "S2");
     }
 
-    public
-    function isS3Eligible()
+    public function isS3Eligible()
     {
         if ($this->rating != Helper::ratingIntFromShort("S2")) {
             return false;
@@ -497,8 +491,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     }
 
-    public
-    function isC1Eligible()
+    public function isC1Eligible()
     {
         if ($this->rating != Helper::ratingIntFromShort("S3")) {
             return false;
@@ -509,28 +502,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     }
 
-    public
-    function lastActivityWebsite()
+    public function lastActivityWebsite()
     {
         return $this->lastactivity->diffInDays(null);
     }
 
-    public
-    function lastActivityForum()
+    public function lastActivityForum()
     {
         $f = \DB::connection('forum')->table("smf_members")->where("member_name", $this->cid)->first();
 
         return ($f) ? Carbon::createFromTimestamp($f->last_login)->diffInDays(null) : "Unknown";
     }
 
-    public
-    function lastPromotion()
+    public function lastPromotion()
     {
         return $this->hasMany(Promotions::class, 'cid', 'cid')->latest()->first();
     }
 
-    public
-    function isActive()
+    public function isActive()
     {
         $website = false;
         $forum = false;
@@ -549,30 +538,29 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return false;
     }
 
-    public
-    function getTrainingActivitySparkline()
+    public function getTrainingActivitySparkline()
     {
         $vals = [];
         for ($i = 10; $i >= 0; $i--) {
             $vals[] = $this->trainingRecordsIns()->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, DATE_FORMAT(session_date, '%Y-%U') AS week")
-                    ->where(DB::raw("DATE_FORMAT(session_date, '%Y-%U')"), '=',
-                        Carbon::now()->subWeeks($i)->format('Y-W'))->groupBy(['week'])->orderBy('week',
-                        'ASC')->pluck('sum')->map(function ($v) {
-                        return floor($v / 3600);
-                    })->pop() ?? 0;
+                ->where(DB::raw("DATE_FORMAT(session_date, '%Y-%U')"), '=',
+                    Carbon::now()->subWeeks($i)->format('Y-W'))->groupBy(['week'])->orderBy('week',
+                    'ASC')->pluck('sum')->map(function ($v) {
+                    return floor($v / 3600);
+                })->pop() ?? 0;
         }
 
         return implode(",", $vals);
     }
 
-    public
-    function checkPromotionCriteria(
+    public function checkPromotionCriteria(
         &$trainingRecordStatus,
         &$otsEvalStatus,
         &$examPosition,
         &$dateOfExam,
         &$evalId
-    ) {
+    )
+    {
         $trainingRecordStatus = 0;
         $otsEvalStatus = 0;
 
