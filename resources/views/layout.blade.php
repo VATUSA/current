@@ -368,7 +368,7 @@
                                             <li><a href="{{ secure_url("/mgt/facility/training/evals") }}">OTS
                                                     Evaluations</a>
                                             </li>
-                                            <!--This is exactly like the Training tab of records, but with OTS Evals. ARTCC select, position groups, and everything.
+                                            <!--This is exactly like the Training tab of records, but with OTS Evals. ARTCC select, position groups, and everything. -->
                                         @endif
                                     @endif
 
