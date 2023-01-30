@@ -2,21 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ExamResults;
-use App\Models\ExamResultsData;
 use App\Models\SoloCert;
 use Illuminate\Http\Request;
 use App\Classes\EmailHelper;
 use App\Classes\RoleHelper;
 use App\Classes\Helper;
-use App\Models\Actions;
 use App\Models\Facility;
 use App\Models\Transfers;
 use App\Models\User;
-use App\Models\TrainingBlock;
-use App\Models\TrainingChapter;
 use App\Models\TrainingProgress;
-use App\Models\Exam;
 
 class APIController
     extends Controller
@@ -34,147 +28,6 @@ class APIController
 
         return json_encode($data);
     }
-
-    // <editor-fold desc="CBT">
-    public function getCBTBlocks($apikey)
-    {
-        $facility = Facility::where('apikey', $apikey)->first();
-
-        $blocks = TrainingBlock::where('facility', $facility->id)->orderBy('order')->get();
-        $data = [];
-        $data['status'] = "success";
-        foreach ($blocks as $block) {
-            $data['blocks'][] =
-                [
-                    'id' => $block->id,
-                    'order' => $block->order,
-                    'name' => $block->name,
-                    'visible' => $block->visible
-                ];
-        }
-        echo json_encode($data);
-    }
-
-    public function getCBTChapters($apikey, $blockid)
-    {
-        $facility = Facility::where('apikey', $apikey)->first();
-
-        $block = TrainingBlock::find($blockid);
-        if ($block == null || empty($block)) {
-            $data['status'] = "error";
-            $data['msg'] = "Training block not found.";
-            echo json_encode($data);
-            exit;
-        }
-        if ($block->facility != $facility->id) {
-            $data['status'] = "error";
-            $data['msg'] = "Access denied.";
-            echo json_encode($data);
-            exit;
-        }
-
-        $data['status'] = "success";
-        $data['blockId'] = $block->id;
-        $data['blockName'] = $block->name;
-        $chapters = $block->chapters()->get();
-        foreach ($chapters as $chapter) {
-            $data['chapters'][] =
-                [
-                    'id' => $chapter->id,
-                    'order' => $chapter->order,
-                    'name' => $chapter->name,
-                    'url' => ((substr($chapter->url, 0, 4) == "http") ?
-                        $chapter->url :
-                        ((strlen($chapter->url) > 0) ? "https://docs.google.com/presentation/d/" . $chapter->url . "/embed?start=false&loop=false&delayms=60000" : "")),
-                ];
-        }
-
-        echo json_encode($data);
-    }
-
-    public function getCBTChapter($apikey, $chapterid)
-    {
-        $facility = Facility::where('apikey', $apikey)->first();
-
-        $chapter = TrainingChapter::find($chapterid);
-        if ($chapter == null || empty($chapter)) {
-            $data['status'] = "error";
-            $data['msg'] = "Chapter not found.";
-            echo json_encode($data);
-            exit;
-        }
-        $block = $chapter->block()->first();
-        if ($block->facility != $facility->id) {
-            $data['status'] = "error";
-            $data['msg'] = "Access denied.";
-            echo json_encode($data);
-            exit;
-        }
-
-        $data['status'] = "success";
-        $data['chapter'] =
-            [
-                'id' => $chapter->id,
-                'blockId' => $chapter->blockid,
-                'order' => $chapter->order,
-                'name' => $chapter->name,
-                'url' => ((substr($chapter->url, 0, 4) == "http") ?
-                    $chapter->url :
-                    ((strlen($chapter->url) > 0) ? "https://docs.google.com/presentation/d/" . $chapter->url . "/embed?start=false&loop=false&delayms=60000" : "")),
-            ];
-
-        echo json_encode($data);
-    }
-
-    public function putCBTProgress(Request $request, $apikey, $cid)
-    {
-        parse_str(file_get_contents("php://input"), $vars);
-
-        $facility = Facility::where('apikey', $apikey)->first();
-        $chapterid = $vars['chapterId'];
-        $chapter = TrainingChapter::find($chapterid);
-        if ($chapter == null || empty($chapter)) {
-            $data['status'] = "error";
-            $data['msg'] = "Chapter not found.";
-            echo json_encode($data);
-            exit;
-        }
-        $block = $chapter->block()->first();
-        if ($block->facility != $facility->id) {
-            $data['status'] = "error";
-            $data['msg'] = "Access denied.";
-            echo json_encode($data);
-            exit;
-        }
-
-        $user = User::where('cid', $cid)->first();
-        if ($user == null || empty($user)) {
-            $data['status'] = "error";
-            $data['msg'] = "User not found or not specified";
-            echo json_encode($data);
-            exit;
-        }
-
-        if (TrainingProgress::where('cid', $cid)->where('chapterid', $chapterid)->count()) {
-            $data['status'] = "error";
-            $data['msg'] = "Already completed";
-            echo json_encode($data);
-            exit;
-        }
-
-        if (!$request->has('test')) {
-            $progress = new TrainingProgress();
-            $progress->cid = $cid;
-            $progress->chapterid = $chapterid;
-            $progress->date = \DB::raw('NOW()');
-            $progress->save();
-        }
-        $data['status'] = "success";
-        echo json_encode($data);
-        exit;
-    }
-
-    // </editor-fold>
 
     // <editor-fold desc="Controller">
     public function getController($apikey, $cid)
@@ -198,73 +51,6 @@ class APIController
         exit;
     }
     // </editor-fold>
-
-    // <editor-fold desc="Exams">
-    public function getExam($apikey)
-    {
-    }
-
-    public function getExamAssignment($apikey, $id = null)
-    {
-    }
-
-    public function getExamUserResults($apikey, $cid)
-    {
-        if (!$cid) {
-            return $this->error("CID not specified");
-        }
-        $user = User::find($cid);
-        if (!$user) {
-            return $this->error("CID not valid");
-        }
-
-        $results = ExamResults::where('cid', $cid)->orderBy('date')->get();
-        $res = [];
-        $res['status'] = "success";
-        $res['cid'] = $cid;
-        foreach ($results as $result) {
-            $data = [];
-            $data['id'] = $result->id;
-            $data['exam_id'] = $result->exam_id;
-            $data['name'] = $result->exam_name;
-            $data['score'] = $result->score;
-            $data['passed'] = ($result->passed ? true : false);
-            $data['date'] = $result->date;
-            $res['exams'][] = $data;
-        }
-
-        return json_encode($res);
-    }
-
-    public function getExamResult($apikey, $rid)
-    {
-        $res = ExamResults::find($rid);
-        if (!$res) {
-            return $this->error("Exam result not found");
-        }
-
-        $ret = [];
-        $ret['status'] = "success";
-        $ret['id'] = $rid;
-        $ret['cid'] = $res->cid;
-        $data['exam_id'] = $res->exam_id;
-        $ret['name'] = $res->exam_name;
-        $ret['score'] = $res->score;
-        $ret['passed'] = $res->passed;
-        $ret['date'] = $res->date;
-        $data = ExamResultsData::where('result_id', $rid)->get();
-        foreach ($data as $d) {
-            $r = [
-                'question' => $d->question,
-                'correct' => $d->correct,
-                'selected' => $d->selected,
-                'is_correct' => ($d->is_correct ? true : false)
-            ];
-            $ret['questions'][] = $r;
-        }
-
-        return json_encode($ret);
-    }
 
     // </editor-fold>
 

@@ -30,6 +30,7 @@ class EmailHelper
 
         static::sendEmail($email, $subject, $template, $data);
     }
+
     /**
      * Send an email from support
      *

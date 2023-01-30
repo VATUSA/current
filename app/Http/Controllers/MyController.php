@@ -1,11 +1,8 @@
 <?php namespace App\Http\Controllers;
 
 use App\Classes\EmailHelper;
-use App\Classes\ExamHelper;
 use App\Classes\Helper;
-use App\Classes\RoleHelper;
 use App\Classes\VATUSAMoodle;
-use App\Models\Promotions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Transfers;
@@ -100,21 +97,6 @@ class MyController
 
         return view('my.profile',
             compact('checks', 'eligible', 'trainingRecords', 'trainingfac', 'trainingfacname', 'trainingfaclist', 'trainingFacListArray', 'examAttempts'));
-    }
-
-    public function getAssignBasic()
-    {
-        if (Auth::user()->flag_needbasic) {
-            if (!ExamHelper::isAssigned(Auth::user()->cid, BASIC_EXAM, true)) {
-                ExamHelper::assign(Auth::user()->cid, BASIC_EXAM, 0, 14);
-
-                return redirect('/exam/0')->with('success', "Basic exam assigned");
-            } else {
-                return redirect('/exam/0')->with('error', "The exam is already assigned or waiting for reassignment");
-            }
-        } else {
-            return redirect('/my/profile')->with('error', "You are not eligible for the Basic ATC Exam");
-        }
     }
 
     public function getSelect()
@@ -237,11 +219,6 @@ class MyController
         ]);
 
         return redirect('/')->with('success', 'You have initiated a transfer to ' . $data->to);
-    }
-
-    public function getExamIndex()
-    {
-        return view('my.exams.index');
     }
 
     public function toggleBroadcastEmails(Request $request)

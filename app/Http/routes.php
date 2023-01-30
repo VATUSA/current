@@ -57,41 +57,6 @@ Route::group([
             });
         });
 
-        /* * * * *
-         *  CBT  *
-         * * * * */
-        Route::group(['prefix' => 'cbt'], function () {
-            Route::get('/', 'CBTController@getIndex');
-            Route::group(['middleware' => 'auth'], function () {
-                Route::get('{fac}', 'CBTController@getIndex')->where('fac', '[A-Z]{3}');
-                Route::put('{id}', 'CBTController@putIndex')->where('id', '[0-9]+');
-
-                // * * * * * * Editor * * * * * *
-                Route::group(['prefix' => 'editor'], function () {
-                    Route::get('/', 'CBTController@getEditor');
-                    Route::get('{fac}', 'CBTController@getEditor')->where('fac', '[A-Z]{3}');
-                    Route::get('{id}', 'CBTController@getEditorBlock')->where('id', '[0-9]+');
-
-                    Route::group(['prefix' => 'ajax'], function () {
-                        Route::post('blocktoggle/{id}', 'CBTController@ajaxBlockToggle')->where('id',
-                            '[0-9]+');
-                        Route::delete('block/{id}', 'CBTController@ajaxDeleteBlock')->where('id', '[0-9]+');
-                        Route::put('block/{fac}', 'CBTController@ajaxPutBlock')->where('fac', '[A-Z]{3}');
-                        Route::post('block/order/{fac}', 'CBTController@ajaxOrderBlock')->where('fac',
-                            '[A-Z]{3}');
-                        Route::post('block/rename/{id}', 'CBTController@ajaxRenameBlock')->where('id',
-                            '[0-9]+');
-                        Route::post('block/access/{id}', 'CBTController@ajaxChangeAccess')->where('id',
-                            '[0-9]+');
-                        Route::delete('chapter/{id}', 'CBTController@ajaxChapterDelete')->where('id',
-                            '[0-9]+');
-                        Route::put('chapter/{id}', 'CBTController@ajaxChapterNew')->where('id', '[0-9]+');
-                        Route::post('chapter/{id}', 'CBTController@ajaxChapterModify')->where('id', '[0-9]+');
-                    });
-                });
-            });
-        });
-
         /* * * * * * * * * *
          *  Knowledgebase  *
          * * * * * * * * * */
@@ -142,7 +107,6 @@ Route::group([
              *  My Profle  *
              * * * * * * * */
             Route::group(['prefix' => 'my'], function () {
-                Route::get('exams', 'MyController@getExamIndex');
                 Route::get('profile', 'MyController@getProfile');
                 Route::post('profile', 'MyController@getProfile');
                 Route::post('profile/toggleBroadcast', 'MyController@toggleBroadcastEmails');
@@ -150,50 +114,7 @@ Route::group([
                 Route::post('select', 'MyController@postSelect');
                 Route::get('transfer', 'MyController@getTransfer');
                 Route::post('transfer/do', 'MyController@doTransfer');
-                Route::get('assignbasic', 'MyController@getAssignBasic');
                 Route::get('discord/{mode}', 'MyController@linkDiscord');
-            });
-
-            /* * * * * * * * *
-             *  Exam Center  *
-             * * * * * * * * */
-            Route::group(['prefix' => 'exam'], function () {
-                Route::get('/', 'ExamController@getIndex');
-
-                // * * * * * * Exam Assignment * * * * * *
-                Route::get('assign', 'ExamController@getAssign');
-                Route::post('assign', 'ExamController@postAssign');
-                Route::delete('assignment/{id}', 'ExamController@deleteAssignment')->where('id',
-                    '[0-9]+');
-                Route::delete('reassignment/{id}', 'ExamController@deleteReassignment')->where('id',
-                    '[0-9]+');
-                Route::get('{id}', 'ExamController@getTakeExam')->where('id', '[0-9]+');
-                Route::put('{id}', 'ExamController@putTakeExam')->where('id', '[0-9]+');
-                Route::get('delete/{id}', 'ExamController@getDeleteExam')->where('id', '[0-9]+');
-
-                // * * * * * * Editor - Create * * * * * *
-                Route::get('create', 'ExamController@getCreate');
-                Route::post('create', 'ExamController@postCreate');
-
-                // * * * * * * Editor - Edit * * * * * *
-                Route::group(['prefix' => 'edit'], function () {
-                    Route::get('/', 'ExamController@getEdit');
-                    Route::post('/', 'ExamController@editExam');
-                    Route::get('{id}', 'ExamController@editExam')->where('id', '[0-9]+');
-                    Route::post('{id}', 'ExamController@postEditExam')->where('id', '[0-9]+');
-                    Route::get('{examid}/{qid}', 'ExamController@getEditQuestion')->where('examid',
-                        '[0-9]+')->where('qid', '[0-9]+');
-                    Route::post('{examid}/{qid}', 'ExamController@postEditQuestion')->where('examid',
-                        '[0-9]+')->where('qid', '[0-9]+');
-                    Route::delete('{examid}/{qid}', 'ExamController@deleteQuestion')->where('examid',
-                        '[0-9]+')->where('qid', '[0-9]+');
-                });
-
-                // * * * * * * Exam View * * * * * *
-                Route::get('view', 'ExamController@getAssignments');
-                Route::get('view/{fac}', 'ExamController@getAssignments')->where('fac', '[A-Z]{3}');
-                Route::get('download/{id}', 'ExamController@getDownload')->where('id', '[0-9]+');
-                Route::get('result/{id}', 'ExamController@getResult');
             });
         });
 
@@ -258,7 +179,6 @@ Route::group([
                     Route::get('/', 'MgtController@getController')->name('mgt.controller.index');
                     Route::post('/', 'MgtController@getController');
                     Route::get('mentor/{facility?}', 'MgtController@getControllerMentor');
-                    Route::get('exams', 'MgtController@getControllerExams');
                     Route::post('rating', 'MgtController@postControllerRating');
                     Route::get('transfers', 'MgtController@getControllerTransfers');
                     Route::get('transferwaiver', 'MgtController@getControllerTransferWaiver');

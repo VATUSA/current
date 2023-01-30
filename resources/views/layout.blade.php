@@ -288,11 +288,6 @@
                                             Why can I not join
                                             a facility or transfer?</a></li>
                                 @endif
-                                {{--<li><a href="{{ secure_url('exam') }}"><i class="fas fa-school"></i> Exam Center
-                                        (Legacy)</a>
-                                </li>--}}
-                                {{--<li><a href="{{ secure_url("cbt") }}"><i class="fas fa-desktop"></i> Computer Based
-                                        Training (Legacy)</a></li>--}}
                                 <li role="separator" class="divider"></li>
                                 <li>
                                     <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i
@@ -349,16 +344,6 @@
                                             <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
                                                 <i class="fas fa-chalkboard-teacher"></i> Training Actions</h5>
                                         </li>
-
-                                        <!-- Exam Management [Instructors/ATM/DATM/TA] -->
-                                        @if(\App\Classes\RoleHelper::isVATUSAStaff())
-                                            <li><a href="{{secure_url("exam")}}">Exam Management (Legacy)</a></li>
-                                        @endif
-
-                                    <!-- CBT Editor [VATUSA/ATM/DATM/TA] -->
-                                        @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                            <li><a href="{{secure_url("cbt/editor") }}">CBT Editor (Legacy)</a></li>
-                                        @endif
 
                                     <!-- Training Statistics [INS/ATM/DATM/TA/VATUSA] -->
                                         @if (\App\Classes\RoleHelper::isTrainingStaff())

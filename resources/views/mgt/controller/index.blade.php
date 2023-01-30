@@ -576,7 +576,6 @@
                                 </div>
                                 <div class="panel-body">
                                     <div>
-                                        {{-- -<pre>@dump($examAttempts)</pre> --}}
                                         @if (\App\Classes\RoleHelper::isFacilitySeniorStaff()
                                             || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid))
                                         <div style="text-align: center;">

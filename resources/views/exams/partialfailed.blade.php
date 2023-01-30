@@ -1,2 +1,0 @@
-I'm sorry.  You did not pass your exam.  An email has been sent to you and your training staff.
-@if ($reassign > 0)  You will be eligible to retake your exam in {{$reassign}} days. @else Your training staff will reassign this exam in accordance to local training policies. @endif

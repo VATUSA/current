@@ -13,8 +13,6 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\CERTSync',
-        'App\Console\Commands\ExamReassign',
-        'App\Console\Commands\ULSTokens',
         'App\Console\Commands\TattlerStaffVisit',
         'App\Console\Commands\TattlerTransfers',
         'App\Console\Commands\GroupCheck',
@@ -25,8 +23,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\CERTCorrect',
         'App\Console\Commands\CERTErr',
         'App\Console\Commands\MoodleSync',
-        'App\Console\Commands\CachePromotionEligibility',
-        'App\Console\Commands\ProcessOBSList'
+        'App\Console\Commands\CachePromotionEligibility'
     ];
 
     /**
@@ -39,9 +36,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('CERTSync')->twiceDaily(11, 23);
-        $schedule->command('ULSTokens')->everyMinute();
         $schedule->command('UpdateVATSIM')->everyMinute();
-        $schedule->command('ExamReassign')->hourly();
         $schedule->command('TattlerTransfers')->cron('15 0 * * *');
         // $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00");
         $schedule->command('rolesync')->cron('45 * * * *');
