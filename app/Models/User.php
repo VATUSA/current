@@ -476,8 +476,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.S2.legacyId'))->where('passed',
-                1)->exists() || ExamHelper::academyPassedExam($this->cid, "S2");
+        return ExamHelper::academyPassedExam($this->cid, "S2");
     }
 
     public function isS3Eligible()
@@ -486,8 +485,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.S3.legacyId'))->where('passed',
-                1)->exists() || ExamHelper::academyPassedExam($this->cid, "S3");
+        return ExamHelper::academyPassedExam($this->cid, "S3");
 
     }
 
@@ -497,8 +495,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamResults::where('cid', $this->cid)->where('exam_id', config('exams.C1.legacyId'))->where('passed',
-                1)->exists() || ExamHelper::academyPassedExam($this->cid, "C1");
+        return ExamHelper::academyPassedExam($this->cid, "C1");
 
     }
 
