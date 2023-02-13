@@ -228,6 +228,32 @@
           })
       })
 
+      $('#toggleDICE').click(function () {
+          let icon        = $(this).find('i.toggle-icon'),
+              currentlyOn = icon.hasClass('fa-toggle-on'),
+              spinner     = $(this).find('i.spinner-icon')
+
+          spinner.show()
+          $.ajax({
+              type: 'POST',
+              url : "{{ secure_url("/mgt/controller/ajax/toggleDICERole") }}",
+              data: {cid: "{{ $user->cid }}"}
+          }).success(function (result) {
+              spinner.hide()
+              if (result === '1') {
+                  //Success
+                  icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+                      ' text-' + (currentlyOn ? 'info' : 'success'))
+              } else {
+                  bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle VATUSA DICE Team role.')
+              }
+          })
+              .error(function (result) {
+                  spinner.hide()
+                  bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle VATUSA DICE Team role.')
+              })
+      })
+
       $('#ratingchange').on('change', function () {
         let hasFlag = $('#toggleStaffPrevent').find('i.toggle-icon').hasClass('fa-toggle-on')
         if (this.value >= parseInt("{{\App\Classes\Helper::ratingIntFromShort("I1")}}") && hasFlag)
@@ -820,6 +846,17 @@
                                         <div class="col-sm-10">
                                             <span id="toggleTT" style="font-size:1.8em;">
                                                 <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, "ZHQ", "USWT") ? "on text-success" : "off text-info"}} "></i>
+                                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                                            </span>
+                                            <p class="help-block">This will allow the user to receive the proper roles
+                                                in Discord.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">VATUSA DICE Team</label>
+                                        <div class="col-sm-10">
+                                            <span id="toggleDICE" style="font-size:1.8em;">
+                                                <i class="toggle-icon fa fa-toggle-{{ \App\Classes\RoleHelper::hasRole($user->cid, "ZHQ", "DICE") ? "on text-success" : "off text-info"}} "></i>
                                                 <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                                             </span>
                                             <p class="help-block">This will allow the user to receive the proper roles

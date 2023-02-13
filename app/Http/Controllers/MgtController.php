@@ -1192,6 +1192,43 @@ class MgtController extends Controller
     }
 
     public
+    function toggleDICERole(
+        Request $request
+    )
+    {
+        $cid = $request->cid;
+
+        if (!RoleHelper::isVATUSAStaff()) {
+            abort(403);
+        }
+
+        $user = User::findOrFail($cid);
+        $currentRole = Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "DICE");
+        if ($currentRole->count()) {
+            //Delete role
+            $currentRole->first()->delete();
+            $log = new Actions();
+            $log->to = $cid;
+            $log->log = "VATUSA DICE Team role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+            $log->save();
+        } else {
+            //Create role
+            $role = new Role();
+            $role->cid = $cid;
+            $role->facility = "ZHQ";
+            $role->role = "DICE";
+            $role->save();
+
+            $log = new Actions();
+            $log->to = $cid;
+            $log->log = "VATUSA DICE Team role added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+            $log->save();
+        }
+
+        return "1";
+    }
+
+    public
     function ajaxCanModifyRecord(
         $record
     )
