@@ -139,7 +139,7 @@
                                     <div class="col-sm-6">
                                         <select class="form-control" id="facility">
                                             <option value="0">Select a Facility</option>
-                                            @foreach (\App\Models\Facility::where(['active' => 1])->orderBy('name')->get() as $facility)
+                                            @foreach (\App\Models\Facility::where(['active' => 1])->orWhere('id', 'ZHQ')->orderBy('name')->get() as $facility)
                                                 <option value="{{$facility->id}}">{{$facility->name}}</option>
                                             @endforeach
                                         </select>
