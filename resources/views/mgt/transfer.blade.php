@@ -21,7 +21,10 @@
                         <label class="col-sm-2 control-label">New Facility</label>
                         <div class="col-sm-10">
                             <select class="form-control" name="facility">
-                                @foreach(\App\Models\Facility::where('active', 1)->orderby('name', 'ASC')->get() as $f)
+                                @foreach(\App\Models\Facility::where('active', 1)
+                                                                ->orWhere('id', 'ZAE')
+                                                                ->orWhere('id', 'ZHQ')
+                                                                ->orderby('name', 'ASC')->get() as $f)
                                     <option value="{{$f->id}}">{{$f->name}}</option>
                                 @endforeach
                             </select>

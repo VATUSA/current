@@ -668,19 +668,22 @@ class MgtController extends Controller
         $log->to = $cid;
         $log->log = "[Submitted by " . Auth::user()->fullname() . "] Requested transfer from " . $tr->from . " to " . $tr->to . ": " . $tr->reason;
         $log->save();
-
-        EmailHelper::sendEmail([
-            $tr->from . "-atm@vatusa.net",
-            $tr->from . "-datm@vatusa.net",
-            "vatusa2@vatusa.net"
-        ], "Transfer Pending", "emails.transfers.internalpending", [
-            'fname' => $user->fname,
-            'lname' => $user->lname,
-            'cid' => $tr->cid,
-            'facility' => $fac->id,
-            'reason' => $_POST['reason']
-        ]);
-
+        if (in_array($facility, ['ZAE', 'ZHQ'])) {
+            // Automatically approve transfers to ZAE, ZHQ
+            $tr->accept(Auth::user()->cid);
+        } else {
+            EmailHelper::sendEmail([
+                $tr->from . "-atm@vatusa.net",
+                $tr->from . "-datm@vatusa.net",
+                "vatusa2@vatusa.net"
+            ], "Transfer Pending", "emails.transfers.internalpending", [
+                'fname' => $user->fname,
+                'lname' => $user->lname,
+                'cid' => $tr->cid,
+                'facility' => $fac->id,
+                'reason' => $_POST['reason']
+            ]);
+        }
         return redirect("/mgt/transfer")->with("success", "Transfer for $cid - " . $user->fullname() . " submitted.");
     }
 
