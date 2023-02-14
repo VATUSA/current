@@ -136,25 +136,12 @@
                             <form class="form-horizontal artcc-mem-search">
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Select a Facility</label>
-
                                     <div class="col-sm-6">
                                         <select class="form-control" id="facility">
                                             <option value="0">Select a Facility</option>
-                                            <optgroup label="Western Region">
-                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 6])->orderBy('name')->get() as $facility)
-                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
-                                                @endforeach
-                                            </optgroup>
-                                            <optgroup label="Central Region">
-                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderBy('name')->get() as $facility)
-                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
-                                                @endforeach
-                                            </optgroup>
-                                            <optgroup label="Eastern Region">
-                                                @foreach (\App\Models\Facility::where(['active' => 1, 'region' => 7])->orderBy('name')->get() as $facility)
-                                                    <option value="{{$facility->id}}">{{$facility->name}}</option>
-                                                @endforeach
-                                            </optgroup>
+                                            @foreach (\App\Models\Facility::where(['active' => 1])->orderBy('name')->get() as $facility)
+                                                <option value="{{$facility->id}}">{{$facility->name}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

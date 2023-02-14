@@ -49,25 +49,13 @@ class InfoController
             if (ctype_alpha($fac) && strlen($fac) == 3) {
                 $facility = Facility::where('id', $fac)->first();
                 $id = $facility->id;
-                $regid = $facility->region;
-                switch ($regid) {
-                    case 5:
-                        $region = "Central";
-                        break;
-                    case 6:
-                        $region = "Western";
-                        break;
-                    case 7:
-                        $region = "Eastern";
-                        break;
-                    default:
-                        $region = "Unknown";
-                        break;
-                }
                 echo '<h2 class="text-center">' . $facility->name . '</h2>';
-                echo '<h4 class="text-center">' . "$region Region" . '</h4>';
-                echo '<h4 class="text-center">' . "ATD: " . RoleHelper::getNameFromRole("US$regid") . " (USA$regid)" . '</h4>';
-                echo '<h4>Facility Staff</h4><table class="table table-hover"><thead><tr><th>Position</th><th>Name</th><th>Email</th></tr>
+                if (!in_array($fac, ['ZAE', 'ZHQ'])) {
+                    echo '
+                            <h4>Facility Staff</h4>
+                            <table class="table table-hover">
+                                <thead>
+                                <tr><th>Position</th><th>Name</th><th>Email</th></tr>
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -102,17 +90,19 @@ class InfoController
                                     </tr>
                                 </tbody>
                             </table>
-                            <br>
-                            <h4>Facility Controllers</h4>
-                            <table class="table table-hover">
-                                <thead>
+                            <br>';
+                }
+                echo '
+                        <h4>Facility Controllers</h4>
+                        <table class="table table-hover">
+                            <thead>
                                 <tr>
                                     <th>CID</th>
                                     <th>Name</th>
                                     <th>Rating</th>
                                 </tr>
-                                </thead>
-                                <tbody>';
+                            </thead>
+                            <tbody>';
                 foreach (User::where('facility', $id)->orderBy('rating', 'desc')->orderBy('lname',
                     'asc')->orderBy('fname', 'asc')->get() as $c) {
                     echo '<tr>
@@ -121,8 +111,7 @@ class InfoController
                                     <td >' . $c->urating->short . '</td >
                                 </tr >';
                 }
-                echo '</tbody>
-                            </table>';
+                echo '</tbody></table>';
             }
         }
     }
