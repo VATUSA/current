@@ -222,9 +222,9 @@ class FacMgtController extends Controller
             abort(403);
         }
 
-        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,
-                "ATM") && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,
-                "DATM") && !RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,"ATM")
+            && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,"DATM")
+            && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
 
@@ -247,61 +247,17 @@ class FacMgtController extends Controller
             case 6:
                 $pos = 'WM';
                 break;
+            default:
+                return "Invalid position ID";
         }
-        $spos = strtolower($pos);
         $cid = $request->input('cid');
-        $u = User::where('cid', $cid)->count();
-        if ($u == 0) {
-            return 'That CID was not found';
-        }
+
+        $error = RoleHelper::addFacilityStaffPosition($facility, $cid, $pos);
+        if ($error)
+            return $error;
 
         $u = User::where('cid', $cid)->first();
         $un = $u->fname . ' ' . $u->lname;
-
-        if ($u->facility == "ZZN") {
-            return "User is not part of VATUSA and is not eligible for staff positions";
-        }
-        if ($u->flag_preventStaffAssign) {
-            return "This user is current not eligible for a staff position. Please contact VATUSA Staff for more information.";
-        }
-
-        $fu = Facility::where('id', $facility)->first();
-        $fu->$spos = $cid;
-        $fu->save();
-
-        if ($u->facility != $facility) {
-            $uc = User::where('cid', $cid)->first();
-            $uc->addToFacility($facility);
-
-            $tr = new Transfers;
-            $tr->cid = $cid;
-            $tr->reason = "Auto Transfer: Controller set as staff.";
-            $tr->to = $facility;
-            $tr->from = $u->facility;
-            $tr->status = 1;
-            $tr->actionby = 0;
-            $tr->save();
-
-            $log = new Actions;
-            $log->to = $u->cid;
-            $log->from = 0;
-            $log->log = "Auto Transfer to " . $facility . ", controller set as staff.";
-            $log->save();
-        }
-
-        $log = new Actions;
-        $log->to = $u->cid;
-        $log->from = Auth::user()->cid;
-        $log->log = "Set as " . $facility . " " . $pos . " by " . \App\Classes\Helper::nameFromCID(Auth::user()->cid);
-        $log->save();
-
-        $email = $fu->id . "-" . $pos . "@vatusa.net";
-
-        if (!EmailHelper::isStaticForward($email)) {
-            EmailHelper::setForward($email, $u->email);
-        }
-
-        SMFHelper::setPermissions($u->cid);
 
         return $pos . ' successfully changed to ' . $un . '.';
     }
@@ -331,8 +287,9 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "ATM") && !RoleHelper::hasRole(Auth::user()->cid,
-                $facility, "DATM") && !RoleHelper::isVATUSAStaff()) {
+        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "ATM")
+            && !RoleHelper::hasRole(Auth::user()->cid, $facility, "DATM")
+            && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
 
@@ -358,37 +315,7 @@ class FacMgtController extends Controller
                     $pos = 'WM';
                     break;
             }
-            $spos = strtolower($pos);
-
-            $fu = Facility::where('id', $facility)->first();
-            $oldstaff = $fu->$spos;
-            $fu->$spos = 0;
-            $fu->save();
-
-            if ($oldstaff != 0) {
-                $user = User::where('cid', $oldstaff)->first();
-                $log = new Actions();
-                $log->to = $user->cid;
-                $log->log = "User removed from " . $fu->name . " $pos by " . Auth::user()->fullname() . ".";
-                $log->save();
-
-                $email = $fu->id . "-" . $spos . "@vatusa.net";
-                if (!EmailHelper::isStaticForward($email)) {
-                    if ($spos == "atm") {
-                        $fwd = "vatusa2@vatusa.net";
-                    } else {
-                        $fwd[] = $fu->id . "-atm@vatusa.net";
-                        if ($spos != "datm") {
-                            $fwd[] = $fu->id . "-datm@vatusa.net";
-                        }
-                    }
-
-                    EmailHelper::setForward($email, $fwd);
-                }
-
-                SMFHelper::setPermissions($user->cid);
-            }
-
+            RoleHelper::deleteFacilityStaffPosition($facility, $pos);
             return 1;
         }
 

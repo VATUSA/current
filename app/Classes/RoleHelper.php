@@ -2,8 +2,10 @@
 
 namespace App\Classes;
 
+use App\Classes\DiscordHelper;
 use App\Models\Policy;
 use App\Models\Role;
+use App\Models\Transfers;
 use App\Models\User;
 use App\Models\Facility;
 use App\Models\RoleTitle;
@@ -576,6 +578,143 @@ class RoleHelper
         }
 
         return $staff;
+    }
+
+    public static function addFacilityStaffPosition($facility, $cid, $pos) {
+        $u = User::where('cid', $cid)->first();
+        $un = $u->fname . ' ' . $u->lname;
+
+        if ($u->facility == "ZZN") {
+            return "User is not part of VATUSA and is not eligible for staff positions";
+        }
+        if ($u->flag_preventStaffAssign) {
+            return "This user is current not eligible for a staff position. Please contact VATUSA Staff for more information.";
+        }
+
+        $log = new Actions;
+        $log->to = $u->cid;
+        $log->from = Auth::user()->cid;
+        $log->log = "Set as " . $facility . " " . $pos . " by " . \App\Classes\Helper::nameFromCID(Auth::user()->cid);
+        $log->save();
+
+        if ($u->facility != $facility) {
+            $uc = User::where('cid', $cid)->first();
+            $uc->addToFacility($facility);
+
+            $tr = new Transfers;
+            $tr->cid = $cid;
+            $tr->reason = "Auto Transfer: Controller set as staff.";
+            $tr->to = $facility;
+            $tr->from = $u->facility;
+            $tr->status = 1;
+            $tr->actionby = 0;
+            $tr->save();
+
+            $log = new Actions;
+            $log->to = $u->cid;
+            $log->from = 0;
+            $log->log = "Auto Transfer to " . $facility . ", controller set as staff.";
+            $log->save();
+        }
+
+        $fac = Facility::where('id', $facility)->first();
+
+        $role = new Role();
+        $role->cid = $cid;
+        $role->facility = $fac->id;
+        $role->role = $pos;
+        $role->save();
+
+        switch ($pos) {
+            case 'ATM':
+                if ($fac->atm != 0) {
+                    self::deleteFacilityStaffPosition($facility, $fac->atm, 'ATM');
+                }
+                $fac->atm = $cid;
+                break;
+            case 'DATM':
+                if ($fac->atm != 0) {
+                    self::deleteFacilityStaffPosition($facility, $fac->datm, 'DATM');
+                }
+                $fac->datm = $cid;
+                break;
+            case 'TA':
+                if ($fac->atm != 0) {
+                    self::deleteFacilityStaffPosition($facility, $fac->ta, 'TA');
+                }
+                $fac->ta = $cid;
+                break;
+            case 'EC':
+                if ($fac->atm != 0) {
+                    self::deleteFacilityStaffPosition($facility, $fac->ec, 'EC');
+                }
+                $fac->ec = $cid;
+                break;
+            case 'FE':
+                if ($fac->atm != 0) {
+                    self::deleteFacilityStaffPosition($facility, $fac->fe, 'FE');
+                }
+                $fac->fe = $cid;
+                break;
+            case 'WM':
+                if ($fac->atm != 0) {
+                    self::deleteFacilityStaffPosition($facility, $fac->wm, 'WM');
+                }
+                $fac->wm = $cid;
+                break;
+        }
+        $fac->save();
+        DiscordHelper::assignRoles($cid);
+        SMFHelper::setPermissions($u->cid);
+    }
+
+    public static function deleteFacilityStaffPosition($facility, $pos) {
+        $fac = Facility::where('id', $facility)->first();
+        switch ($pos) {
+            case 'ATM':
+                $cid = $fac->atm;
+                $fac->atm = 0;
+                break;
+            case 'DATM':
+                $cid = $fac->datm;
+                $fac->datm = 0;
+                break;
+            case 'TA':
+                $cid = $fac->ta;
+                $fac->ta = 0;
+                break;
+            case 'EC':
+                $cid = $fac->ec;
+                $fac->ec = 0;
+                break;
+            case 'FE':
+                $cid = $fac->fe;
+                $fac->fe = 0;
+                break;
+            case 'WM':
+                $cid = $fac->wm;
+                $fac->wm = 0;
+                break;
+            default:
+                return;
+        }
+        if ($cid == 0)
+            return;
+        $fac->save();
+
+        $u = User::where('cid', $cid)->first();
+
+        $log = new Actions;
+        $log->to = $cid;
+        $log->from = Auth::user()->cid;
+        $log->log = "Removed from " . $facility . " " . $pos . " by "
+            . \App\Classes\Helper::nameFromCID(Auth::user()->cid);
+        $log->save();
+        $role = Role::where('cid', $cid)->where('facility', $facility)->where('role', $pos);
+        $role->delete();
+
+        DiscordHelper::assignRoles($cid);
+        SMFHelper::setPermissions($u->cid);
     }
 
     public static function deleteStaff($facility, $cid, $pos)
