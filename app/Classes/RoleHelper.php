@@ -628,37 +628,37 @@ class RoleHelper
         switch ($pos) {
             case 'ATM':
                 if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, $fac->atm, 'ATM');
+                    self::deleteFacilityStaffPosition($facility, 'ATM');
                 }
                 $fac->atm = $cid;
                 break;
             case 'DATM':
                 if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, $fac->datm, 'DATM');
+                    self::deleteFacilityStaffPosition($facility, 'DATM');
                 }
                 $fac->datm = $cid;
                 break;
             case 'TA':
                 if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, $fac->ta, 'TA');
+                    self::deleteFacilityStaffPosition($facility, 'TA');
                 }
                 $fac->ta = $cid;
                 break;
             case 'EC':
                 if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, $fac->ec, 'EC');
+                    self::deleteFacilityStaffPosition($facility, 'EC');
                 }
                 $fac->ec = $cid;
                 break;
             case 'FE':
                 if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, $fac->fe, 'FE');
+                    self::deleteFacilityStaffPosition($facility, 'FE');
                 }
                 $fac->fe = $cid;
                 break;
             case 'WM':
                 if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, $fac->wm, 'WM');
+                    self::deleteFacilityStaffPosition($facility, 'WM');
                 }
                 $fac->wm = $cid;
                 break;
