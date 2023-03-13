@@ -144,6 +144,7 @@
           $(document).ready(function () {
             $.ajax({
               url : 'https://api.vatusa.net/v2/public/news/10',
+                beforeSend: function(xhr) { xhr.withCredentials = true },
               type: 'GET'
             }).success(function (resp) {
               var html = ''
@@ -157,6 +158,7 @@
             })
             $.ajax({
               url : 'https://api.vatusa.net/v2/public/events/10',
+                beforeSend: function(xhr) { xhr.withCredentials = true },
               type: 'GET',
             }).success(function (resp) {
               var html = ''
