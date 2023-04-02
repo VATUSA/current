@@ -115,12 +115,12 @@
                                              @if(!($otsEvalStatus == 1 /* && $trainingRecordStatus == 1*/)) disabled @endif>
                                         <i class="fas fa-check"></i> Promote
                                     </button>
-                                    <div class="alert alert-warning"><span class="glyphicon glyphicon-info-sign"></span>
-                                        If you press the Promote button, the controller will
-                                        be promoted even if they have failed the OTS!
-                                        Please only hit Promote if you mean it!
-                                    </div>
                                 </div>
+                            </div>
+                            <div class="alert alert-warning"><span class="glyphicon glyphicon-info-sign"></span>
+                                If you press the Promote button, the controller will
+                                be promoted even if they have failed the OTS!
+                                Please only hit Promote if you mean it!
                             </div>
                         </form>
                     </div>
