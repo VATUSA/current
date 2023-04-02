@@ -118,7 +118,7 @@
                                     </button>
                                     <button type="button" id="cancel-promotion" class="btn btn-danger btn-block"
                                             style="width:150px;">
-                                        <i class="fas fa-check"></i> Don't Promote
+                                        <i class="fas fa-times"></i> Don't Promote
                                     </button>
                                 </div>
                             </div>
