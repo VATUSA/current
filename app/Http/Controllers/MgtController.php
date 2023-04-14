@@ -363,7 +363,7 @@ class MgtController extends Controller
         $cid
     )
     {
-        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam()) {
+        if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
         $user = User::find($cid);

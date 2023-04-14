@@ -389,9 +389,8 @@
                                         <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
                                         <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
-                                        <li>Needs Basic ATC Exam:
-                                            @if (\App\Classes\RoleHelper::isVATUSAStaff()
-                                                || \App\Classes\RoleHelper::isWebTeam())
+                                        <li>Needs Basic ATC or RCE Exam:
+                                            @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 <a href="/mgt/controller/{{$user->cid}}/togglebasic">
                                             @endif
                                                     @if ($user->flag_needbasic)
@@ -399,8 +398,7 @@
                                                     @else
                                                         No
                                                     @endif
-                                            @if (\App\Classes\RoleHelper::isVATUSAStaff()
-                                                || \App\Classes\RoleHelper::isWebTeam())
+                                            @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 </a>
                                             @endif
                                         </li>
@@ -473,7 +471,7 @@
                                             <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                                         </tr>
                                         <tr>
-                                            <td>Needs to complete the Basic ATC/S1 courses?</td>
+                                            <td>Needs to complete the Basic ATC/S1 courses or RCE Exam?</td>
                                             <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes</span>' !!}</td>
                                         </tr>
                                         <tr>
