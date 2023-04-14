@@ -45,8 +45,12 @@ class DiscordSync extends Command
             foreach ($users as $user) {
                 if ($user->discord_id != null && ($user->flag_homecontroller = 1 || count($user->visits()) > 0)) {
                     print("Assigning CID $user->cid \n");
-                    $result = DiscordHelper::assignRoles($user->cid);
-                    print($result . "\n\n");
+                    try {
+                        $result = DiscordHelper::assignRoles($user->cid);
+                        print($result . "\n\n");
+                    } catch (\Exception $exception) {
+                        print($exception);
+                    }
                 }
             }
         });
