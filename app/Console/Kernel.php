@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\TattlerTransfers',
         'App\Console\Commands\GroupCheck',
         'App\Console\Commands\UpdateVATSIM',
+        'App\Console\Commands\DiscordSync',
         'App\Console\Commands\RoleSync',
         'App\Console\Commands\TransferEmails',
         'App\Console\Commands\ExpireNotices',
