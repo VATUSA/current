@@ -49,7 +49,7 @@ class DiscordSync extends Command
                         $result = DiscordHelper::assignRoles($user->cid);
                         print($result . "\n\n");
                     } catch (\Exception $exception) {
-                        print($exception);
+                        print($exception->getMessage() . "\n\n");
                     }
                 }
             }
