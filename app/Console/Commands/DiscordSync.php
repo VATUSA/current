@@ -43,7 +43,8 @@ class DiscordSync extends Command
     {
         User::chunk(1000, function ($users) {
             foreach ($users as $user) {
-                if ($user->discord_id != null && ($user->flag_homecontroller = 1 || count($user->visits()) > 0)) {
+                if ($user->discord_id != null &&
+                    (($user->flag_homecontroller = 1 && $user->facility != 'ZAE') || count($user->visits()) > 0)) {
                     print("Assigning CID $user->cid \n");
                     try {
                         $result = DiscordHelper::assignRoles($user->cid);
