@@ -37,13 +37,11 @@ class MgtController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
 //        $this->middleware('ins');
     }
 
-    public function getController(Request $request, $cid = null)
-    {
+    public function getController(Request $request, $cid = null) {
         if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()
             && !RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam()
             && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "WM")) {
@@ -181,12 +179,7 @@ class MgtController extends Controller
         }
     }
 
-    public
-    function getControllerMentor(
-        $cid,
-        $facility = null
-    )
-    {
+    public function getControllerMentor($cid, $facility = null) {
         if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff()) {
             return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
         }
@@ -232,12 +225,7 @@ class MgtController extends Controller
     }
 
     /* Controller AJAX */
-    public
-    function getControllerTransfers(
-        Request $request,
-                $cid
-    )
-    {
+    public function getControllerTransfers(Request $request, $cid) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -259,12 +247,7 @@ class MgtController extends Controller
         }
     }
 
-    public
-    function postControllerRating(
-        Request $request,
-                $cid
-    )
-    {
+    public function postControllerRating(Request $request, $cid) {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -322,12 +305,7 @@ class MgtController extends Controller
         return;
     }
 
-    public
-    function getControllerTransferWaiver(
-        Request $request,
-                $cid
-    )
-    {
+    public function getControllerTransferWaiver(Request $request, $cid) {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -359,11 +337,7 @@ class MgtController extends Controller
         return;
     }
 
-    public
-    function getControllerToggleBasic(
-        $cid
-    )
-    {
+    public function getControllerToggleBasic($cid) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -380,9 +354,7 @@ class MgtController extends Controller
     /*
      * Ace Team
      */
-    public
-    function getAce()
-    {
+    public function getAce() {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -391,12 +363,7 @@ class MgtController extends Controller
         return view('mgt.ace', ['roles' => $roles]);
     }
 
-    public
-    function deleteAce(
-        Request $request,
-                $cid
-    )
-    {
+    public function deleteAce(Request $request, $cid) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -410,11 +377,7 @@ class MgtController extends Controller
         return redirect("/mgt/ace");
     }
 
-    public
-    function putAce(
-        Request $request
-    )
-    {
+    public function putAce(Request $request) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -445,9 +408,7 @@ class MgtController extends Controller
     /*
      * Division Staff Management
      */
-    public
-    function getStaff()
-    {
+    public function getStaff() {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -455,12 +416,7 @@ class MgtController extends Controller
         return view('mgt.staff');
     }
 
-    public
-    function deleteStaff(
-        Request $request,
-                $role
-    )
-    {
+    public function deleteStaff(Request $request, $role) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -503,12 +459,7 @@ class MgtController extends Controller
         }
     }
 
-    public
-    function putStaff(
-        Request $request,
-                $role
-    )
-    {
+    public function putStaff(Request $request, $role) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -587,11 +538,7 @@ class MgtController extends Controller
         SMFHelper::setPermissions($cid);
     }
 
-    public
-    function addLog(
-        Request $request
-    )
-    {
+    public function addLog(Request $request) {
         $this->validate($request, [
             'to' => 'required',
             'log' => 'required|min:1',
@@ -617,11 +564,7 @@ class MgtController extends Controller
             'Your log entry has been added.');
     }
 
-    public
-    function getManualTransfer(
-        Request $request
-    )
-    {
+    public function getManualTransfer(Request $request) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -629,11 +572,7 @@ class MgtController extends Controller
         return view('mgt.transfer', ['cid' => $request->input("cid", '')]);
     }
 
-    public
-    function postManualTransfer(
-        Request $request
-    )
-    {
+    public function postManualTransfer(Request $request) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -688,8 +627,7 @@ class MgtController extends Controller
         return redirect("/mgt/transfer")->with("success", "Transfer for $cid - " . $user->fullname() . " submitted.");
     }
 
-    function getSolo()
-    {
+    function getSolo() {
         if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isInstructor() && !RoleHelper::isVATUSAStaff()
             && !RoleHelper::isWebTeam()) {
             abort(401);
@@ -698,8 +636,7 @@ class MgtController extends Controller
         return view('mgt.solo');
     }
 
-    function postSolo(Request $request)
-    {
+    function postSolo(Request $request) {
         if (!RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isInstructor() && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -736,8 +673,7 @@ class MgtController extends Controller
         return redirect('/mgt/solo')->with('success', 'Added solo certification');
     }
 
-    function deleteSolo(Request $request, $id)
-    {
+    function deleteSolo(Request $request, $id) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -762,8 +698,7 @@ class MgtController extends Controller
         return session()->flash('success', 'Removed solo certification');
     }
 
-    function getControllerPromote($cid)
-    {
+    function getControllerPromote($cid) {
         $user = User::find($cid);
         $forms = OTSEvalForm::active()->get();
 
@@ -797,8 +732,7 @@ class MgtController extends Controller
                 'otsEvalStatus', 'examPosition', 'dateOfExam', 'evalId'));
     }
 
-    function postControllerPromote(Request $request, $cid)
-    {
+    function postControllerPromote(Request $request, $cid) {
         $user = User::find($cid);
         if (!$user) {
             return redirect('mgt/facility#mem')->with('error', 'User not found');
@@ -829,9 +763,7 @@ class MgtController extends Controller
     }
 
 // Checklists
-    public
-    function getChecklists()
-    {
+    public function getChecklists() {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -840,11 +772,7 @@ class MgtController extends Controller
         return view('mgt.checklists.checklists', ['checklists' => $checklists]);
     }
 
-    public
-    function getChecklistItems(
-        $id
-    )
-    {
+    public function getChecklistItems($id) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -856,9 +784,7 @@ class MgtController extends Controller
         return view('mgt.checklists.checklist', ['cl' => $checklist]);
     }
 
-    public
-    function postChecklistsOrder()
-    {
+    public function postChecklistsOrder() {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -875,9 +801,7 @@ class MgtController extends Controller
         echo 1;
     }
 
-    public
-    function postChecklistItemsOrder()
-    {
+    public function postChecklistItemsOrder() {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -894,9 +818,7 @@ class MgtController extends Controller
         echo 1;
     }
 
-    public
-    function putChecklists()
-    {
+    public function putChecklists() {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -917,11 +839,7 @@ class MgtController extends Controller
         echo $list->id;
     }
 
-    public
-    function postChecklist(
-        $id
-    )
-    {
+    public function postChecklist($id) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -938,11 +856,7 @@ class MgtController extends Controller
         echo "1";
     }
 
-    public
-    function deleteChecklist(
-        $clid
-    )
-    {
+    public function deleteChecklist($clid){
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -964,11 +878,7 @@ class MgtController extends Controller
         }
     }
 
-    public
-    function putChecklistItem(
-        $id
-    )
-    {
+    public function putChecklistItem($id) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -991,12 +901,7 @@ class MgtController extends Controller
         echo $list->id;
     }
 
-    public
-    function postChecklistItem(
-        $clid,
-        $id
-    )
-    {
+    public function postChecklistItem($clid, $id) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -1013,12 +918,7 @@ class MgtController extends Controller
         echo "1";
     }
 
-    public
-    function deleteChecklistItem(
-        $clid,
-        $id
-    )
-    {
+    public function deleteChecklistItem($clid, $id) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -1153,13 +1053,7 @@ class MgtController extends Controller
                     && $record->instructor_id == Auth::user()->cid)));
     }
 
-    public
-    function getOTSEval(
-        Request $request,
-        int     $cid,
-                $form = null
-    )
-    {
+    public function getOTSEval(Request $request, int $cid, $form = null){
         $student = User::find($cid);
         if (!$student) {
             abort(404);
@@ -1188,12 +1082,7 @@ class MgtController extends Controller
 
     }
 
-    public
-    function viewOTSEval(
-        Request $request,
-        int     $eval
-    )
-    {
+    public function viewOTSEval(Request $request, int $eval) {
         $eval = OTSEval::withAll()->find($eval);
         if (!$eval) {
             abort(404, "The OTS evaluation form is invalid.");
@@ -1222,11 +1111,7 @@ class MgtController extends Controller
             compact('student', 'eval', 'attempt', 'recs'));
     }
 
-    public
-    function viewTrainingStatistics(
-        Request $request
-    )
-    {
+    public function viewTrainingStatistics(Request $request) {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -1547,13 +1432,14 @@ class MgtController extends Controller
         //Completed Evaluations per Form
         $evals = OTSEval::where('exam_date', '>=', Carbon::now()->subDays($interval));
         if ($region) {
-            $evals->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
+            $evals->whereIn('facility_id', Facility::where('region', $region)->get()->pluck('id')->all());
         } elseif ($facility) {
             $evals->where('facility_id', $facility);
         }
         $evalsPerFormData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
-        $evalsPerForm = $evals->with(['form:id,name'])->selectRaw('COUNT(*) AS total, form_id')
+        $evalsPerForm = $evals
+            ->with(['form:id,name'])
+            ->selectRaw('COUNT(*) AS total, form_id')
             ->groupBy([DB::raw('form_id')]);
         foreach ($evalsPerForm->get() as $eval) {
             if (!$eval->form_id) {
@@ -1755,11 +1641,7 @@ class MgtController extends Controller
                 'recordsPerTypeData', 'recordsPerMonthData', 'trainingRecords', 'facilities'));
     }
 
-    public
-    function viewEvals(
-        Request $request
-    )
-    {
+    public function viewEvals(Request $request) {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -1793,12 +1675,7 @@ class MgtController extends Controller
             compact('evals', 'trainingfac', 'trainingfacname', 'facilities'));
     }
 
-    public
-    function viewOTSEvalStatistics(
-        Request $request,
-        int     $form
-    )
-    {
+    public function viewOTSEvalStatistics(Request $request, int $form) {
         $form = OTSEvalForm::withAll()->find($form);
         if (!$form) {
             abort(404, "The OTS evaluation form is invalid.");
@@ -1940,8 +1817,7 @@ class MgtController extends Controller
                 'numPassFailsData', 'evalsPerMonthDataIns', 'allIns', 'tableData', 'hasGlobalAccess'));
     }
 
-    public function toggleAcademyEditor(Request $request): string
-    {
+    public function toggleAcademyEditor(Request $request): string {
         $cid = $request->cid;
         $user = User::findOrFail($cid);
 
