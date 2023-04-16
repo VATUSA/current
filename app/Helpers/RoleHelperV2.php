@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Actions;
 use App\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class RoleHelperV2
 {
