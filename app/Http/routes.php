@@ -199,6 +199,7 @@ Route::group([
                     Route::post('toggleSMTRole', 'MgtController@toggleSMTRole')->middleware('vatusastaff');
                     Route::post('toggleTTRole', 'MgtController@toggleTTRole')->middleware('vatusastaff');
                     Route::post('toggleDICERole', 'MgtController@toggleDICERole')->middleware('vatusastaff');
+                    Route::post('toggleDCCRole', 'MgtController@toggleDCCRole')->middleware('vatusastaff');
                 });
                 Route::post('action/add', 'MgtController@addLog');
                 Route::delete('action/delete/{log}', 'MgtController@deleteActionLog')->where('id', '[0-9]+');

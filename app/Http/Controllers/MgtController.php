@@ -99,13 +99,13 @@ class MgtController extends Controller
                 $trainingFacListArray = array_merge($trainingFacListArray,
                     [$user->facility => $user->facilityObj->name]);
             }
-            foreach($user->visits()->get() as $visit) {
+            foreach ($user->visits()->get() as $visit) {
                 $trainingFacListArray[$visit->fac->id] = $visit->fac->name;
             }
             $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility
-                || $user->visits()->where('facility', Auth::user()->facility)->exists()
-                || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
-                    $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
+            || $user->visits()->where('facility', Auth::user()->facility)->exists()
+            || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
+                $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac)
                 && $user->cid !== Auth::user()->cid;
 
@@ -1043,11 +1043,7 @@ class MgtController extends Controller
      *
      * @return string
      */
-    public
-    function deleteActionLog(
-        $log
-    )
-    {
+    public function deleteActionLog($log) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -1064,11 +1060,7 @@ class MgtController extends Controller
         return "1";
     }
 
-    public
-    function toggleStaffPrevent(
-        Request $request
-    )
-    {
+    public function toggleStaffPrevent(Request $request) {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1083,11 +1075,7 @@ class MgtController extends Controller
         return "1";
     }
 
-    public
-    function toggleInsRole(
-        Request $request
-    )
-    {
+    public function toggleInsRole(Request $request) {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1100,11 +1088,7 @@ class MgtController extends Controller
         return "1";
     }
 
-    public
-    function toggleSMTRole(
-        Request $request
-    )
-    {
+    public function toggleSMTRole(Request $request) {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1117,11 +1101,7 @@ class MgtController extends Controller
         return "1";
     }
 
-    public
-    function toggleTTRole(
-        Request $request
-    )
-    {
+    public function toggleTTRole(Request $request) {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1134,11 +1114,7 @@ class MgtController extends Controller
         return "1";
     }
 
-    public
-    function toggleDICERole(
-        Request $request
-    )
-    {
+    public function toggleDICERole(Request $request) {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1151,11 +1127,7 @@ class MgtController extends Controller
         return "1";
     }
 
-    public
-    function toggleDCCRole(
-        Request $request
-    )
-    {
+    public function toggleDCCRole(Request $request) {
         $cid = $request->cid;
 
         if (!RoleHelper::isVATUSAStaff()) {
@@ -1168,11 +1140,7 @@ class MgtController extends Controller
         return "1";
     }
 
-    public
-    function ajaxCanModifyRecord(
-        $record
-    )
-    {
+    public function ajaxCanModifyRecord($record) {
         $record = TrainingRecord::find($record);
         if (!$record->count()) {
             return response()->json(false);
