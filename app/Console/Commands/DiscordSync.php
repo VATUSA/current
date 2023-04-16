@@ -41,7 +41,7 @@ class DiscordSync extends Command
      */
     public function handle()
     {
-        User::whereNotNull('discord_id')->where('facility', '!=', 'ZAE')->chunk(1000, function ($users) {
+        User::whereNotNull('discord_id')->chunk(1000, function ($users) {
             print("\n Next Batch \n");
             foreach ($users as $user) {
                 if ($user->flag_homecontroller = 1 || count($user->visits()) > 0) {
