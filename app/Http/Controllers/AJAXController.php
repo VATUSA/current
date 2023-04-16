@@ -8,12 +8,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class AJAXController
-    extends Controller
-{
+class AJAXController extends Controller {
 
-    public function getNews()
-    {
+    public function getNews() {
         //SELECT `smf_topics`.`id_topic`,FROM_UNIXTIME(`smf_messages`.`poster_time`, \"%b %e\") AS `poster_time`,`smf_messages`.`subject`
         //FROM `smf_messages`,`smf_topics` WHERE `smf_topics`.`id_board`='2' AND `smf_topics`.`id_first_msg`=`smf_messages`.`id_msg`
         //ORDER BY `smf_messages`.`poster_time` DESC LIMIT 10
@@ -33,8 +30,7 @@ class AJAXController
         //WHERE UNIX_TIMESTAMP(`enddate`) - UNIX_TIMESTAMP() >= 0 AND `active`='1' ORDER BY `startdate`,`enddate`,`name`
     }
 
-    public function getEvents()
-    {
+    public function getEvents() {
         $results = DB::connection('forum')->select("SELECT *,DATE_FORMAT(`start_date`, \"%c/%e/%Y\") AS `eventdate` FROM smf_calendar WHERE `start_date` > DATE_SUB(NOW(), INTERVAL 1 DAY) ORDER BY `start_date` ASC LIMIT 10");
         $events = [];
         foreach ($results as $result) {
@@ -48,8 +44,7 @@ class AJAXController
         echo json_encode($events, JSON_HEX_APOS);
     }
 
-    public function getCID()
-    {
+    public function getCID() {
         $search = trim(strip_tags($_GET['term']));
         if (strlen($search) >= 2) {
             $users = User::where('cid', 'LIKE', "$search%")->limit(30)->get();
@@ -64,8 +59,7 @@ class AJAXController
         }
     }
 
-    public function getHelpStaffc($facility)
-    {
+    public function getHelpStaffc($facility) {
         $staff = RoleHelper::getStaff($facility);
 
         $ret = [];
@@ -80,8 +74,7 @@ class AJAXController
         echo json_encode($ret, JSON_HEX_APOS);
     }
 
-    public function getHelpStaff($facility)
-    {
+    public function getHelpStaff($facility) {
         $staff = RoleHelper::getStaff($facility);
 
         $ret = [];
