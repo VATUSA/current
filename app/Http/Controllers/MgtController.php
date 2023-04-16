@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Helpers\RoleHelperV2;
 use App\Models\Actions;
 use App\Models\ChecklistData;
 use App\Models\Checklists;
@@ -1094,28 +1095,7 @@ class MgtController extends Controller
         }
 
         $user = User::findOrFail($cid);
-        $facility = $user->facility;
-        $currentIns = Role::where("facility", $facility)->where("cid", $cid)->where("role", "INS");
-        if ($currentIns->count()) {
-            //Delete role
-            $currentIns->first()->delete();
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "Instructor role for " . $user->facility . " revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        } else {
-            //Create role
-            $role = new Role();
-            $role->cid = $cid;
-            $role->facility = $facility;
-            $role->role = "INS";
-            $role->save();
-
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "Instructor role for " . $user->facility . " added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        }
+        RoleHelperV2::toggleRole($cid, "INS", "ZHQ");
 
         return "1";
     }
@@ -1132,27 +1112,7 @@ class MgtController extends Controller
         }
 
         $user = User::findOrFail($cid);
-        $currentRole = Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "SMT");
-        if ($currentRole->count()) {
-            //Delete role
-            $currentRole->first()->delete();
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "SMT role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        } else {
-            //Create role
-            $role = new Role();
-            $role->cid = $cid;
-            $role->facility = "ZHQ";
-            $role->role = "SMT";
-            $role->save();
-
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "SMT role added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        }
+        RoleHelperV2::toggleRole($cid, "SMT", "ZHQ");
 
         return "1";
     }
@@ -1169,27 +1129,7 @@ class MgtController extends Controller
         }
 
         $user = User::findOrFail($cid);
-        $currentRole = Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "USWT");
-        if ($currentRole->count()) {
-            //Delete role
-            $currentRole->first()->delete();
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "VATUSA Tech Team role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        } else {
-            //Create role
-            $role = new Role();
-            $role->cid = $cid;
-            $role->facility = "ZHQ";
-            $role->role = "USWT";
-            $role->save();
-
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "VATUSA Tech Team role added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        }
+        RoleHelperV2::toggleRole($cid, "USWT", "ZHQ");
 
         return "1";
     }
@@ -1206,27 +1146,24 @@ class MgtController extends Controller
         }
 
         $user = User::findOrFail($cid);
-        $currentRole = Role::where("facility", "ZHQ")->where("cid", $cid)->where("role", "DICE");
-        if ($currentRole->count()) {
-            //Delete role
-            $currentRole->first()->delete();
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "VATUSA DICE Team role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
-        } else {
-            //Create role
-            $role = new Role();
-            $role->cid = $cid;
-            $role->facility = "ZHQ";
-            $role->role = "DICE";
-            $role->save();
+        RoleHelperV2::toggleRole($cid, "DICE", "ZHQ");
 
-            $log = new Actions();
-            $log->to = $cid;
-            $log->log = "VATUSA DICE Team role added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-            $log->save();
+        return "1";
+    }
+
+    public
+    function toggleDCCRole(
+        Request $request
+    )
+    {
+        $cid = $request->cid;
+
+        if (!RoleHelper::isVATUSAStaff()) {
+            abort(403);
         }
+
+        $user = User::findOrFail($cid);
+        RoleHelperV2::toggleRole($cid, "DCC", "ZHQ");
 
         return "1";
     }
