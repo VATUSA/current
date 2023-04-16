@@ -17,10 +17,9 @@ use Auth;
 /**
  *
  */
-class AppController extends Controller
-{
+class AppController extends Controller {
     const STATUS_SUCCESS = 1;
-    const STATUS_ERROR = 2;
+    const STATUS_ERROR   = 2;
     public $http_codes = [
         100,
         200,
@@ -31,37 +30,36 @@ class AppController extends Controller
     public $response = [];
     public $error_message = null;
 
-    function __construct()
-    {
+    function __construct() {}
 
-    }
-
-    public function getIndex($cid = null)
-    {
+    public function getIndex($cid = null) {
         // Loads the send push notification page
-        if (!Auth::check() || !RoleHelper::isFacilitySeniorStaff()) abort(401);
+        if (!Auth::check() || !RoleHelper::isFacilitySeniorStaff()) {
+            abort(401);
+        }
         return view('mgt.app.push', ['cid' => $cid]);
     }
 
-    public function getLog($cid = null)
-    {
+    public function getLog($cid = null) {
         // Loads the Push Log page
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) abort(401);
+        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+            abort(401);
+        }
         return view('mgt.app.log', ['cid' => $cid]);
     }
 
-    public function getPushLog()
-    {
+    public function getPushLog() {
         // Checks the database and gets the log of recent push notifications
         // Max 15
-        if (!RoleHelper::isVATUSAStaff()) abort(401);
+        if (!RoleHelper::isVATUSAStaff()) {
+            abort(401);
+        }
         $log = PushLog::orderBy('created_at', 'DESC')->limit(15)->get();
 
         return view('mgt.app.log', ['log' => $log]);
     }
 
-    public function postPush(Request $request)
-    {
+    public function postPush(Request $request) {
         // Gathers data from user form submission
         $title = $request->title;
         $msg = $request->message . ' - Sent by: ' . Auth::user()->cid;

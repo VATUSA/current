@@ -16,20 +16,16 @@ use App\Classes\RoleHelper;
 use Auth;
 
 class HelpdeskController
-    extends Controller
-{
-    public function getIndex()
-    {
+    extends Controller {
+    public function getIndex() {
         return view('help.index');
     }
 
-    public function getKBIndex()
-    {
+    public function getKBIndex() {
         return view('help.kb');
     }
 
-    public function getList(Request $request, $status)
-    {
+    public function getList(Request $request, $status) {
         if (!Auth::check()) {
             return redirect('/')->with("error", "Must be logged in to visit ticket center");
         }
@@ -41,11 +37,11 @@ class HelpdeskController
         if ($status == "mine") {
             $tickets = Ticket::where('cid', Auth::user()->cid)->orderBy('created_at', 'asc')->get();
             $status = "My";
-        } elseif ($status == "myassigned") {
+        } else if ($status == "myassigned") {
             $tickets = Ticket::where('assigned_to', Auth::user()->cid)->where('status', 'Open')->orderBy('created_at',
                 'asc')->get();
             $status = "My Assigned";
-        } elseif ($status == "open") {
+        } else if ($status == "open") {
             $status = "Open";
             if (RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam()) {
                 $tickets = Ticket::where('status', 'Open')->orderBy('created_at', 'asc')->get();
@@ -55,7 +51,7 @@ class HelpdeskController
                         ->orwhere('assigned_to', Auth::user()->cid);
                 })->get();
             }
-        } elseif ($status == "closed") {
+        } else if ($status == "closed") {
             $status = "Closed";
 
             // Build query
@@ -106,8 +102,7 @@ class HelpdeskController
         ]);
     }
 
-    public function postList($status)
-    {
+    public function postList($status) {
         if (!Auth::check()) {
             return redirect('/')->with("error", "Must be logged in to visit ticket center");
         }
@@ -142,8 +137,7 @@ class HelpdeskController
         return view('help.list', ["tickets" => $tickets, "status" => "Searched"]);
     }
 
-    public function getNew()
-    {
+    public function getNew() {
         if (!Auth::check()) {
             return redirect('/')->with('error', "Must be logged in to submit a ticket");
         }
@@ -151,8 +145,7 @@ class HelpdeskController
         return view('help.openticket');
     }
 
-    public function postNew(Request $request)
-    {
+    public function postNew(Request $request) {
         if (!Auth::check()) {
             return redirect('/')->with('error', "Must be logged in to submit a ticket");
         }
@@ -190,7 +183,7 @@ class HelpdeskController
                 foreach ($users as $user) {
                     $emails[] = "vat" . strtolower(str_replace("US", "usa", $user->role)) . "@vatusa.net";
                 }
-            } elseif ($ticket->facility == "ZAE") {
+            } else if ($ticket->facility == "ZAE") {
                 $emails[] = "vatusa3@vatusa.net";
                 $emails[] = "vatusa13@vatusa.net";
             } else {
@@ -223,8 +216,7 @@ class HelpdeskController
         return redirect("/help/ticket/" . $ticket->id)->with("success", "Ticket successfully submitted");
     }
 
-    public function getTicketToggleStatus($id)
-    {
+    public function getTicketToggleStatus($id) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -260,8 +252,7 @@ class HelpdeskController
             "Ticket status set to \"" . $ticket->status . "\"");
     }
 
-    public function getTicket(Request $request, $id)
-    {
+    public function getTicket(Request $request, $id) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -279,8 +270,7 @@ class HelpdeskController
         }
     }
 
-    public function postTicket(Request $request, $id)
-    {
+    public function postTicket(Request $request, $id) {
         $ticket = Ticket::find($id);
         if (!$ticket) {
             return redirect('/help')->with("error", "Ticket not found");
@@ -317,7 +307,7 @@ class HelpdeskController
                 $history->save();
                 EmailHelper::sendSupportEmail($ticket->submitter->email, $ticket->id, "Ticket Closed",
                     "emails.help.closed", ["ticket" => $ticket, "closer" => Auth::user()->fullname()]);
-            } elseif ($request->input("replyAndOpenSubmit")) {
+            } else if ($request->input("replyAndOpenSubmit")) {
                 $ticket->status = "Open";
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
@@ -343,7 +333,7 @@ class HelpdeskController
                     foreach ($roles as $role) {
                         $emails[] = "vat" . strtolower(str_replace("US", "usa", $role->role)) . "@vatusa.net";
                     }
-                } elseif ($ticket->facility == "ZAE") {
+                } else if ($ticket->facility == "ZAE") {
                     $emails[] = "vatusa3@vatusa.net";
                 } else {
                     $fac = Facility::find($ticket->facility);
@@ -378,8 +368,7 @@ class HelpdeskController
         abort(403);
     }
 
-    public function postTicketAjax(Request $request, $id)
-    {
+    public function postTicketAjax(Request $request, $id) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -396,7 +385,9 @@ class HelpdeskController
 
                 $history = new TicketHistory();
                 $history->ticket_id = $ticket->id;
-                $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned ticket to " . $ticket->facility . " facility.";
+                $history->entry =
+                    Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned ticket to " . $ticket->facility .
+                    " facility.";
                 $history->save();
             }
             if (isset($_POST['assign'])) {
@@ -406,7 +397,8 @@ class HelpdeskController
 
                     $history = new TicketHistory();
                     $history->ticket_id = $ticket->id;
-                    $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") set ticket to unassigned.";
+                    $history->entry =
+                        Auth::user()->fullname() . " (" . Auth::user()->cid . ") set ticket to unassigned.";
                     $history->save();
 
                     if ($ticket->facility == "ZHQ") {
@@ -414,7 +406,7 @@ class HelpdeskController
                         foreach ($users as $user) {
                             $emails[] = "vat" . strtolower(str_replace("US", "usa", $user->role)) . "@vatusa.net";
                         }
-                    } elseif ($ticket->facility == "ZAE") {
+                    } else if ($ticket->facility == "ZAE") {
                         // Find Specific ZAE Member
                         $user = Role::where('facility', 'ZHQ')
                             ->where('role', 'LIKE', "%3")
@@ -447,7 +439,9 @@ class HelpdeskController
 
                     $history = new TicketHistory();
                     $history->ticket_id = $ticket->id;
-                    $history->entry = Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned the ticket to " . $user->fullname() . " (" . $user->cid . ").";
+                    $history->entry =
+                        Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned the ticket to " .
+                        $user->fullname() . " (" . $user->cid . ").";
                     $history->save();
 
                     EmailHelper::sendSupportEmail($user->email, $id, "Ticket Assigned to You", "emails.help.assigned",
@@ -466,8 +460,7 @@ class HelpdeskController
 // Knowledgebase Editor - Categories
 
     public
-    function getKBE()
-    {
+    function getKBE() {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -479,8 +472,7 @@ class HelpdeskController
     function deleteKBECategory(
         Request $request,
                 $id
-    )
-    {
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -499,8 +491,7 @@ class HelpdeskController
     function postKBECategory(
         Request $request,
                 $id
-    )
-    {
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -526,8 +517,7 @@ class HelpdeskController
     public
     function putKBECategory(
         Request $request
-    )
-    {
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -546,8 +536,7 @@ class HelpdeskController
     function getKBECategory(
         Request $request,
                 $id
-    )
-    {
+    ) {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -564,8 +553,7 @@ class HelpdeskController
     function getKBEQuestion(
         Request $request,
                 $qid
-    )
-    {
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -585,8 +573,7 @@ class HelpdeskController
     function deleteKBEQuestion(
         Request $request,
                 $id
-    )
-    {
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -618,8 +605,7 @@ class HelpdeskController
     function postKBEQuestionOrder(
         Request $request,
                 $id
-    )
-    {
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -640,8 +626,7 @@ class HelpdeskController
     function getKBEeditQuestion(
         $cid,
         $id
-    )
-    {
+    ) {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -664,8 +649,7 @@ class HelpdeskController
     function postKBEeditQuestion(
         $cid,
         $id
-    )
-    {
+    ) {
         if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -703,8 +687,7 @@ class HelpdeskController
     function putKBEQuestion(
         Request $request,
                 $id
-    )
-    {
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -738,8 +721,7 @@ class HelpdeskController
     function postKBEQuestion(
         Request $request,
                 $id
-    )
-    {
+    ) {
         if (!$request->ajax()) {
             abort(403);
         }

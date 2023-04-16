@@ -12,23 +12,21 @@ use App\Classes\RoleHelper;
 use App\Models\Actions;
 use Illuminate\Support\Facades\Cache;
 
-class FacMgtController extends Controller
-{
+class FacMgtController extends Controller {
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         //       $this->middleware('ins');
     }
 
 
-    public function getIndex($fac = null)
-    {
-        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() && !RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam() && !RoleHelper::hasRole(Auth::user()->cid,
+    public function getIndex($fac = null) {
+        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() &&
+            !RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam() && !RoleHelper::hasRole(Auth::user()->cid,
                 $fac ?? Auth::user()->facility, "WM")) {
             abort(401);
         }
@@ -58,8 +56,7 @@ class FacMgtController extends Controller
             ['fac' => $fac, 'facility' => $facility, 'promotionEligible' => $promotionEligible]);
     }
 
-    public function postAPIGenerate(Request $request, $facility)
-    {
+    public function postAPIGenerate(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -82,8 +79,7 @@ class FacMgtController extends Controller
         return;
     }
 
-    public function postAPISandboxGenerate(Request $request, $facility)
-    {
+    public function postAPISandboxGenerate(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -106,8 +102,7 @@ class FacMgtController extends Controller
         return;
     }
 
-    public function postAPIIP(Request $request, $facility)
-    {
+    public function postAPIIP(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -128,8 +123,7 @@ class FacMgtController extends Controller
         return;
     }
 
-    public function postAPISandboxIP(Request $request, $facility)
-    {
+    public function postAPISandboxIP(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -150,8 +144,7 @@ class FacMgtController extends Controller
         return;
     }
 
-    public function postULSGenerate(Request $request, $facility)
-    {
+    public function postULSGenerate(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -174,8 +167,7 @@ class FacMgtController extends Controller
         return;
     }
 
-    public function postULSReturn(Request $request, $facility)
-    {
+    public function postULSReturn(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -195,8 +187,7 @@ class FacMgtController extends Controller
         return;
     }
 
-    public function postULSDevReturn(Request $request, $facility)
-    {
+    public function postULSDevReturn(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -216,14 +207,13 @@ class FacMgtController extends Controller
         return;
     }
 
-    public function ajaxPosition(Request $request, $facility, $id)
-    {
+    public function ajaxPosition(Request $request, $facility, $id) {
         if (!$request->ajax()) {
             abort(403);
         }
 
-        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,"ATM")
-            && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,"DATM")
+        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "ATM")
+            && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "DATM")
             && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
@@ -253,8 +243,9 @@ class FacMgtController extends Controller
         $cid = $request->input('cid');
 
         $error = RoleHelper::addFacilityStaffPosition($facility, $cid, $pos);
-        if ($error)
+        if ($error) {
             return $error;
+        }
 
         $u = User::where('cid', $cid)->first();
         $un = $u->fname . ' ' . $u->lname;
@@ -262,8 +253,7 @@ class FacMgtController extends Controller
         return $pos . ' successfully changed to ' . $un . '.';
     }
 
-    public function deleteController(Request $request, $facility, $cid)
-    {
+    public function deleteController(Request $request, $facility, $cid) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -282,8 +272,7 @@ class FacMgtController extends Controller
         $user->removeFromFacility(Auth::user()->cid, $vars['reason']);
     }
 
-    public function ajaxPositionDel(Request $request, $facility)
-    {
+    public function ajaxPositionDel(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(403);
         }
@@ -322,8 +311,7 @@ class FacMgtController extends Controller
         return 0;
     }
 
-    public function ajaxTransfers(Request $request, $status)
-    {
+    public function ajaxTransfers(Request $request, $status) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -359,8 +347,7 @@ class FacMgtController extends Controller
         }
     }
 
-    public function ajaxTransferReason(Request $request)
-    {
+    public function ajaxTransferReason(Request $request) {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -376,8 +363,7 @@ class FacMgtController extends Controller
         }
     }
 
-    public function ajaxStaffTable(Request $request, $facility)
-    {
+    public function ajaxStaffTable(Request $request, $facility) {
         if (!$request->ajax()) {
             abort(500);
         }

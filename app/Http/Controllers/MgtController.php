@@ -29,8 +29,7 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
 
-class MgtController extends Controller
-{
+class MgtController extends Controller {
 
     /**
      * Create a new controller instance.
@@ -149,20 +148,24 @@ class MgtController extends Controller
             $examAttempts = [
                 'Basic ATC/S1 Exam' => array_merge([
                     'examInfo' => config('exams.BASIC'),
-                    'assignDate' => $basicAssignmentDate ? Carbon::createFromTimestampUTC($basicAssignmentDate)->format('Y-m-d H:i') : false
+                    'assignDate' => $basicAssignmentDate ?
+                        Carbon::createFromTimestampUTC($basicAssignmentDate)->format('Y-m-d H:i') : false
                 ], ['attempts' => $moodle->getQuizAttempts(config('exams.BASIC.id'), null, $uid)]),
                 'S2 Rating (TWR) Controller Exam' => array_merge([
                     'examInfo' => config('exams.S2'),
-                    'assignDate' => $s2AssignmentDate ? Carbon::createFromTimestampUTC($s2AssignmentDate)->format('Y-m-d H:i') : false
+                    'assignDate' => $s2AssignmentDate ?
+                        Carbon::createFromTimestampUTC($s2AssignmentDate)->format('Y-m-d H:i') : false
                 ], ['attempts' => $moodle->getQuizAttempts(config('exams.S2.id'), null, $uid)]),
                 'S3 Rating (DEP/APP) Controller Exam' => array_merge([
                     'examInfo' => config('exams.S3'),
-                    'assignDate' => $s3AssignmentDate ? Carbon::createFromTimestampUTC($s3AssignmentDate)->format('Y-m-d H:i') : false
+                    'assignDate' => $s3AssignmentDate ?
+                        Carbon::createFromTimestampUTC($s3AssignmentDate)->format('Y-m-d H:i') : false
                 ],
                     ['attempts' => $moodle->getQuizAttempts(config('exams.S3.id'), null, $uid)]),
                 'C1 Rating (CTR) Controller Exam' => array_merge([
                     'examInfo' => config('exams.C1'),
-                    'assignDate' => $c1AssignmentDate ? Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : false
+                    'assignDate' => $c1AssignmentDate ?
+                        Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : false
                 ],
                     ['attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)]),
             ];
@@ -202,7 +205,9 @@ class MgtController extends Controller
             $role->save();
             $log = new Actions();
             $log->to = $user->cid;
-            $log->log = "Mentor role for " . $facility . " added by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+            $log->log =
+                "Mentor role for " . $facility . " added by " . Auth::user()->fullname() . " (" . Auth::user()->cid .
+                ").";
             $log->save();
 
             return redirect("/mgt/controller/$cid")->with("success", "Successfully set as mentor");
@@ -217,7 +222,9 @@ class MgtController extends Controller
             $role->delete();
             $log = new Actions();
             $log->to = $user->cid;
-            $log->log = "Mentor role for " . $facility . " deleted by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+            $log->log =
+                "Mentor role for " . $facility . " deleted by " . Auth::user()->fullname() . " (" . Auth::user()->cid .
+                ").";
             $log->save();
 
             return redirect("/mgt/controller/$cid")->with("success", "Successfully removed mentor role");
@@ -328,7 +335,8 @@ class MgtController extends Controller
 
         $action = new Actions();
         $action->to = $user->cid;
-        $action->log = "Transfer Waiver " . (($user->flag_xferOverride == 1) ? "enabled" : "disabled") . " by " . Auth::user()->fullname() . " " . Auth::user()->cid;
+        $action->log = "Transfer Waiver " . (($user->flag_xferOverride == 1) ? "enabled" : "disabled") . " by " .
+            Auth::user()->fullname() . " " . Auth::user()->cid;
         //$action->created_at = \DB::raw("NOW()");
         $action->save();
 
@@ -606,7 +614,9 @@ class MgtController extends Controller
         $log = new Actions;
         $log->from = 0;
         $log->to = $cid;
-        $log->log = "[Submitted by " . Auth::user()->fullname() . "] Requested transfer from " . $tr->from . " to " . $tr->to . ": " . $tr->reason;
+        $log->log =
+            "[Submitted by " . Auth::user()->fullname() . "] Requested transfer from " . $tr->from . " to " . $tr->to .
+            ": " . $tr->reason;
         $log->save();
         if (in_array($facility, ['ZAE', 'ZHQ'])) {
             // Automatically approve transfers to ZAE, ZHQ
@@ -856,7 +866,7 @@ class MgtController extends Controller
         echo "1";
     }
 
-    public function deleteChecklist($clid){
+    public function deleteChecklist($clid) {
         if (!RoleHelper::isVATUSAStaff()) {
             abort(403);
         }
@@ -1053,7 +1063,7 @@ class MgtController extends Controller
                     && $record->instructor_id == Auth::user()->cid)));
     }
 
-    public function getOTSEval(Request $request, int $cid, $form = null){
+    public function getOTSEval(Request $request, int $cid, $form = null) {
         $student = User::find($cid);
         if (!$student) {
             abort(404);
@@ -1138,7 +1148,7 @@ class MgtController extends Controller
         if ($region) {
             $records->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        } else if ($facility) {
             $records->where('facility_id', $facility);
         }
 
@@ -1148,7 +1158,8 @@ class MgtController extends Controller
         if (!$hours) {
             $sumTotalTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
         } else {
-            $sumTotalTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+            $sumTotalTimeStr =
+                "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
         }
         $sumTotalSessions = $records->count();
 
@@ -1162,13 +1173,14 @@ class MgtController extends Controller
         if (!$hours) {
             $sumAvgTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
         } else {
-            $sumAvgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+            $sumAvgTimeStr =
+                "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
         }
         $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
         if ($region) {
             $records->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        } else if ($facility) {
             $records->where('facility_id', $facility);
         }
         $sumAvgSessions = $records->selectRaw('COUNT(*) AS total')
@@ -1180,7 +1192,7 @@ class MgtController extends Controller
         if ($region) {
             $evals = $evals->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        } else if ($facility) {
             $evals = $evals->where('facility_id', $facility);
         }
         $sumNumEvals = $evals->count();
@@ -1261,15 +1273,17 @@ class MgtController extends Controller
             $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
             $hoursPerMonthData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
 
-            $hoursPerMonth = TrainingRecord::with(['instructor:cid,fname,lname'])->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, instructor_id, DATE_FORMAT(session_date, '%Y-%m') AS month");
+            $hoursPerMonth = TrainingRecord::with(['instructor:cid,fname,lname'])
+                ->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, instructor_id, DATE_FORMAT(session_date, '%Y-%m') AS month");
             if ($region) {
                 $hoursPerMonth = $hoursPerMonth->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } elseif ($facility) {
+            } else if ($facility) {
                 $hoursPerMonth = $hoursPerMonth->where('facility_id', $facility);
             }
             $hoursPerMonth = $hoursPerMonth->where('session_date', '>',
-                Carbon::parse('first day of this month')->subMonths(6))->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->groupBy([
+                Carbon::parse('first day of this month')->subMonths(6))
+                ->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->groupBy([
                 'month',
                 'instructor_id'
             ])->orderBy('month', 'ASC')->get();
@@ -1306,11 +1320,12 @@ class MgtController extends Controller
             if ($region) {
                 $records = $records->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } elseif ($facility) {
+            } else if ($facility) {
                 $records = $records->where('facility_id', $facility);
             }
             $timePerInstructorData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
-            $timePerInstructor = $records->with(['instructor:cid,fname,lname'])->selectRaw('SUM(TIME_TO_SEC(duration)) AS total, instructor_id')
+            $timePerInstructor = $records->with(['instructor:cid,fname,lname'])
+                ->selectRaw('SUM(TIME_TO_SEC(duration)) AS total, instructor_id')
                 ->groupBy(['instructor_id']);
             foreach ($timePerInstructor->get() as $time) {
                 if (!$time->instructor_id) {
@@ -1318,7 +1333,8 @@ class MgtController extends Controller
                 }
                 $timePerInstructorData['labels'][] = $time->instructor->fullname();
                 $timePerInstructorData['datasets'][0]['data'][] = floor($time->total / 3600);
-                $timePerInstructorData['datasets'][0]['backgroundColor'][] = $colors[$time->instructor->cid] ?? Factory::create()->hexColor;
+                $timePerInstructorData['datasets'][0]['backgroundColor'][] =
+                    $colors[$time->instructor->cid] ?? Factory::create()->hexColor;
             }
         }
 
@@ -1337,7 +1353,7 @@ class MgtController extends Controller
                     if ($region) {
                         $records->whereIn('facility_id',
                             Facility::where('region', $region)->get()->pluck('id')->all());
-                    } elseif ($facility) {
+                    } else if ($facility) {
                         $records->where('facility_id', $facility);
                     }
                     $avgTime = $records->selectRaw('SUM(TIME_TO_SEC(duration)) as total')
@@ -1352,7 +1368,8 @@ class MgtController extends Controller
                         if (!$hours) {
                             $avgTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
                         } else {
-                            $avgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" . ($minutes !== 1 ? 's' : '');
+                            $avgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" .
+                                ($minutes !== 1 ? 's' : '');
                         }
                     }
                     $insActivity[$i]['avgTime'][$k] = $avgTimeStr;
@@ -1362,7 +1379,7 @@ class MgtController extends Controller
                     if ($region) {
                         $records->whereIn('facility_id',
                             Facility::where('region', $region)->get()->pluck('id')->all());
-                    } elseif ($facility) {
+                    } else if ($facility) {
                         $records->where('facility_id', $facility);
                     }
                     $avgSessions = $records->selectRaw('COUNT(*) AS total')
@@ -1401,11 +1418,12 @@ class MgtController extends Controller
             $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
             $evalsPerMonthData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
 
-            $evalsPerMonth = OTSEval::with('form:id,name')->selectRaw("form_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
+            $evalsPerMonth =
+                OTSEval::with('form:id,name')->selectRaw("form_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
             if ($region) {
                 $evalsPerMonth->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } elseif ($facility) {
+            } else if ($facility) {
                 $evalsPerMonth->where('facility_id', $facility);
             }
             if ($instructor) {
@@ -1433,7 +1451,7 @@ class MgtController extends Controller
         $evals = OTSEval::where('exam_date', '>=', Carbon::now()->subDays($interval));
         if ($region) {
             $evals->whereIn('facility_id', Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        } else if ($facility) {
             $evals->where('facility_id', $facility);
         }
         $evalsPerFormData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
@@ -1447,7 +1465,8 @@ class MgtController extends Controller
             }
             $evalsPerFormData['labels'][] = $eval->form->name;
             $evalsPerFormData['datasets'][0]['data'][] = $eval->total;
-            $evalsPerFormData['datasets'][0]['backgroundColor'][] = $colors[$eval->form_id] ?? Factory::create()->hexColor;
+            $evalsPerFormData['datasets'][0]['backgroundColor'][] =
+                $colors[$eval->form_id] ?? Factory::create()->hexColor;
         }
 
         //Table Data
@@ -1464,7 +1483,7 @@ class MgtController extends Controller
                 if ($region) {
                     $completed->whereIn('facility_id',
                         Facility::where('region', $region)->get()->pluck('id')->all());
-                } elseif ($facility) {
+                } else if ($facility) {
                     $completed->where('facility_id', $facility);
                 }
                 $numConducted = $completed->count();
@@ -1491,17 +1510,20 @@ class MgtController extends Controller
             $datasets = [];
             for ($i = 6; $i >= 0; $i--) {
                 $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
-                $evalsPerMonthDataIns['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
+                $evalsPerMonthDataIns['labels'][] =
+                    Carbon::parse('first day of this month')->subMonths($i)->format('F');
 
-                $evalsPerMonth = OTSEval::with('instructor:cid,fname,lname')->selectRaw("instructor_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
+                $evalsPerMonth = OTSEval::with('instructor:cid,fname,lname')
+                    ->selectRaw("instructor_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
                 if ($region) {
                     $evalsPerMonth->whereIn('facility_id',
                         Facility::where('region', $region)->get()->pluck('id')->all());
                 }
 
                 $evalsPerMonth->where('facility_id', $facility);
-                $evalsPerMonth = $evalsPerMonth->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') = '$month'")->orderBy('month',
-                    'ASC')->get();
+                $evalsPerMonth =
+                    $evalsPerMonth->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') = '$month'")->orderBy('month',
+                        'ASC')->get();
                 // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
                 //dd($hoursPerMonth->get()->toArray());
                 foreach ($allIns['ins'] as $ins) {
@@ -1526,7 +1548,7 @@ class MgtController extends Controller
             if ($region) {
                 $evals->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } elseif ($facility) {
+            } else if ($facility) {
                 $evals->where('facility_id', $facility);
             }
             $evalsPerForm = $evals->with(['instructor:cid,fname,lname'])->selectRaw('COUNT(*) AS total, instructor_id')
@@ -1537,7 +1559,8 @@ class MgtController extends Controller
                 }
                 $evalsPerFormDataIns['labels'][] = $eval->instructor->fullname();
                 $evalsPerFormDataIns['datasets'][0]['data'][] = $eval->total;
-                $evalsPerFormDataIns['datasets'][0]['backgroundColor'][] = $colors[$eval->instructor->cid] ?? Factory::create()->hexColor;
+                $evalsPerFormDataIns['datasets'][0]['backgroundColor'][] =
+                    $colors[$eval->instructor->cid] ?? Factory::create()->hexColor;
             }
         }
 
@@ -1545,11 +1568,12 @@ class MgtController extends Controller
         $colors = [];
         $recordsPerMonthData = ['labels' => [], 'datasets' => []];
         $datasets = [];
-        $recordsPerMonth = TrainingRecord::selectRaw("COUNT(*) AS total, position, DATE_FORMAT(session_date, '%Y-%m') AS month");
+        $recordsPerMonth =
+            TrainingRecord::selectRaw("COUNT(*) AS total, position, DATE_FORMAT(session_date, '%Y-%m') AS month");
         if ($region) {
             $recordsPerMonth->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        } else if ($facility) {
             $recordsPerMonth->where('facility_id', $facility);
         }
         $recordsPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
@@ -1562,7 +1586,7 @@ class MgtController extends Controller
         if ($region) {
             $recordsPerMonth->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        } else if ($facility) {
             $recordsPerMonth->where('facility_id', $facility);
         }
         $recordsPerMonth->whereRaw("session_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)")->orderBy('month', 'ASC');
@@ -1575,11 +1599,12 @@ class MgtController extends Controller
             if ($region) {
                 $recordsPerMonth->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } elseif ($facility) {
+            } else if ($facility) {
                 $recordsPerMonth->where('facility_id', $facility);
             }
-            $recordsPerMonth = $recordsPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->orderBy('month',
-                'ASC');
+            $recordsPerMonth =
+                $recordsPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->orderBy('month',
+                    'ASC');
             if ($facility) {
                 foreach ($allPos as $pos) {
                     $datasets[$pos]['data'][] = $recordsPerMonth->get()->filter(function ($q) use ($pos) {
@@ -1606,7 +1631,7 @@ class MgtController extends Controller
         if ($region) {
             $records->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        } else if ($facility) {
             $records->where('facility_id', $facility);
         }
         $recordsPerTypeData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
@@ -1618,7 +1643,8 @@ class MgtController extends Controller
             }
             $recordsPerTypeData['labels'][] = $record->position;
             $recordsPerTypeData['datasets'][0]['data'][] = $record->total;
-            $recordsPerTypeData['datasets'][0]['backgroundColor'][] = $colors[$record->position] ?? Factory::create()->hexColor;
+            $recordsPerTypeData['datasets'][0]['backgroundColor'][] =
+                $colors[$record->position] ?? Factory::create()->hexColor;
         }
 
         //Table Data
@@ -1626,7 +1652,7 @@ class MgtController extends Controller
         if ($region) {
             $trainingRecords->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        } else if ($facility) {
             $trainingRecords->where('facility_id', $facility);
         }
         $trainingRecords = $trainingRecords->get();
@@ -1696,7 +1722,7 @@ class MgtController extends Controller
         $hasGlobalAccess = RoleHelper::isVATUSAStaff();
         if (!$hasGlobalAccess) {
             $facility = Auth::user()->facilityObj;
-        } elseif ($facility) {
+        } else if ($facility) {
             $facility = Facility::find($facility);
             if (!$facility) {
                 abort(404, "Facility not found.");
@@ -1711,7 +1737,8 @@ class MgtController extends Controller
         for ($i = 6; $i >= 0; $i--) {
             $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
             $numPassFailsData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
-            $numPassFails = OTSEval::selectRaw("result, DATE_FORMAT(exam_date, '%Y-%m') as month")->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') = '$month'");
+            $numPassFails = OTSEval::selectRaw("result, DATE_FORMAT(exam_date, '%Y-%m') as month")
+                ->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') = '$month'");
             if ($facility) {
                 $numPassFails->where('facility_id', $facility->id);
             }
@@ -1825,7 +1852,8 @@ class MgtController extends Controller
         $facility = $isFacility ? $user->facility : "ZAE";
         $moodle = new VATUSAMoodle();
 
-        if ((!$isFacility && !RoleHelper::isVATUSAStaff()) || ($isFacility && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
+        if ((!$isFacility && !RoleHelper::isVATUSAStaff()) ||
+            ($isFacility && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
                     $facility))) {
             abort(403);
         }

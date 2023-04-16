@@ -9,15 +9,13 @@ use App\Classes\VATUSAMoodle;
 use App\Models\User;
 use Auth;
 
-class AuthController extends Controller
-{
+class AuthController extends Controller {
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('guest');
     }
 
@@ -26,8 +24,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function getLogin()
-    {
+    public function getLogin() {
         if (env('APP_ENV', 'prod') == "dev" && !\Auth::check()) {
             /** In Development Environment */
             Auth::loginUsingId(env('DEV_CID_LOGIN', 0));

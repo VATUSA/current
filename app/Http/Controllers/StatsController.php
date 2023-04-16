@@ -11,10 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
 class StatsController
-    extends Controller
-{
-    public function getExportOverview()
-    {
+    extends Controller {
+    public function getExportOverview() {
         header("Content-Type: text/csv");
         $response = "facility,atm,datm,ta,ec,fa,wm,transfers,controllers,\n";
         foreach (Facility::where('active', 1)->orWhere('id', 'ZAE')->orderBy('id')->get() as $facility) {
@@ -35,23 +33,33 @@ class StatsController
         //return response()->header('Content-Type', 'text/plain');
     }
 
-    public function getExportDetails()
-    {
+    public function getExportDetails() {
         header("Content-type: text/csv");
         $response = "facility,obs,obsg30,s1,s2,s3,c1,c3,i1,i3,sup,adm,total,\n";
         foreach (Facility::where('active', 1)->orWhere('id', 'ZAE')->orderBy('region')->orderBy('id')->get() as $fac) {
             $response .= $fac->id . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))->whereRaw("DATE_ADD(`facility_join`, INTERVAL 30 DAY) < NOW()")->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))->whereRaw("DATE_ADD(`facility_join`, INTERVAL 30 DAY) >= NOW()")->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S1"))->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S2"))->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S3"))->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("C1"))->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("C3"))->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("I1"))->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("I3"))->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("SUP"))->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("ADM"))->count() . ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))
+                    ->whereRaw("DATE_ADD(`facility_join`, INTERVAL 30 DAY) < NOW()")->count() . ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))
+                    ->whereRaw("DATE_ADD(`facility_join`, INTERVAL 30 DAY) >= NOW()")->count() . ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S1"))->count() .
+                ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S2"))->count() .
+                ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S3"))->count() .
+                ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("C1"))->count() .
+                ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("C3"))->count() .
+                ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("I1"))->count() .
+                ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("I3"))->count() .
+                ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("SUP"))
+                    ->count() . ",";
+            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("ADM"))
+                    ->count() . ",";
             $response .= User::where('facility', $fac->id)->count() . ",\n";
         }
         return response()->make($response, 200, [
@@ -60,8 +68,7 @@ class StatsController
         ]);
     }
 
-    public function getDetails(Request $request, $facility)
-    {
+    public function getDetails(Request $request, $facility) {
         if ($facility == "overview") {
             $data = [
                 'OBS' => [],
@@ -72,22 +79,34 @@ class StatsController
                 'I1' => [],
             ];
             foreach (Facility::where('active', 1)->get() as $fac) {
-                $data['OBS'][] = ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))->count(), "label" => $fac->id];
-                $data['S1'][] = ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S1"))->count(), "label" => $fac->id];
-                $data['S2'][] = ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S2"))->count(), "label" => $fac->id];
-                $data['S3'][] = ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S3"))->count(), "label" => $fac->id];
+                $data['OBS'][] =
+                    ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))
+                        ->count(), "label" => $fac->id];
+                $data['S1'][] =
+                    ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S1"))
+                        ->count(), "label" => $fac->id];
+                $data['S2'][] =
+                    ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S2"))
+                        ->count(), "label" => $fac->id];
+                $data['S3'][] =
+                    ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S3"))
+                        ->count(), "label" => $fac->id];
                 $data['C1'][] = ["y" => User::where('facility', $fac->id)->where(function ($query) {
                     $query->where('rating', Helper::ratingIntFromShort("C1"))
                         ->orWhere('rating', Helper::ratingIntFromShort("C3"));
                 })->count(), "label" => $fac->id];
-                $data['I1'][] = ["y" => User::where('facility', $fac->id)->where('rating', '>=', Helper::ratingIntFromShort("I1"))->count(), "label" => $fac->id];
+                $data['I1'][] =
+                    ["y" => User::where('facility', $fac->id)->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+                        ->count(), "label" => $fac->id];
             }
             echo json_encode($data, JSON_HEX_APOS);
             return;
         }
 
         $fac = Facility::find($facility);
-        if ($fac == null || ($fac->active != 1 && $fac->id != "ZAE")) abort(404);
+        if ($fac == null || ($fac->active != 1 && $fac->id != "ZAE")) {
+            abort(404);
+        }
 
         $data = [
             'id' => $fac->id,
@@ -114,19 +133,28 @@ class StatsController
                 }
             }
 
-            if ($user->rating == Helper::ratingIntFromShort("S1")) $data['S1']++;
-            if ($user->rating == Helper::ratingIntFromShort("S2")) $data['S2']++;
-            if ($user->rating == Helper::ratingIntFromShort("S3")) $data['S3']++;
+            if ($user->rating == Helper::ratingIntFromShort("S1")) {
+                $data['S1']++;
+            }
+            if ($user->rating == Helper::ratingIntFromShort("S2")) {
+                $data['S2']++;
+            }
+            if ($user->rating == Helper::ratingIntFromShort("S3")) {
+                $data['S3']++;
+            }
             if ($user->rating == Helper::ratingIntFromShort("C1") ||
-                $user->rating == Helper::ratingIntFromShort("C3")) $data['C1']++;
-            if ($user->rating >= Helper::ratingIntFromShort("I1")) $data['I1']++;
+                $user->rating == Helper::ratingIntFromShort("C3")) {
+                $data['C1']++;
+            }
+            if ($user->rating >= Helper::ratingIntFromShort("I1")) {
+                $data['I1']++;
+            }
             $data['total']++;
         }
         echo json_encode($data, JSON_HEX_APOS);
     }
 
-    public function getIndex()
-    {
+    public function getIndex() {
         $zae = Facility::where('id', 'ZAE')->get();
         $west = Facility::where('active', 1)->where('region', 8)->orderBy('name')->get();
         $midwest = Facility::where('active', 1)->where('region', 6)->orderBy('name')->get();
