@@ -157,19 +157,19 @@
                             </tr>
                             </thead>
                             <tr>
-                                <td>Are you in the VATUSA Division?</td>
+                                <td>You are in the VATUSA Division</td>
                                 <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>Have you completed the Basic ATC/S1 courses?</td>
+                                <td>You completed the Basic ATC/S1 courses</td>
                                 <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
                             </tr>
                             <tr>
-                                <td>Has it been at least 90 days since your last transfer?</td>
+                                <td>It has been at least 90 days since your last transfer</td>
                                 <td>{!! ($checks['90days'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>If it's your first facility, are you within 30 days of joining?</td>
+                                <td>If it's your first facility, it has been at least 30 days since joining</td>
                                 @if($checks['is_first'] == 0)
                                     <td><span class="text-success">N/A</span></td>
                                 @elseif($checks['initial'] == 1)
@@ -179,23 +179,23 @@
                                 @endif
                             </tr>
                             <tr>
-                                <td>Has it been at least 90 days since promotion to S1, S2, S3, or C1?</td>
+                                <td>It has been at least 90 days since promotion to S1, S2, S3, or C1</td>
                                 <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>Do you not hold a staff position at a facility?</td>
+                                <td>You do not hold a staff position at a facility</td>
                                 <td>{!! ($checks['staff'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>Do you not hold an I1 or I3 rating?</td>
+                                <td>You do not hold an I1 or I3 rating</td>
                                 <td>{!! ($checks['instructor'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>Do you have pending transfers?</td>
+                                <td>You do not have pending transfers</td>
                                 <td>{!! ($checks['pending'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>If the above are all green, you are eligible to submit a transfer request. Are you
+                                <td>If all of the above are green, you are eligible to submit a transfer request. Are you
                                     eligible?
                                 </td>
                                 <td>{!! ($eligible)?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
