@@ -96,24 +96,7 @@
                             Facilities
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 5px; margin-bottom: 5px;">Western Region</h5>
-                            </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 6])->orderby('name', 'ASC')->get() as $f)
-                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
-                            @endforeach
-                            <li class="nav-divider"></li>
-                            <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Central Region</h5>
-                            </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 5])->orderby('name', 'ASC')->get() as $f)
-                                <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
-                            @endforeach
-                            <li class="nav-divider"></li>
-                            <li class="dropdown-header"><h5
-                                    style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Eastern Region</h5>
-                            </li>
-                            @foreach(\App\Models\Facility::where(['active' => 1, 'region' => 7])->orderby('name', 'ASC')->get() as $f)
+                            @foreach(\App\Models\Facility::where(['active' => 1])->orderby('name', 'ASC')->get() as $f)
                                 <li><a href="{{$f->url}}" target="_blank">{{$f->name}}</a></li>
                             @endforeach
                         </ul>
@@ -139,6 +122,7 @@
                                     Events Calendar</a></li>
                             <li class="divider"></li>
                             <li><a href="{{ secure_url('info/ace') }}"><i class="fas fa-star"></i> ACE Team</a></li>
+                            <li><a href="{{ secure_url('info/dice') }}"><i class="fas fa-star"></i> DICE Team</a></li>
                             <li><a href="{{ secure_url('info/solo') }}"><i class="fas fa-certificate"></i> Solo
                                     Certs</a>
                             </li>

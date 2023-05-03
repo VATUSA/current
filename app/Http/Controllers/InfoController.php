@@ -12,6 +12,9 @@ class InfoController
     public function getACE() {
         return view('info.ace');
     }
+    public function getDICE() {
+        return view('info.dice');
+    }
 
     public function getJoin() {
         $content = KnowledgebaseQuestions::find(config('services.kb.joinQuestionId'));

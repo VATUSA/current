@@ -5,12 +5,17 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    ACE Team
+                    DICE Team
                 </h3>
             </div>
             <div class="panel-body">
-                <strong>What is the ACE Team?</strong>
-                <p>The VATUSA Advanced Controller for Events (ACE) Team is a group of highly skilled advanced controllers who have volunteered to make themselves available for assisting USA Facilities with event staffing. Each member represents the best of VATUSA controlling ability and are exceptional controllers. Facilities in need of the ACE Team should utilize the VATUSA Discord #aceteam-requests channel or contact the VATUSA Events Manager (VATUSA5) to schedule the team for an event.</p><hr>
+                <strong>What is the DICE Team?</strong>
+                <p>The VATUSA Division Instruction for Controller Education (DICE) Team is a group of instructor-rated
+                    members who have volunteered their time for the purpose of providing a standard training flow for
+                    developmental controllers, available to facilities in need of instructional assistance.
+                    Facilities in need of the DICE Team should contact the
+                    Deputy Director Training Services (VATUSA3) to request more information. </p>
+                <hr>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -20,7 +25,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach(\App\Models\Role::where('role','ACE')->orderBy('cid')->get() as $ace)
+                    @foreach(\App\Models\Role::where('role','DICE')->orderBy('cid')->get() as $ace)
                     <tr>
                         <td>{{$ace->cid}}</td>
                         <td>{{$ace->user()->first()->fullname()}}</td>

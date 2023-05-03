@@ -123,6 +123,7 @@ Route::group([
          * * * * * * * * * * * */
         Route::group(['prefix' => 'info'], function () {
             Route::get('ace', 'InfoController@getACE');
+            Route::get('dice', 'InfoController@getDICE');
             Route::get('join', 'InfoController@getJoin');
             Route::get('members', 'InfoController@getMembers');
             Route::get('policies', 'PolicyController@index');
