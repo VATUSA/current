@@ -55,7 +55,7 @@ jobs:
           docker push vatusa/www:dev
           
       - name: Install kubectl
-        uses: azure/setup-kubectl@v1
+        uses: azure/setup-kubectl@v3
         with:
           version: 'v1.21.2'
       
