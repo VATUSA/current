@@ -161,10 +161,7 @@ class StatsController
         $northeast = Facility::where('active', 1)->where('region', 7)->orderBy('name')->get();
         $south = Facility::where('active', 1)->where('region', 5)->orderBy('name')->get();
         $facilities = Facility::where('active', 1)->orWhere('id', 'ZAE')->get();
-        $us5 = Role::where('facility', 'ZHQ')->where('role', 'US5')->first();
-        $us6 = Role::where('facility', 'ZHQ')->where('role', 'US6')->first();
-        $us7 = Role::where('facility', 'ZHQ')->where('role', 'US7')->first();
-        $us8 = Role::where('facility', 'ZHQ')->where('role', 'US8')->first();
+        $us2 = Role::where('facility', 'ZHQ')->where('role', 'US2')->first();
         $regions[0] = $regions[5] = $regions[6] = $regions[7] = $regions[8] = 0;
         foreach ($facilities as $facility) {
             $transfersPending[$facility->id] = Transfers::where('to', $facility->id)->where('status', 0)->count();
@@ -202,8 +199,7 @@ class StatsController
             }
         }
         return view('stats.index', compact('zae',
-            'west', 'midwest', 'northeast', 'south',
-            'us5', 'us6', 'us7', 'us8',
+            'west', 'midwest', 'northeast', 'south', 'us2',
             'transfersPending', 'controllersCount',
             'atms', 'datms', 'tas', 'ecs', 'fes', 'wms',
             'regions'));

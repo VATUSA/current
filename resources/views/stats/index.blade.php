@@ -69,12 +69,12 @@
                                     </tr>
                                 @endforeach -->
                                 <tr>
-                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Western Region (USA6)
+                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Western Region
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us6==null)?"Vacant":$us6->user()->first()->fullname()}}</td>
+                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us2==null)?"Vacant":$us2->user()->first()->fullname()}}</td>
                                     <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[6]}}</td>
                                 </tr>
                                 <tr style="background: #cccccc">
@@ -102,12 +102,12 @@
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Central Region (USA5)
+                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Central Region
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us5==null)?"Vacant":$us5->user()->first()->fullname()}}</td>
+                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us2==null)?"Vacant":$us2->user()->first()->fullname()}}</td>
                                     <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[5]}}</td>
                                 </tr>
                                 <tr style="background: #cccccc">
@@ -135,12 +135,12 @@
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Eastern Region (USA7)
+                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Eastern Region
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us7==null)?"Vacant":$us7->user()->first()->fullname()}}</td>
+                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us2==null)?"Vacant":$us2->user()->first()->fullname()}}</td>
                                     <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[7]}}</td>
                                 </tr>
                                 <tr style="background: #cccccc">
