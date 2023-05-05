@@ -43,7 +43,7 @@ class EmailHelper
     public static function sendSupportEmail($email, $ticket, $subject, $template, $data)
     {
         $backup = Mail::getSwiftMailer();
-        $transport = new \Swift_SmtpTransport(env('MAIL_HOST'), 587, env('MAIL_ENCRYPTION', 'tls'));
+        $transport = new \Swift_SmtpTransport(env('MAIL_HOST'), env('MAIL_PORT'), env('MAIL_ENCRYPTION', 'tls'));
         $transport->setUsername(env("SUPPORT_EMAIL_USERNAME"));
         $transport->setPassword(env("SUPPORT_EMAIL_PASSWORD"));
         $support = new \Swift_Mailer($transport);
