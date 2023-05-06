@@ -23,8 +23,13 @@ class HomeController
         $banners = [];
         $ids = [];
 
-        $results = \DB::connection('forum')
-            ->select("SELECT * , DATE_FORMAT(sc.`start_date` ,  \"%c/%e/%Y\") AS `eventdate` FROM smf_calendar AS sc LEFT JOIN smf_messages ON smf_messages.id_topic = sc.id_topic WHERE sc.`start_date` > DATE_SUB(NOW(), INTERVAL 1 DAY) GROUP BY sc.id_topic ORDER BY sc.`start_date` ASC LIMIT 5");
+        if (env('APP_ENV', 'dev') == "prod") {
+            $results = \DB::connection('forum')
+                ->select("SELECT * , DATE_FORMAT(sc.`start_date` ,  \"%c/%e/%Y\") AS `eventdate` FROM smf_calendar AS sc LEFT JOIN smf_messages ON smf_messages.id_topic = sc.id_topic WHERE sc.`start_date` > DATE_SUB(NOW(), INTERVAL 1 DAY) GROUP BY sc.id_topic ORDER BY sc.`start_date` ASC LIMIT 5");
+        } else {
+            $results = [];
+        }
+
 
         foreach ($results as $result) {
             if (preg_match('/\[img\]([^\[]+)\[\/img\]/i', $result->body, $matches)) {
