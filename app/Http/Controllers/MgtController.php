@@ -288,16 +288,6 @@ class MgtController extends Controller {
             ]);
 
             if ($return) {
-                $promo = new Promotions();
-                $promo->cid = $cid;
-                $promo->grantor = Auth::user()->cid;
-                $promo->to = $rating;
-                $promo->from = $from;
-                $promo->exam = "0000-00-00 00:00:00";
-                $promo->examiner = Auth::user()->cid;
-                $promo->position = "n/a";
-                $promo->save();
-
                 if ($rating >= Helper::ratingIntFromShort("I1")) {
                     Role::where("cid", $cid)->where(function ($query) {
                         $query->where("role", "MTR")->orWhere("role", "INS");
