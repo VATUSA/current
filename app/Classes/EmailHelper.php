@@ -42,12 +42,12 @@ class EmailHelper
 
     public static function sendSupportEmail($email, $ticket, $subject, $template, $data)
     {
-        $backup = Mail::getSwiftMailer();
-        $transport = new \Swift_SmtpTransport(env('MAIL_HOST'), env('MAIL_PORT'), env('MAIL_ENCRYPTION', 'tls'));
-        $transport->setUsername(env("SUPPORT_EMAIL_USERNAME"));
-        $transport->setPassword(env("SUPPORT_EMAIL_PASSWORD"));
-        $support = new \Swift_Mailer($transport);
-        Mail::setSwiftMailer($support);
+//        $backup = Mail::getSwiftMailer();
+//        $transport = new \Swift_SmtpTransport(env('MAIL_HOST'), env('MAIL_PORT'), env('MAIL_ENCRYPTION', 'tls'));
+//        $transport->setUsername(env("SUPPORT_EMAIL_USERNAME"));
+//        $transport->setPassword(env("SUPPORT_EMAIL_PASSWORD"));
+//        $support = new \Swift_Mailer($transport);
+//        Mail::setSwiftMailer($support);
         if (is_array($email)) {
             $sent = [];
             foreach($email as $e) {
@@ -66,7 +66,7 @@ class EmailHelper
                 $msg->subject("[VATUSA Help Desk] (Ticket #$ticket) $subject");
             });
         }
-        Mail::setSwiftMailer($backup);
+//        Mail::setSwiftMailer($backup);
     }
 
     /**
