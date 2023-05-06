@@ -24,7 +24,6 @@ use App\Models\User;
 use App\Models\Facility;
 use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
-use App\Classes\CertHelper;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
@@ -282,7 +281,11 @@ class MgtController extends Controller {
         }
 
         if (env('APP_ENV', 'dev') == "prod") {
-            $return = CertHelper::changeRating($cid, $request->input('rating'), true);
+            $return = PromoHelper::handle($cid, Auth::user()->cid, $rating, [
+                "exam" => "0000-00-00 00:00:00",
+                "examiner" => Auth::user()->cid,
+                "position" => "n/a"
+            ]);
 
             if ($return) {
                 $promo = new Promotions();
@@ -1148,8 +1151,10 @@ class MgtController extends Controller {
         if ($region) {
             $records->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
-            $records->where('facility_id', $facility);
+        } else {
+            if ($facility) {
+                $records->where('facility_id', $facility);
+            }
         }
 
         $totalTime = $records->sum(DB::raw('TIME_TO_SEC(duration)'));
@@ -1180,8 +1185,10 @@ class MgtController extends Controller {
         if ($region) {
             $records->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
-            $records->where('facility_id', $facility);
+        } else {
+            if ($facility) {
+                $records->where('facility_id', $facility);
+            }
         }
         $sumAvgSessions = $records->selectRaw('COUNT(*) AS total')
             ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
@@ -1192,8 +1199,10 @@ class MgtController extends Controller {
         if ($region) {
             $evals = $evals->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
-            $evals = $evals->where('facility_id', $facility);
+        } else {
+            if ($facility) {
+                $evals = $evals->where('facility_id', $facility);
+            }
         }
         $sumNumEvals = $evals->count();
         $sumNumPass = $sumNumEvals ? $evals->where('result', 1)->count() : 0;
@@ -1278,15 +1287,17 @@ class MgtController extends Controller {
             if ($region) {
                 $hoursPerMonth = $hoursPerMonth->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
-                $hoursPerMonth = $hoursPerMonth->where('facility_id', $facility);
+            } else {
+                if ($facility) {
+                    $hoursPerMonth = $hoursPerMonth->where('facility_id', $facility);
+                }
             }
             $hoursPerMonth = $hoursPerMonth->where('session_date', '>',
                 Carbon::parse('first day of this month')->subMonths(6))
                 ->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->groupBy([
-                'month',
-                'instructor_id'
-            ])->orderBy('month', 'ASC')->get();
+                    'month',
+                    'instructor_id'
+                ])->orderBy('month', 'ASC')->get();
             //dd(str_replace_array('?', $hoursPerMonth->getBindings(), $hoursPerMonth->toSql()));
             //dd($hoursPerMonth->get()->toArray());
 
@@ -1320,8 +1331,10 @@ class MgtController extends Controller {
             if ($region) {
                 $records = $records->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
-                $records = $records->where('facility_id', $facility);
+            } else {
+                if ($facility) {
+                    $records = $records->where('facility_id', $facility);
+                }
             }
             $timePerInstructorData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
             $timePerInstructor = $records->with(['instructor:cid,fname,lname'])
@@ -1353,8 +1366,10 @@ class MgtController extends Controller {
                     if ($region) {
                         $records->whereIn('facility_id',
                             Facility::where('region', $region)->get()->pluck('id')->all());
-                    } else if ($facility) {
-                        $records->where('facility_id', $facility);
+                    } else {
+                        if ($facility) {
+                            $records->where('facility_id', $facility);
+                        }
                     }
                     $avgTime = $records->selectRaw('SUM(TIME_TO_SEC(duration)) as total')
                         ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
@@ -1379,8 +1394,10 @@ class MgtController extends Controller {
                     if ($region) {
                         $records->whereIn('facility_id',
                             Facility::where('region', $region)->get()->pluck('id')->all());
-                    } else if ($facility) {
-                        $records->where('facility_id', $facility);
+                    } else {
+                        if ($facility) {
+                            $records->where('facility_id', $facility);
+                        }
                     }
                     $avgSessions = $records->selectRaw('COUNT(*) AS total')
                         ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
@@ -1423,8 +1440,10 @@ class MgtController extends Controller {
             if ($region) {
                 $evalsPerMonth->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
-                $evalsPerMonth->where('facility_id', $facility);
+            } else {
+                if ($facility) {
+                    $evalsPerMonth->where('facility_id', $facility);
+                }
             }
             if ($instructor) {
                 $evalsPerMonth->where('instructor_id', $instructor);
@@ -1451,8 +1470,10 @@ class MgtController extends Controller {
         $evals = OTSEval::where('exam_date', '>=', Carbon::now()->subDays($interval));
         if ($region) {
             $evals->whereIn('facility_id', Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
-            $evals->where('facility_id', $facility);
+        } else {
+            if ($facility) {
+                $evals->where('facility_id', $facility);
+            }
         }
         $evalsPerFormData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
         $evalsPerForm = $evals
@@ -1483,8 +1504,10 @@ class MgtController extends Controller {
                 if ($region) {
                     $completed->whereIn('facility_id',
                         Facility::where('region', $region)->get()->pluck('id')->all());
-                } else if ($facility) {
-                    $completed->where('facility_id', $facility);
+                } else {
+                    if ($facility) {
+                        $completed->where('facility_id', $facility);
+                    }
                 }
                 $numConducted = $completed->count();
                 if (!$numConducted) {
@@ -1548,8 +1571,10 @@ class MgtController extends Controller {
             if ($region) {
                 $evals->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
-                $evals->where('facility_id', $facility);
+            } else {
+                if ($facility) {
+                    $evals->where('facility_id', $facility);
+                }
             }
             $evalsPerForm = $evals->with(['instructor:cid,fname,lname'])->selectRaw('COUNT(*) AS total, instructor_id')
                 ->groupBy(['instructor_id']);
@@ -1573,8 +1598,10 @@ class MgtController extends Controller {
         if ($region) {
             $recordsPerMonth->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
-            $recordsPerMonth->where('facility_id', $facility);
+        } else {
+            if ($facility) {
+                $recordsPerMonth->where('facility_id', $facility);
+            }
         }
         $recordsPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
             'month',
@@ -1586,8 +1613,10 @@ class MgtController extends Controller {
         if ($region) {
             $recordsPerMonth->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
-            $recordsPerMonth->where('facility_id', $facility);
+        } else {
+            if ($facility) {
+                $recordsPerMonth->where('facility_id', $facility);
+            }
         }
         $recordsPerMonth->whereRaw("session_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)")->orderBy('month', 'ASC');
         $allPos = $recordsPerMonth->get()->pluck('position')->unique()->all();
@@ -1599,8 +1628,10 @@ class MgtController extends Controller {
             if ($region) {
                 $recordsPerMonth->whereIn('facility_id',
                     Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
-                $recordsPerMonth->where('facility_id', $facility);
+            } else {
+                if ($facility) {
+                    $recordsPerMonth->where('facility_id', $facility);
+                }
             }
             $recordsPerMonth =
                 $recordsPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->orderBy('month',
@@ -1631,8 +1662,10 @@ class MgtController extends Controller {
         if ($region) {
             $records->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
-            $records->where('facility_id', $facility);
+        } else {
+            if ($facility) {
+                $records->where('facility_id', $facility);
+            }
         }
         $recordsPerTypeData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
         $recordsPerType = $records->selectRaw('COUNT(*) AS total, position')
@@ -1652,8 +1685,10 @@ class MgtController extends Controller {
         if ($region) {
             $trainingRecords->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
-            $trainingRecords->where('facility_id', $facility);
+        } else {
+            if ($facility) {
+                $trainingRecords->where('facility_id', $facility);
+            }
         }
         $trainingRecords = $trainingRecords->get();
 
@@ -1722,10 +1757,12 @@ class MgtController extends Controller {
         $hasGlobalAccess = RoleHelper::isVATUSAStaff();
         if (!$hasGlobalAccess) {
             $facility = Auth::user()->facilityObj;
-        } else if ($facility) {
-            $facility = Facility::find($facility);
-            if (!$facility) {
-                abort(404, "Facility not found.");
+        } else {
+            if ($facility) {
+                $facility = Facility::find($facility);
+                if (!$facility) {
+                    abort(404, "Facility not found.");
+                }
             }
         }
 

@@ -2,7 +2,6 @@
 namespace App\Classes;
 
 use App\Models\User;
-use App\Classes\CertHelper;
 use App\Models\Promotions;
 use App\Models\Actions;
 
@@ -11,7 +10,7 @@ class PromoHelper
     public static function handle($cid, $ins, $to, $data) {
         $user = User::where('cid', $cid)->first();
 
-        if(CertHelper::changeRating($cid, $to, false) === 0) {
+        if(!VATSIMApi2Helper::updateRating($cid, $to)) {
             return 0;
         } else {
             $promo = new Promotions;

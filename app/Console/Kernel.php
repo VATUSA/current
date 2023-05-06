@@ -21,8 +21,6 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\RoleSync',
         'App\Console\Commands\TransferEmails',
         'App\Console\Commands\ExpireNotices',
-        'App\Console\Commands\CERTCorrect',
-        'App\Console\Commands\CERTErr',
         'App\Console\Commands\MoodleSync',
         'App\Console\Commands\CachePromotionEligibility'
     ];
