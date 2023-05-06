@@ -21,6 +21,7 @@ class VATSIMApi2Helper {
         $data = [
             "id" => $cid,
             "rating" => $rating,
+            "comment" => "VATUSA Rating Change Integration"
         ];
         $json = json_encode($data);
         $client = new Client();
