@@ -15,7 +15,8 @@ class VATSIMApi2Helper {
     static function updateRating(int $cid, int $rating): bool {
         $path = "/members/{$cid}";
         $fullURL = VATSIMApi2Helper::_url() . $path;
-        if (VATSIMApi2Helper::_key() === null) {
+        $key = VATSIMApi2Helper::_key()
+        if ($key === null) {
             return false;
         }
         $data = [
@@ -24,7 +25,7 @@ class VATSIMApi2Helper {
             "comment" => "VATUSA Rating Change Integration"
         ];
         $json = json_encode($data);
-        $client = new Client();
+        $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
         $response = $client->patch($fullURL, ['body' => $json]);
         return $response->getStatusCode() == 200;
     }
