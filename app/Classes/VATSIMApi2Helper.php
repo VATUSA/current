@@ -15,6 +15,9 @@ class VATSIMApi2Helper {
     static function updateRating(int $cid, int $rating): bool {
         $path = "/members/{$cid}";
         $fullURL = VATSIMApi2Helper::_url() . $path;
+        if (VATSIMApi2Helper::_key() === null) {
+            return false;
+        }
         $data = [
             "id" => $cid,
             "rating" => $rating,
