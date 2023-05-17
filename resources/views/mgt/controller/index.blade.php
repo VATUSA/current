@@ -601,7 +601,7 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
-                                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                            @if(\App\Classes\RoleHelper::isVATUSAStaff() && $user->flag_homecontroller == 1)
                                                 <tr>
                                                     <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
                                                                 id="waivertogglei"

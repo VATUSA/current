@@ -590,6 +590,9 @@ class MgtController extends Controller {
         if (!$user) {
             return redirect("/mgt/transfer")->with("error", "User not found");
         }
+        if ($user->flag_homecontroller != 1) {
+            return redirect("/mgt/controller/{$cid}")->with("error", "User is not a member of the VATUSA Division");
+        }
 
         if (Transfers::where('cid', $cid)->where('status', 0)->count() > 0) {
             return redirect("/mgt/transfer")->with("error", "User has pending transfer request.");
