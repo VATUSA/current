@@ -408,14 +408,16 @@
                                                     @else
                                                         {{(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))?"Yes":"No"}}
                                                     @endif
+                                                    @if($user->rating>7)
                                                      - INS:
                                                     @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id))
                                                         <a href="/mgt/controller/{{$user->cid}}/instructor/{{$visit->fac->id}}">
-                                                            {{(\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id))?"Yes":"No"}}
+                                                            {{(\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id, false))?"Yes":"No"}}
                                                         </a>
                                                     @else
-                                                        {{(\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id))?"Yes":"No"}}
+                                                        {{(\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id, false))?"Yes":"No"}}
                                                     @endif 
+                                                    @endif
                                                 </li>
                                             @endforeach
                                             <br>
