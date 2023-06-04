@@ -229,6 +229,29 @@ class MgtController extends Controller {
             return redirect("/mgt/controller/$cid")->with("success", "Successfully removed mentor role");
         }
     }
+    
+    public function getControllerInstructor($cid, $facility) {
+        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff()) {
+            return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
+        }
+
+        $user = User::find($cid);
+        if (!$user) {
+            return redirect("/mgt/controller")->with("error", "User not found");
+        }
+
+        if ($facility == null) {
+            return redirect("/mgt/controller")->with("error", "Incorrect facility name");
+        }
+        
+        if($user->rating<8){
+            return redirect("/mgt/controller")->with("error", "User is not an Instructor");
+        }
+
+        RoleHelperV2::toggleRole($cid, "INS", $facility);
+        return redirect("/mgt/controller/$cid")->with("success", "Successfully toggled Instructor role");
+        
+    }
 
     /* Controller AJAX */
     public function getControllerTransfers(Request $request, $cid) {
