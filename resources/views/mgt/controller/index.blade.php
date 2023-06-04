@@ -400,7 +400,7 @@
                                             <li>Visiting:</li>
                                             @foreach ($user->visits()->get() as $visit)
                                                 <li>
-                                                    {{$visit->fac->id}} - {{$visit->fac->name}} - Mentor:
+                                                    {{$visit->fac->id}} - {{$visit->fac->name}} - MTR:
                                                     @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id))
                                                         <a href="/mgt/controller/{{$user->cid}}/mentor/{{$visit->fac->id}}">
                                                             {{(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))?"Yes":"No"}}
@@ -408,6 +408,14 @@
                                                     @else
                                                         {{(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))?"Yes":"No"}}
                                                     @endif
+                                                     - INS:
+                                                    @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id))
+                                                        <a href="/mgt/controller/{{$user->cid}}/instructor/{{$visit->fac->id}}">
+                                                            {{(\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id))?"Yes":"No"}}
+                                                        </a>
+                                                    @else
+                                                        {{(\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id))?"Yes":"No"}}
+                                                    @endif 
                                                 </li>
                                             @endforeach
                                             <br>
