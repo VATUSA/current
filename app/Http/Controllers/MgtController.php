@@ -989,7 +989,7 @@ class MgtController extends Controller {
         }
 
         $user = User::findOrFail($cid);
-        RoleHelperV2::toggleRole($cid, "INS", "ZHQ");
+        RoleHelperV2::toggleRole($cid, "INS", $user->facility);
 
         return "1";
     }
