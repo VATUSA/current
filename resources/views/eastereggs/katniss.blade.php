@@ -28,7 +28,7 @@
     </div>
     <script>
         function viewXfer(id) {
-            $.post( "{{secure_url('mgt/ajax/transfer/reason')}}", { id: id }, function( data ) {
+            $.post( "{{url('mgt/ajax/transfer/reason')}}", { id: id }, function( data ) {
                 bootbox.alert(data);
             });
         }

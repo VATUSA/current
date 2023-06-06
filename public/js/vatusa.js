@@ -141,8 +141,7 @@ jQuery(document).ready(function ($) {
             className: 'btn-success continue-login',
             callback : function () {
               if ($('#privacy-agree').is(':checked')) {
-                let parts = document.domain.split('.');
-                Cookies.set('privacy-agree', true, {expires: 180, domain: '.vatusa.' + parts[parts.length - 1]})
+                Cookies.set('privacy-agree', true, {expires: 180, domain: window.location.hostname})
                 window.location = redirect + "?agreed"
               }
               else {

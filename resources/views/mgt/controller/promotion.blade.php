@@ -252,7 +252,7 @@
                     btn.attr('disabled', false).html('<i class="fas fa-check"></i> Promote')
                     if (result.data.hasOwnProperty('status') && result.data.status === 'OK') {
                         return swal('Success!', 'The controller has been promoted.', 'success').then(() => {
-                            return window.location = '{{ secure_url('/mgt/facility') }}'
+                            return window.location = '{{ url('/mgt/facility') }}'
                         })
                     } else
                         return swal('Error!', 'The controller was not promoted. ' + result.data.msg, 'error')
@@ -262,7 +262,7 @@
                 })
             });
             $('#cancel-promotion').click(function (e) {
-                window.location = '{{ secure_url('/mgt/facility') }}'
+                window.location = '{{ url('/mgt/facility') }}'
             });
         })
     </script>

@@ -5,7 +5,7 @@
 @endpush
 @include('my.training.view')
 <div class="col-md-3" style="border-right: 1px solid #ccc;">
-    <form class="form-inline" action="{{ secure_url("my/profile") }}#training" method="POST"
+    <form class="form-inline" action="{{ url("my/profile") }}#training" method="POST"
           id="training-artcc-select-form">
         <div class="form-group">
             <label for="tng-artcc-select">ARTCC:</label>

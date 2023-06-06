@@ -27,7 +27,7 @@ class AuthController extends Controller {
     public function getLogin() {
         if (env('APP_ENV', 'prod') == "dev" && !\Auth::check()) {
             /** In Development Environment */
-            Auth::loginUsingId(env('DEV_CID_LOGIN', 0));
+            Auth::loginUsingId(env('DEV_CID_LOGIN', 0), true);
             /*$moodle = new VATUSAMoodle(true);
             $response = $moodle->request("auth_userkey_request_login_url",
                 ['user' => ['idnumber' => \Illuminate\Support\Facades\Auth::user()->cid]]);

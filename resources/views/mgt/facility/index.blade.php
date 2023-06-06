@@ -31,7 +31,7 @@
                                                    data-toggle="tab"><i class="fas fa-door-open"></i> Visiting
                                 Roster</a></li>
                         @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
-                            <li role="presentation"><a href="{{ secure_url("mgt/facility/training/stats") }}"
+                            <li role="presentation"><a href="{{ url("mgt/facility/training/stats") }}"
                                                        aria-controls="training"><i class="fas fa-chart-line"></i>
                                     Training</a></li>
                         @endif
@@ -445,7 +445,7 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
       $(document).ready(function () {
-        $.post('{{ secure_url("/mgt/ajax/staff/$fac") }}', function (data) {
+        $.post('{{ url("/mgt/ajax/staff/$fac") }}', function (data) {
           $('#staff-table').html(data)
         })
         $('#facmgt').change(function () {
@@ -844,19 +844,19 @@
       }
 
       function ulsDevUpdate () {
-        $.post('{{ secure_url("/mgt/facility/$fac/uls/devreturn") }}', {ret: $('#devret').val()}).done(function (result) {
+        $.post('{{ url("/mgt/facility/$fac/uls/devreturn") }}', {ret: $('#devret').val()}).done(function (result) {
           bootbox.alert('Updated')
         })
       }
 
       function apiGen () {
-        $.post('{{ secure_url("/mgt/facility/$fac/api/generate") }}', function (result) {
+        $.post('{{ url("/mgt/facility/$fac/api/generate") }}', function (result) {
           if (result) $('#apikey').attr('value', result)
         })
       }
 
       function apiSBGen () {
-        $.post('{{ secure_url("/mgt/facility/$fac/api/generate/sandbox") }}', function (result) {
+        $.post('{{ url("/mgt/facility/$fac/api/generate/sandbox") }}', function (result) {
           if (result) $('#apisbkey').attr('value', result)
         })
       }
@@ -874,7 +874,7 @@
         })
           .then(r => {
             if (r) {
-              $.post('{{ secure_url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
+              $.post('{{ url('/mgt/ajax/transfers/1') }}', {id: id}, function (data) {
                 if (data == 1)
                   swal('Success!', 'The transfer has been successfully approved.', 'success').then(_ => {
                     window.location.hash = '#trans';
@@ -907,7 +907,7 @@
         })
           .then((r) => {
             if (r) {
-              $.post('{{ secure_url('/mgt/ajax/transfers/2') }}', {id: id, reason: r}, function (data) {
+              $.post('{{ url('/mgt/ajax/transfers/2') }}', {id: id, reason: r}, function (data) {
                 if (data == 1)
                   swal('Success!', 'The transfer has been successfully rejected.', 'success').then(_ => {
                     window.location.hash = '#trans';
@@ -985,10 +985,10 @@
         })
           .then(r => {
             if (r) {
-              $.post("{{secure_url('mgt/ajax/del/position/'.$fac)}}", {pos: val}, function (data) {
+              $.post("{{url('mgt/ajax/del/position/'.$fac)}}", {pos: val}, function (data) {
                   if (data == 1) {
                     swal('Success!', 'The ' + val_lng + ' position has been successfully vacated.', 'success')
-                    $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
+                    $.post('{{url('/mgt/ajax/staff/'.$fac)}}', function (data) {
                       $('#staff-table').html(data)
                     })
                   } else {
@@ -1032,11 +1032,11 @@
         $('#assignStaffModal').modal('show')
         $('#confirmAssignStaff').unbind()
         $('#confirmAssignStaff').click(function () {
-          $.post("{{secure_url('mgt/ajax/position/'.$fac)}}/" + val, {
+          $.post("{{url('mgt/ajax/position/'.$fac)}}/" + val, {
             cid: $('#assignStaffModal #staffcidsearch').val()
           }, function (data) {
             bootbox.alert(data)
-            $.post('{{secure_url('/mgt/ajax/staff/'.$fac)}}', function (data) {
+            $.post('{{url('/mgt/ajax/staff/'.$fac)}}', function (data) {
               $('#staff-table').html(data)
             })
           })

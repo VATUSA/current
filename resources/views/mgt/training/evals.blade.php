@@ -15,7 +15,7 @@
             <div class="panel-body">
                 <div class="col-md-3" style="border-right: 1px solid #ccc;">
                     @if(\App\Classes\RoleHelper::isVATUSAStaff())
-                        <form class="form-inline" action="{{ secure_url("/mgt/facility/training/evals") }}" method="POST"
+                        <form class="form-inline" action="{{ url("/mgt/facility/training/evals") }}" method="POST"
                               id="training-artcc-select-form">
                             <div class="form-group">
                                 <label for="tng-artcc-select">ARTCC:</label>
@@ -113,7 +113,7 @@
                                                     class="text-danger">{{ $eval->results()->where('result', 3)->count() }}</strong>
                                             </td>
                                             <td>
-                                                <a href="{{ secure_url('/mgt/facility/training/eval/' . $eval->id . '/view') }}"
+                                                <a href="{{ url('/mgt/facility/training/eval/' . $eval->id . '/view') }}"
                                                    target="_blank">
                                                     <button class="btn btn-primary"><span
                                                             class="glyphicon glyphicon-eye-open"></span>
@@ -177,7 +177,7 @@
                                                         class="text-danger">{{ $eval->results()->where('result', 3)->count() }}</strong>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ secure_url('/mgt/facility/training/eval/' . $eval->id . '/view') }}"
+                                                    <a href="{{ url('/mgt/facility/training/eval/' . $eval->id . '/view') }}"
                                                        target="_blank">
                                                         <button class="btn btn-primary"><span
                                                                 class="glyphicon glyphicon-eye-open"></span>

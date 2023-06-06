@@ -75,7 +75,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/ajax/toggleStaffPrevent") }}",
+          url : "{{ url("/mgt/controller/ajax/toggleStaffPrevent") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
@@ -103,7 +103,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/ajax/toggleAcademyEditor") }}",
+          url : "{{ url("/mgt/controller/ajax/toggleAcademyEditor") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
@@ -131,7 +131,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/ajax/toggleAcademyEditor") }}",
+          url : "{{ url("/mgt/controller/ajax/toggleAcademyEditor") }}",
           data: {cid: "{{ $user->cid }}", facOnly: true}
         }).success(function (result) {
           spinner.hide()
@@ -159,7 +159,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/ajax/toggleInsRole") }}",
+          url : "{{ url("/mgt/controller/ajax/toggleInsRole") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
@@ -184,7 +184,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/ajax/toggleSMTRole") }}",
+          url : "{{ url("/mgt/controller/ajax/toggleSMTRole") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
@@ -210,7 +210,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/mgt/controller/ajax/toggleTTRole") }}",
+          url : "{{ url("/mgt/controller/ajax/toggleTTRole") }}",
           data: {cid: "{{ $user->cid }}"}
         }).success(function (result) {
           spinner.hide()
@@ -236,7 +236,7 @@
           spinner.show()
           $.ajax({
               type: 'POST',
-              url : "{{ secure_url("/mgt/controller/ajax/toggleDICERole") }}",
+              url : "{{ url("/mgt/controller/ajax/toggleDICERole") }}",
               data: {cid: "{{ $user->cid }}"}
           }).success(function (result) {
               spinner.hide()
@@ -262,7 +262,7 @@
           spinner.show()
           $.ajax({
               type: 'POST',
-              url : "{{ secure_url("/mgt/controller/ajax/toggleDCCRole") }}",
+              url : "{{ url("/mgt/controller/ajax/toggleDCCRole") }}",
               data: {cid: "{{ $user->cid }}"}
           }).success(function (result) {
               spinner.hide()
@@ -772,7 +772,7 @@
                                     @endif
                                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
                                         <form class="form-horizontal"
-                                              action="{{secure_url("/mgt/controller/action/add")}}"
+                                              action="{{url("/mgt/controller/action/add")}}"
                                               method="POST">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input type="hidden" name="to" value="{{ $user->cid }}">
@@ -811,7 +811,7 @@
                                                     !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
                                                         <a data-id="{{ $a->id }}"
                                                            href="#"
-                                                           data-action="{{ secure_url('mgt/controller/action/delete/'.$a->id) }}"
+                                                           data-action="{{ url('mgt/controller/action/delete/'.$a->id) }}"
                                                            class="text-danger delete-log"><i
                                                                 class="fa fa-times"></i></a>
                                                         <i class="spinner-icon fa fa-spinner fa-spin"
@@ -976,7 +976,7 @@
     </div>
     <script>
       function viewXfer (id) {
-        $.get("{{secure_url('mgt/ajax/transfer/reason')}}", {id: id}, function (data) {
+        $.get("{{url('mgt/ajax/transfer/reason')}}", {id: id}, function (data) {
           bootbox.alert(data)
         })
       }

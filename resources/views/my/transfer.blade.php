@@ -9,7 +9,7 @@
                 </h3>
             </div>
             <div class="panel-body">
-                <form class="form-horizontal" action="{{secure_url("/my/transfer/do")}}" method="POST">
+                <form class="form-horizontal" action="{{url("/my/transfer/do")}}" method="POST">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Name</label>

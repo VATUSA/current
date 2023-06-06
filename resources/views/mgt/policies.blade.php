@@ -370,7 +370,7 @@
       $(document).ready(function () {
         $('#newPolicyCategory').click(function () {
           $(this).attr('disabled', true)
-          return window.location = '{{ secure_url('/mgt/policies/newCategory') }}'
+          return window.location = '{{ url('/mgt/policies/newCategory') }}'
         })
         $('.delete-category').click(function () {
           swal({
@@ -383,7 +383,7 @@
           })
             .then((willDelete) => {
               if (willDelete) {
-                window.location = '{{ secure_url("/mgt/policies/deleteCategory/") }}/' + $(this).data('id')
+                window.location = '{{ url("/mgt/policies/deleteCategory/") }}/' + $(this).data('id')
               } else return false
             })
         })

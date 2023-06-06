@@ -31,7 +31,7 @@
                         class="fa fa-warning"></i><strong>Error!</strong> {{ session('broadcastError') }}
                 </div>
             @endif
-            <form id="broadcast-form" class="form-horizontal" action="{{secure_url("/mgt/mail/broadcast")}}"
+            <form id="broadcast-form" class="form-horizontal" action="{{url("/mgt/mail/broadcast")}}"
                   method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <div class="form-group">

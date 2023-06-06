@@ -12,7 +12,7 @@
                     @if(!\App\Classes\RoleHelper::isFacilitySeniorStaff())
                         - {{ \App\Classes\Helper::facShtLng($facility) }}
                     @else -
-                    <form class="form-inline" action="{{ secure_url("mgt/facility/training/stats") }}#training"
+                    <form class="form-inline" action="{{ url("mgt/facility/training/stats") }}#training"
                           method="POST"
                           id="training-artcc-select-form" style="display: inline;">
                         <div class="form-group">
@@ -255,7 +255,7 @@
                                                 @if(++$c != count($form['numConducted'])) <br>@endif
                                             @endforeach</td>
                                         <td>
-                                            <a href="{{ secure_url("mgt/facility/training/eval/" . $form['id'] . "/stats") }}">
+                                            <a href="{{ url("mgt/facility/training/eval/" . $form['id'] . "/stats") }}">
                                                 <button class="btn btn-primary"><i class="fas fa-bullseye"></i> Itemized
                                                 </button>
                                             </a>
@@ -265,7 +265,7 @@
                                 </tbody>
                             </table>
                             <div class="row text-center">
-                                <a href="{{ secure_url("/mgt/facility/training/evals") }}">
+                                <a href="{{ url("/mgt/facility/training/evals") }}">
                                     <button class="btn btn-success"><i class="fas fa-external-link-alt"></i> View
                                         Completed Evaluations
                                     </button>

@@ -451,7 +451,7 @@
                   }
                 }
               }).then(() => {
-                window.location = '{{ session()->has('evalRedirect') ? session()->pull('evalRedirect') : secure_url("mgt/controller/{$student->cid}/promote") }}'
+                window.location = '{{ session()->has('evalRedirect') ? session()->pull('evalRedirect') : url("mgt/controller/{$student->cid}/promote") }}'
               })
             }
           ).fail((xhr, status, error) => {
@@ -506,7 +506,7 @@
           .then((willDelete) => {
             if (willDelete) {
               window.onbeforeunload = null
-              window.location = '{{ secure_url("mgt/controller/{$student->cid}/promote") }}'
+              window.location = '{{ url("mgt/controller/{$student->cid}/promote") }}'
             }
           })
       }
