@@ -21,4 +21,4 @@ supervisord.pid
 *_helper.php
 *_helper_models.php
 changeauthor.sh
-.composer.lock
+composer.lock
