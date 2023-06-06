@@ -42,7 +42,7 @@
             <div class="row">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">TMU Notices (N.T.O.S.) <a href="{{ secure_url("/tmu/notices") }}"
+                        <h3 class="panel-title">TMU Notices (N.T.O.S.) <a href="{{ url("/tmu/notices") }}"
                                                                           target="_blank"><i
                                     class="fa fa-share-square"></i></a></h3>
                     </div>
@@ -50,7 +50,7 @@
                         <section>
                             @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
                                 <div class="text-center">
-                                    <a href="{{ secure_url("/mgt/tmu#notices") }}">
+                                    <a href="{{ url("/mgt/tmu#notices") }}">
                                         <button class="btn btn-default"><i class="fa fa-pencil-alt"></i>
                                             Edit @if(!\App\Classes\RoleHelper::isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
                                             Notices

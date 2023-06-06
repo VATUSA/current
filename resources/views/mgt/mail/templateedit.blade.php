@@ -7,7 +7,7 @@
             </h3>
         </div>
         <div class="panel-body">
-            <form action="{{secure_url("/mgt/mail/template/$template")}}" method="POST">
+            <form action="{{url("/mgt/mail/template/$template")}}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <div class="form-group">
                     <label for="template">Email:</label>

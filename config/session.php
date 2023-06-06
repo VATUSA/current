@@ -137,7 +137,7 @@ return [
 
 	'domain' => env('SESSION_DOMAIN'),
 	
-	'same_site' => 'none',
+	'same_site' => env('SESSION_COOKIE_SECURE', true) ? 'none' : 'lax',
 
 	/*
 	|--------------------------------------------------------------------------

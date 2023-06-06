@@ -11,7 +11,7 @@
             <div class="panel-body">
                 <p>Please take your time on your selection.  Once you have selected a facility, this action
                 is irrevocable and transfers are only handled in accordance with VATUSA Division Policy.</p>
-                <form class="form-horizontal" action="{{secure_url("/my/select")}}" method="POST">
+                <form class="form-horizontal" action="{{url("/my/select")}}" method="POST">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Facility</label>

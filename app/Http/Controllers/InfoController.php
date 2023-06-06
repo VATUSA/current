@@ -28,7 +28,7 @@ class InfoController
     public function getMembers() {
         $orgchart = Policy::where('ident', 'ORG')->first();
         if ($orgchart) {
-            $orgLink = secure_url("/info/policies/" . $orgchart->slug);
+            $orgLink = url("/info/policies/" . $orgchart->slug);
         } else {
             $orgLink = null;
         }

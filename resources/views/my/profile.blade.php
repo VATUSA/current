@@ -17,7 +17,7 @@
         spinner.show()
         $.ajax({
           type: 'POST',
-          url : "{{ secure_url("/my/profile/toggleBroadcast") }}"
+          url : "{{ url("/my/profile/toggleBroadcast") }}"
         }).success(function (result) {
           spinner.hide()
           if (result === '1') {
@@ -122,7 +122,7 @@
                                     <div class="btn btn-group" style="padding: 0; margin-top: 5px;">
                                         @if(!Auth::user()->discord_id)
                                             <button class="btn btn-success" type="button" id="link-discord"
-                                                    onclick="window.location='{{ secure_url('my/discord/link') }}'">
+                                                    onclick="window.location='{{ url('my/discord/link') }}'">
                                                 <i class="fas fa-link"></i> Link
                                                 Accounts
                                             </button>@else

@@ -11,7 +11,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <form class="form-inline" action="{{ secure_url('/mgt/ace') }}" style="margin-bottom:5px;"
+                        <form class="form-inline" action="{{ url('/mgt/ace') }}" style="margin-bottom:5px;"
                               method="post">
                             @if(Session::has('aceSubmit'))
                                 @if(Session::get('aceSubmit') !== true)

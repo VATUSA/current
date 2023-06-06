@@ -45,7 +45,7 @@
     <script>
         $(document).ready(function() {
             $("#facmgt").change(function() {
-                window.location = "{{secure_url("/mgt/facility")}}/" + $("#facmgt").val();
+                window.location = "{{url("/mgt/facility")}}/" + $("#facmgt").val();
             });
         });
     </script>

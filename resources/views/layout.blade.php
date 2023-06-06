@@ -90,7 +90,7 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="https://academy.vatusa.net"><i class="fas fa-graduation-cap"></i> Academy</a></li>
-                    <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="{{ url("/help/kb") }}"><i class="fas fa-question-circle"></i> FAQ</a></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                             aria-expanded="false">
                             Facilities
@@ -110,10 +110,10 @@
                                     Official Discord</a></li>
                             <li><a href="https://forums.vatusa.net"><i class="fas fa-comment"></i> Forums</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{ secure_url('info/members') }}"><i class="fas fa-users"></i> Members and
+                            <li><a href="{{ url('info/members') }}"><i class="fas fa-users"></i> Members and
                                     Staff</a>
                             </li>
-                            <li><a href="{{ secure_url('info/policies') }}"><i class="fas fa-clipboard"></i> Policies
+                            <li><a href="{{ url('info/policies') }}"><i class="fas fa-clipboard"></i> Policies
                                     and
                                     Downloads</a>
                             </li>
@@ -121,9 +121,9 @@
                             <li><a href="https://forums.vatusa.net/?action=calendar"><i class="fas fa-calendar"></i>
                                     Events Calendar</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{ secure_url('info/ace') }}"><i class="fas fa-star"></i> ACE Team</a></li>
-                            <li><a href="{{ secure_url('info/dice') }}"><i class="fas fa-star"></i> DICE Team</a></li>
-                            <li><a href="{{ secure_url('info/solo') }}"><i class="fas fa-certificate"></i> Solo
+                            <li><a href="{{ url('info/ace') }}"><i class="fas fa-star"></i> ACE Team</a></li>
+                            <li><a href="{{ url('info/dice') }}"><i class="fas fa-star"></i> DICE Team</a></li>
+                            <li><a href="{{ url('info/solo') }}"><i class="fas fa-certificate"></i> Solo
                                     Certs</a>
                             </li>
                         </ul>
@@ -224,11 +224,11 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="https://status.vatusa.net">System Status</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{ secure_url("/help/kb") }}"><i class="fas fa-question-circle"></i>
+                            <li><a href="{{ url("/help/kb") }}"><i class="fas fa-question-circle"></i>
                                     Knowledgebase/FAQ</a></li>
-                            <li><a href="{{ secure_url("/help/ticket/new") }}"><i class="fas fa-life-ring"></i> Open New
+                            <li><a href="{{ url("/help/ticket/new") }}"><i class="fas fa-life-ring"></i> Open New
                                     Ticket</a></li>
-                            <li><a href="{{ secure_url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My
+                            <li><a href="{{ url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My
                                     Tickets</a></li>
                             @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()
                                 || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isWebTeam())
@@ -238,15 +238,15 @@
                                                                 aria-expanded="false"><i
                                             class="fas fa-hands-helping"></i> Ticket Manager</a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="{{ secure_url("/help/ticket/myassigned") }}">My Assigned
+                                        <li><a href="{{ url("/help/ticket/myassigned") }}">My Assigned
                                                 Tickets</a></li>
-                                        <li><a href="{{ secure_url("/help/ticket/open") }}">Open Tickets</a></li>
-                                        <li><a href="{{ secure_url("/help/ticket/closed") }}">Closed Tickets</a></li>
-                                        <li><a href="{{ secure_url("/help/ticket/search") }}">Search Tickets</a></li>
+                                        <li><a href="{{ url("/help/ticket/open") }}">Open Tickets</a></li>
+                                        <li><a href="{{ url("/help/ticket/closed") }}">Closed Tickets</a></li>
+                                        <li><a href="{{ url("/help/ticket/search") }}">Search Tickets</a></li>
                                     </ul>
                                 </li>
                                 @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                    <li><a href="{{ secure_url("/help/kbe") }}">Knowledgebase Editor</a></li>
+                                    <li><a href="{{ url("/help/kbe") }}">Knowledgebase Editor</a></li>
                                 @endif
                             @endif
                         </ul>
@@ -258,17 +258,17 @@
                                                 aria-expanded="false">
                                 <i class="fa fa-user"></i> My VATUSA<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ secure_url('my/profile') }}"><i class="fas fa-id-badge"></i> Profile</a>
+                                <li><a href="{{ url('my/profile') }}"><i class="fas fa-id-badge"></i> Profile</a>
                                 </li>
                                 @if(Auth::user()->selectionEligible())
-                                    <li><a href="{{ secure_url('my/select') }}"><i class="fas fa-star"></i> Join
+                                    <li><a href="{{ url('my/select') }}"><i class="fas fa-star"></i> Join
                                             Facility</a>
                                     </li>
                                 @elseif(Auth::user()->transferEligible())
-                                    <li><a href="{{ secure_url('my/transfer') }}"><i class="fas fa-exchange-alt"></i>
+                                    <li><a href="{{ url('my/transfer') }}"><i class="fas fa-exchange-alt"></i>
                                             Transfer Request</a></li>
                                 @else
-                                    <li><a href="{{ secure_url("/my/profile") }}"><i class="fas fa-question-circle"></i>
+                                    <li><a href="{{ url("/my/profile") }}"><i class="fas fa-question-circle"></i>
                                             Why can I not join
                                             a facility or transfer?</a></li>
                                 @endif
@@ -294,14 +294,14 @@
 
                                     <!-- Facility Management [Mentor/Instructors/VATUSA/ATM/DATM/TA/WM] -->
                                     @if(\App\Classes\RoleHelper::isMentor() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM"))
-                                        <li><a href="{{secure_url("mgt/facility")}}">Facility Management</a></li>
+                                        <li><a href="{{url("mgt/facility")}}">Facility Management</a></li>
                                     @endif
 
                                 <!-- TMU Management [ATM/DATM/TA/WM/FE] -->
                                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "FE"))
-                                        <li><a href="{{secure_url('mgt/tmu')}}">TMU Map Management</a></li>
+                                        <li><a href="{{url('mgt/tmu')}}">TMU Map Management</a></li>
                                     @else
-                                        <li><a href="{{secure_url('mgt/tmu')}}">TMU Notices Management</a></li>
+                                        <li><a href="{{url('mgt/tmu')}}">TMU Notices Management</a></li>
                                     @endif
 
                                 <!-- Controllers -->
@@ -313,12 +313,12 @@
 
                                     <!-- Member Management [Mentor/Instructors/ATM/DATM/TA/VATUSA/WM] -->
                                     @if(\App\Classes\RoleHelper::isMentor() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM"))
-                                        <li><a href="{{secure_url("mgt/controller")}}">Member Management</a></li>
+                                        <li><a href="{{url("mgt/controller")}}">Member Management</a></li>
                                     @endif
 
                                 <!-- Submit Transfer Request [VATUSA] -->
                                     @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="{{secure_url("mgt/transfer") }}">Submit Transfer Request</a></li>
+                                        <li><a href="{{url("mgt/transfer") }}">Submit Transfer Request</a></li>
                                     @endif
 
                                     @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
@@ -331,10 +331,10 @@
 
                                     <!-- Training Statistics [INS/ATM/DATM/TA/VATUSA] -->
                                         @if (\App\Classes\RoleHelper::isTrainingStaff())
-                                            <li><a href="{{ secure_url("/mgt/facility/training/stats") }}">Training
+                                            <li><a href="{{ url("/mgt/facility/training/stats") }}">Training
                                                     Statistics</a>
                                             </li>
-                                            <li><a href="{{ secure_url("/mgt/facility/training/evals") }}">OTS
+                                            <li><a href="{{ url("/mgt/facility/training/evals") }}">OTS
                                                     Evaluations</a>
                                             </li>
                                             <!--This is exactly like the Training tab of records, but with OTS Evals. ARTCC select, position groups, and everything. -->
@@ -351,7 +351,7 @@
 
                                             <!-- Email Management [ATM/DATM/TA/VATUSA] -->
                                             @if(\App\Classes\RoleHelper::isFacilityStaff())
-                                                <li><a href="{{secure_url("mgt/mail") }}">Email Management</a></li>
+                                                <li><a href="{{url("mgt/mail") }}">Email Management</a></li>
                                             @endif
 
                                         <!-- iDENT App Management [ATM/DATM/TA/VATUSA] -->
@@ -369,18 +369,18 @@
 
                                         <!-- ACE Team/Division Staff Management [VATUSA] -->
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                            <li><a href="{{secure_url("mgt/ace") }}">ACE Team Management</a></li>
-                                            <li><a href="{{secure_url("mgt/staff") }}">Division Staff Management</a>
+                                            <li><a href="{{url("mgt/ace") }}">ACE Team Management</a></li>
+                                            <li><a href="{{url("mgt/staff") }}">Division Staff Management</a>
                                             </li>
-                                            <li><a href="{{secure_url("mgt/policies") }}">Policies & Downloads</a></li>
+                                            <li><a href="{{url("mgt/policies") }}">Policies & Downloads</a></li>
                                         @endif
 
                                     <!-- Division Statistics [All] -->
-                                        <li><a href="{{ secure_url("/mgt/stats") }}">Division Statistics</a></li>
+                                        <li><a href="{{ url("/mgt/stats") }}">Division Statistics</a></li>
 
                                         <!-- Solo Certifications [Instructors/ATM/DATM/TA/VATUSA] -->
                                         @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
-                                            <li><a href="{{ secure_url("mgt/solo") }}">Solo Certifications</a></li>
+                                            <li><a href="{{ url("mgt/solo") }}">Solo Certifications</a></li>
                                         @endif
 
                                 </ul>

@@ -165,7 +165,7 @@
             </div>
         </div>
         @if(\Auth::user()->cid == $ticket->cid || \App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility))
-            <form method="post" action="{{ secure_url("/help/ticket/{$ticket->id}") }}" class="form" id="reply-form">
+            <form method="post" action="{{ url("/help/ticket/{$ticket->id}") }}" class="form" id="reply-form">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
                 <div class="row">
