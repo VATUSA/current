@@ -400,7 +400,8 @@
                                             <li>Visiting:</li>
                                             @foreach ($user->visits()->get() as $visit)
                                                 <li>
-                                                    {{$visit->fac->id}} - {{$visit->fac->name}} - MTR:
+                                                    {{$visit->fac->id}} - {{$visit->fac->name}} 
+                                                    <br> <span style="margin-left:2em;">MTR:
                                                     @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id))
                                                         <a href="/mgt/controller/{{$user->cid}}/mentor/{{$visit->fac->id}}">
                                                             {{(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))?"Yes":"No"}}
@@ -418,6 +419,7 @@
                                                         {{(\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id, false))?"Yes":"No"}}
                                                     @endif 
                                                     @endif
+                                                    <span>
                                                 </li>
                                             @endforeach
                                             <br>
