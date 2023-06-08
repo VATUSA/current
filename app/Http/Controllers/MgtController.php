@@ -312,7 +312,7 @@ class MgtController extends Controller {
 
             if ($return) {
                 if ($rating >= Helper::ratingIntFromShort("I1")) {
-                    Role::where("cid", $cid)->where(function ($query) {
+                    Role::where("cid", $cid)->where("facility", $user->facility)->where(function ($query) {
                         $query->where("role", "MTR")->orWhere("role", "INS");
                     })->delete();
                 }

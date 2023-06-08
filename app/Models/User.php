@@ -220,7 +220,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                             ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
             );
-
             /** Remove Mentor Role */
             Role::where("cid", $this->cid)->where("facility", $facility)->where(function ($query) {
                 $query->where("role", "MTR")->orWhere("role", "INS");
@@ -251,6 +250,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $log->to = $this->cid;
                 $log->log = "User removed from {$visit->facility} visiting roster: Transfer to ZAE";
                 $log->save();
+                /** Remove Mentor Role */
+                Role::where("cid", $this->cid)->where("facility", $visit->facility)->where(function ($query) {
+                    $query->where("role", "MTR")->orWhere("role", "INS");
+                })->delete();
                 $visit->delete();
             }
         }
