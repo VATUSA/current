@@ -584,6 +584,21 @@ class MgtController extends Controller {
         $le->log = $request->log;
         $le->save();
 
+        EmailHelper::sendEmail(
+            [
+                Auth::user()->email,
+                "vatusa1@vatusa.net",
+                "vatusa2@vatusa.net"
+            ],
+            "{$user->fullname()} - {$user->cid} Action Log Update",
+            "emails.user.actionLog",
+            [
+                'user' => $user,
+                'by' => Auth::user(),
+                'msg' => $request->log
+            ]
+        );
+
         return redirect('/mgt/controller/' . $request->to . '#actions')->with('success',
             'Your log entry has been added.');
     }
