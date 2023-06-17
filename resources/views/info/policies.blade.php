@@ -53,7 +53,7 @@
                                                     <strong>Modified: </strong>{{ $policy->updated_at->format('m/d/Y') }}@endif
                                             </td>
                                             <td class="hidden-xs">{{ $policy->description }}</td>
-                                            <td><a href="https://vatusa-storage.nyc3.cdn.digitaloceanspaces.com/{{ $policy->slug }}.{{ $policy->extension }}" target="_blank">
+                                            <td><a href="https://vatusa-storage.nyc3.cdn.digitaloceanspaces.com/docs/{{ $policy->slug }}.{{ $policy->extension }}" target="_blank">
                                                     <button class="btn btn-primary" rel="tooltip"
                                                             title="{{ strtoupper($policy->extension) }}"><i
                                                                 class="fas fa-eye"></i> View
