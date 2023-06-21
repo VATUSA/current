@@ -48,17 +48,13 @@ return [
             'root'   => storage_path().'/app',
         ],
 
-        'public' => [
-            'driver' => 'local',
-            'root'   => storage_path().'/app/public',
-        ],
-
-		's3' => [
+		'public' => [
 			'driver' => 's3',
-			'key'    => 'your-key',
-			'secret' => 'your-secret',
-			'region' => 'your-region',
-			'bucket' => 'your-bucket',
+			'key'    => env('DO_SPACES_KEY', ''),
+			'secret' => env('DO_SPACES_SECRET', ''),
+            'endpoint' => 'https://nyc3.digitaloceanspaces.com',
+			'region' => env('DO_SPACES_REGION', 'nyc3'),
+			'bucket' => env('DO_SPACES_BUCKET', 'vatusa-storage'),
 		],
 
 		'rackspace' => [

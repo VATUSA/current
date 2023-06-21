@@ -322,7 +322,7 @@ class VATUSAMoodle extends MoodleRest
             return false;
         }
 
-        return $this->request("core_user_update_users", [
+        $response = $this->request("core_user_update_users", [
             'users' => [
                 0 => [
                     'id'        => $id,
@@ -332,6 +332,7 @@ class VATUSAMoodle extends MoodleRest
                 ]
             ]
         ], self::METHOD_POST);
+        return count($response["warnings"]) == 0;
     }
 
     /**
