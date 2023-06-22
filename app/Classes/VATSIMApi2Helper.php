@@ -53,8 +53,16 @@ class VATSIMApi2Helper {
         $user->flag_homecontroller = $data['division_id'] == 'USA';
         $user->save();
         if ($user->rating <= 0) {
-            $user->removeFromFacility("Automated", "Suspended/Inactive", ($user->flag_homecontroller) ? "ZAE" : "ZZN");
+            if ($user->flag_homecontroller) {
+                if ($user->facility != "ZAE") {
+                    $user->removeFromFacility("Automated", "Suspended/Inactive", ($user->flag_homecontroller) ? "ZAE" : "ZZN");
+                }
+            } else if ($user->facility != "ZZN") {
+                $user->removeFromFacility("Automated", "Suspended/Inactive", ($user->flag_homecontroller) ? "ZAE" : "ZZN");
+            }
+            $user->removeFromVisitingFacilities("Suspended/Inactive");
         }
+
         return true;
     }
 }

@@ -250,14 +250,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         /** Remove from visiting rosters if going to ZAE */
         if ($newfac == "ZAE" && $this->visits()) {
-            foreach ($this->visits() as $visit) {
-                $log = new Actions();
-                $log->from = 0;
-                $log->to = $this->cid;
-                $log->log = "User removed from {$visit->facility} visiting roster: Transfer to ZAE";
-                $log->save();
-                $visit->delete();
-            }
+            $this->removeFromVisitingFacilities("Transfer to ZAE");
         }
 
         if ($newfac == "ZZN") {
@@ -287,6 +280,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
         // if ($this->rating >= Helper::ratingIntFromShort("I1"))
         // SMFHelper::createPost(7262, 82, "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility, "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
+    }
+
+    public function removeFromVisitingFacilities($reason) {
+        foreach ($this->visits() as $visit) {
+            $log = new Actions();
+            $log->from = 0;
+            $log->to = $this->cid;
+            $log->log = "User removed from {$visit->facility} visiting roster: {$reason}}";
+            $log->save();
+            $visit->delete();
+        }
     }
 
     public function purge(
