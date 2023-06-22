@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Classes\VATSIMApi2Helper;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class VATSIMSync extends Command {
@@ -44,7 +45,11 @@ class VATSIMSync extends Command {
 
             return 0;
         }
-        $users = User::limit(250)->where('rating', '>=', 0)->orderBy('last_cert_sync')->get();
+        $users = User::limit(250)
+            ->where('rating', '>=', 0)
+            ->where('last_cert_sync', '<=', Carbon::now()->subDays(1)->toDateTimeString())
+            ->orderBy('last_cert_sync')
+            ->get();
         foreach ($users as $user) {
             echo "Syncing User {$user->cid}\n";
             VATSIMApi2Helper::syncCID($user->cid);
