@@ -4,6 +4,7 @@ namespace App\Classes;
 use App\Models\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception;
 
 class VATSIMApi2Helper {
 
@@ -42,7 +43,7 @@ class VATSIMApi2Helper {
         $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
         try {
             $response = $client->get($fullURL);
-        } catch (ClientException $e) {
+        } catch (Exception\GuzzleException $e) {
             echo Psr7\Message::toString($e->getRequest());
             echo Psr7\Message::toString($e->getResponse());
             return false;
