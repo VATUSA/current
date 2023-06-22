@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Classes;
+use App\Models\User;
 use GuzzleHttp\Client;
 
 class VATSIMApi2Helper {
@@ -28,5 +29,31 @@ class VATSIMApi2Helper {
         $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
         $response = $client->patch($fullURL, ['body' => $json]);
         return $response->getStatusCode() == 200;
+    }
+
+    static function syncCID (int $cid): bool {
+        $path = "/members/{$cid}";
+        $fullURL = VATSIMApi2Helper::_url() . $path;
+        $key = VATSIMApi2Helper::_key();
+        if ($key === null) {
+            return false;
+        }
+        $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
+        $response = $client->get($fullURL);
+        $data = $response->getBody();
+        $user = User::find($cid);
+        if (!$user) {
+            return false;
+        }
+
+        $user->fname = $data['name_first'];
+        $user->lname = $data['name_last'];
+        $user->email = $data['email'];
+        $user->rating = $data['rating'];
+        $user->flag_homecontroller = $data['division_id'] == 'USA';
+        $user->save();
+
+        $user->removeFromFacility("Automated", "Suspended/Inactive", "ZZN");
+
     }
 }

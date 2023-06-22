@@ -225,6 +225,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             Role::where("cid", $this->cid)->where("facility", $facility)->where(function ($query) {
                 $query->where("role", "MTR")->orWhere("role", "INS");
             })->delete();
+
+            // Remove All roles
+            foreach (Role::where('cid', $this->cid)->get() as $role) {
+                $role->delete();
+            }
             $moodle = new VATUSAMoodle();
             try {
                 $moodle->unassignMentorRoles($this->cid);
@@ -476,7 +481,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamHelper::academyPassedExam($this->cid, "S2");
+        return ExamHelper::academyPassedExam($this->cid, "S2") || ExamHelper::academyPassedExam($this->cid, "S2_RCE");
     }
 
     public function isS3Eligible()
@@ -485,7 +490,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamHelper::academyPassedExam($this->cid, "S3");
+        return ExamHelper::academyPassedExam($this->cid, "S3") || ExamHelper::academyPassedExam($this->cid, "S3_RCE");
 
     }
 
@@ -495,7 +500,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamHelper::academyPassedExam($this->cid, "C1");
+        return ExamHelper::academyPassedExam($this->cid, "C1") || ExamHelper::academyPassedExam($this->cid, "C1_RCE");
 
     }
 
