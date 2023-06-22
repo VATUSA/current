@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\TransferEmails',
         'App\Console\Commands\ExpireNotices',
         'App\Console\Commands\MoodleSync',
+        'App\Console\Commands\VATSIMSync',
         'App\Console\Commands\CachePromotionEligibility'
     ];
 
