@@ -44,5 +44,11 @@ class VATSIMSync extends Command {
 
             return 0;
         }
+        $users = User::limit(250)->where('rating', '>=', 0)->orderBy('last_cert_sync')->get();
+        foreach ($users as $user) {
+            echo "Syncing User {$user->cid}\n";
+            VATSIMApi2Helper::syncCID($user->cid);
+        }
+        return 0;
     }
 }

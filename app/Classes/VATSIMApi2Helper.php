@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 use App\Models\User;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 
 class VATSIMApi2Helper {
@@ -51,6 +52,7 @@ class VATSIMApi2Helper {
         $user->email = $data['email'];
         $user->rating = $data['rating'];
         $user->flag_homecontroller = $data['division_id'] == 'USA';
+        $user->last_cert_sync = Carbon::now();
         $user->save();
         if ($user->rating <= 0) {
             if ($user->flag_homecontroller) {
