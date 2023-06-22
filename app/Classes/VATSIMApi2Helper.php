@@ -58,6 +58,7 @@ class VATSIMApi2Helper {
         $data = json_decode($response->getBody(), true);
         $user = User::find($cid);
         if (!$user) {
+            // TODO: Create User
             return false;
         }
         if (array_key_exists('name_first', $data) && array_key_exists('name_last', $data)) {
@@ -71,15 +72,18 @@ class VATSIMApi2Helper {
         $user->flag_homecontroller = $data['division_id'] == 'USA';
         $user->last_cert_sync = Carbon::now();
         $user->save();
-        if ($user->rating <= 0) {
+        if ($user->rating == -1) {
+            $user->removeFromFacility("Automated", "Inactive", "ZZI");
+        }
+        else if ($user->rating == 0) {
             if ($user->flag_homecontroller) {
                 if ($user->facility != "ZAE") {
-                    $user->removeFromFacility("Automated", "Suspended/Inactive", "ZAE");
+                    $user->removeFromFacility("Automated", "Suspended", "ZAE");
                 }
             } else if ($user->facility != "ZZN") {
-                $user->removeFromFacility("Automated", "Suspended/Inactive", "ZZN");
+                $user->removeFromFacility("Automated", "Suspended", "ZZN");
             }
-            $user->removeFromVisitingFacilities("Suspended/Inactive");
+            $user->removeFromVisitingFacilities("Suspended");
         }
 
         return true;
