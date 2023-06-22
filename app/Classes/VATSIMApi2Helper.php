@@ -54,6 +54,6 @@ class VATSIMApi2Helper {
         $user->save();
 
         $user->removeFromFacility("Automated", "Suspended/Inactive", "ZZN");
-
+        return true;
     }
 }
