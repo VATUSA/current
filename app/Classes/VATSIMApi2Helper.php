@@ -55,10 +55,10 @@ class VATSIMApi2Helper {
         if ($user->rating <= 0) {
             if ($user->flag_homecontroller) {
                 if ($user->facility != "ZAE") {
-                    $user->removeFromFacility("Automated", "Suspended/Inactive", ($user->flag_homecontroller) ? "ZAE" : "ZZN");
+                    $user->removeFromFacility("Automated", "Suspended/Inactive", "ZAE");
                 }
             } else if ($user->facility != "ZZN") {
-                $user->removeFromFacility("Automated", "Suspended/Inactive", ($user->flag_homecontroller) ? "ZAE" : "ZZN");
+                $user->removeFromFacility("Automated", "Suspended/Inactive", "ZZN");
             }
             $user->removeFromVisitingFacilities("Suspended/Inactive");
         }
