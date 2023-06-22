@@ -46,10 +46,13 @@ class VATSIMApi2Helper {
         if (!$user) {
             return false;
         }
-
-        $user->fname = $data['name_first'];
-        $user->lname = $data['name_last'];
-        $user->email = $data['email'];
+        if (array_key_exists('name_first', $data) && array_key_exists('name_last', $data)) {
+            $user->fname = $data['name_first'];
+            $user->lname = $data['name_last'];
+        }
+        if (array_key_exists('email', $data)) {
+            $user->email = $data['email'];
+        }
         $user->rating = $data['rating'];
         $user->flag_homecontroller = $data['division_id'] == 'USA';
         $user->last_cert_sync = Carbon::now();
