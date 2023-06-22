@@ -40,7 +40,7 @@ class VATSIMApi2Helper {
         }
         $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
         $response = $client->get($fullURL);
-        $data = $response->getBody();
+        $data = json_decode($response->getBody(), true);
         $user = User::find($cid);
         if (!$user) {
             return false;
