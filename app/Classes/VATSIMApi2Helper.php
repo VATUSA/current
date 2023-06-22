@@ -44,6 +44,14 @@ class VATSIMApi2Helper {
         try {
             $response = $client->get($fullURL);
         } catch (Exception\GuzzleException $e) {
+            if ($e->getResponse()->getStatusCode() == 404) {
+                $user = User::find($cid);
+                if (!$user) {
+                    return false;
+                }
+                $user->rating = -1;
+                $user->save();
+            }
             echo $e->getMessage();
             return false;
         }
