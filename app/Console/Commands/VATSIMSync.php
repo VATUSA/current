@@ -50,10 +50,10 @@ class VATSIMSync extends Command {
             ->where(function ($query) {
                 $query->where('last_cert_sync', '<=', Carbon::now()->subDays(1)->toDateTimeString());
                 $query->orWhereNull('last_cert_sync');
-            })->orderBy('last_cert_sync')
+            })->orderBy('last_cert_sync', 'asc')
             ->get();
         foreach ($users as $user) {
-            echo "Syncing User {$user->cid}\n";
+            echo "Syncing User {$user->cid} - Last Sync: {$user->last_cert_sync}\n";
             VATSIMApi2Helper::syncCID($user->cid);
         }
         return 0;
