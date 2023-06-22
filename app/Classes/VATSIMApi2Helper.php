@@ -50,7 +50,9 @@ class VATSIMApi2Helper {
                     return false;
                 }
                 $user->rating = -1;
+                $user->flag_homecontroller = 0;
                 $user->save();
+                $user->removeFromFacility("Automated", "Inactive", "ZZI");
             }
             echo $e->getMessage();
             return false;

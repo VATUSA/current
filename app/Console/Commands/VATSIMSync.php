@@ -48,7 +48,7 @@ class VATSIMSync extends Command {
         $users = User::limit(250)
             ->where('rating', '>=', 0)
             ->where(function ($query) {
-                $query->where('last_cert_sync', '<=', Carbon::now()->subHours(1)->toDateTimeString());
+                $query->where('last_cert_sync', '<=', Carbon::now()->subDays(1)->toDateTimeString());
                 $query->orWhereNull('last_cert_sync');
             })->orderBy('last_cert_sync', 'asc')
             ->get();

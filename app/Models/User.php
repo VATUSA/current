@@ -204,7 +204,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $region = $this->facility()->region;
         $facname = $this->facility()->name;
 
-        if ($facility != "ZAE") {
+        if (!in_array($facility, ["ZAE", "ZZN", "ZZI"])) {
             EmailHelper::sendEmail(
                 [$this->email, "$facility-atm@vatusa.net", "$facility-datm@vatusa.net", "vatusa2@vatusa.net"],
                 "Removal from $facname",
