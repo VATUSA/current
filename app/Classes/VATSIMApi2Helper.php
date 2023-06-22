@@ -44,8 +44,7 @@ class VATSIMApi2Helper {
         try {
             $response = $client->get($fullURL);
         } catch (Exception\GuzzleException $e) {
-            echo $e->getRequest();
-            echo $e->getResponse();
+            echo $e->getMessage();
             return false;
         }
         $data = json_decode($response->getBody(), true);
