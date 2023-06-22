@@ -40,7 +40,13 @@ class VATSIMApi2Helper {
             return false;
         }
         $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
-        $response = $client->get($fullURL);
+        try {
+            $response = $client->get($fullURL);
+        } catch (ClientException $e) {
+            echo Psr7\Message::toString($e->getRequest());
+            echo Psr7\Message::toString($e->getResponse());
+            return false;
+        }
         $data = json_decode($response->getBody(), true);
         $user = User::find($cid);
         if (!$user) {
