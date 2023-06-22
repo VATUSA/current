@@ -249,8 +249,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $log->save();
 
         /** Remove from visiting rosters if going to ZAE */
-        if ($newfac == "ZAE" && $this->visits) {
-            foreach ($this->visits as $visit) {
+        if ($newfac == "ZAE" && $this->visits()) {
+            foreach ($this->visits() as $visit) {
                 $log = new Actions();
                 $log->from = 0;
                 $log->to = $this->cid;
