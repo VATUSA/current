@@ -200,6 +200,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function removeFromFacility($by = "Automated", $msg = "None provided", $newfac = "ZAE")
     {
+        if ($newfac == $this->facility) {
+            return;
+        }
         $facility = $this->facility;
         $region = $this->facility()->region;
         $facname = $this->facility()->name;
@@ -237,7 +240,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
-        if ($by > 800000) {
+        if (is_numeric($by) && $by > 800000) {
             $byuser = User::find($by);
             $by = $byuser->fullname();
         }
