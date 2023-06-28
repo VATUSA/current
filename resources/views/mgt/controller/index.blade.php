@@ -630,7 +630,7 @@
                                             || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid)
                                             || \App\Classes\RoleHelper::isMentor(Auth::user()->cid))
                                         <div style="text-align: center;">
-                                            <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=19&userid={{$moodleUid}}"
+                                            <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=19&userid={{$moodleUid}}&userview=1"
                                                style="text-decoration: none; font-size: 24px; "
                                                target="_blank"><span
                                                         class="label label-success"><i
