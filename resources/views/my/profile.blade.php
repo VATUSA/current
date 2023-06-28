@@ -159,7 +159,7 @@
                                 <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>You completed the Basic ATC/S1 courses</td>
+                                <td>You have completed the Basic ATC/S1 courses or appropriate RCE</td>
                                 <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
                             </tr>
                             <tr>
