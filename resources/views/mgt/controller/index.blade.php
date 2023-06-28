@@ -415,7 +415,7 @@
                                         <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
                                         <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
-                                        <li>Needs Basic ATC or RCE Exam:
+                                        <li>Needs Basic ATC or RCE:
                                             @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 <a href="/mgt/controller/{{$user->cid}}/togglebasic">
                                             @endif
