@@ -200,11 +200,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function removeFromFacility($by = "Automated", $msg = "None provided", $newfac = "ZAE")
     {
+        if ($newfac == $this->facility) {
+            return;
+        }
         $facility = $this->facility;
         $region = $this->facility()->region;
         $facname = $this->facility()->name;
 
-        if ($facility != "ZAE") {
+        if (!in_array($facility, ["ZAE", "ZZN", "ZZI"])) {
             EmailHelper::sendEmail(
                 [$this->email, "$facility-atm@vatusa.net", "$facility-datm@vatusa.net", "vatusa2@vatusa.net"],
                 "Removal from $facname",
@@ -224,6 +227,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             Role::where("cid", $this->cid)->where("facility", $facility)->where(function ($query) {
                 $query->where("role", "MTR")->orWhere("role", "INS");
             })->delete();
+
+            // Remove All roles
+            foreach (Role::where('cid', $this->cid)->get() as $role) {
+                $role->delete();
+            }
             $moodle = new VATUSAMoodle();
             try {
                 $moodle->unassignMentorRoles($this->cid);
@@ -231,7 +239,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
-        if ($by > 800000) {
+        if (is_numeric($by) && $by > 800000) {
             $byuser = User::find($by);
             $by = $byuser->fullname();
         }
@@ -243,19 +251,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $log->save();
 
         /** Remove from visiting rosters if going to ZAE */
-        if ($newfac == "ZAE" && $this->visits) {
-            foreach ($this->visits as $visit) {
-                $log = new Actions();
-                $log->from = 0;
-                $log->to = $this->cid;
-                $log->log = "User removed from {$visit->facility} visiting roster: Transfer to ZAE";
-                $log->save();
-                /** Remove Mentor Role */
-                Role::where("cid", $this->cid)->where("facility", $visit->facility)->where(function ($query) {
-                    $query->where("role", "MTR")->orWhere("role", "INS");
-                })->delete();
-                $visit->delete();
-            }
+        if ($newfac == "ZAE" && $this->visits()) {
+            $this->removeFromVisitingFacilities("Transfer to ZAE");
         }
 
         if ($newfac == "ZZN") {
@@ -285,6 +282,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
         // if ($this->rating >= Helper::ratingIntFromShort("I1"))
         // SMFHelper::createPost(7262, 82, "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility, "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
+    }
+
+    public function removeFromVisitingFacilities($reason) {
+        foreach ($this->visits() as $visit) {
+            $log = new Actions();
+            $log->from = 0;
+            $log->to = $this->cid;
+            $log->log = "User removed from {$visit->facility} visiting roster: {$reason}}";
+            $log->save();
+            $visit->delete();
+        }
     }
 
     public function purge(
@@ -479,7 +487,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamHelper::academyPassedExam($this->cid, "S2");
+        return ExamHelper::academyPassedExam($this->cid, "S2") || ExamHelper::academyPassedExam($this->cid, "S2_RCE");
     }
 
     public function isS3Eligible()
@@ -488,7 +496,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamHelper::academyPassedExam($this->cid, "S3");
+        return ExamHelper::academyPassedExam($this->cid, "S3") || ExamHelper::academyPassedExam($this->cid, "S3_RCE");
 
     }
 
@@ -498,7 +506,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
 
-        return ExamHelper::academyPassedExam($this->cid, "C1");
+        return ExamHelper::academyPassedExam($this->cid, "C1") || ExamHelper::academyPassedExam($this->cid, "C1_RCE");
 
     }
 

@@ -427,7 +427,7 @@
                                         <li>Last Activity Forum: {{$user->lastActivityForum()}} days ago</li>
                                         <li>Last Activity Website: {{$user->lastActivityWebsite()}} days ago</li>
                                         <br>
-                                        <li>Needs Basic ATC or RCE Exam:
+                                        <li>Needs Basic ATC or RCE:
                                             @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                                 <a href="/mgt/controller/{{$user->cid}}/togglebasic">
                                             @endif
@@ -639,9 +639,10 @@
                                 <div class="panel-body">
                                     <div>
                                         @if (\App\Classes\RoleHelper::isFacilitySeniorStaff()
-                                            || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid))
+                                            || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid)
+                                            || \App\Classes\RoleHelper::isMentor(Auth::user()->cid))
                                         <div style="text-align: center;">
-                                            <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=8&userid={{$moodleUid}}"
+                                            <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=19&userid={{$moodleUid}}&userview=1"
                                                style="text-decoration: none; font-size: 24px; "
                                                target="_blank"><span
                                                         class="label label-success"><i

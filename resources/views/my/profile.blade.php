@@ -142,9 +142,7 @@
                                     <p class="help-block"><strong>Click <a href="https://discord.gg/a7Qcse7"
                                                                            target="_blank">here</a> to
                                             join the Discord. </strong><br>If you have linked your account and the Discord bot is saying otherwise, then you may have linked the wrong account.
-                                            Ensure that you are logging in with the right account when linking.<br>Once joined and linked, you may assign your roles by clicking "Assign Roles."<br>To automatically synchronize
-                                        your rating, register with <a href="https://vatsimsync.com"
-                                                                 target="_blank">VATSIMSync</a>.
+                                            Ensure that you are logging in with the right account when linking.<br>Once joined and linked, you may assign your roles by clicking "Assign Roles."
                                     </p>
                                 </div>
                             </div>
@@ -161,7 +159,7 @@
                                 <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>You completed the Basic ATC/S1 courses</td>
+                                <td>You have completed the Basic ATC/S1 courses or appropriate RCE</td>
                                 <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
                             </tr>
                             <tr>
