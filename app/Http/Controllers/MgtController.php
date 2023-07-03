@@ -635,8 +635,8 @@ class MgtController extends Controller {
             $tr->accept(Auth::user()->cid);
         } else {
             EmailHelper::sendEmail([
-                $tr->from . "-atm@vatusa.net",
-                $tr->from . "-datm@vatusa.net",
+                $tr->to . "-atm@vatusa.net",
+                $tr->to . "-datm@vatusa.net",
                 "vatusa2@vatusa.net"
             ], "Transfer Pending", "emails.transfers.internalpending", [
                 'fname' => $user->fname,
