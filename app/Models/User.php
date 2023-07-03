@@ -223,7 +223,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                             ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
             );
-
             /** Remove Mentor Role */
             Role::where("cid", $this->cid)->where("facility", $facility)->where(function ($query) {
                 $query->where("role", "MTR")->orWhere("role", "INS");

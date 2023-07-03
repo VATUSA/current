@@ -182,33 +182,18 @@ class MgtController extends Controller {
     }
 
     public function getControllerMentor($cid, $facility = null) {
-        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff()) {
-            return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
-        }
-
-        $user = User::find($cid);
-        if (!$user) {
-            return redirect("/mgt/controller")->with("error", "User not found");
-        }
+        $user = User::findOrFail($cid);
 
         if ($facility == null) {
             $facility = $user->facility;
         }
 
-        $role = Role::where("cid", $cid)->where("facility", $facility)->where("role", "MTR")->first();
-        if (!$role) {
-            $role = new Role();
-            $role->cid = $user->cid;
-            $role->role = "MTR";
-            $role->facility = $facility;
-            $role->save();
-            $log = new Actions();
-            $log->to = $user->cid;
-            $log->log =
-                "Mentor role for " . $facility . " added by " . Auth::user()->fullname() . " (" . Auth::user()->cid .
-                ").";
-            $log->save();
+        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff(null, $facility)) {
+            return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
+        }
 
+        if (!RoleHelperV2::hasRole($cid, "MTR", $facility)) {
+            RoleHelperV2::assignRole($cid, "MTR", $facility);
             return redirect("/mgt/controller/$cid")->with("success", "Successfully set as mentor");
         } else {
             $moodle = new VATUSAMoodle();
@@ -218,16 +203,32 @@ class MgtController extends Controller {
                 return redirect("/mgt/controller")->with("error",
                     "Unable to remove roles from Moodle. Please try again later.");
             }
-            $role->delete();
-            $log = new Actions();
-            $log->to = $user->cid;
-            $log->log =
-                "Mentor role for " . $facility . " deleted by " . Auth::user()->fullname() . " (" . Auth::user()->cid .
-                ").";
-            $log->save();
-
+            RoleHelperV2::revokeRole($cid, "MTR", $facility);
             return redirect("/mgt/controller/$cid")->with("success", "Successfully removed mentor role");
         }
+    }
+    
+    public function getControllerInstructor($cid, $facility) {
+        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff(null, $facility)) {
+            return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
+        }
+
+        $user = User::findOrFail($cid);
+
+        if (!Facility::where('id', $facility)->where('active', 1)->exists()) {
+            return redirect("/mgt/controller")->with("error", "Incorrect facility name");
+        }
+        
+        if(!RoleHelper::isInstructor($cid)){
+            return redirect("/mgt/controller")->with("error", "User is not an Instructor");
+        }
+
+        RoleHelperV2::toggleRole($cid, "INS", $facility);
+        if(RoleHelperV2::hasrole($cid, "MTR", $facility)){
+            RoleHelperV2::revokeRole($cid, "MTR", $facility);
+        }
+        return redirect("/mgt/controller/$cid")->with("success", "Successfully toggled Instructor role");
+        
     }
 
     /* Controller AJAX */
@@ -289,7 +290,7 @@ class MgtController extends Controller {
 
             if ($return) {
                 if ($rating >= Helper::ratingIntFromShort("I1")) {
-                    Role::where("cid", $cid)->where(function ($query) {
+                    Role::where("cid", $cid)->where("facility", $user->facility)->where(function ($query) {
                         $query->where("role", "MTR")->orWhere("role", "INS");
                     })->delete();
                 }
@@ -560,6 +561,21 @@ class MgtController extends Controller {
         $le->from = Auth::user()->cid;
         $le->log = $request->log;
         $le->save();
+
+        EmailHelper::sendEmail(
+            [
+                Auth::user()->email,
+                "vatusa1@vatusa.net",
+                "vatusa2@vatusa.net"
+            ],
+            "{$user->fullname()} - {$user->cid} Action Log Update",
+            "emails.user.actionLog",
+            [
+                'user' => $user,
+                'by' => Auth::user(),
+                'msg' => $request->log
+            ]
+        );
 
         return redirect('/mgt/controller/' . $request->to . '#actions')->with('success',
             'Your log entry has been added.');
@@ -989,6 +1005,9 @@ class MgtController extends Controller {
         }
 
         $user = User::findOrFail($cid);
+        if(RoleHelperV2::hasrole($cid, "MTR", $user->facility)){
+            RoleHelperV2::revokeRole($cid, "MTR", $user->facility);
+        }
         RoleHelperV2::toggleRole($cid, "INS", $user->facility);
 
         return "1";

@@ -468,11 +468,11 @@
             if (resp.data[i].cid == undefined) return
             html += '<tr><td>' + resp.data[i].cid + '</td>'
             html += '<td data-sort-value="'+resp.data[i].lname + ', ' + resp.data[i].fname+'">'
-            if (resp.data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
+            if (resp.data[i].isSupIns == true || (resp.data[i].rating>7&&resp.data[i].rating<11)) html += ' <span class=\'label label-danger role-label\'>INS</span> '
+            else if (resp.data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
             html += resp.data[i].lname + ', ' + resp.data[i].fname
             html += '</td>'
             html += '<td data-text="' + resp.data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(resp.data[i].rating)) + '</span>' + resp.data[i].rating_short
-            if (resp.data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
             html += '</td>'
             var date = new Date(resp.data[i].facility_join.replace(/\s/, 'T'))
             html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
@@ -511,11 +511,11 @@
             if (resp.data[i].cid == undefined) return
             html += '<tr><td>' + resp.data[i].cid + '</td>'
             html += '<td>'
-            if (resp.data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
+            if (resp.data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span> '
+            else if (resp.data[i].isMentor == true) html += '<span class=\'label label-danger role-label\'>MTR</span> '
             html += resp.data[i].lname + ', ' + resp.data[i].fname
             html += '</td>'
             html += '<td data-text="' + resp.data[i].rating + '"><span style="display:none">' + String.fromCharCode(64 + parseInt(resp.data[i].rating)) + '</span>' + resp.data[i].rating_short
-            if (resp.data[i].isSupIns == true) html += ' <span class=\'label label-danger role-label\'>INS</span>'
             html += '</td>'
             html += '<td>' + resp.data[i].facility + '</td>'
             var date = new Date(resp.data[i].facility_join.replace(/\s/, 'T'))

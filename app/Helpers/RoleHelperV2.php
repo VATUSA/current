@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class RoleHelperV2
 {
+    public static function hasRole(int $cid, string $role, string $facility)
+    {
+        return Role::where('role', $role)->where('cid', $cid)->where('facility', $facility)->exists();
+    }
+    
     public static function assignRole(int $cid, string $role, string $facility) {
         $r = new Role();
         $r->cid = $cid;
@@ -35,8 +40,7 @@ class RoleHelperV2
 
     // Assigns a role if not assigned, revokes that role if it is assigned
     public static function toggleRole(int $cid, string $role, string $facility) {
-        $currentRole = Role::where("facility", $facility)->where("cid", $cid)->where("role", $role);
-        if ($currentRole->count()) {
+        if (RoleHelperV2::hasRole($cid, $role, $facility)) {
             RoleHelperV2::revokeRole($cid, $role, $facility);
         } else {
             RoleHelperV2::assignRole($cid, $role, $facility);

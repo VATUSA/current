@@ -21,6 +21,9 @@ class Helper
 
     public static function apiUrl()
     {
+        if (env('APP_ENV') == "dev") {
+            return env('API_URL');
+        }
         return str_replace('www.vatusa', 'api.vatusa', config('app.url'));
     }
 
