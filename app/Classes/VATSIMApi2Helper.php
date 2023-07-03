@@ -122,7 +122,7 @@ class VATSIMApi2Helper {
             }
             $user->removeFromVisitingFacilities("Suspended");
         } else if (!$user->flag_homecontroller && $user->facility != 'ZZN') {
-            $user->removeFromFacility("Automated", "Suspended", "ZZN");
+            $user->removeFromFacility("Automated", "Left Division", "ZZN");
         }
     }
 }
