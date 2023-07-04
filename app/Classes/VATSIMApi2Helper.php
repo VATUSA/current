@@ -123,6 +123,12 @@ class VATSIMApi2Helper {
             $user->removeFromVisitingFacilities("Suspended");
         } else if (!$user->flag_homecontroller && $user->facility != 'ZZN') {
             $user->removeFromFacility("Automated", "Left Division", "ZZN");
+        } else if ($user->facility == "ZZI" && $user->flag_homecontroller) {
+            $user->removeFromFacility("Automated", "Returned from Inactivity", "ZAE");
+            $user->flag_needbasic = 1;
+            $user->save();
+        } else if ($user->facility == "ZZI" && !$user->flag_homecontroller) {
+            $user->removeFromFacility("Automated", "Returned from Inactivity", "ZZN");
         }
     }
 }
