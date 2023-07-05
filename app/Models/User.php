@@ -230,6 +230,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             // Remove All roles
             foreach (Role::where('cid', $this->cid)->get() as $role) {
+                // This looks silly, but it would take a huge refactor to avoid
+                if (in_array($role->role, ['ATM', 'DATM', 'TA', 'FE', 'EC', 'WM'])) {
+                    $spos = strtolower($role->role);
+                    $fu = Facility::where('id', $role->facility)->first();
+                    $fu->$spos = 0;
+                    $fu->save();
+                }
                 $role->delete();
             }
             $moodle = new VATUSAMoodle();
