@@ -55,6 +55,7 @@ return [
             'endpoint' => 'https://nyc3.digitaloceanspaces.com',
 			'region' => env('DO_SPACES_REGION', 'nyc3'),
 			'bucket' => env('DO_SPACES_BUCKET', 'vatusa-storage'),
+            'visibility' => 'public',
 		],
 
 		'rackspace' => [
