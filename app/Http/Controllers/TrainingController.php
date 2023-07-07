@@ -121,7 +121,7 @@ class TrainingController extends Controller {
         }
 
 //        abort(500); // Disable training statistics as it's overloading the nodes, will re-enable after performance rework
-
+        ini_set('memory_limit', '512M');
 
         $globalAccess = RoleHelper::isFacilitySeniorStaff();
 
@@ -260,7 +260,6 @@ class TrainingController extends Controller {
             });
         }
 
-
         // OLD CODE BELOW
 
         /** Summary */
@@ -320,6 +319,7 @@ class TrainingController extends Controller {
                 'backgroundColor' => $colors[$k]
             ];
         }
+
         //Time per Instructor
         $timePerInstructorData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
         if ($facility) {
@@ -657,7 +657,8 @@ class TrainingController extends Controller {
         }
 
         //Table Data
-        $trainingRecords = TrainingRecord::with(['instructor:cid,fname,lname', 'student:cid,fname,lname']);
+        $trainingRecords = TrainingRecord::with(['instructor:cid,fname,lname', 'student:cid,fname,lname'])
+            ->where('session_date', '>=', Carbon::now()->subDays($interval));
         if ($region) {
             $trainingRecords->whereIn('facility_id',
                 Facility::where('region', $region)->get()->pluck('id')->all());
