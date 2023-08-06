@@ -124,9 +124,13 @@ class VATSIMApi2Helper {
         } else if (!$user->flag_homecontroller && $user->facility != 'ZZN') {
             $user->removeFromFacility("Automated", "Left Division", "ZZN");
         } else if ($user->facility == "ZZI" && $user->flag_homecontroller) {
-            $user->removeFromFacility("Automated", "Returned from Inactivity", "ZAE");
             $user->flag_needbasic = 1;
             $user->save();
+            TransferHelper::forceTransfer($user, "ZAE", "Returned from Inactivity");
+        } else if ($user->facility == "ZZN" && $user->flag_homecontroller) {
+            $user->flag_needbasic = 1;
+            $user->save();
+            TransferHelper::forceTransfer($user, "ZAE", "Joined division");
         } else if ($user->facility == "ZZI" && !$user->flag_homecontroller) {
             $user->removeFromFacility("Automated", "Returned from Inactivity", "ZZN");
         }
