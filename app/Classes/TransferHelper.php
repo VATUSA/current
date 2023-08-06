@@ -18,7 +18,7 @@ class TransferHelper
 
         $log = new Actions;
         $log->from = 0;
-        $log->to = Auth::user()->cid;
+        $log->to = $user->cid;
         $log->log = "Requested transfer from " . $tr->from . " to " . $tr->to . ": " . $tr->reason;
         $log->save();
 
@@ -51,7 +51,7 @@ class TransferHelper
 
         $log = new Actions;
         $log->from = 0;
-        $log->to = Auth::user()->cid;
+        $log->to = $user->cid;
         $log->log = "Forced transfer from " . $tr->from . " to " . $tr->to . ": " . $tr->reason;
         $log->save();
 
