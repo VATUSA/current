@@ -701,6 +701,8 @@ class TrainingController extends Controller {
             if (Facility::find($trainingfac)) {
                 $trainingfacname = Helper::facShtLng($trainingfac);
             } else {
+                var_dump($trainingfac);
+                exit;
                 abort(500);
             }
         }
