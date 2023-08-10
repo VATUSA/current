@@ -698,9 +698,6 @@ class TrainingController extends Controller {
                 $trainingfacname = Auth::user()->facility()->name;
             }
         } else {
-            if (!RoleHelper::isVATUSAStaff()) {
-                abort(403);
-            }
             if (Facility::find($trainingfac)) {
                 $trainingfacname = Helper::facShtLng($trainingfac);
             } else {
