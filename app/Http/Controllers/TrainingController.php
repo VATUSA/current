@@ -701,9 +701,8 @@ class TrainingController extends Controller {
             if (Facility::find($trainingfac)) {
                 $trainingfacname = Helper::facShtLng($trainingfac);
             } else {
-                var_dump($trainingfac);
-                exit;
-                abort(500);
+                $trainingfac = Auth::user()->facility;
+                $trainingfacname = Auth::user()->facility()->name;
             }
         }
         $evals = $trainingfac ? Facility::find($trainingfac)->evaluations()->where('facility_id',
