@@ -298,6 +298,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $log->to = $this->cid;
             $log->log = "User removed from {$visit->facility} visiting roster: {$reason}}";
             $log->save();
+
+            $facility = $visit->facility;
+            $facname = Facility::find($facility)->name;
+
+            EmailHelper::sendEmail(
+                [$this->email, "$facility-atm@vatusa.net", "$facility-datm@vatusa.net", "vatusa2@vatusa.net"],
+                "Removal from $facname Visiting Roster",
+                "emails.user.removedVisit",
+                [
+                    'name' => $this->fname . " " . $this->lname,
+                    'cid' => $this->cid,
+                    'facility' => $facility,
+                    'reason' => $reason,
+                ]
+            );
+
             $visit->delete();
         }
     }
