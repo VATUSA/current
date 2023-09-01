@@ -42,7 +42,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('rolesync')->cron('45 * * * *');
         $schedule->command('ntos:expire')->weekly();
         $schedule->command('promos:cacheeligible')->dailyAt('05:00');
-        $schedule->command('discord:rolesync')->hourly();
+//        $schedule->command('discord:rolesync')->hourly();
         $schedule->command('vatsim:sync')->hourly();
     }
 
