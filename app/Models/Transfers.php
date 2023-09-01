@@ -86,7 +86,6 @@ class Transfers
                 'cid'     => $this->cid,
                 'facname' => $this->to()->name,
                 'facid'   => $this->to()->id,
-                'region'  => $this->to()->region,
                 'by'      => Helper::nameFromCID($by),
                 'msg'     => $msg
             ]

@@ -8,5 +8,5 @@
     <br><br>
     The reason specified for the rejection of your request is: <br><br><em>{{$msg}}</em>.<br>
     <br>
-    If you have any questions or wish to appeal this decision, please contact either {{$facid}}-atm@vatusa.net or vatusa{{$region}}@vatusa.net.
+    If you have any questions or wish to appeal this decision, please contact either {{$facid}}-atm@vatusa.net or vatusa2@vatusa.net.
 @endsection
