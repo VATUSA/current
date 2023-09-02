@@ -241,8 +241,9 @@ class FacMgtController extends Controller {
                 return "Invalid position ID";
         }
         $cid = $request->input('cid');
+        $xfer = $request->input('xfer');
 
-        $error = RoleHelper::addFacilityStaffPosition($facility, $cid, $pos);
+        $error = RoleHelper::addFacilityStaffPosition($facility, $cid, $pos, $xfer);
         if ($error) {
             return $error;
         }
