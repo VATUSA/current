@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Classes\DiscordHelper;
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\VATUSAMoodle;
@@ -270,5 +271,11 @@ class MyController
         }
 
         abort(400, "Invalid Mode");
+    }
+
+    public function assignRoles() {
+        $user = Auth::user();
+        DiscordHelper::assignRoles($user->cid);
+        return "1";
     }
 }
