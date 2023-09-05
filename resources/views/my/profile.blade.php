@@ -75,7 +75,7 @@
                                 <label class="col-sm-2 control-label">Name</label>
                                 <div class="col-sm-10">
                                     <p class="form-control-static">{{Auth::user()->fname}} {{Auth::user()->lname}}</p>
-                                    <p class="help-block">To change your name, contact the <a href="https://support.vatsim.net/"> VATSIM Membership Department</a>. If you would like your name changed on VATUSA while it is being processed by VATSIM, send an email to VATUSA12.</a></p>
+                                    <p class="help-block">To change your name, contact the <a href="https://support.vatsim.net/"> VATSIM Membership Department</a>.</p>
                                 </div>
                             </div>
                             <div class="form-group">
