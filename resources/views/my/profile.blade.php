@@ -253,7 +253,8 @@
           $.post("{{ url("/my/profile/assignRoles") }}", result => {
               btn.button('reset')
               let content = document.createElement('p')
-              content.innerHTML = "Discord Sync Request Sent. <br /> It make take a few minutes before your roles are assigned."
+              content.innerHTML = "Discord Sync Request Sent. <br /> " +
+                  "It make take a few minutes before your roles are assigned."
               return swal({
                 title  : 'Success!',
                 content: content,
