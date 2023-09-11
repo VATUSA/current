@@ -258,7 +258,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $log->save();
 
         /** Remove from visiting rosters if going to ZAE */
-        if ($newfac == "ZAE" && $this->visits()) {
+        if ($newfac == "ZAE" && count($this->visits()) > 0) {
             $this->removeFromVisitingFacilities("Transfer to ZAE");
         }
 
@@ -292,7 +292,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     public function removeFromVisitingFacilities($reason) {
-        foreach ($this->visits() as $visit) {
+        foreach ($this->visits()->get() as $visit) {
             $log = new Actions();
             $log->from = 0;
             $log->to = $this->cid;

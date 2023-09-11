@@ -75,7 +75,7 @@
                                 <label class="col-sm-2 control-label">Name</label>
                                 <div class="col-sm-10">
                                     <p class="form-control-static">{{Auth::user()->fname}} {{Auth::user()->lname}}</p>
-                                    <p class="help-block">To change your name, contact the <a href="https://support.vatsim.net/"> VATSIM Membership Department</a>. If you would like your name changed on VATUSA while it is being processed by VATSIM, send an email to VATUSA12.</a></p>
+                                    <p class="help-block">To change your name, contact the <a href="https://support.vatsim.net/"> VATSIM Membership Department</a>.</p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -126,18 +126,20 @@
                                                 <i class="fas fa-link"></i> Link
                                                 Accounts
                                             </button>@else
-                                            <button class="btn btn-success" disabled><i class="fas fa-check"></i> Linked
-                                                <button class="btn btn-info" id="assign-roles"
-                                                        data-loading-text="Assigning...">
-                                                    <i
-                                                        class="fas fa-sync-alt"></i> Assign Roles
-                                                </button>
-                                                <button class="btn btn-danger" id="unlink"
-                                                        data-loading-text="Unlinking..."><i
-                                                        class="fas fa-unlink"></i>
-                                                    Unlink
-                                                </button>
-                                            </button>@endif
+                                            <button class="btn btn-success" disabled>
+                                                <i class="fas fa-check"></i>Linked
+                                            </button>
+                                            <button class="btn btn-info" id="assign-roles"
+                                                    data-loading-text="Assigning...">
+                                                <i
+                                                    class="fas fa-sync-alt"></i> Assign Roles
+                                            </button>
+                                            <button class="btn btn-danger" id="unlink"
+                                                    data-loading-text="Unlinking..."><i
+                                                    class="fas fa-unlink"></i>
+                                                Unlink
+                                            </button>
+                                        @endif
                                     </div>
                                     <p class="help-block"><strong>Click <a href="https://discord.gg/a7Qcse7"
                                                                            target="_blank">here</a> to
@@ -248,44 +250,16 @@
         $('#assign-roles').click(function (e) {
           e.preventDefault()
           let btn = $(this).button('loading')
-          $.post("{{ config('services.discord.botserver') . "/assignRoles/" . Auth::user()->discord_id}}", result => {
-            btn.button('reset')
-            if (result.hasOwnProperty('status') && result.hasOwnProperty('msg') && result.status === 'OK') {
+          $.post("{{ url("/my/profile/assignRoles") }}", result => {
+              btn.button('reset')
               let content = document.createElement('p')
-              content.innerHTML = result.msg
+              content.innerHTML = "Discord Sync Request Sent. <br /> " +
+                  "It make take a few minutes before your roles are assigned."
               return swal({
                 title  : 'Success!',
                 content: content,
                 icon   : 'success'
               })
-            }
-
-            if (result.msg.match(/^You are not a member/)) {
-              return swal({
-                title  : 'Error!',
-                text   : result.msg,
-                icon   : 'error',
-                buttons: {
-                  join: {
-                    text     : 'Join Discord',
-                    value    : 'join',
-                    className: 'btn-success'
-                  },
-                  ok  : {
-                    text: 'OK'
-                  }
-                }
-              }).then(selection => {
-                switch (selection) {
-                  case 'join':
-                    window.open('https://discord.gg/a7Qcse7', '_blank')
-                    break
-                  default:
-                    return
-                }
-              })
-            }
-            return swal('Error!', result.msg, 'error')
           }).fail(result => {
             btn.button('reset')
             return swal('Error!', 'Unable to assign roles. Please try again later.', 'error')

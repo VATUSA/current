@@ -115,6 +115,7 @@ Route::group([
                 Route::get('transfer', 'MyController@getTransfer');
                 Route::post('transfer/do', 'MyController@doTransfer');
                 Route::get('discord/{mode}', 'MyController@linkDiscord');
+                Route::post('profile/assignRoles', 'MyController@assignRoles');
             });
         });
 
