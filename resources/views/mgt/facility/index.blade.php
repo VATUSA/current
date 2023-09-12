@@ -430,7 +430,10 @@
                     <label for="cid">CID or Last Name:</label>
                     <input type="text" name="cid" class="form-control" id="staffcidsearch">
                     <input type="number" name="pos" id="staffInt" hidden>
-
+                    Transfer to facility? <span id="toggleTransfer" style="font-size:1.8em;margin-left: 20px;">
+                                <i class="toggle-icon fa fa-toggle-on text-success"></i>
+                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                    </span>
                 </div>
 
                 <div class="modal-footer">
@@ -441,6 +444,16 @@
             </div>
         </div>
     </div>
+    <script>
+      $('#toggleTransfer').click(function () {
+        let icon        = $(this).find('i.toggle-icon'),
+            currentlyOn = icon.hasClass('fa-toggle-on')
+
+            icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+              ' text-' + (currentlyOn ? 'danger' : 'success'))
+      })
+    </script>
+
 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
@@ -1033,7 +1046,8 @@
         $('#confirmAssignStaff').unbind()
         $('#confirmAssignStaff').click(function () {
           $.post("{{url('mgt/ajax/position/'.$fac)}}/" + val, {
-            cid: $('#assignStaffModal #staffcidsearch').val()
+            cid: $('#assignStaffModal #staffcidsearch').val(),
+            xfer: $('#toggleTransfer').find('i.toggle-icon').hasClass('fa-toggle-on')
           }, function (data) {
             bootbox.alert(data)
             $.post('{{url('/mgt/ajax/staff/'.$fac)}}', function (data) {

@@ -121,7 +121,7 @@ class MyController
         }
 
         if ($_POST['facility'] == "0") {
-            return redirect('/my/transfer')->with('error', "You didn't select a facility!");
+            return redirect('/my/select')->with('error', "You didn't select a facility!");
         }
 
         $facility = Facility::find($facility);
@@ -169,7 +169,11 @@ class MyController
 
         $fac = Facility::find($_POST['facility']);
         if (!$fac) {
-            return redirect('/mgt/transfer')->with('error', "Invalid facility");
+            return redirect('/my/transfer')->with('error', "Invalid facility");
+        }
+
+        if(Auth::user()->facility == $_POST['facility']){
+            return redirect('/my/transfer')->with('error', "You cannot transfer to your current facility");
         }
 
         $this->validate($request, [

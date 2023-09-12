@@ -470,6 +470,7 @@ class MgtController extends Controller {
         }
 
         $cid = $request->cid;
+        $xfer = $request->xfer;
 
         $this->deleteStaff($request, $role);
 
@@ -498,9 +499,10 @@ class MgtController extends Controller {
         $log->log = "Assigned to role '" . RoleHelper::roleTitle($role) . "' by " . Auth::user()->fullname();
         $log->save();
 
-        if (config('staff.hq.moveToHQ')) {
+        //ONLY TRANSFER IF NOT IN ZHQ AND FLAG ENABLED
+        $u = User::find($cid);
+        if ($u->facility != config('staff.hq.HQ') && $xfer == "true") {
             $tr = new \App\Models\Transfers();
-            $u = User::find($cid);
 
             $tr->cid = $cid;
             $tr->reason = "Auto Transfer to " . config('staff.hq.HQ') . ": set as staff.";
