@@ -243,7 +243,7 @@ class FacMgtController extends Controller {
         $cid = $request->input('cid');
         $xfer = $request->input('xfer');
 
-        $error = RoleHelper::addFacilityStaffPosition($facility, $cid, $pos, $xfer);
+        $error = RoleHelper::addFacilityStaffPosition($facility, $cid, $pos, $xfer == "true");
         if ($error) {
             return $error;
         }

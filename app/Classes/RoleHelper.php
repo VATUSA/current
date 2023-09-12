@@ -580,7 +580,7 @@ class RoleHelper
         return $staff;
     }
 
-    public static function addFacilityStaffPosition($facility, $cid, $pos, $xfer = "true") {
+    public static function addFacilityStaffPosition($facility, $cid, $pos, $xfer = true) {
         $u = User::where('cid', $cid)->first();
         $un = $u->fname . ' ' . $u->lname;
 
@@ -598,7 +598,7 @@ class RoleHelper
         $log->save();
 
         //INSERT TRANSFER FLAG
-        if ($u->facility != $facility && $xfer == "true") {
+        if ($u->facility != $facility && $xfer) {
             $uc = User::where('cid', $cid)->first();
             $uc->addToFacility($facility);
 
