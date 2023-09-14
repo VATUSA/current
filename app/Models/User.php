@@ -372,9 +372,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         } else {
             $checks['is_first'] = 0;
         }
-        $transfer = Transfers::where('cid', $this->cid)->where('status', 1)->where('to', 'NOT LIKE',
-            'ZAE')->where('to',
-            'NOT LIKE', 'ZZN')->where('status', 1)->orderBy('created_at', 'DESC')->first();
+        $transfer = Transfers::where('cid', $this->cid)
+            ->where('to', '!=', 'ZAE')
+            ->where('to', '!=', 'ZZN')
+            ->where('to', '!=', 'ZZI')
+            ->where('status', 1)
+            ->orderBy('created_at', 'DESC')
+            ->first();
         if (!$transfer) {
             $checks['90days'] = 1;
         } else {
