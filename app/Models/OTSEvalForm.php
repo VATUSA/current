@@ -34,14 +34,11 @@ class OTSEvalForm extends Model
         return $this->hasMany(OTSEval::class, 'form_id');
     }
 
-    public function getStatSparkline($region, $facility)
+    public function getStatSparkline( $facility)
     {
         $vals = [];
         $evals = $this->evaluations();
-        if ($region) {
-            $evals->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } elseif ($facility) {
+        if ($facility) {
             $evals->where('facility_id', $facility);
         }
         $evals = $evals->orderBy('exam_date', 'DESC')->limit(15)->get();

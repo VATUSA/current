@@ -17,11 +17,13 @@ use App\Models\Promotions;
 use App\Models\Role;
 use App\Models\OTSEvalForm;
 
-class TrainingController extends Controller {
+class TrainingController extends Controller
+{
     public
     function ajaxCanModifyRecord(
         $record
-    ) {
+    )
+    {
         $record = TrainingRecord::find($record);
         if (!$record->count()) {
             return response()->json(false);
@@ -39,7 +41,8 @@ class TrainingController extends Controller {
         Request $request,
         int     $cid,
                 $form = null
-    ) {
+    )
+    {
         $student = User::find($cid);
         if (!$student) {
             abort(404);
@@ -67,7 +70,8 @@ class TrainingController extends Controller {
     function viewOTSEval(
         Request $request,
         int     $eval
-    ) {
+    )
+    {
         $eval = OTSEval::withAll()->find($eval);
         if (!$eval) {
             abort(404, "The OTS evaluation form is invalid.");
@@ -99,13 +103,19 @@ class TrainingController extends Controller {
     public
     function viewTrainingStatistics(
         Request $request
-    ) {
-        function time_to_seconds($str_time): int {
+    )
+    {
+        function time_to_seconds($str_time): int
+        {
             sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
             return isset($seconds) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
         }
 
-        function seconds_to_string($seconds): string {
+        function seconds_to_string($seconds): string
+        {
+            if ($seconds == 0) {
+                return "No sessions";
+            }
             $hours = floor($seconds / 3600);
             $minutes = floor(($seconds / 60) % 60);
             if (!$hours) {
@@ -127,8 +137,6 @@ class TrainingController extends Controller {
 
         $instructor = $request->input('instructor', null);
         $facility = $request->input('facility', null);
-        //$region = $request->input('region', null);
-        $region = null;
         $interval = $request->input('interval', 30);
         $facilities = Facility::active()->get();
 
@@ -138,53 +146,133 @@ class TrainingController extends Controller {
 
         // START NEW CODE
 
+        // List of training staff
+        $instructors = User::where('flag_homecontroller', 1)->where(function ($query) {
+            $query->where(function ($query) {
+                global $facility;
+                $query->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+                    ->where('rating', '<=', Helper::ratingIntFromShort("I3"));
+                if ($facility) {
+                    $query->where('facility', $facility);
+                }
+            });
+            $query->orWhere(function ($query) {
+                global $facility;
+                $trainingStaffByRoleQuery = Role::where('role', 'INS');
+                if ($facility) {
+                    $trainingStaffByRoleQuery->where('facility', $facility);
+                }
+                $query->whereIn('cid', $trainingStaffByRoleQuery->get()->pluck('cid')->all());
+            });
+        })->get();
+
+        $mentors = User::where('flag_homecontroller', 1)->where(function ($query) {
+            global $facility;
+            $trainingStaffByRoleQuery = Role::where('role', 'INS');
+            if ($facility) {
+                $trainingStaffByRoleQuery->where('facility', $facility);
+            }
+            $query->whereIn('cid', $trainingStaffByRoleQuery->get()->pluck('cid')->all());
+        })->get();
+
+        $trainingStaffCount = count($instructors) + count($mentors);
+
         // TrainingRecord based calculations
-        $recordQuery = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
-        if ($region) {
-            $recordQuery->whereIn('facility_id', Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
+        $recordQuery = TrainingRecord::where('session_date', '>', Carbon::now()->subDays(90));
+        if ($facility) {
             $recordQuery->where('facility_id', $facility);
         }
 
         $allRecords = $recordQuery->get();
         $totalTime = 0;
-        $weekTime = [];
-        $weekCount = [];
-        $insWeekTimes = [];
+        $timePeriods = [];
+        $sessionPeriods = [];
+        $trainingStaffPeriods = [];
+        foreach ($instructors as $ts) {
+            $trainingStaffPeriods[$ts->cid] = [
+                30 => ['time' => 0, 'sessions' => 0],
+                60 => ['time' => 0, 'sessions' => 0],
+                90 => ['time' => 0, 'sessions' => 0],
+            ];
+        }
+        foreach ($mentors as $ts) {
+            $trainingStaffPeriods[$ts->cid] = [
+                30 => ['time' => 0, 'sessions' => 0],
+                60 => ['time' => 0, 'sessions' => 0],
+                90 => ['time' => 0, 'sessions' => 0],
+            ];
+        }
+
+        foreach ([30, 60, 90] as $period) {
+            $timePeriods[$period] = 0;
+            $sessionPeriods[$period] = 0;
+        }
+
         foreach ($allRecords as $record) {
             $session_time = time_to_seconds($record->duration);
-            $totalTime += $session_time;
-            $week = $record->session_date->format('W');
-            if (!isset($weekTime[$week])) {
-                $weekTime[$week] = 0;
+            if (Carbon::now()->subDays(30)->lessThanOrEqualTo($record->session_date)) {
+                $totalTime += $session_time;
             }
-            $weekTime[$week] += $session_time;
-            if (!isset($weekCount[$week])) {
-                $weekCount[$week] = 0;
+
+            foreach ([30, 60, 90] as $period) {
+                if (Carbon::now()->subDays($period)->lessThanOrEqualTo($record->session_date)) {
+                    $timePeriods[$period] += $session_time;
+                    $sessionPeriods[$period]++;
+                    if (array_key_exists($record->instructor_id, $trainingStaffPeriods)) {
+                        $trainingStaffPeriods[$record->instructor_id][$period]['time'] += $session_time;
+                        $trainingStaffPeriods[$record->instructor_id][$period]['sessions']++;
+                    }
+                }
             }
-            $weekCount[$week]++;
-            $insId = $record->instructor_id;
-            $yearWeek = $record->session_date->format('Y-W');
-            if (!isset($insWeekTimes[$insId])) {
-                $insWeekTimes[$insId] = [];
-            }
-            if (!isset($insWeekTimes[$insId][$yearWeek])) {
-                $insWeekTimes[$insId][$yearWeek] = 0;
-            }
-            $insWeekTimes[$insId][$yearWeek] += $session_time;
+
         }
         $sumTotalTimeStr = seconds_to_string($totalTime);
         $sumTotalSessions = count($allRecords);
-        $avgTime = !empty($weekTime) ? array_sum($weekTime) / count($weekTime) : 0;
+        $avgTime = ($trainingStaffCount > 0) ? $totalTime / $trainingStaffCount : 0;
         $sumAvgTimeStr = seconds_to_string($avgTime);
-        $sumAvgSessions = !empty($weekCount) ? round(array_sum($weekCount) / count($weekCount), 2) : 0;
+        $sumAvgSessions = ($trainingStaffCount > 0) ? $sumTotalSessions / $trainingStaffCount : 0;
+
+
+        // Instructor / Mentor Activity
+
+        $activityTableData = [];
+        //
+        foreach ($instructors as $ts) {
+            $row = [];
+            $row['name'] = $ts->fullname();
+            $row['hours'] = [
+                30 => seconds_to_string($trainingStaffPeriods[$ts->cid][30]['time']),
+                60 => seconds_to_string($trainingStaffPeriods[$ts->cid][60]['time']),
+                90 => seconds_to_string($trainingStaffPeriods[$ts->cid][90]['time']),
+            ];
+            $row['sessions'] = [
+                30 => $trainingStaffPeriods[$ts->cid][30]['sessions'],
+                60 => $trainingStaffPeriods[$ts->cid][60]['sessions'],
+                90 => $trainingStaffPeriods[$ts->cid][90]['sessions'],
+            ];
+            $row['role'] = 'Instructor';
+            $activityTableData[] = $row;
+        }
+        foreach ($mentors as $ts) {
+            $row = [];
+            $row['name'] = $ts->fullname();
+            $row['hours'] = [
+                30 => seconds_to_string($trainingStaffPeriods[$ts->cid][30]['time']),
+                60 => seconds_to_string($trainingStaffPeriods[$ts->cid][60]['time']),
+                90 => seconds_to_string($trainingStaffPeriods[$ts->cid][90]['time']),
+            ];
+            $row['sessions'] = [
+                30 => $trainingStaffPeriods[$ts->cid][30]['sessions'],
+                60 => $trainingStaffPeriods[$ts->cid][60]['sessions'],
+                90 => $trainingStaffPeriods[$ts->cid][90]['sessions'],
+            ];
+            $row['role'] = 'Mentor';
+            $activityTableData[] = $row;
+        }
 
         // OTSEval based calculations
         $evalQuery = OTSEval::where('exam_date', '>', Carbon::now()->subDays($interval));
-        if ($region) {
-            $evalQuery = $evalQuery->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
+        if ($facility) {
             $evalQuery = $evalQuery->where('facility_id', $facility);
         }
         $allEvals = $evalQuery->get();
@@ -202,63 +290,6 @@ class TrainingController extends Controller {
         $sumNumFail = $evalFail;
         $sumPassRate = $sumNumEvals ? round($sumNumPass / $sumNumEvals * 100) : 0;
 
-        // Instructors and Mentors
-        $insWithSparklines = ['ins' => [], 'mtr' => []];
-
-        function make_ins_sparkline($ins) {
-            global $insWeekTimes;
-            $vals = [];
-            for ($i = 10; $i >= 0; $i--) {
-                $yearWeek = Carbon::now()->subWeeks($i)->format('Y-W');
-                $vals[] = isset($insWeekTimes[$ins->cid]) ? floor($insWeekTimes[$ins->cid][$yearWeek] / 3600) : 0;
-            }
-
-            return [
-                'cid' => $ins->cid,
-                'sparkline' => implode(",", $vals),
-                'name' => $ins->fullname(true),
-                'since' => $ins->created_at->format('m/d/Y')
-            ];
-        }
-
-        // Instructors by Rating
-        $insQuery = User::where('rating', '>=', Helper::ratingIntFromShort("I1"))
-            ->where('rating', '<=', Helper::ratingIntFromShort("I3"))
-            ->where('flag_homecontroller', 1)
-            ->where('facility', '!=', 'ZZN');
-        if ($facility) {
-            $insQuery->where('facility', $facility);
-        }
-        $instructors = $insQuery->get();
-        foreach ($instructors as $ins) {
-            $insWithSparklines['ins'][] = make_ins_sparkline($ins);
-        }
-
-        // Instructors by role (SUP/INS)
-        $users = Role::where('role', 'INS');
-        if ($facility) {
-            $users->where('facility', $facility);
-        }
-        $users = $users->get();
-        foreach ($users as $user) {
-            $insWithSparklines['ins'][] = make_ins_sparkline($user->user);
-        }
-
-        // Mentors by role
-        $users = Role::where('role', 'MTR');
-        if ($facility) {
-            $users->where('facility', $facility);
-        }
-        $users = $users->get();
-        foreach ($users as $user) {
-            $insWithSparklines['mtr'][] = make_ins_sparkline($user->user);
-        }
-
-        foreach ($insWithSparklines as $k => $v) {
-            usort($insWithSparklines[$k], function ($a, $b) {
-                return strcmp($a['name'], $b['name']);
-            });
-        }
 
         // OLD CODE BELOW
 
@@ -276,18 +307,15 @@ class TrainingController extends Controller {
 
             $hoursPerMonth = TrainingRecord::with(['instructor:cid,fname,lname'])
                 ->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, instructor_id, DATE_FORMAT(session_date, '%Y-%m') AS month");
-            if ($region) {
-                $hoursPerMonth = $hoursPerMonth->whereIn('facility_id',
-                    Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
+            if ($facility) {
                 $hoursPerMonth = $hoursPerMonth->where('facility_id', $facility);
             }
             $hoursPerMonth = $hoursPerMonth->where('session_date', '>',
                 Carbon::parse('first day of this month')->subMonths(6))
                 ->whereRaw("DATE_FORMAT(session_date, '%Y-%m') = '$month'")->groupBy([
-                'month',
-                'instructor_id'
-            ])->orderBy('month', 'ASC')->get();
+                    'month',
+                    'instructor_id'
+                ])->orderBy('month', 'ASC')->get();
             //dd(str_replace_array('?', $hoursPerMonth->getBindings(), $hoursPerMonth->toSql()));
             //dd($hoursPerMonth->get()->toArray());
 
@@ -324,10 +352,7 @@ class TrainingController extends Controller {
         $timePerInstructorData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
         if ($facility) {
             $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($interval));
-            if ($region) {
-                $records = $records->whereIn('facility_id',
-                    Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
+            if ($facility) {
                 $records = $records->where('facility_id', $facility);
             }
             $timePerInstructorData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
@@ -348,71 +373,6 @@ class TrainingController extends Controller {
         //Table Data
         $i = 0;
         //dd($insWithSparklines);
-        foreach ($insWithSparklines as $type => $v) {
-            foreach ($v as $staff) {
-                $insActivity[$i]['name'] = $staff['name'];
-                $insActivity[$i]['sparkline'] = $staff['sparkline'];
-                $insActivity[$i]['role'] = strtoupper($type);
-                $insActivity[$i]['since'] = $staff['since'];
-                for ($k = 30; $k <= 90; $k += 30) {
-                    $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($k))
-                        ->where('instructor_id', $staff['cid']);
-                    if ($region) {
-                        $records->whereIn('facility_id',
-                            Facility::where('region', $region)->get()->pluck('id')->all());
-                    } else if ($facility) {
-                        $records->where('facility_id', $facility);
-                    }
-                    $avgTime = $records->selectRaw('SUM(TIME_TO_SEC(duration)) as total')
-                        ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
-                    if (!count($avgTime)) {
-                        $avgTimeStr = "<em>No Sessions</em>";
-                    } else {
-                        $avgTime = array_sum($avgTime) / count($avgTime);
-
-                        $hours = floor($avgTime / 3600);
-                        $minutes = floor(($avgTime / 60) % 60);
-                        if (!$hours) {
-                            $avgTimeStr = $minutes . " minute" . ($minutes !== 1 ? 's' : '');
-                        } else {
-                            $avgTimeStr = "$hours hour" . ($hours !== 1 ? 's' : '') . ", " . $minutes . " minute" .
-                                ($minutes !== 1 ? 's' : '');
-                        }
-                    }
-                    $insActivity[$i]['avgTime'][$k] = $avgTimeStr;
-
-                    $records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($k))
-                        ->where('instructor_id', $staff['cid']);
-                    if ($region) {
-                        $records->whereIn('facility_id',
-                            Facility::where('region', $region)->get()->pluck('id')->all());
-                    } else if ($facility) {
-                        $records->where('facility_id', $facility);
-                    }
-                    $avgSessions = $records->selectRaw('COUNT(*) AS total')
-                        ->groupBy([DB::raw("DATE_FORMAT(session_date, '%U')")])->pluck('total')->all();
-                    if (!count($avgSessions)) {
-                        $avgSessions = "<em>No Sessions</em>";
-                    } else {
-                        $avgSessions = round(array_sum($avgSessions) / count($avgSessions), 2);
-                    }
-
-                    $insActivity[$i]['avgSessions'][$k] = $avgSessions;
-
-                    /*$records = TrainingRecord::where('session_date', '>', Carbon::now()->subDays($k))
-                        ->where('instructor_id', $staff['cid']);
-                    if ($region) {
-                        $records->whereIn('facility_id',
-                            Facility::where('region', $region)->get()->pluck('id')->all());
-                    } elseif ($facility) {
-                        $records->where('facility_id', $facility);
-                    }
-
-                    $insActivity[$i]['numSessions'][$k] = $records->count();*/
-                }
-                $i++;
-            }
-        }
 
         /** OTS Evaluations */
 
@@ -427,10 +387,7 @@ class TrainingController extends Controller {
 
             $evalsPerMonth =
                 OTSEval::with('form:id,name')->selectRaw("form_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
-            if ($region) {
-                $evalsPerMonth->whereIn('facility_id',
-                    Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
+            if ($facility) {
                 $evalsPerMonth->where('facility_id', $facility);
             }
             if ($instructor) {
@@ -456,10 +413,7 @@ class TrainingController extends Controller {
 
         //Completed Evaluations per Form
         $evals = OTSEval::where('exam_date', '>=', Carbon::now()->subDays($interval));
-        if ($region) {
-            $evals->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
+        if ($facility) {
             $evals->where('facility_id', $facility);
         }
         $evalsPerFormData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
@@ -482,14 +436,11 @@ class TrainingController extends Controller {
         foreach ($evalForms as $form) {
             $evalFormsTable[$i]['name'] = $form->name;
             $evalFormsTable[$i]['id'] = $form->id;
-            $evalFormsTable[$i]['sparkline'] = $form->getStatSparkline($region, $facility);
+            $evalFormsTable[$i]['sparkline'] = $form->getStatSparkline($facility);
 
             for ($k = 30; $k <= 90; $k += 30) {
                 $completed = $form->evaluations()->where('exam_date', '>=', Carbon::now()->subDays($k));
-                if ($region) {
-                    $completed->whereIn('facility_id',
-                        Facility::where('region', $region)->get()->pluck('id')->all());
-                } else if ($facility) {
+                if ($facility) {
                     $completed->where('facility_id', $facility);
                 }
                 $numConducted = $completed->count();
@@ -521,10 +472,6 @@ class TrainingController extends Controller {
 
                 $evalsPerMonth = OTSEval::with('instructor:cid,fname,lname')
                     ->selectRaw("instructor_id, DATE_FORMAT(exam_date, '%Y-%m') AS month");
-                if ($region) {
-                    $evalsPerMonth->whereIn('facility_id',
-                        Facility::where('region', $region)->get()->pluck('id')->all());
-                }
 
                 $evalsPerMonth->where('facility_id', $facility);
                 $evalsPerMonth =
@@ -554,10 +501,7 @@ class TrainingController extends Controller {
 
             //Completed Evaluations per Form - INS
             $evals = OTSEval::where('exam_date', '>=', Carbon::now()->subDays($interval));
-            if ($region) {
-                $evals->whereIn('facility_id',
-                    Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
+            if ($facility) {
                 $evals->where('facility_id', $facility);
             }
             $evalsPerForm = $evals->with(['instructor:cid,fname,lname'])->selectRaw('COUNT(*) AS total, instructor_id')
@@ -579,10 +523,7 @@ class TrainingController extends Controller {
         $datasets = [];
         $recordsPerMonth =
             TrainingRecord::selectRaw("COUNT(*) AS total, position, DATE_FORMAT(session_date, '%Y-%m') AS month");
-        if ($region) {
-            $recordsPerMonth->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
+        if ($facility) {
             $recordsPerMonth->where('facility_id', $facility);
         }
         $recordsPerMonth->whereRaw("DATE_FORMAT(session_date, '%Y-%m') != DATE_FORMAT(NOW(), '%Y-%m')")->groupBy([
@@ -592,10 +533,7 @@ class TrainingController extends Controller {
         // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
         //dd($hoursPerMonth->get()->toArray());
         $recordsPerMonth = TrainingRecord::selectRaw("position, DATE_FORMAT(session_date, '%Y-%m') AS month");
-        if ($region) {
-            $recordsPerMonth->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
+        if ($facility) {
             $recordsPerMonth->where('facility_id', $facility);
         }
         $recordsPerMonth->whereRaw("session_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)")->orderBy('month', 'ASC');
@@ -605,10 +543,7 @@ class TrainingController extends Controller {
             $recordsPerMonthData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
 
             $recordsPerMonth = TrainingRecord::selectRaw("position, DATE_FORMAT(session_date, '%Y-%m') AS month");
-            if ($region) {
-                $recordsPerMonth->whereIn('facility_id',
-                    Facility::where('region', $region)->get()->pluck('id')->all());
-            } else if ($facility) {
+            if ($facility) {
                 $recordsPerMonth->where('facility_id', $facility);
             }
             $recordsPerMonth =
@@ -637,10 +572,7 @@ class TrainingController extends Controller {
 
         //Records per Type
         $records = TrainingRecord::where('session_date', '>=', Carbon::now()->subDays($interval));
-        if ($region) {
-            $records->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
+        if ($facility) {
             $records->where('facility_id', $facility);
         }
         $recordsPerTypeData = ['labels' => [], 'datasets' => [['data' => [], 'backgroundColor' => []]]];
@@ -659,28 +591,24 @@ class TrainingController extends Controller {
         //Table Data
         $trainingRecords = TrainingRecord::with(['instructor:cid,fname,lname', 'student:cid,fname,lname'])
             ->where('session_date', '>=', Carbon::now()->subDays($interval));
-        if ($region) {
-            $trainingRecords->whereIn('facility_id',
-                Facility::where('region', $region)->get()->pluck('id')->all());
-        } else if ($facility) {
+        if ($facility) {
             $trainingRecords->where('facility_id', $facility);
         }
         $trainingRecords = $trainingRecords->get();
 
         return view('mgt.training.stats',
-            compact('instructor', 'facility', 'region',
-                'sumTotalSessions', 'sumTotalTimeStr', 'sumAvgTimeStr', 'sumAvgSessions',
-                'sumNumPass', 'sumNumFail', 'sumPassRate',
-                'hoursPerMonthData', 'timePerInstructorData', 'insActivity',
-                'evalsPerMonthData', 'evalsPerFormData', 'evalsPerFormDataIns',
-                'evalsPerMonthDataIns', 'evalFormsTable',
-                'recordsPerTypeData', 'recordsPerMonthData', 'trainingRecords', 'facilities'));
+            compact('instructor', 'facility', 'sumTotalSessions', 'sumTotalTimeStr',
+                'sumAvgTimeStr', 'sumAvgSessions', 'sumNumPass', 'sumNumFail', 'sumPassRate', 'hoursPerMonthData',
+                'timePerInstructorData', 'evalsPerMonthData', 'evalsPerFormData', 'evalsPerFormDataIns',
+                'evalsPerMonthDataIns', 'evalFormsTable', 'recordsPerTypeData', 'recordsPerMonthData',
+                'trainingRecords', 'facilities', 'activityTableData'));
     }
 
     public
     function viewEvals(
         Request $request
-    ) {
+    )
+    {
         if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
             abort(403);
         }
@@ -716,7 +644,8 @@ class TrainingController extends Controller {
     function viewOTSEvalStatistics(
         Request $request,
         int     $form
-    ) {
+    )
+    {
         $form = OTSEvalForm::withAll()->find($form);
         if (!$form) {
             abort(404, "The OTS evaluation form is invalid.");

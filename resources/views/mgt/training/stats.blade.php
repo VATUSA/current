@@ -84,9 +84,8 @@
                                     <div class="panel-body training-stat-static">
                                         {{ $sumAvgTimeStr }}<br>{{ $sumAvgSessions }} sessions
                                     </div>
-                                    <div class="panel-footer">Average Time and Sessions Per Week<br><em>last
-                                            30
-                                            days</em></div>
+                                    <div class="panel-footer">Average Time and Sessions Per Training Staff<br>
+                                        <em>last 30 days</em></div>
                                 </div>
                             </div>
                         </div>
@@ -125,29 +124,26 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Role</th>
-                                    <th>INS/MTR Since</th>
-                                    <th>Avg. Hours / Week</th>
-                                    <th>Avg. Sessions Conducted / Week</th>
+                                    <th>Hours</th>
+                                    <th>Sessions Conducted</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($insActivity as $ins)
+                                @foreach($activityTableData as $row)
                                     <tr>
-                                        <td>{{ $ins['name'] }} <span class="sparkline"
-                                                                     values="{{ $ins['sparkline'] }}"></span></td>
-                                        <td>{{ $ins['role'] === "INS" ? "Instructors" : "Mentors" }}</td>
-                                        <td>{{ $ins['since'] }}</td>
+                                        <td>{{ $row['name'] }}</td>
+                                        <td>{{ $row['role'] === "INS" ? "Instructors" : "Mentors" }}</td>
                                         <td>
                                             @php $c = 0; @endphp
-                                            @foreach ($ins['avgTime'] as $i => $v)
+                                            @foreach ($row['hours'] as $i => $v)
                                                 <strong>Last {{ $i }} days:</strong> {!! $v !!}
-                                                @if(++$c != count($ins['avgTime'])) <br>@endif
+                                                @if(++$c != count($row['hours'])) <br>@endif
                                             @endforeach
                                         </td>
                                         <td>@php $c = 0; @endphp
-                                            @foreach ($ins['avgSessions'] as $i => $v)
+                                            @foreach ($row['sessions'] as $i => $v)
                                                 <strong>Last {{ $i }} days:</strong> {!! $v !!}
-                                                @if(++$c != count($ins['avgSessions'])) <br>@endif
+                                                @if(++$c != count($row['sessions'])) <br>@endif
                                             @endforeach</td>
                                     </tr>
                                 @endforeach
