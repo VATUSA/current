@@ -473,8 +473,8 @@
         $('#training-staff-list').DataTable({
           responsive  : true,
           autoWidth   : false,
-          lengthMenu  : [5, 10, 15, 25],
-          pageLength  : 5,
+          lengthMenu  : [25, 50, 100],
+          pageLength  : 25,
           columnDefs  : [{
             visible: false,
             targets: 1
