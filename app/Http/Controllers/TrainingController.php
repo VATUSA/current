@@ -254,7 +254,7 @@ class TrainingController extends Controller
                 60 => $trainingStaffPeriods[$ts->cid][60]['sessions'],
                 90 => $trainingStaffPeriods[$ts->cid][90]['sessions'],
             ];
-            $row['role'] = 'Instructor';
+            $row['role'] = 'INS';
             $activityTableData[] = $row;
         }
         foreach ($mentors as $ts) {
@@ -270,7 +270,7 @@ class TrainingController extends Controller
                 60 => $trainingStaffPeriods[$ts->cid][60]['sessions'],
                 90 => $trainingStaffPeriods[$ts->cid][90]['sessions'],
             ];
-            $row['role'] = 'Mentor';
+            $row['role'] = 'MTR';
             $activityTableData[] = $row;
         }
 
