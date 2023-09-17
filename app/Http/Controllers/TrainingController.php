@@ -169,7 +169,7 @@ class TrainingController extends Controller
             $instructors[$ins->cid] = $ins;
         }
 
-        $mtrByRoleQuery = Role::where('role', 'INS');
+        $mtrByRoleQuery = Role::where('role', 'MTR');
         if ($facility) {
             $mtrByRoleQuery->where('facility', $facility);
         }
