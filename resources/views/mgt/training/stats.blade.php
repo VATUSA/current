@@ -18,24 +18,10 @@
                         <div class="form-group">
                             <select class="form-control" id="tng-artcc-select" autocomplete="off" name="facility">
                                 <option value="0" @if(!$facility) selected @endif>All Facilities</option>
-                                <optgroup label="Western Region">
-                                    @foreach($facilities->filter(function($fac) { return $fac->region == 6; }) as $fac)
-                                        <option value="{{ $fac->id }}"
-                                                @if($facility == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                    @endforeach
-                                </optgroup>
-                                <optgroup label="Eastern Region">
-                                    @foreach($facilities->filter(function($fac) { return $fac->region == 7; }) as $fac)
-                                        <option value="{{ $fac->id }}"
-                                                @if($facility == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                    @endforeach
-                                </optgroup>
-                                <optgroup label="Central Region">
-                                    @foreach($facilities->filter(function($fac) { return $fac->region == 5; }) as $fac)
-                                        <option value="{{ $fac->id }}"
-                                                @if($facility == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                    @endforeach
-                                </optgroup>
+                                @foreach($facilities as $fac)
+                                    <option value="{{ $fac->id }}"
+                                            @if($facility == $fac->id) selected @endif>{{ $fac->id }} - {{ $fac->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </form> @endif</h5>
