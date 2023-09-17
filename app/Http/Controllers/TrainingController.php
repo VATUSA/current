@@ -147,33 +147,37 @@ class TrainingController extends Controller
         // START NEW CODE
 
         // List of training staff
-        $instructors = User::where('flag_homecontroller', 1)->where(function ($query) {
-            $query->where(function ($query) {
-                global $facility;
-                $query->where('rating', '>=', Helper::ratingIntFromShort("I1"))
-                    ->where('rating', '<=', Helper::ratingIntFromShort("I3"));
-                if ($facility) {
-                    $query->where('facility', $facility);
-                }
-            });
-            $query->orWhere(function ($query) {
-                global $facility;
-                $trainingStaffByRoleQuery = Role::where('role', 'INS');
-                if ($facility) {
-                    $trainingStaffByRoleQuery->where('facility', $facility);
-                }
-                $query->whereIn('cid', $trainingStaffByRoleQuery->get()->pluck('cid')->all());
-            });
-        })->get();
+        $insByRoleQuery = Role::where('role', 'INS');
+        if ($facility) {
+            $insByRoleQuery->where('facility', $facility);
+        }
+        $insByRole = $insByRoleQuery->get();
 
-        $mentors = User::where('flag_homecontroller', 1)->where(function ($query) {
-            global $facility;
-            $trainingStaffByRoleQuery = Role::where('role', 'INS');
-            if ($facility) {
-                $trainingStaffByRoleQuery->where('facility', $facility);
-            }
-            $query->whereIn('cid', $trainingStaffByRoleQuery->get()->pluck('cid')->all());
-        })->get();
+        $insByRatingQuery = User::where('flag_homecontroller', 1)
+            ->where('rating', '>=', Helper::ratingIntFromShort("I1"))
+            ->where('rating', '<=', Helper::ratingIntFromShort("I3"));
+        if ($facility) {
+            $insByRatingQuery->where('facility', $facility);
+        }
+        $insByRating = [];
+
+        $instructors = [];
+        foreach ($insByRole as $ins) {
+            $instructors[$ins->cid] = $ins->user;
+        }
+        foreach($insByRating as $ins) {
+            $instructors[$ins->cid] = $ins;
+        }
+
+        $mtrByRoleQuery = Role::where('role', 'INS');
+        if ($facility) {
+            $mtrByRoleQuery->where('facility', $facility);
+        }
+        $mtrByRole = $mtrByRoleQuery->get();
+        $mentors = [];
+        foreach ($mtrByRole as $mtr) {
+            $mentors[] = $mtr->user;
+        }
 
         $trainingStaffCount = count($instructors) + count($mentors);
 
