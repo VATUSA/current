@@ -259,7 +259,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         /** Remove from visiting rosters if going to ZAE */
         if ($newfac == "ZAE" && count($this->visits()->get()) > 0) {
-            $this->removeFromVisitingFacilities("Transfer to ZAE");
+            $this->removeFromVisitingFacilities($msg);
         }
 
         if ($newfac == "ZZN") {
