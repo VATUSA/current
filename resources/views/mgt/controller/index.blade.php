@@ -323,6 +323,7 @@
                     @endif
                     @php $canViewTraining = ($user->facility == Auth::user()->facility
                                             || \App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
+                                            || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility)
                                             || $user->visits()->where('facility', Auth::user()->facility)->exists()
                                             || $user->trainingRecords()->where('facility_id', Auth::user()->facility)->exists()
                                             || \App\Classes\RoleHelper::isVATUSAStaff()
