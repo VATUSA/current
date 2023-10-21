@@ -159,7 +159,7 @@ class TrainingController extends Controller
         if ($facility) {
             $insByRatingQuery->where('facility', $facility);
         }
-        $insByRating = [];
+        $insByRating = $insByRatingQuery->get();
 
         $instructors = [];
         foreach ($insByRole as $ins) {
