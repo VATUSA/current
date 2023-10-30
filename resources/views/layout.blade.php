@@ -162,21 +162,20 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                    aria-expanded="false"><i class="fas fa-cloud"></i> Weather</a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="https://www.aviationweather.gov/metar" target="_blank">METARs</a></li>
-                                    <li><a href="https://www.aviationweather.gov/taf" target="_blank">TAFs</a></li>
-                                    <li><a href="https://www.aviationweather.gov/adds/pireps" target="_blank">PIREPs</a>
+                                    <li><a href="https://aviationweather.gov/data/metar/" target="_blank">METARs</a></li>
+                                    <li><a href="https://aviationweather.gov/data/taf/" target="_blank">TAFs</a></li>
+                                    <li><a href="https://aviationweather.gov/data/pirep/" target="_blank">PIREPs</a>
                                     </li>
                                     <li><a href="http://weather.uwyo.edu/upperair/sounding.html" target="_blank">Balloon
                                             Sounding</a></li>
-                                    <li><a href="https://aviationweather.gov/windtemp" target="_blank">Winds
+                                    <li><a href="https://aviationweather.gov/data/windtemp/" target="_blank">Winds
                                             Aloft</a></li>
-                                    <li><a href="http://digital.weather.gov" target="_blank">Graphical Forecasts</a>
+                                    <li><a href="https://aviationweather.gov/gfa/#obs" target="_blank">Graphical Forecasts</a>
                                     </li>
-                                    <li><a href="https://www.aviationweather.gov/progchart" target="_blank">Prog
+                                    <li><a href="https://aviationweather.gov/gfa/#obs" target="_blank">Current Observations</a>
+                                    </li>
+                                    <li><a href="https://aviationweather.gov/gfa/#progchart" target="_blank">Prog
                                             Charts</a></li>
-                                    <li><a href="https://www.aviationweather.gov/satellite" target="_blank">Satellite
-                                            Imagery</a></li>
-                                    <li><a href="https://www.aviationweather.gov/radar" target="_blank">Radar</a></li>
                                     <li><a href="https://www.faa.gov/air_traffic/weather/asos/" target="_blank">ASOS/AWOS
                                             Stations</a></li>
                                 </ul>
