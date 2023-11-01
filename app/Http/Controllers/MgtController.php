@@ -70,8 +70,8 @@ class MgtController extends Controller
             $trainingfaclist = $user->trainingRecords()->groupBy('facility_id')->get()->filter(function ($record) use (
                 $user
             ) {
-                return RoleHelper::isTrainingStaff(null, null, $record->facility_id)
-                    || RoleHelper::isTrainingStaff(null, null, $user->facility)
+                return RoleHelper::isTrainingStaff(null, true, $record->facility_id)
+                    || RoleHelper::isTrainingStaff(null, true, $user->facility)
                     || RoleHelper::isWebTeam();
             });
 
@@ -101,10 +101,10 @@ class MgtController extends Controller
             foreach ($user->visits()->get() as $visit) {
                 $trainingFacListArray[$visit->fac->id] = $visit->fac->name;
             }
-            $trainingRecords = $user->facility == Auth::user()->facility || $trainingfac == Auth::user()->facility
-            || $user->visits()->where('facility', Auth::user()->facility)->exists()
-            || RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam() || RoleHelper::isFacilitySeniorStaff() ?
-                $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
+            $trainingRecords = RoleHelper::isTrainingStaff(null, true, $trainingfac)
+            || RoleHelper::isTrainingStaff(null, true, $user->facility)
+            || RoleHelper::isWebTeam()
+                ? $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac)
                 && $user->cid !== Auth::user()->cid;
 
