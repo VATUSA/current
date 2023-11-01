@@ -70,14 +70,9 @@ class MgtController extends Controller
             $trainingfaclist = $user->trainingRecords()->groupBy('facility_id')->get()->filter(function ($record) use (
                 $user
             ) {
-                return Auth::user()->facility === $record->facility_id
-                    || Auth::user()->facility === $user->facility
-                    || $user->visits()->where('facility', Auth::user()->facility)->exists()
-                    || RoleHelper::isTrainingStaff(null, $record->facility_id)
+                return RoleHelper::isTrainingStaff(null, $record->facility_id)
                     || RoleHelper::isTrainingStaff(null, $user->facility)
-                    || RoleHelper::isVATUSAStaff()
-                    || RoleHelper::isWebTeam()
-                    || RoleHelper::isFacilitySeniorStaff();
+                    || RoleHelper::isWebTeam();
             });
 
             if (!$trainingfac) {
