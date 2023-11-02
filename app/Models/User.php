@@ -463,7 +463,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         $passedBasic = ExamHelper::academyPassedExam($this->cid, "basic", 0, 6);
-        if ($passedBasic && $this->flag_needbasic) {
+        if ($passedBasic && $this->flag_needbasic && $this->rating <= Helper::ratingIntFromShort("S1")) {
             $this->flag_needbasic = 0;
             $this->save();
         }
