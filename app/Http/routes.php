@@ -110,6 +110,7 @@ Route::group([
                 Route::get('profile', 'MyController@getProfile');
                 Route::post('profile', 'MyController@getProfile');
                 Route::post('profile/toggleBroadcast', 'MyController@toggleBroadcastEmails');
+                Route::post('profile/toggleNamePrivacy', 'MyController@toggleNamePrivacy');
                 Route::get('select', 'MyController@getSelect');
                 Route::post('select', 'MyController@postSelect');
                 Route::get('transfer', 'MyController@getTransfer');

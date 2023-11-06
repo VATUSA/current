@@ -243,6 +243,26 @@ class MyController
         return "1";
     }
 
+    public function toggleNamePrivacy(Request $request) {
+        if (!$request->ajax()) {
+            abort(500);
+        }
+
+
+        $user = Auth::user();
+        $currentFlag = $user->flag_nameprivacy;
+        $user->flag_nameprivacy = !$currentFlag;
+        $user->saveOrFail();
+
+        $log = new Actions();
+        $log->from = 0;
+        $log->to = Auth::id();
+        $log->log = "Opted " . ($currentFlag ? "out of" : "in to") . " name privacy";
+        $log->save();
+
+        return "1";
+    }
+
     public function linkDiscord($mode = "link") {
         if ($mode === "link") {
             return Socialite::driver('discord')->setScopes(['identify'])->redirect();

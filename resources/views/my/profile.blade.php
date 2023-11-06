@@ -33,6 +33,30 @@
             bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle email opt-in setting.')
           })
       })
+      $('#toggleNamePrivacy').click(function () {
+          let icon        = $(this).find('i.toggle-icon'),
+              currentlyOn = icon.hasClass('fa-toggle-on'),
+              spinner     = $(this).find('i.spinner-icon')
+
+          spinner.show()
+          $.ajax({
+              type: 'POST',
+              url : "{{ url("/my/profile/toggleNamePrivacy") }}"
+          }).success(function (result) {
+              spinner.hide()
+              if (result === '1') {
+                  //Success
+                  icon.attr('class', 'toggle-icon fa fa-toggle-' + (currentlyOn ? 'off' : 'on') +
+                      ' text-' + (currentlyOn ? 'danger' : 'success'))
+              } else {
+                  bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle name privacy setting.')
+              }
+          })
+              .error(function (result) {
+                  spinner.hide()
+                  bootbox.alert('<div class=\'alert alert-danger\'><i class=\'fa fa-warning\'></i> <strong>Error!</strong> Unable to toggle name privacy setting.')
+              })
+      })
     </script>
 @endsection
 
@@ -116,6 +140,20 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-2 control-label">Name Privacy</label>
+                                <div class="col-sm-10">
+                            <span id="toggleOptin" style="font-size:1.8em;">
+                                <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_nameprivacy ? "on text-success" : "off text-danger"}} "></i>
+                                <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
+                            </span>
+                                    <p class="help-block">Enabling this setting will cause your last name to be hidden from some locations, such as Discord.<br>
+                                        This only affects the mass emailing system of ARTCCs that choose to use this setting.<br>
+                                        When this setting is in use, your last name will be replaced with your CID instead.<br>
+                                        <strong>You must sync your Discord using the blue Sync button below for this setting to take effect on Discord.</strong>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-2 control-label"><i class="fab fa-discord"></i> VATUSA Discord
                                     Link</label>
                                 <div class="col-sm-10">
@@ -132,7 +170,7 @@
                                             <button class="btn btn-info" id="assign-roles"
                                                     data-loading-text="Assigning...">
                                                 <i
-                                                    class="fas fa-sync-alt"></i> Assign Roles
+                                                    class="fas fa-sync-alt"></i> Sync
                                             </button>
                                             <button class="btn btn-danger" id="unlink"
                                                     data-loading-text="Unlinking..."><i
