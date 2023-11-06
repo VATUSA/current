@@ -143,7 +143,7 @@
                                 <label class="col-sm-2 control-label">Name Privacy</label>
                                 <div class="col-sm-10">
                             <span id="toggleNamePrivacy" style="font-size:1.8em;">
-                                <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_nameprivacy ? "on text-success" : "off text-danger"}} "></i>
+                                <i class="toggle-icon fa fa-toggle-{{ Auth::user()->flag_nameprivacy ? "on text-info" : "off"}} "></i>
                                 <i class="spinner-icon fa fa-spinner fa-spin" style="display:none;"></i>
                             </span>
                                     <p class="help-block">Enabling this setting will cause your last name to be hidden from some locations, such as Discord.<br>
