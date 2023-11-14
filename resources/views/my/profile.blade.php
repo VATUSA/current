@@ -10,9 +10,9 @@
         history.pushState({}, '', e.target.hash)
       })
       $('#toggleOptin').click(function () {
-        let icon        = $(this).find('i.toggle-icon'),
+        let icon        = $(this).find('#toggleOptin i.toggle-icon'),
             currentlyOn = icon.hasClass('fa-toggle-on'),
-            spinner     = $(this).find('i.spinner-icon')
+            spinner     = $(this).find('#toggleOptin i.spinner-icon')
 
         spinner.show()
         $.ajax({
@@ -34,9 +34,9 @@
           })
       })
       $('#toggleNamePrivacy').click(function () {
-          let icon        = $(this).find('i.toggle-icon'),
+          let icon        = $(this).find('#toggleNamePrivacy i.toggle-icon'),
               currentlyOn = icon.hasClass('fa-toggle-on'),
-              spinner     = $(this).find('i.spinner-icon')
+              spinner     = $(this).find('#toggleNamePrivacy i.spinner-icon')
 
           spinner.show()
           $.ajax({
