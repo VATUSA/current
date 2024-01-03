@@ -695,7 +695,7 @@ class MgtController extends Controller
                 'You do not have permission to assign this solo certification.');
         }
 
-        if (!preg_match("/^([A-Z0-9]{2,3})_(APP|CTR)$/i", $request->input("position"))) {
+        if (!preg_match("/^([A-Z0-9]{2,3})_(TWR|APP|CTR)$/i", $request->input("position"))) {
             return redirect("/mgt/solo")->with("error", "Invalid position defined.");
         }
 
