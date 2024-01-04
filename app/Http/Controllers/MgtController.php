@@ -192,7 +192,7 @@ class MgtController extends Controller
             $facility = $user->facility;
         }
 
-        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff(null, $facility)) {
+        if (!RoleHelper::isVATUSAStaff() && (!RoleHelper::isFacilitySeniorStaff(null, $facility) || $user->flag_preventStaffAssign)) {
             return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
         }
 
@@ -214,7 +214,7 @@ class MgtController extends Controller
 
     public function getControllerInstructor($cid, $facility)
     {
-        if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isFacilitySeniorStaff(null, $facility)) {
+        if (!RoleHelper::isVATUSAStaff() && (!RoleHelper::isFacilitySeniorStaff(null, $facility) || $user->flag_preventStaffAssign)) {
             return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
         }
 
