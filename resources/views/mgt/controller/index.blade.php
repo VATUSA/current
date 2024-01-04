@@ -389,7 +389,7 @@
                                         <li>Member of {{$user->facility}} since {{ $user->facility_join }}</li>
                                         @if(!str_contains($user->urating->long, "Instructor"))
                                             <li>Mentor?
-                                                @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $user->facility))
+                                                @if(\App\Classes\RoleHelper::isVATUSAStaff() || (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $user->facility) && !$user->flag_preventStaffAssign))
                                                     <a href="/mgt/controller/{{$user->cid}}/mentor">{{(\App\Classes\RoleHelper::isMentor($user->cid))?"Yes":"No"}}</a>
                                                 @else
                                                     {{(\App\Classes\RoleHelper::isMentor($user->cid))?"Yes":"No"}}
@@ -403,7 +403,7 @@
                                                 <li>
                                                     {{$visit->fac->id}} - {{$visit->fac->name}} 
                                                     <br> <span style="margin-left:2em;">MTR:
-                                                    @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id))
+                                                    @if(\App\Classes\RoleHelper::isVATUSAStaff() || (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id) && !$user->flag_preventStaffAssign))
                                                         <a href="/mgt/controller/{{$user->cid}}/mentor/{{$visit->fac->id}}">
                                                             {{(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))?"Yes":"No"}}
                                                         </a>
@@ -412,7 +412,7 @@
                                                     @endif
                                                     @if(\App\Classes\RoleHelper::isInstructor($user->cid))
                                                      - INS:
-                                                    @if(\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id))
+                                                    @if(\App\Classes\RoleHelper::isVATUSAStaff() || (\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $visit->fac->id) && !$user->flag_preventStaffAssign))
                                                         <a href="/mgt/controller/{{$user->cid}}/instructor/{{$visit->fac->id}}">
                                                             {{(\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id, false))?"Yes":"No"}}
                                                         </a>
