@@ -760,11 +760,11 @@ class MgtController extends Controller
 
         if (!$forms) {
             return redirect('mgt/facility#mem')->with('error',
-                'No evaluation forms found. Please try again later or contact VATUSA12.');
+                'No evaluation forms found. Please try again later or contact VATUSA6.');
         }
         if ($forms->count() !== 4) {
             return redirect('mgt/facility#mem')->with('error',
-                'Insufficient evaluation forms found. Please try again later or contact VATUSA12.');
+                'Insufficient evaluation forms found. Please try again later or contact VATUSA6.');
         }
 
         if (!$user->promotionEligible()) {

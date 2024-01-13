@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="panel-body">
                                     <p>To create a sub-facility (ie, center area, terminal area) please email
-                                        vatusa12@vatusa.net with the identifier desired
+                                        vatusa6@vatusa.net with the identifier desired
                                         (up to 4 letters) and English name. Identifiers to be related to the position,
                                         IE,
                                         TRACONs like M98, P31, etc. should use an identifier
