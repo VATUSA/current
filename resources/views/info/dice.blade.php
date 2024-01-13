@@ -1,5 +1,5 @@
 @extends('layout')
-@section('title', 'ACE Team')
+@section('title', 'DICE Team')
 @section('content')
     <div class="container">
         <div class="panel panel-default">

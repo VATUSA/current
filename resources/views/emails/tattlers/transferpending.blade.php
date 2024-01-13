@@ -5,12 +5,7 @@
 
     There is a transfer pending that is older than {{$days}} days.<br><br>
 
-    <p>Pursuant to DP002 6.1.8 - All transfer requests will be processed as expeditiously as possible. At the discretion
-        of the appropriate Region Manager, transfer requests may be approved or denied by the Region Manager if the
-        ATM has not processed a decision within 10 days of the original request submission date.</p>
-
-    <p>Pursuant to DP002 6.1.9 - Transfer requests not processed within 14 days may be approved or denied by the
-        Division Director (or his designee).</p>
+    <p>Pursuant to DP001 12.8 - All transfer requests shall be processed within 7 days. If not processed within this period, the transfer request may be approved or denied by the Deputy Division Director, Air Traffic Services.</p>
 
     <table class="callout"
            style="Margin-bottom: 16px; border-collapse: collapse; border-spacing: 0; margin-bottom: 16px; padding: 0; text-align: left; vertical-align: top;">
