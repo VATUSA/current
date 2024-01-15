@@ -204,10 +204,16 @@
                             </tr>
                             <tr>
                                 <td>It has been at least 90 days since your last transfer</td>
-                                <td>{!! ($checks['90days'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                @if($checks['is_first'] == 1)
+                                    <td><span class="text-success">N/A</span></td>
+                                @elseif($checks['90days'])
+                                    <td><i class="fa fa-check text-success"></i></td>
+                                @else
+                                    <td><i class="fa fa-times text-danger"></i></td>
+                                @endif
                             </tr>
                             <tr>
-                                <td>If it's your first facility, it has been at least 30 days since joining</td>
+                                <td>You are in your first facility</td>
                                 @if($checks['is_first'] == 0)
                                     <td><span class="text-success">N/A</span></td>
                                 @elseif($checks['initial'] == 1)
