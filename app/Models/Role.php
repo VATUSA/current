@@ -17,4 +17,9 @@ class Role extends Model
     }
 
 
+    public function title()
+    {
+        return $this->hasOne(RoleTitle::class, 'role', 'role');
+    }
+
 }

@@ -187,8 +187,9 @@ Route::group([
                     Route::get('promote', 'MgtController@getControllerPromote');
                     Route::get('togglebasic', 'MgtController@getControllerToggleBasic');
                     Route::post('promote', 'MgtController@postControllerPromote');
-                    Route::delete('transfer/override',
-                        'MgtController@deleteControllerTransferOverride');
+                    Route::post('role/assign', 'RoleController@postAssignRole');
+                    Route::post('role/revoke', 'RoleController@postRevokeRole');
+                    Route::delete('transfer/override', 'MgtController@deleteControllerTransferOverride');
                 });
 
                 Route::group(['prefix' => 'ajax'], function () {
