@@ -150,11 +150,6 @@ Route::group([
                     Route::delete('{cid}', 'FacMgtController@deleteController');
                     Route::post('api/generate', 'FacMgtController@postAPIGenerate');
                     Route::post('api/generate/sandbox', 'FacMgtController@postAPISandboxGenerate');
-                    Route::post('api/update', 'FacMgtController@postAPIIP');
-                    Route::post('api/update/sandbox', 'FacMgtController@postAPISandboxIP');
-                    Route::post('uls/generate', 'FacMgtController@postULSGenerate');
-                    Route::post('uls/return', 'FacMgtController@postULSReturn');
-                    Route::post('uls/devreturn', 'FacMgtController@postULSDevReturn');
                 });
             });
 

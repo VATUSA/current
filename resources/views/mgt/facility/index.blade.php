@@ -194,60 +194,6 @@
                                        autocomplete="off"/>
                                 <button class="btn btn-primary" onClick="updateDevUrl()">Update</button>
                                 <hr>
-                                <h1>ULS</h1>
-                                <fieldset>
-                                    <legend>Live</legend>
-                                    <b>ULSv2 JSON Web Key (JWK):</b> (<a
-                                        href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
-                                    <input type="text" readonly id="textulsv2jwk" class="form-control"
-                                           value="{{$facility->uls_jwk}}" autocomplete="off"><br>
-                                    <button class="btn btn-primary" onClick="ulsv2JWK()">Generate New</button>
-                                    <br><br>
-                                    <b>Return URLs:</b>
-                                    <div id="return-URLs">
-                                        <table class="table table-striped" id="ulsreturn-table">
-                                            <thead>
-                                            <tr>
-                                                <th style="color:#7a7a7a; width:40px;">ID</th>
-                                                <th style="color:#7a7a7a; width:500px;">URL</th>
-                                                <th style="color:#7a7a7a;">Actions</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            @foreach(\App\Classes\ULSHelper::getReturnPaths($facility->id) as $p)
-                                                <tr id="path-{{$p->order}}">
-                                                    <td class="rp-order">{{ $p->order }}</td>
-                                                    <td class="rp-url">{{ $p->url }}</td>
-                                                    <td class="rp-actions">
-                                                        <button class="btn btn-info"
-                                                                onclick="editUlsReturn({{$p->order . ", '" . $p->url . "'"}})">
-                                                            <i class="fas fa-pencil-alt"></i></button>
-                                                        <button class="btn btn-danger"
-                                                                onclick="removeUlsReturn({{$p->order}})">
-                                                            <i class="fas fa-times"></i></button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            </tbody>
-                                        </table>
-                                        <button class="btn btn-success" onclick="addUlsReturn()">Add Return URL</button>
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <fieldset>
-                                    <legend>Development</legend>
-                                    <b>Sandbox ULSv2 JSON Web Key (JWK):</b> (<a
-                                        href="https://tools.ietf.org/html/rfc7515">RFC7515</a> page 38) -- symmetric key<br>
-                                    <p class="help-block">When the <strong>?test</strong> query string parameter is set,
-                                        ULS will not redirect to VATSIM login. Instead, it will authenticate a test user
-                                        with CID 999 and random rating and email. Additionally, the signature will be
-                                        created according to the Sandbox JWK below.</p>
-                                    <input type="text" readonly id="textulsv2jwkdev" class="form-control"
-                                           value="{{$facility->uls_jwk_dev}}" autocomplete="off"><br>
-                                    <button class="btn btn-primary" onClick="ulsv2JWK(true)">Generate New</button>
-                                    <button class="btn btn-warning" onClick="clearDevULSv2JWK()">Clear</button>
-                                </fieldset>
-                                <br><br>
                                 <h1>API (v2)</h1>
                                 <fieldset>
                                     <legend>Live</legend>
@@ -727,27 +673,6 @@
         })
       }
 
-      function ulsv2JWK (isdev = false) {
-        $.ajax(
-          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: '', jwkdev: isdev}}
-        ).done(function (result) {
-          if (result) {
-            if (!isdev) $('#textulsv2jwk').val(result.uls_jwk)
-            else $('#textulsv2jwkdev').val(result.uls_jwk_dev)
-          }
-        })
-      }
-
-      function clearDevULSv2JWK () {
-        $.ajax(
-          {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {ulsV2jwk: 'X', jwkdev: true}}
-        ).done(function (result) {
-          if (result.hasOwnProperty('status') && result.status === 'OK') {
-            $('#textulsv2jwkdev').val('')
-          }
-        })
-      }
-
       function apiv2JWK (isdev = false) {
         $.ajax(
           {method: 'put', url: $.apiUrl() + "/v2/facility/{{$fac}}", data: {apiV2jwk: '', jwkdev: isdev}}
@@ -766,99 +691,6 @@
           if (result.hasOwnProperty('status') && result.status === 'OK') {
             $('#textapiv2jwkdev').val('')
           }
-        })
-      }
-
-      function ulsGen () {
-        $.post("/mgt/facility/{{$fac}}/uls/generate", function (result) {
-          if (result) $('#key').attr('value', result)
-        })
-      }
-
-      function removeUlsReturn (id) {
-        bootbox.confirm({
-          message : '<strong>Are you sure you want to remove the return path?</strong><br>This will shift all succeeding order IDs down.',
-          buttons : {
-            confirm: {
-              label    : 'Yes, delete',
-              className: 'btn-danger'
-            },
-            cancel : {
-              label    : 'No, cancel',
-              className: 'btn-default'
-            }
-          },
-          callback: result => {
-            if (result) {
-              waitingDialog.show()
-              $.ajax({
-                url   : $.apiUrl() + '/v2/facility/{{$fac}}/ulsReturns/' + id,
-                method: 'DELETE'
-              }).done(() => {
-                waitingDialog.hide()
-                window.location.hash = '#uls';
-                location.reload()
-              }).error(data => {
-                waitingDialog.hide()
-                bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong></div>')
-              })
-            }
-          }
-        })
-      }
-
-      function editUlsReturn (id, url) {
-        bootbox.prompt({
-          title   : 'Editing return URL #' + id,
-          value   : url,
-          callback: newUrl => {
-            if (!newUrl) return null
-            waitingDialog.show()
-            $.ajax({
-              url   : $.apiUrl() + '/v2/facility/{{$fac}}/ulsReturns/' + id,
-              method: 'PUT',
-              data  : {url: newUrl}
-            }).done(() => {
-              waitingDialog.hide()
-              $('#path-' + id).find('.rp-url').text(newUrl)
-            }).error(data => {
-              waitingDialog.hide()
-              bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong></div>')
-            })
-          }
-        })
-      }
-
-      function addUlsReturn () {
-        let lastOrder = parseInt($('#ulsreturn-table').find('.rp-order').last().text()),
-            order     = lastOrder ? lastOrder + 1 : 1
-        bootbox.prompt('New return URL #' + order, url => {
-          if (!url) return null
-          waitingDialog.show()
-          $.ajax({
-            url   : $.apiUrl() + '/v2/facility/{{$fac}}/ulsReturns',
-            method: 'POST',
-            data  : {url: url, order: order}
-          }).done(() => {
-            waitingDialog.hide()
-            let element = '<tr id="path-"' + order + '</td>' +
-              '<td class="rp-order">' + order + '</td>' +
-              '<td class="rp-url">' + url + '</td>' +
-              '<td class="rp-actions">' +
-              '<button class="btn btn-info" onclick="editUlsReturn(' + order + ')"><i class="fas fa-pencil-alt"></i></button>' +
-              '&nbsp;<button class="btn btn-danger" onclick="removeUlsReturn(' + order + ')"> <i class="fas fa-times"></i></button>' +
-              '</td>'
-            $(element).appendTo('#ulsreturn-table > tbody')
-          }).error(data => {
-            waitingDialog.hide()
-            bootbox.alert('<div class=\'alert alert-danger\'><strong>There was an error processing the request.</strong></div>')
-          })
-        })
-      }
-
-      function ulsDevUpdate () {
-        $.post('{{ url("/mgt/facility/$fac/uls/devreturn") }}', {ret: $('#devret').val()}).done(function (result) {
-          bootbox.alert('Updated')
         })
       }
 
