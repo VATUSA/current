@@ -21,12 +21,14 @@ class CloudflareServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (IpUtils::checkIp(request()->ip(), $this->fetchIps())) {
-            request()->server->add([
-                'ORIGINAL_REMOTE_ADDR' => request()->ip(),
-                'REMOTE_ADDR'          => filter_var(request()->header('HTTP_CF_CONNECTING_IP'),
-                    FILTER_VALIDATE_IP) ?: request()->ip()
-            ]);
+        if (env('APP_ENV') != "dev") {
+            if (IpUtils::checkIp(request()->ip(), $this->fetchIps())) {
+                request()->server->add([
+                    'ORIGINAL_REMOTE_ADDR' => request()->ip(),
+                    'REMOTE_ADDR' => filter_var(request()->header('HTTP_CF_CONNECTING_IP'),
+                        FILTER_VALIDATE_IP) ?: request()->ip()
+                ]);
+            }
         }
     }
 
