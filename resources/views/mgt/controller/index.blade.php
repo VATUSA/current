@@ -443,7 +443,7 @@
                                         </li>
                                         <br>
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
-                                            $user->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
+                                            $user->rating >= \App\Classes\Helper::ratingIntFromShort("OBS") && $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
                                             <li>Rating Change
                                                 <select id="ratingchange">
                                                     @foreach (\App\Models\Rating::get() as $rating)
