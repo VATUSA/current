@@ -176,8 +176,6 @@ Route::group([
                 Route::group(['prefix' => '{cid}'], function () {
                     Route::get('/', 'MgtController@getController')->name('mgt.controller.index');
                     Route::post('/', 'MgtController@getController');
-                    Route::get('mentor/{facility?}', 'MgtController@getControllerMentor');
-                    Route::get('instructor/{facility?}', 'MgtController@getControllerInstructor');
                     Route::post('rating', 'MgtController@postControllerRating');
                     Route::get('transfers', 'MgtController@getControllerTransfers');
                     Route::get('transferwaiver', 'MgtController@getControllerTransferWaiver');

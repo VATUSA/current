@@ -184,16 +184,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             $this->visits()->where('facility', $fac)->delete();
 
-            /** Remove Mentor Role */
-            Role::where("cid", $this->cid)->where("facility", $oldfac->id)->where(function ($query) {
-                $query->where("role", "MTR")->orWhere("role", "INS");
-            })->delete();
-            $moodle = new VATUSAMoodle();
-            try {
-                $moodle->unassignMentorRoles($this->cid);
-            } catch (Exception $e) {
-            }
-
             Cache::forget("roster-$facility-home");
             Cache::forget("roster-$facility-both");
         }
