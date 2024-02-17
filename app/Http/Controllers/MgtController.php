@@ -186,58 +186,6 @@ class MgtController extends Controller
         }
     }
 
-    public function getControllerMentor($cid, $facility = null)
-    {
-        $user = User::findOrFail($cid);
-
-        if ($facility == null) {
-            $facility = $user->facility;
-        }
-
-        if (!RoleHelper::isVATUSAStaff() && (!RoleHelper::isFacilitySeniorStaff(null, $facility) || $user->flag_preventStaffAssign)) {
-            return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
-        }
-
-        if (!RoleHelperV2::hasRole($cid, "MTR", $facility)) {
-            RoleHelperV2::assignRole($cid, "MTR", $facility);
-            return redirect("/mgt/controller/$cid")->with("success", "Successfully set as mentor");
-        } else {
-            $moodle = new VATUSAMoodle();
-            try {
-                $moodle->unassignMentorRoles($cid);
-            } catch (Exception $e) {
-                return redirect("/mgt/controller")->with("error",
-                    "Unable to remove roles from Moodle. Please try again later.");
-            }
-            RoleHelperV2::revokeRole($cid, "MTR", $facility);
-            return redirect("/mgt/controller/$cid")->with("success", "Successfully removed mentor role");
-        }
-    }
-
-    public function getControllerInstructor($cid, $facility)
-    {
-        if (!RoleHelper::isVATUSAStaff() && (!RoleHelper::isFacilitySeniorStaff(null, $facility) || $user->flag_preventStaffAssign)) {
-            return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
-        }
-
-        $user = User::findOrFail($cid);
-
-        if (!Facility::where('id', $facility)->where('active', 1)->exists()) {
-            return redirect("/mgt/controller")->with("error", "Incorrect facility name");
-        }
-
-        if (!RoleHelper::isInstructor($cid)) {
-            return redirect("/mgt/controller")->with("error", "User is not an Instructor");
-        }
-
-        RoleHelperV2::toggleRole($cid, "INS", $facility);
-        if (RoleHelperV2::hasrole($cid, "MTR", $facility)) {
-            RoleHelperV2::revokeRole($cid, "MTR", $facility);
-        }
-        return redirect("/mgt/controller/$cid")->with("success", "Successfully toggled Instructor role");
-
-    }
-
     /* Controller AJAX */
     public function getControllerTransfers(Request $request, $cid)
     {
@@ -298,12 +246,6 @@ class MgtController extends Controller
             ]);
 
             if ($return) {
-                if ($rating >= Helper::ratingIntFromShort("I1")) {
-                    Role::where("cid", $cid)->where("facility", $user->facility)->where(function ($query) {
-                        $query->where("role", "MTR")->orWhere("role", "INS");
-                    })->delete();
-                }
-
                 echo "1";
             } else {
                 echo "0";

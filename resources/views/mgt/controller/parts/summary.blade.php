@@ -79,28 +79,16 @@
             </li>
             <br>
             @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
-                $user->rating >= \App\Classes\Helper::ratingIntFromShort("C1") && $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
+                $user->rating >= \App\Classes\Helper::ratingIntFromShort("OBS") && $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
                 <li>Rating Change
                     <select id="ratingchange">
-                        <option value="{{\App\Classes\Helper::ratingIntFromShort("C1")}}">C1
-                            -
-                            Enroute
-                            Controller
-                        </option>
-                        <option value="{{\App\Classes\Helper::ratingIntFromShort("C3")}}">C3
-                            -
-                            Senior
-                            Controller
-                        </option>
-                        <option value="{{\App\Classes\Helper::ratingIntFromShort("I1")}}">I1
-                            -
-                            Instructor
-                        </option>
-                        <option value="{{\App\Classes\Helper::ratingIntFromShort("I3")}}">I3
-                            -
-                            Senior
-                            Instructor
-                        </option>
+                        @foreach (\App\Models\Rating::get() as $rating)
+                            @if(in_array($rating->id, [1,2,3,4,5,7,8,10]))
+                                <option
+                                        @if ($user->rating == $rating->id) selected @endif
+                                        value="{{$rating->id}}">{{$rating->short}} - {{$rating->long}}</option>
+                            @endif
+                        @endforeach
                     </select>
                     <div class="alert alert-danger" id="ratingchange-warning"
                          style="display:none;"><strong><i class="fas fa-times"></i>
