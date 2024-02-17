@@ -273,7 +273,7 @@ class MgtController extends Controller
         if (!$user) {
             abort(404);
         }
-        if ($user->rating < Helper::ratingIntFromShort("C1") || $user->rating > Helper::ratingIntFromShort("I3")) {
+        if ($user->rating < Helper::ratingIntFromShort("OBS") || $user->rating > Helper::ratingIntFromShort("I3")) {
             abort(401);
         }
 
