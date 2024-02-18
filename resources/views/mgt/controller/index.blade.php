@@ -548,6 +548,10 @@
                                             <td>{!! ($checks['pending'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                                         </tr>
                                         <tr>
+                                            <td>Has a transfer waiver?</td>
+                                            <td>{!! ($checks['override'])?'<i class="fa fa-check text-success"></i>':'<span class="text-success">N/A</span>' !!}</td>
+                                        </tr>
+                                        <tr>
                                             <td>Are they eligible?</td>
                                             <td>{!! ($eligible)?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                                         </tr>
@@ -567,6 +571,10 @@
                                         <tr>
                                             <td>Needs to complete RCE Exam?</td>
                                             <td>{!! ($checks['needbasic'])?'<span class="text-success">No</span>':'<span class="text-danger">Yes</span>' !!}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Has at least an S1 rating?</td>
+                                            <td>{!! ($checks['hasRating'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                                         </tr>
                                         <tr>
                                             <td>Has it been at least 90 days since promotion to S1, S2, S3, or C1?</td>

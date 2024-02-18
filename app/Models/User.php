@@ -426,6 +426,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $checks['hasHome'] = 0;
         }
 
+        if ($this->rating >= Helper::ratingIntFromShort("S1")){
+            $checks['hasRating'] = 1;
+        } else {
+            $checks['hasRating'] = 0;
+        }
+
         if ($this->rating >= Helper::ratingIntFromShort("I1") && $this->rating <= Helper::ratingIntFromShort("I3")) {
             $checks['instructor'] = 0;
         } else {
@@ -457,7 +463,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         /*        if ($this->facility == "ZAE" && !$this->flag_needbasic && !$this->selectionEligible() && !Transfers::where('cid', $this->cid)->where('status',0)->count())
                     return true;*/
 
-        if($checks['hasHome'] && $checks['50hrs'] && $checks['needbasic'] && $checks['promo']){
+        if($checks['hasRating'] && $checks['hasHome'] && $checks['50hrs'] && $checks['needbasic'] && $checks['promo']){
             $checks['visiting'] = 1;
         } else {
             $checks['visiting'] = 0;

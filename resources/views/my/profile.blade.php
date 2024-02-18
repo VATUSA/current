@@ -249,6 +249,10 @@
                                 <td>{!! ($checks['pending'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
+                                <td>You have been issued a transfer waiver</td>
+                                <td>{!! ($checks['override'])?'<i class="fa fa-check text-success"></i>':'<span class="text-success">N/A</span>' !!}</td>
+                            </tr>
+                            <tr>
                                 <td>If all of the above are green, you are eligible to submit a transfer request. Are you
                                     eligible?
                                 </td>
@@ -269,6 +273,10 @@
                             <tr>
                                 <td>If applicable, you have completed the appropriate RCE</td>
                                 <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
+                            </tr>
+                            <tr>
+                                <td>You have earned at least an S1 rating</td>
+                                <td>{!! ($checks['hasRating'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
                                 <td>It has been at least 90 days since promotion to S1, S2, S3, or C1</td>
