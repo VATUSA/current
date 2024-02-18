@@ -227,6 +227,16 @@
                                 <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
+                                <td>You have controlled 50 hours since promotion to S1, S2, S3, or C1</td>
+                                @if($checks['hasHome'] == 0)
+                                    <td><span class="text-success">N/A</span></td>
+                                @elseif($checks['50hrs'] == 1)
+                                    <td><i class="fa fa-check text-success"></i></td>
+                                @else
+                                    <td><i class="fa fa-times text-danger"></i></td>
+                                @endif
+                            </tr>
+                            <tr>
                                 <td>You do not hold a staff position at a facility</td>
                                 <td>{!! ($checks['staff'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
@@ -243,6 +253,36 @@
                                     eligible?
                                 </td>
                                 <td>{!! ($eligible)?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                            </tr>
+                        </table>
+                        <table class="table table-responsive table-striped">
+                            <thead>
+                            <tr>
+                                <th style="width:100%;">Visiting eligibility checks</th>
+                                <th>Pass/Fail</th>
+                            </tr>
+                            </thead>
+                            <tr>
+                                <td>You have a home facility</td>
+                                <td>{!! ($checks['hasHome'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                            </tr>
+                            <tr>
+                                <td>If applicable, you have completed the appropriate RCE</td>
+                                <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
+                            </tr>
+                            <tr>
+                                <td>It has been at least 90 days since promotion to S1, S2, S3, or C1</td>
+                                <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                            </tr>
+                            <tr>
+                                <td>You have controlled 50 hours since promotion to S1, S2, S3, or C1</td>
+                                <td>{!! ($checks['50hrs'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                            </tr>
+                            <tr>
+                                <td>If all of the above are green, you are eligible to visit within VATUSA. Are you
+                                    eligible?
+                                </td>
+                                <td>{!! ($checks['visiting'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                         </table>
                     </div>

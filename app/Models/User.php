@@ -7,6 +7,7 @@ use App\Classes\VATUSAMoodle;
 use Carbon\Carbon;
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
+use App\Classes\VATSIMApi2Helper;
 use Exception;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -346,6 +347,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $checks['initial'] = 0;
         $checks['90days'] = 0;
         $checks['promo'] = 0;
+        $checks['50hrs'] = 1;
         $checks['override'] = 0;
         $checks['is_first'] = 1;
         $checks['homecontroller'] = $this->flag_homecontroller;
@@ -403,6 +405,27 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $checks['promo'] = 0;
         }
 
+        // 50 hours consolidating current rating
+        $ratingHours = VATSIMApi2Helper::fetchRatingHours($this->cid);
+        if($this->rating == Helper::ratingIntFromShort("S1") && $ratingHours['s1'] < 50){
+            $checks['50hrs'] = 0;
+        }
+        if($this->rating == Helper::ratingIntFromShort("S2") && $ratingHours['s2'] < 50){
+            $checks['50hrs'] = 0;
+        }
+        if($this->rating == Helper::ratingIntFromShort("S3") && $ratingHours['s3'] < 50){
+            $checks['50hrs'] = 0;
+        }
+        if($this->rating == Helper::ratingIntFromShort("C1") && $ratingHours['c1'] < 50){
+            $checks['50hrs'] = 0;
+        }
+        
+        if (!in_array($this->facility, ["ZAE", "ZZI"])) {
+            $checks['hasHome'] = 1;
+        } else {
+            $checks['hasHome'] = 0;
+        }
+
         if ($this->rating >= Helper::ratingIntFromShort("I1") && $this->rating <= Helper::ratingIntFromShort("I3")) {
             $checks['instructor'] = 0;
         } else {
@@ -434,6 +457,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         /*        if ($this->facility == "ZAE" && !$this->flag_needbasic && !$this->selectionEligible() && !Transfers::where('cid', $this->cid)->where('status',0)->count())
                     return true;*/
 
+        if($checks['hasHome'] && $checks['50hrs'] && $checks['needbasic'] && $checks['promo']){
+            $checks['visiting'] = 1;
+        } else {
+            $checks['visiting'] = 0;
+        }
+
         // Override flag
         if ($this->flag_xferOverride) {
             $checks['override'] = 1;
@@ -444,7 +473,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($checks['override']) {
             return true;
         }
-        if ($checks['instructor'] && $checks['staff'] && $checks['homecontroller'] && $checks['needbasic'] && $checks['pending'] && (($checks['is_first'] && $checks['initial']) || $checks['90days']) && $checks['promo']) {
+        if (($checks['50hrs'] || !$checks['hasHome']) && $checks['instructor'] && $checks['staff'] && $checks['homecontroller'] && $checks['needbasic'] && $checks['pending'] && (($checks['is_first'] && $checks['initial']) || $checks['90days']) && $checks['promo']) {
             return true;
         } else {
             return false;

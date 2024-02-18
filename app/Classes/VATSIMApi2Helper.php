@@ -39,6 +39,18 @@ class VATSIMApi2Helper {
         return $response->getStatusCode() == 200;
     }
 
+    static function fetchRatingHours($cid) {
+        $path = "/v2/members/{$cid}/stats";
+        $client = self::_client();
+        try {
+            $response = $client->get($path);
+        } catch (Exception\GuzzleException $e) {
+            echo $e->getMessage() . "\n";
+            return null;
+        }
+        return json_decode($response->getBody(), true);
+    }
+
     static function fetchOrgMemberPage($page) {
         $limit = 100;
         $offset = $limit * $page;
