@@ -275,7 +275,7 @@
                                 <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
                             </tr>
                             <tr>
-                                <td>You have earned at least an S1 rating</td>
+                                <td>You have earned at least an S3 rating</td>
                                 <td>{!! ($checks['hasRating'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>

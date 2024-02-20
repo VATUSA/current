@@ -426,7 +426,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $checks['hasHome'] = 0;
         }
 
-        if ($this->rating >= Helper::ratingIntFromShort("S1")){
+        if ($this->rating >= Helper::ratingIntFromShort("S3")){
             $checks['hasRating'] = 1;
         } else {
             $checks['hasRating'] = 0;
