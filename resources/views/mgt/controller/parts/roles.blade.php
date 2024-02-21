@@ -60,7 +60,7 @@
                 <select id="frFacility" name="facility">
                     <option>---</option>
                     @foreach(\App\Models\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f)
-                        @if($isVATUSAStaff || \App\Classes\RoleHelper::isFacilitySeniorStaff(null, $f->id, false, false) || in_array($f->id, ["ZDV", "ZLC"]))
+                        @if($isVATUSAStaff || \App\Classes\RoleHelper::isFacilitySeniorStaff(null, $f->id, false, false))
                             <option value="{{$f->id}}">{{$f->id}}</option>
                         @endif
                     @endforeach
