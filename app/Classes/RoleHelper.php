@@ -274,16 +274,6 @@ class RoleHelper
             return true;
         }
 
-        if (Facility::where("wm", $cid)->where("id", $facility)->count()) {
-            return true;
-        }
-        if (Facility::where("ec", $cid)->where("id", $facility)->count()) {
-            return true;
-        }
-        if (Facility::where("fe", $cid)->where("id", $facility)->count()) {
-            return true;
-        }
-
         return false;
     }
 
@@ -320,16 +310,6 @@ class RoleHelper
             return true;
         }
 
-        if (Facility::where("atm", $cid)->where("id", $facility)->count()) {
-            return true;
-        }
-        if (Facility::where("datm", $cid)->where("id", $facility)->count()) {
-            return true;
-        }
-        if (Facility::where("ta", $cid)->where("id", $facility)->count()) {
-            return true;
-        }
-
         return false;
     }
 
@@ -356,13 +336,6 @@ class RoleHelper
             return true;
         }
 
-        if (Facility::where("atm", $cid)->where("id", $facility)->count()) {
-            return true;
-        }
-        if (Facility::where("datm", $cid)->where("id", $facility)->count()) {
-            return true;
-        }
-
         return false;
     }
 
@@ -383,10 +356,6 @@ class RoleHelper
         }
 
         if (Role::where("facility", $facility)->where("cid", $cid)->where("role", "TA")->count()) {
-            return true;
-        }
-
-        if (Facility::where("ta", $cid)->where("id", $facility)->count()) {
             return true;
         }
 
@@ -580,213 +549,15 @@ class RoleHelper
         return $staff;
     }
 
-    public static function addFacilityStaffPosition($facility, $cid, $pos, $xfer = true) {
-        $u = User::where('cid', $cid)->first();
-        $un = $u->fname . ' ' . $u->lname;
-
-        if ($u->facility == "ZZN") {
-            return "User is not part of VATUSA and is not eligible for staff positions";
-        }
-        if ($u->flag_preventStaffAssign) {
-            return "This user is current not eligible for a staff position. Please contact VATUSA Staff for more information.";
-        }
-
-        $log = new Actions;
-        $log->to = $u->cid;
-        $log->from = Auth::user()->cid;
-        $log->log = "Set as " . $facility . " " . $pos . " by " . \App\Classes\Helper::nameFromCID(Auth::user()->cid);
-        $log->save();
-
-        //INSERT TRANSFER FLAG
-        if ($u->facility != $facility && $xfer) {
-            $uc = User::where('cid', $cid)->first();
-            $uc->addToFacility($facility);
-
-            $tr = new Transfers;
-            $tr->cid = $cid;
-            $tr->reason = "Auto Transfer: Controller set as staff.";
-            $tr->to = $facility;
-            $tr->from = $u->facility;
-            $tr->status = 1;
-            $tr->actionby = 0;
-            $tr->save();
-
-            $log = new Actions;
-            $log->to = $u->cid;
-            $log->from = 0;
-            $log->log = "Auto Transfer to " . $facility . ", controller set as staff.";
-            $log->save();
-        }
-
-        $fac = Facility::where('id', $facility)->first();
-
-        $role = new Role();
-        $role->cid = $cid;
-        $role->facility = $fac->id;
-        $role->role = $pos;
-        $role->save();
-
-        switch ($pos) {
-            case 'ATM':
-                if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, 'ATM');
-                }
-                $fac->atm = $cid;
-                break;
-            case 'DATM':
-                if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, 'DATM');
-                }
-                $fac->datm = $cid;
-                break;
-            case 'TA':
-                if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, 'TA');
-                }
-                $fac->ta = $cid;
-                break;
-            case 'EC':
-                if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, 'EC');
-                }
-                $fac->ec = $cid;
-                break;
-            case 'FE':
-                if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, 'FE');
-                }
-                $fac->fe = $cid;
-                break;
-            case 'WM':
-                if ($fac->atm != 0) {
-                    self::deleteFacilityStaffPosition($facility, 'WM');
-                }
-                $fac->wm = $cid;
-                break;
-        }
-        $fac->save();
-        DiscordHelper::assignRoles($cid);
-        SMFHelper::setPermissions($u->cid);
-    }
-
-    public static function deleteFacilityStaffPosition($facility, $pos) {
-        $fac = Facility::where('id', $facility)->first();
-        switch ($pos) {
-            case 'ATM':
-                $cid = $fac->atm;
-                $fac->atm = 0;
-                break;
-            case 'DATM':
-                $cid = $fac->datm;
-                $fac->datm = 0;
-                break;
-            case 'TA':
-                $cid = $fac->ta;
-                $fac->ta = 0;
-                break;
-            case 'EC':
-                $cid = $fac->ec;
-                $fac->ec = 0;
-                break;
-            case 'FE':
-                $cid = $fac->fe;
-                $fac->fe = 0;
-                break;
-            case 'WM':
-                $cid = $fac->wm;
-                $fac->wm = 0;
-                break;
-            default:
-                return;
-        }
-        if ($cid == 0)
-            return;
-        $fac->save();
-
-        $u = User::where('cid', $cid)->first();
-
-        $log = new Actions;
-        $log->to = $cid;
-        $log->from = Auth::user()->cid;
-        $log->log = "Removed from " . $facility . " " . $pos . " by "
-            . \App\Classes\Helper::nameFromCID(Auth::user()->cid);
-        $log->save();
-        $role = Role::where('cid', $cid)->where('facility', $facility)->where('role', $pos);
-        $role->delete();
-
-        DiscordHelper::assignRoles($cid);
-        SMFHelper::setPermissions($u->cid);
-    }
-
-    public static function deleteStaff($facility, $cid, $pos)
-    {
-        $id = intval($pos);
-        switch ($id) {
-            case 1:
-                $pos = 'ATM';
-                break;
-            case 2:
-                $pos = 'DATM';
-                break;
-            case 3:
-                $pos = 'TA';
-                break;
-            case 4:
-                $pos = 'EC';
-                break;
-            case 5:
-                $pos = 'FE';
-                break;
-            case 6:
-                $pos = 'WM';
-                break;
-        }
-        $spos = strtolower($pos);
-
-        $fu = Facility::where('id', $facility)->first();
-        $oldstaff = $fu->$spos;
-
-        if ($oldstaff == $cid) {
-            $fu->$spos = 0;
-            $fu->save();
-            $user = User::where('cid', $oldstaff)->first();
-            $log = new Actions();
-            $log->to = $user->cid;
-            $log->log = "User removed from " . $fu->name . " $pos by " . \Auth::user()->fullname() . ".";
-            $log->save();
-
-            $email = $fu->id . "-" . $spos . "@vatusa.net";
-            if (!EmailHelper::isStaticForward($email)) {
-                if ($spos == "atm") {
-                    $fwd = "vatusa2@vatusa.net";
-                } else {
-                    $fwd[] = $fu->id . "-atm@vatusa.net";
-                    if ($spos != "datm") {
-                        $fwd[] = $fu->id . "-datm@vatusa.net";
-                    }
-                }
-
-                EmailHelper::setForward($email, $fwd);
-            }
-
-            SMFHelper::setPermissions($user->cid);
-        }
-    }
-
-    public static function validRoles()
-    {
-        return ['MENTOR', 'INS'];
-    }
-
     public static function isTrainingStaff(
         $cid = null,
         bool $includeMentor = true,
         $facility = null,
         bool $includeVATUSA = true
     ) {
-        return ($includeMentor && self::isMentor($cid, $facility)) || self::isInstructor($cid, $facility,
-                $includeVATUSA) || self::isFacilitySeniorStaff($cid,
-                $facility, false, $includeVATUSA);
+        return ($includeMentor && self::isMentor($cid, $facility)) ||
+            self::isInstructor($cid, $facility, $includeVATUSA) ||
+            ($includeVATUSA && self::isVATUSAStaff());
     }
 
     /**

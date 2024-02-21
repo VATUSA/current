@@ -2,8 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Classes\DiscordHelper;
 use App\Classes\RoleHelper;
 use App\Models\Actions;
+use App\Models\Facility;
 use App\Models\Role;
 use App\Models\RoleTitle;
 use Illuminate\Support\Facades\Auth;
@@ -64,6 +66,7 @@ class RoleHelperV2
         $log->to = $cid;
         $log->log = $roleStr . " role assigned by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
         $log->save();
+        DiscordHelper::assignRoles($cid);
     }
 
     public static function revokeRole(int $cid, string $role, string $facility)
@@ -76,6 +79,36 @@ class RoleHelperV2
         $log->to = $cid;
         $log->log = $roleStr . " role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
         $log->save();
+        DiscordHelper::assignRoles($cid);
+
+        // Also remove from point of contact, if set
+        $fac = Facility::where('id', $facility)->first();
+        switch ($role) {
+            case 'ATM':
+                if ($cid == $fac->atm)
+                    $fac->atm = 0;
+                break;
+            case 'DATM':
+                if ($cid == $fac->datm)
+                    $fac->datm = 0;
+                break;
+            case 'TA':
+                if ($cid == $fac->ta)
+                    $fac->ta = 0;
+                break;
+            case 'EC':
+                if ($cid == $fac->ec)
+                    $fac->ec = 0;
+                break;
+            case 'FE':
+                if ($cid == $fac->fe)
+                    $fac->fe = 0;
+                break;
+            case 'WM':
+                if ($cid == $fac->wm)
+                    $fac->wm = 0;
+                break;
+        }
     }
 
     // Assigns a role if not assigned, revokes that role if it is assigned

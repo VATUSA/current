@@ -4,6 +4,7 @@ use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
+use App\Helpers\RoleHelperV2;
 use App\Models\Role;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\ConnectException;
@@ -219,32 +220,32 @@ class CERTSync extends Command
         }
         $fac = Facility::find($user->facility);
         if (RoleHelper::hasRole($user->cid, $user->facility, "ATM")) {
-            RoleHelper::deleteStaff($user->facility, $user->cid, "ATM");
+            RoleHelperV2::revokeRole($user->cid, "ATM", $user->facility);
             $removals .= "Removed from ATM of " . $user->facility . "\n";
         }
         if (RoleHelper::hasRole($user->cid, $user->facility, "DATM")) {
-            RoleHelper::deleteStaff($user->facility, $user->cid, "DATM");
+            RoleHelperV2::revokeRole($user->cid, "DATM", $user->facility);
             $removals .= "Removed from DATM of " . $user->facility . "\n";
         }
         if (RoleHelper::hasRole($user->cid, $user->facility, "TA")) {
-            RoleHelper::deleteStaff($user->facility, $user->cid, "TA");
+            RoleHelperV2::revokeRole($user->cid, "TA", $user->facility);
             $removals .= "Removed from TA of " . $user->facility . "\n";
         }
         if (RoleHelper::hasRole($user->cid, $user->facility, "EC")) {
-            RoleHelper::deleteStaff($user->facility, $user->cid, "EC");
+            RoleHelperV2::revokeRole($user->cid, "EC", $user->facility);
             $removals .= "Removed from EC of " . $user->facility . "\n";
         }
         if (RoleHelper::hasRole($user->cid, $user->facility, "FE")) {
-            RoleHelper::deleteStaff($user->facility, $user->cid, "FE");
+            RoleHelperV2::revokeRole($user->cid, "FE", $user->facility);
             $removals .= "Removed from FE of " . $user->facility . "\n";
         }
         if (RoleHelper::hasRole($user->cid, $user->facility, "WM")) {
-            RoleHelper::deleteStaff($user->facility, $user->cid, "WM");
+            RoleHelperV2::revokeRole($user->cid, "WM", $user->facility);
             $removals .= "Removed from WM of " . $user->facility . "\n";
         }
         foreach (Role::where('cid', $user->cid)->get() as $role) {
+            RoleHelperV2::revokeRole($role->cid, $role->role, $role->facility);
             $removals .= "Removed role " . $role->role . " for " . $role->facility . "\n";
-            $role->delete();
         }
 
         /*if ($removals) {

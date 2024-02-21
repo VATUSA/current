@@ -6,11 +6,11 @@
             <div class="panel-heading">
                 <h3 class="panel-title">
                     @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
-                        <select id="facmgt"
-                                class="mgt-sel">@foreach(\App\Models\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f)
-                                <option name="{{$f->id}}"
-                                        @if($f->id == $fac) selected @endif>{{$f->id}}</option>
-                            @endforeach</select>
+                        <select id="facmgt" class="mgt-sel">
+                            @foreach(\App\Models\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f)
+                                <option name="{{$f->id}}" @if($f->id == $fac) selected @endif>{{$f->id}}</option>
+                            @endforeach
+                        </select>
                         - Facility Management
                     @else
                         Facility Management - {{ Auth::user()->facility()->name }}
@@ -20,34 +20,45 @@
             <div class="panel-body">
                 <div>
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#dash" aria-controls="dash" role="tab"
-                                                                  data-toggle="tab"><i
-                                        class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li role="presentation" class="active">
+                            <a href="#dash" aria-controls="dash" role="tab" data-toggle="tab">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
                         @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
                             <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i
                                             class="fas fa-exchange-alt"></i> Transfers</a>
                             </li>
                         @endif
-                        <li role="presentation"><a href="#hroster" aria-controls="hroster" role="tab"
-                                                   data-toggle="tab"><i class="fas fa-users"></i> Home Roster</a></li>
-                        <li role="presentation"><a href="#vroster" aria-controls="vroster" role="tab"
-                                                   data-toggle="tab"><i class="fas fa-door-open"></i> Visiting
-                                Roster</a></li>
+                        <li role="presentation">
+                            <a href="#hroster" aria-controls="hroster" role="tab" data-toggle="tab">
+                                <i class="fas fa-users"></i> Home Roster
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#vroster" aria-controls="vroster" role="tab" data-toggle="tab">
+                                <i class="fas fa-door-open"></i> Visiting Roster
+                            </a>
+                        </li>
                         @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
-                            <li role="presentation"><a href="{{ url("mgt/facility/training/stats") }}"
-                                                       aria-controls="training"><i class="fas fa-chart-line"></i>
-                                    Training</a></li>
-                        @endif
-                        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#uls" aria-controls="uls" role="tab" data-toggle="tab"><i
-                                            class="fas fa-server"></i> Tech
-                                    Conf</a>
+                            <li role="presentation">
+                                <a href="{{ url("mgt/facility/training/stats") }}" aria-controls="training">
+                                    <i class="fas fa-chart-line"></i> Training
+                                </a>
                             </li>
                         @endif
                         @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
-                            <li role="presentation"><a href="#email" aria-controls="email" role="tab" data-toggle="tab"><i
-                                            class="fas fa-envelope"></i> Email
-                                    Conf</a>
+                            <li role="presentation">
+                                <a href="#uls" aria-controls="uls" role="tab" data-toggle="tab">
+                                    <i class="fas fa-server"></i> Tech Conf
+                                </a>
+                            </li>
+                        @endif
+                        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                            <li role="presentation">
+                                <a href="#email" aria-controls="email" role="tab" data-toggle="tab">
+                                    <i class="fas fa-envelope"></i> Email Conf
+                                </a>
                             </li>
                         @endif
                     </ul>
@@ -159,9 +170,6 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         $(document).ready(function () {
-            $.post('{{ url("/mgt/ajax/staff/$fac") }}', function (data) {
-                $('#staff-table').html(data)
-            })
             $('#facmgt').change(function () {
                 window.location = '/mgt/facility/' + $('#facmgt').val()
             })

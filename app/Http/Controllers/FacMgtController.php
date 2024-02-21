@@ -3,6 +3,7 @@
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\SMFHelper;
+use App\Models\Role;
 use Auth;
 use App\Models\Transfers;
 use Illuminate\Http\Request;
@@ -12,19 +13,22 @@ use App\Classes\RoleHelper;
 use App\Models\Actions;
 use Illuminate\Support\Facades\Cache;
 
-class FacMgtController extends Controller {
+class FacMgtController extends Controller
+{
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         //       $this->middleware('ins');
     }
 
 
-    public function getIndex($fac = null) {
+    public function getIndex($fac = null)
+    {
         if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() &&
             !RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam() && !RoleHelper::hasRole(Auth::user()->cid,
                 $fac ?? Auth::user()->facility, "WM")) {
@@ -52,11 +56,32 @@ class FacMgtController extends Controller {
 
         $promotionEligible = Cache::get("promotionEligible-$fac") ?? "N/A";
 
+        $staffPOCOptions = [];
+
+        foreach (["ATM", "DATM", "TA", "EC", "FE", "WM"] as $role) {
+            $staffPOCOptions[$role] = [];
+            foreach (Role::where("facility", $fac)->where("role", $role)->get() as $userRole) {
+                $staffPOCOptions[$role][$userRole->user->cid] = $userRole->user->fname . " " . $userRole->user->lname;
+            }
+        }
+
         return view('mgt.facility.index',
-            ['fac' => $fac, 'facility' => $facility, 'promotionEligible' => $promotionEligible]);
+            [
+                'fac' => $fac,
+                'facility' => $facility,
+                'promotionEligible' => $promotionEligible,
+                'atm' => RoleHelper::getNameFromRole('ATM', $fac, 1),
+                'datm' => RoleHelper::getNameFromRole('DATM', $fac, 1),
+                'ta' => RoleHelper::getNameFromRole('TA', $fac, 1),
+                'ec' => RoleHelper::getNameFromRole('EC', $fac, 1),
+                'fe' => RoleHelper::getNameFromRole('FE', $fac, 1),
+                'wm' => RoleHelper::getNameFromRole('WM', $fac, 1),
+                'staffPOCOptions' => $staffPOCOptions,
+            ]);
     }
 
-    public function postAPIGenerate(Request $request, $facility) {
+    public function postAPIGenerate(Request $request, $facility)
+    {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -79,7 +104,8 @@ class FacMgtController extends Controller {
         return;
     }
 
-    public function postAPISandboxGenerate(Request $request, $facility) {
+    public function postAPISandboxGenerate(Request $request, $facility)
+    {
         if (!$request->ajax()) {
             abort(401);
         }
@@ -102,54 +128,55 @@ class FacMgtController extends Controller {
         return;
     }
 
-    public function ajaxPosition(Request $request, $facility, $id) {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-
+    public function savePointsOfContact(Request $request, $fac)
+    {
         if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "ATM")
             && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "DATM")
             && !RoleHelper::isVATUSAStaff()) {
             abort(401);
         }
+        $facility = Facility::findOrFail($fac);
 
-        switch ($id) {
-            case 1:
-                $pos = 'ATM';
-                break;
-            case 2:
-                $pos = 'DATM';
-                break;
-            case 3:
-                $pos = 'TA';
-                break;
-            case 4:
-                $pos = 'EC';
-                break;
-            case 5:
-                $pos = 'FE';
-                break;
-            case 6:
-                $pos = 'WM';
-                break;
-            default:
-                return "Invalid position ID";
-        }
-        $cid = $request->input('cid');
-        $xfer = $request->input('xfer');
+        $staffPOCOptions = [];
 
-        $error = RoleHelper::addFacilityStaffPosition($facility, $cid, $pos, $xfer == "true");
-        if ($error) {
-            return $error;
+        foreach (["ATM", "DATM", "TA", "EC", "FE", "WM"] as $role) {
+            $staffPOCOptions[$role] = [];
+            foreach (Role::where("facility", $fac)->where("role", $role)->get() as $userRole) {
+                $staffPOCOptions[$role][] = $userRole->user->cid;
+            }
         }
 
-        $u = User::where('cid', $cid)->first();
-        $un = $u->fname . ' ' . $u->lname;
+        $atm = (int)$request->get('atm');
+        $datm = (int)$request->get('datm');
+        $ta = (int)$request->get('ta');
+        $ec = (int)$request->get('ec');
+        $fe = (int)$request->get('fe');
+        $wm = (int)$request->get('wm');
 
-        return $pos . ' successfully changed to ' . $un . '.';
+        if (RoleHelper::isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
+            $facility->atm = $atm;
+        }
+        if (RoleHelper::isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
+            $facility->datm = $datm;
+        }
+        if (RoleHelper::isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
+            $facility->ta = $ta;
+        }
+        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($ec == -1 || in_array($ec, $staffPOCOptions["EC"]))) {
+            $facility->ec = $ec;
+        }
+        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($fe == -1 || in_array($fe, $staffPOCOptions["FE"]))) {
+            $facility->fe = $fe;
+        }
+        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($wm == -1 || in_array($wm, $staffPOCOptions["WM"]))) {
+            $facility->wm = $wm;
+        }
+        $facility->save();
+        return redirect("/mgt/facility/" . $fac);
     }
 
-    public function deleteController(Request $request, $facility, $cid) {
+    public function deleteController(Request $request, $facility, $cid)
+    {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -168,46 +195,8 @@ class FacMgtController extends Controller {
         $user->removeFromFacility(Auth::user()->cid, $vars['reason']);
     }
 
-    public function ajaxPositionDel(Request $request, $facility) {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "ATM")
-            && !RoleHelper::hasRole(Auth::user()->cid, $facility, "DATM")
-            && !RoleHelper::isVATUSAStaff()) {
-            abort(401);
-        }
-
-        if (isset($_POST['pos'])) {
-            $id = intval($_POST['pos']);
-            switch ($id) {
-                case 1:
-                    $pos = 'ATM';
-                    break;
-                case 2:
-                    $pos = 'DATM';
-                    break;
-                case 3:
-                    $pos = 'TA';
-                    break;
-                case 4:
-                    $pos = 'EC';
-                    break;
-                case 5:
-                    $pos = 'FE';
-                    break;
-                case 6:
-                    $pos = 'WM';
-                    break;
-            }
-            RoleHelper::deleteFacilityStaffPosition($facility, $pos);
-            return 1;
-        }
-
-        return 0;
-    }
-
-    public function ajaxTransfers(Request $request, $status) {
+    public function ajaxTransfers(Request $request, $status)
+    {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -243,7 +232,8 @@ class FacMgtController extends Controller {
         }
     }
 
-    public function ajaxTransferReason(Request $request) {
+    public function ajaxTransferReason(Request $request)
+    {
         if (!$request->ajax()) {
             abort(500);
         }
@@ -257,25 +247,5 @@ class FacMgtController extends Controller {
                 return $t->reason;
             }
         }
-    }
-
-    public function ajaxStaffTable(Request $request, $facility) {
-        if (!$request->ajax()) {
-            abort(500);
-        }
-
-        $fac = $facility;
-        $facility = Facility::where('id', $fac)->first();
-        $id = $facility->id;
-
-        return View('mgt.facility.partial_stafftable', [
-            'atm' => RoleHelper::getNameFromRole('ATM', $id, 1),
-            'datm' => RoleHelper::getNameFromRole('DATM', $id, 1),
-            'ta' => RoleHelper::getNameFromRole('TA', $id, 1),
-            'ec' => RoleHelper::getNameFromRole('EC', $id, 1),
-            'fe' => RoleHelper::getNameFromRole('FE', $id, 1),
-            'wm' => RoleHelper::getNameFromRole('WM', $id, 1),
-            'fac' => $facility->id
-        ]);
     }
 }

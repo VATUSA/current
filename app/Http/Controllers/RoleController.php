@@ -2,13 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\RoleHelper;
 use App\Helpers\RoleHelperV2;
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {
+
+    public function getRoleList(Request $request, $fac = null) {
+        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "ATM")
+            && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "DATM")
+            && !RoleHelper::isVATUSAStaff()) {
+            abort(401);
+        }
+        if ($fac != null) {
+            $roles = Role::where('facility', $fac)->orderBy('cid')->get();
+        } else {
+
+            $roles = Role::orderBy('cid')->get();
+        }
+
+        return view('mgt.roles', ['roles' => $roles]);
+    }
+
     public function postAssignRole(Request $request) {
         $cid = $request->cid;
         $role = $request->role;

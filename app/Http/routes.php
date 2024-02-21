@@ -150,6 +150,7 @@ Route::group([
                     Route::delete('{cid}', 'FacMgtController@deleteController');
                     Route::post('api/generate', 'FacMgtController@postAPIGenerate');
                     Route::post('api/generate/sandbox', 'FacMgtController@postAPISandboxGenerate');
+                    Route::post('staffPOC', 'FacMgtController@savePointsOfContact');
                 });
             });
 
@@ -158,12 +159,13 @@ Route::group([
             Route::post('ace', 'MgtController@putAce');
             Route::get('ace/delete/{cid}', 'MgtController@deleteAce');
 
+            // * * * * * * Roles * * * * * *
+            Route::get('roles', 'RoleController@getRoleList');
+            Route::get('roles/{fac}', 'RoleController@getRoleList');
+
 
             // * * * * * * AJAX * * * * * *
             Route::group(['prefix' => 'ajax'], function () {
-                Route::post('position/{facility}/{id}', 'FacMgtController@ajaxPosition');
-                Route::post('del/position/{facility}', 'FacMgtController@ajaxPositionDel');
-                Route::post('staff/{facility}', 'FacMgtController@ajaxStaffTable');
                 Route::post('transfers/{status}', 'FacMgtController@ajaxTransfers');
                 Route::get('transfer/reason', 'FacMgtController@ajaxTransferReason');
             });
