@@ -150,6 +150,7 @@ Route::group([
                     Route::delete('{cid}', 'FacMgtController@deleteController');
                     Route::post('api/generate', 'FacMgtController@postAPIGenerate');
                     Route::post('api/generate/sandbox', 'FacMgtController@postAPISandboxGenerate');
+                    Route::post('staffPOC', 'FacMgtController@savePointsOfContact');
                 });
             });
 
@@ -158,12 +159,13 @@ Route::group([
             Route::post('ace', 'MgtController@putAce');
             Route::get('ace/delete/{cid}', 'MgtController@deleteAce');
 
+            // * * * * * * Roles * * * * * *
+            Route::get('roles', 'RoleController@getRoleList');
+            Route::get('roles/{fac}', 'RoleController@getRoleList');
+
 
             // * * * * * * AJAX * * * * * *
             Route::group(['prefix' => 'ajax'], function () {
-                Route::post('position/{facility}/{id}', 'FacMgtController@ajaxPosition');
-                Route::post('del/position/{facility}', 'FacMgtController@ajaxPositionDel');
-                Route::post('staff/{facility}', 'FacMgtController@ajaxStaffTable');
                 Route::post('transfers/{status}', 'FacMgtController@ajaxTransfers');
                 Route::get('transfer/reason', 'FacMgtController@ajaxTransferReason');
             });
@@ -176,8 +178,6 @@ Route::group([
                 Route::group(['prefix' => '{cid}'], function () {
                     Route::get('/', 'MgtController@getController')->name('mgt.controller.index');
                     Route::post('/', 'MgtController@getController');
-                    Route::get('mentor/{facility?}', 'MgtController@getControllerMentor');
-                    Route::get('instructor/{facility?}', 'MgtController@getControllerInstructor');
                     Route::post('rating', 'MgtController@postControllerRating');
                     Route::get('transfers', 'MgtController@getControllerTransfers');
                     Route::get('transferwaiver', 'MgtController@getControllerTransferWaiver');
@@ -187,8 +187,9 @@ Route::group([
                     Route::get('promote', 'MgtController@getControllerPromote');
                     Route::get('togglebasic', 'MgtController@getControllerToggleBasic');
                     Route::post('promote', 'MgtController@postControllerPromote');
-                    Route::delete('transfer/override',
-                        'MgtController@deleteControllerTransferOverride');
+                    Route::post('role/assign', 'RoleController@postAssignRole');
+                    Route::post('role/revoke', 'RoleController@postRevokeRole');
+                    Route::delete('transfer/override', 'MgtController@deleteControllerTransferOverride');
                 });
 
                 Route::group(['prefix' => 'ajax'], function () {

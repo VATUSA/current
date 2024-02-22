@@ -172,9 +172,11 @@ class MgtController extends Controller
                     ['attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)]),
             ];
 
+            $assignedRoles = RoleHelperV2::assignedRoles($cid);
+
             return view('mgt.controller.index',
                 compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingFacListArray', 'trainingfac',
-                    'trainingfacname', 'ins', 'canAddTR', 'examAttempts', 'moodleUid'));
+                    'trainingfacname', 'ins', 'canAddTR', 'examAttempts', 'moodleUid', 'assignedRoles'));
         } else {
             if ($user = User::where('discord_id', $cid)->first()) {
                 return redirect()->route('mgt.controller.index', ['cid' => $user->cid]);
@@ -182,58 +184,6 @@ class MgtController extends Controller
 
             return view('mgt.controller.404');
         }
-    }
-
-    public function getControllerMentor($cid, $facility = null)
-    {
-        $user = User::findOrFail($cid);
-
-        if ($facility == null) {
-            $facility = $user->facility;
-        }
-
-        if (!RoleHelper::isVATUSAStaff() && (!RoleHelper::isFacilitySeniorStaff(null, $facility) || $user->flag_preventStaffAssign)) {
-            return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
-        }
-
-        if (!RoleHelperV2::hasRole($cid, "MTR", $facility)) {
-            RoleHelperV2::assignRole($cid, "MTR", $facility);
-            return redirect("/mgt/controller/$cid")->with("success", "Successfully set as mentor");
-        } else {
-            $moodle = new VATUSAMoodle();
-            try {
-                $moodle->unassignMentorRoles($cid);
-            } catch (Exception $e) {
-                return redirect("/mgt/controller")->with("error",
-                    "Unable to remove roles from Moodle. Please try again later.");
-            }
-            RoleHelperV2::revokeRole($cid, "MTR", $facility);
-            return redirect("/mgt/controller/$cid")->with("success", "Successfully removed mentor role");
-        }
-    }
-
-    public function getControllerInstructor($cid, $facility)
-    {
-        if (!RoleHelper::isVATUSAStaff() && (!RoleHelper::isFacilitySeniorStaff(null, $facility) || $user->flag_preventStaffAssign)) {
-            return redirect('/mgt/controller/' . $cid)->with("error", "Access denied.");
-        }
-
-        $user = User::findOrFail($cid);
-
-        if (!Facility::where('id', $facility)->where('active', 1)->exists()) {
-            return redirect("/mgt/controller")->with("error", "Incorrect facility name");
-        }
-
-        if (!RoleHelper::isInstructor($cid)) {
-            return redirect("/mgt/controller")->with("error", "User is not an Instructor");
-        }
-
-        RoleHelperV2::toggleRole($cid, "INS", $facility);
-        if (RoleHelperV2::hasrole($cid, "MTR", $facility)) {
-            RoleHelperV2::revokeRole($cid, "MTR", $facility);
-        }
-        return redirect("/mgt/controller/$cid")->with("success", "Successfully toggled Instructor role");
-
     }
 
     /* Controller AJAX */
@@ -296,12 +246,6 @@ class MgtController extends Controller
             ]);
 
             if ($return) {
-                if ($rating >= Helper::ratingIntFromShort("I1")) {
-                    Role::where("cid", $cid)->where("facility", $user->facility)->where(function ($query) {
-                        $query->where("role", "MTR")->orWhere("role", "INS");
-                    })->delete();
-                }
-
                 echo "1";
             } else {
                 echo "0";
@@ -373,50 +317,6 @@ class MgtController extends Controller
         $roles = Role::where('role', 'ACE')->orderBy('cid')->get();
 
         return view('mgt.ace', ['roles' => $roles]);
-    }
-
-    public function deleteAce(Request $request, $cid)
-    {
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(401);
-        }
-        $role = Role::where('cid', $cid)->where('role', 'ACE')->first();
-        if ($role != null) {
-            $role->delete();
-        }
-
-        SMFHelper::setPermissions($cid);
-
-        return redirect("/mgt/ace");
-    }
-
-    public function putAce(Request $request)
-    {
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(401);
-        }
-        $cid = $request->input('cid');
-
-        if (!User::find($cid)) {
-            // No user exits
-            return redirect("/mgt/ace")->with('aceSubmit', 'The controller CID is invalid.');
-        }
-        if (Role::where('cid', $cid)->where('role', 'ACE')->first()) {
-            return redirect("/mgt/ace")->with('aceSubmit', 'The controller is already a member of the team.');
-        }
-
-        if (Role::where('cid', $cid)->where('role', 'ACE')->count() == 0) {
-            $role = new Role();
-            $role->cid = $cid;
-            $role->facility = "ZHQ";
-            $role->role = "ACE";
-            $role->created_at = Carbon::now();
-            $role->save();
-        }
-
-        SMFHelper::setPermissions($cid);
-
-        return redirect("/mgt/ace")->with('aceSubmit', true);
     }
 
     /*
@@ -1034,79 +934,6 @@ class MgtController extends Controller
         return "1";
     }
 
-    public function toggleInsRole(Request $request)
-    {
-        $cid = $request->cid;
-
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $user = User::findOrFail($cid);
-        if (RoleHelperV2::hasrole($cid, "MTR", $user->facility)) {
-            RoleHelperV2::revokeRole($cid, "MTR", $user->facility);
-        }
-        RoleHelperV2::toggleRole($cid, "INS", $user->facility);
-
-        return "1";
-    }
-
-    public function toggleSMTRole(Request $request)
-    {
-        $cid = $request->cid;
-
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $user = User::findOrFail($cid);
-        RoleHelperV2::toggleRole($cid, "SMT", "ZHQ");
-
-        return "1";
-    }
-
-    public function toggleTTRole(Request $request)
-    {
-        $cid = $request->cid;
-
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $user = User::findOrFail($cid);
-        RoleHelperV2::toggleRole($cid, "USWT", "ZHQ");
-
-        return "1";
-    }
-
-    public function toggleDICERole(Request $request)
-    {
-        $cid = $request->cid;
-
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $user = User::findOrFail($cid);
-        RoleHelperV2::toggleRole($cid, "DICE", "ZHQ");
-
-        return "1";
-    }
-
-    public function toggleDCCRole(Request $request)
-    {
-        $cid = $request->cid;
-
-        if (!RoleHelper::isVATUSAStaff()) {
-            abort(403);
-        }
-
-        $user = User::findOrFail($cid);
-        RoleHelperV2::toggleRole($cid, "DCC", "ZHQ");
-
-        return "1";
-    }
-
     public function ajaxCanModifyRecord($record)
     {
         $record = TrainingRecord::find($record);
@@ -1360,57 +1187,5 @@ class MgtController extends Controller
         return view('mgt.training.otsEvalStats',
             compact('form', 'instructor', 'facilities', 'interval', 'facility',
                 'numPassFailsData', 'evalsPerMonthDataIns', 'allIns', 'tableData', 'hasGlobalAccess'));
-    }
-
-    public function toggleAcademyEditor(Request $request): string
-    {
-        $cid = $request->cid;
-        $user = User::findOrFail($cid);
-
-        $isFacility = $request->input('facOnly', false) == true;
-        $facility = $isFacility ? $user->facility : "ZAE";
-        $moodle = new VATUSAMoodle();
-
-        if ((!$isFacility && !RoleHelper::isVATUSAStaff()) ||
-            ($isFacility && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
-                    $facility))) {
-            abort(403);
-        }
-
-        try {
-            if (RoleHelper::hasRole($cid, $facility, $isFacility ? "FACCBT" : "CBT")) {
-                if (is_null($moodle->unassignRole($moodle->getUserId($cid),
-                    $isFacility ? $moodle->getCategoryFromShort($user->facility,
-                        true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
-                    "coursecat"))) {
-                    try {
-                        Role::where('cid', $cid)->where('role', $isFacility ? 'FACCBT' : 'CBT')->where('facility',
-                            $facility)->delete();
-                    } catch (Exception $e) {
-                        return "0";
-                    }
-
-                    return "1";
-                }
-
-                return "0";
-            }
-            if (is_null($moodle->assignRole($moodle->getUserId($cid),
-                $isFacility ? $moodle->getCategoryFromShort($user->facility,
-                    true) : VATUSAMoodle::CATEGORY_CONTEXT_VATUSA, $isFacility ? "FACCBT" : "CBT",
-                "coursecat"))) {
-                $role = new Role();
-                $role->cid = $cid;
-                $role->facility = $facility;
-                $role->role = $isFacility ? "FACCBT" : "CBT";
-                $role->saveOrFail();
-
-                return "1";
-            }
-
-            return "0";
-        } catch (Exception $e) {
-            return "0";
-        }
     }
 }
