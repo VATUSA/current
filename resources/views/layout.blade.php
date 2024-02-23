@@ -369,8 +369,8 @@
                                         <!-- ACE Team/Division Staff Management [VATUSA] -->
                                         @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                             <li><a href="{{url("mgt/ace") }}">ACE Team Management</a></li>
-                                            <li><a href="{{url("mgt/staff") }}">Division Staff Management</a>
-                                            </li>
+                                            <li><a href="{{url("mgt/staff") }}">Division Staff Management</a></li>
+                                            <li><a href="{{url("mgt/roles") }}">All Assigned Roles</a></li>
                                             <li><a href="{{url("mgt/policies") }}">Policies & Downloads</a></li>
                                         @endif
 
