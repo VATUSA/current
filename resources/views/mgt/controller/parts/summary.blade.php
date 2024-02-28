@@ -139,10 +139,16 @@
             </tr>
             <tr>
                 <td>90 days since last transfer?</td>
-                <td>{!! ($checks['90days'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!} {!! (isset($checks['days']))?"(".$checks['days']." days)":"" !!}</td>
+                @if($checks['is_first'] == 1)
+                    <td><span class="text-success">N/A</span></td>
+                @elseif($checks['90days'])
+                    <td><i class="fa fa-check text-success"></i>{!! (isset($checks['days']))?"(".$checks['days']." days)":"" !!}</td>
+                @else
+                    <td><i class="fa fa-times text-danger"></i>{!! (isset($checks['days']))?"(".$checks['days']." days)":"" !!}</td>
+                @endif
             </tr>
             <tr>
-                <td>If first facility, within 30 days of joining?</td>
+                <td>In first facility?</td>
                 @if($checks['is_first'] == 0)
                     <td><span class="text-success">N/A</span></td>
                 @elseif($checks['initial'] == 1)
@@ -174,8 +180,12 @@
                 <td>{!! ($checks['instructor'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
             </tr>
             <tr>
-                <td>Have pending transfers?</td>
+                <td>Does not have pending transfers?</td>
                 <td>{!! ($checks['pending'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+            </tr>
+            <tr>
+                <td>Has a transfer waiver?</td>
+                <td>{!! ($checks['override'])?'<i class="fa fa-check text-success"></i>':'<span class="text-success">N/A</span>' !!}</td>
             </tr>
             <tr>
                 <td>Are they eligible?</td>
