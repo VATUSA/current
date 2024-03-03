@@ -347,12 +347,6 @@
                                                 <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
                                                     <i class="fas fa-broadcast-tower"></i> Communication Actions</h5>
                                             </li>
-
-                                            <!-- Email Management [ATM/DATM/TA/VATUSA] -->
-                                            @if(\App\Classes\RoleHelper::isFacilityStaff())
-                                                <li><a href="{{url("mgt/mail") }}">Email Management</a></li>
-                                            @endif
-
                                         <!-- iDENT App Management [ATM/DATM/TA/VATUSA] -->
                                             @if (\App\Classes\RoleHelper::isFacilitySeniorStaff())
                                                 <li><a href="{{url("mgt/app/push")}}">iDENT App Management</a></li>
