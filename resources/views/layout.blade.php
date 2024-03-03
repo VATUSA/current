@@ -27,11 +27,11 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script type="text/javascript">
-      //Custom jQuery Elements
-      $.apiUrl = () => ("{{ \App\Classes\Helper::apiUrl() }}")
-      $.fn.ignore = function (sel) {
-        return this.clone().find(sel || '>*').remove().end()
-      }
+        //Custom jQuery Elements
+        $.apiUrl = () => ("{{ \App\Classes\Helper::apiUrl() }}")
+        $.fn.ignore = function (sel) {
+            return this.clone().find(sel || '>*').remove().end()
+        }
     </script>
 
     @stack('scripts')
@@ -64,7 +64,7 @@
                             <span class="grab"><strong>{{Auth::user()->fname.' '.Auth::user()->lname}}</strong></span>
                             <br>
                             <small><i class="fa fa-user"></i> {{Auth::user()->cid}} &nbsp; &mdash; &nbsp; <i
-                                    class="fa fa-trophy"></i> {{\App\Classes\Helper::ratingShortFromInt(\Auth::user()->rating)}}
+                                        class="fa fa-trophy"></i> {{\App\Classes\Helper::ratingShortFromInt(\Auth::user()->rating)}}
                                 ({{Auth::user()->urating->long}})<br>
                                 <i class="fa fa-star"></i> {{\App\Classes\RoleHelper::getUserRole(Auth::user()->cid, Auth::user()->facility)}}
                                 - {{\App\Classes\Helper::facShtLng(Auth::user()->facility)}}
@@ -85,7 +85,7 @@
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                         aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
-                        class="icon-bar"></span> <span class="icon-bar"></span></button>
+                            class="icon-bar"></span> <span class="icon-bar"></span></button>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -137,12 +137,12 @@
                                 <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">VATSIM Resources</h5>
                             </li>
                             <li><a href="https://vatsim.net/docs/basics/getting-started" target="_blank"><i
-                                        class="fas fa-star"></i> Getting
+                                            class="fas fa-star"></i> Getting
                                     Started</a></li>
                             <li><a href="https://my.vatsim.net/learn" target="_blank"><i
-                                        class="fas fa-school"></i> Training</a></li>
+                                            class="fas fa-school"></i> Training</a></li>
                             <li><a href="https://my.vatsim.net/virtual-airlines" target="_blank"><i
-                                        class="fas fa-plane"></i> Virtual
+                                            class="fas fa-plane"></i> Virtual
                                     Airlines</a></li>
                             <li><a href="http://stats.vatsim.net/" target="_blank"><i class="fas fa-chart-line"></i>
                                     VATSIM Stats/Tracking</a></li>
@@ -156,13 +156,14 @@
                             <li><a href="https://www.skyvector.com" target="_blank"><i class="fas fa-route"></i> Charts</a>
                             </li>
                             <li><a href="http://www.flightaware.com/statistics/ifr-route/" target="_blank"><i
-                                        class="fas fa-map"></i> Routes</a>
+                                            class="fas fa-map"></i> Routes</a>
                             </li>
                             <li class="dropdown-submenu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                    aria-expanded="false"><i class="fas fa-cloud"></i> Weather</a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="https://aviationweather.gov/data/metar/" target="_blank">METARs</a></li>
+                                    <li><a href="https://aviationweather.gov/data/metar/" target="_blank">METARs</a>
+                                    </li>
                                     <li><a href="https://aviationweather.gov/data/taf/" target="_blank">TAFs</a></li>
                                     <li><a href="https://aviationweather.gov/data/pirep/" target="_blank">PIREPs</a>
                                     </li>
@@ -170,9 +171,11 @@
                                             Sounding</a></li>
                                     <li><a href="https://aviationweather.gov/data/windtemp/" target="_blank">Winds
                                             Aloft</a></li>
-                                    <li><a href="https://aviationweather.gov/gfa/#obs" target="_blank">Graphical Forecasts</a>
+                                    <li><a href="https://aviationweather.gov/gfa/#obs" target="_blank">Graphical
+                                            Forecasts</a>
                                     </li>
-                                    <li><a href="https://aviationweather.gov/gfa/#obs" target="_blank">Current Observations</a>
+                                    <li><a href="https://aviationweather.gov/gfa/#obs" target="_blank">Current
+                                            Observations</a>
                                     </li>
                                     <li><a href="https://aviationweather.gov/gfa/#progchart" target="_blank">Prog
                                             Charts</a></li>
@@ -235,7 +238,7 @@
                                 <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
                                                                 data-toggle="dropdown" role="button"
                                                                 aria-expanded="false"><i
-                                            class="fas fa-hands-helping"></i> Ticket Manager</a>
+                                                class="fas fa-hands-helping"></i> Ticket Manager</a>
                                     <ul class="dropdown-menu">
                                         <li><a href="{{ url("/help/ticket/myassigned") }}">My Assigned
                                                 Tickets</a></li>
@@ -274,7 +277,7 @@
                                 <li role="separator" class="divider"></li>
                                 <li>
                                     <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i
-                                            class="fas fa-sign-out-alt"></i> Logout</a>
+                                                class="fas fa-sign-out-alt"></i> Logout</a>
                                 </li>
                             </ul>
                         </li>
@@ -296,14 +299,14 @@
                                         <li><a href="{{url("mgt/facility")}}">Facility Management</a></li>
                                     @endif
 
-                                <!-- TMU Management [ATM/DATM/TA/WM/FE] -->
+                                    <!-- TMU Management [ATM/DATM/TA/WM/FE] -->
                                     @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "FE"))
                                         <li><a href="{{url('mgt/tmu')}}">TMU Map Management</a></li>
                                     @else
                                         <li><a href="{{url('mgt/tmu')}}">TMU Notices Management</a></li>
                                     @endif
 
-                                <!-- Controllers -->
+                                    <!-- Controllers -->
                                     <li class="nav-divider"></li>
                                     <li class="dropdown-header">
                                         <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
@@ -315,20 +318,20 @@
                                         <li><a href="{{url("mgt/controller")}}">Member Management</a></li>
                                     @endif
 
-                                <!-- Submit Transfer Request [VATUSA] -->
+                                    <!-- Submit Transfer Request [VATUSA] -->
                                     @if (\App\Classes\RoleHelper::isVATUSAStaff())
                                         <li><a href="{{url("mgt/transfer") }}">Submit Transfer Request</a></li>
                                     @endif
 
                                     @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
-                                    <!-- Training -->
+                                        <!-- Training -->
                                         <li class="nav-divider"></li>
                                         <li class="dropdown-header">
                                             <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
                                                 <i class="fas fa-chalkboard-teacher"></i> Training Actions</h5>
                                         </li>
 
-                                    <!-- Training Statistics [INS/ATM/DATM/TA/VATUSA] -->
+                                        <!-- Training Statistics [INS/ATM/DATM/TA/VATUSA] -->
                                         @if (\App\Classes\RoleHelper::isTrainingStaff())
                                             <li><a href="{{ url("/mgt/facility/training/stats") }}">Training
                                                     Statistics</a>
@@ -340,46 +343,32 @@
                                         @endif
                                     @endif
 
-                                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                    <!-- Communication -->
-                                            <li class="nav-divider"></li>
-                                            <li class="dropdown-header">
-                                                <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
-                                                    <i class="fas fa-broadcast-tower"></i> Communication Actions</h5>
-                                            </li>
-                                        <!-- iDENT App Management [ATM/DATM/TA/VATUSA] -->
-                                            @if (\App\Classes\RoleHelper::isFacilitySeniorStaff())
-                                                <li><a href="{{url("mgt/app/push")}}">iDENT App Management</a></li>
-                                            @endif
-
-                                        @endif
                                     <!-- Division -->
-                                        <li class="nav-divider"></li>
-                                        <li class="dropdown-header">
-                                            <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
-                                                <i class="fas fa-city"></i> Division Actions</h5>
-                                        </li>
+                                    <li class="nav-divider"></li>
+                                    <li class="dropdown-header">
+                                        <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
+                                            <i class="fas fa-city"></i> Division Actions</h5>
+                                    </li>
 
-                                        <!-- ACE Team/Division Staff Management [VATUSA] -->
-                                        @if (\App\Classes\RoleHelper::isVATUSAStaff())
-                                            <li><a href="{{url("mgt/ace") }}">ACE Team Management</a></li>
-                                            <li><a href="{{url("mgt/staff") }}">Division Staff Management</a></li>
-                                            <li><a href="{{url("mgt/roles") }}">All Assigned Roles</a></li>
-                                            <li><a href="{{url("mgt/policies") }}">Policies & Downloads</a></li>
-                                        @endif
+                                    <!-- ACE Team/Division Staff Management [VATUSA] -->
+                                    @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                        <li><a href="{{url("mgt/ace") }}">ACE Team Management</a></li>
+                                        <li><a href="{{url("mgt/staff") }}">Division Staff Management</a></li>
+                                        <li><a href="{{url("mgt/roles") }}">All Assigned Roles</a></li>
+                                        <li><a href="{{url("mgt/policies") }}">Policies & Downloads</a></li>
+                                    @endif
 
                                     <!-- Division Statistics [All] -->
-                                        <li><a href="{{ url("/mgt/stats") }}">Division Statistics</a></li>
+                                    <li><a href="{{ url("/mgt/stats") }}">Division Statistics</a></li>
 
-                                        <!-- Solo Certifications [Instructors/ATM/DATM/TA/VATUSA] -->
-                                        @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
-                                            <li><a href="{{ url("mgt/solo") }}">Solo Certifications</a></li>
-                                        @endif
+                                    <!-- Solo Certifications [Instructors/ATM/DATM/TA/VATUSA] -->
+                                    @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
+                                        <li><a href="{{ url("mgt/solo") }}">Solo Certifications</a></li>
+                                    @endif
 
                                 </ul>
                             </li>
                         @endif
-
 
                     @else
                         <li><a href="#" id="login-link" data-action="{{ url('login') }}"><i class="fas fa-user"></i>
@@ -446,14 +435,14 @@
             Network (VATSIM) and may not be used for real-world navigation or aviation purposes and doing so could be a
             violation of federal law.</p>
         <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i
-                    class="fab fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i
-                    class="fa fa-lock"></i> Privacy Policy</a></p>
+                        class="fab fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i
+                        class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>
 <script
-    src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
-    integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
-    crossorigin="anonymous"></script>
+        src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+        integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+        crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="/js/bootbox.min.js"></script>
@@ -464,13 +453,15 @@
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112506058-1"></script>
 <script>
-  window.dataLayer = window.dataLayer || []
+    window.dataLayer = window.dataLayer || []
 
-  function gtag () {dataLayer.push(arguments)}
+    function gtag() {
+        dataLayer.push(arguments)
+    }
 
-  gtag('js', new Date())
+    gtag('js', new Date())
 
-  gtag('config', 'UA-112506058-1')
+    gtag('config', 'UA-112506058-1')
 </script>
 </body>
 </html>

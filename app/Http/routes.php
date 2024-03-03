@@ -277,14 +277,6 @@ Route::group([
                 Route::post('{fac}/mapping/{id}', 'TMUController@postMgtMapping');
             });
 
-            // * * * * * * iDENT APP * * * * * *
-            Route::group(['prefix' => 'app'], function () {
-                Route::get('push', 'AppController@getIndex');
-                Route::post('push', 'AppController@postPush');
-                Route::get('log', 'AppController@getLog');
-                Route::get('log', 'AppController@getPushLog');
-            });
-
             /* * * * * * * * *
              *   Statistics  *
              * * * * * * * * */
