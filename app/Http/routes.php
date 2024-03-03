@@ -52,9 +52,6 @@ Route::group([
             Route::get('/news', 'AJAXController@getNews');
             Route::get('/help/staffc/{facility}', 'AJAXController@getHelpStaffc');
             Route::get('/help/staff/{facility}', 'AJAXController@getHelpStaff');
-            Route::get('/passstrength/{pass}', function ($pass) {
-                echo \App\Classes\cPanelHelper::getPassStrength($pass);
-            });
         });
 
         /* * * * * * * * * *
@@ -286,23 +283,6 @@ Route::group([
                 Route::post('push', 'AppController@postPush');
                 Route::get('log', 'AppController@getLog');
                 Route::get('log', 'AppController@getPushLog');
-            });
-
-            // * * * * * * Mail * * * * * *
-            Route::group(['prefix' => 'mail'], function () {
-                Route::get('/', 'EmailMgtController@getIndex');
-                Route::get('broadcast', 'EmailMgtController@getBroadcast');
-                Route::post('broadcast', 'EmailMgtController@postBroadcast');
-                Route::get('conf', 'EmailMgtController@getConfig');
-                Route::post('conf', 'EmailMgtController@postConfig');
-                Route::get('account', 'EmailMgtController@getAccount');
-                Route::get('{cid}', 'EmailMgtController@getIndividual')->where('cid', '[0-9]+');
-                Route::get('get/{user}', 'EmailMgtController@getType');
-                Route::get('welcome', 'EmailMgtController@getWelcome');
-                Route::post('welcome', 'EmailMgtController@postWelcome');
-                Route::get('template', 'EmailMgtController@getTemplates');
-                Route::get('template/{template}/{action}', 'EmailMgtController@getTemplateAction');
-                Route::post('template/{template}', 'EmailMgtController@postTemplate');
             });
 
             /* * * * * * * * *
