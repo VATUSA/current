@@ -122,7 +122,7 @@ class TrainingController extends Controller
             }
         }
 
-        if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
+        if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false) && !RoleHelper::isFacilitySeniorStaff()) {
             abort(403);
         }
 
