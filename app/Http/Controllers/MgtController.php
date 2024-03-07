@@ -101,6 +101,7 @@ class MgtController extends Controller
             }
             $trainingRecords = RoleHelper::isTrainingStaff(null, true, $trainingfac)
             || RoleHelper::isTrainingStaff(null, true, $user->facility)
+            || RoleHelper::isFacilitySeniorStaff()
             || RoleHelper::isWebTeam()
                 ? $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
             $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac)
