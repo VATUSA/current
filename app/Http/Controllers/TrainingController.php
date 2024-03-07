@@ -51,8 +51,7 @@ class TrainingController extends Controller
             ->has('perfcats.indicators')->withAll()->find($form)
             : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
                 ->withAll()->where('rating_id', $student->rating + 1)->first();
-        if (!RoleHelper::isInstructor(Auth::user()->cid,
-                $student->facility) && !RoleHelper::isInstructor(Auth::user()->cid, $form->facility)) {
+        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
             abort(403);
         }
         if (!$student || !$form) {
@@ -77,10 +76,7 @@ class TrainingController extends Controller
             abort(404, "The OTS evaluation form is invalid.");
         }
         $student = $eval->student;
-        if (!RoleHelper::isInstructor(Auth::user()->cid,
-                $student->facility) && !RoleHelper::isInstructor(Auth::user()->cid,
-                $eval->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid,
-                $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $eval->facility)) {
+        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
             abort(403);
         }
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
@@ -165,7 +161,7 @@ class TrainingController extends Controller
         foreach ($insByRole as $ins) {
             $instructors[$ins->cid] = $ins->user;
         }
-        foreach($insByRating as $ins) {
+        foreach ($insByRating as $ins) {
             $instructors[$ins->cid] = $ins;
         }
 
@@ -662,8 +658,7 @@ class TrainingController extends Controller
         if (!$interval) {
             abort(400);
         }
-        if (!RoleHelper::isInstructor(Auth::user()->cid,
-                $facility) || ($instructor && !RoleHelper::isInstructor($instructor, $facility))) {
+        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
             abort(403);
         }
 

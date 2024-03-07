@@ -323,7 +323,7 @@
                                         <li><a href="{{url("mgt/transfer") }}">Submit Transfer Request</a></li>
                                     @endif
 
-                                    @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isAcademyStaff())
+                                    @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
                                         <!-- Training -->
                                         <li class="nav-divider"></li>
                                         <li class="dropdown-header">
@@ -332,15 +332,13 @@
                                         </li>
 
                                         <!-- Training Statistics [INS/ATM/DATM/TA/VATUSA] -->
-                                        @if (\App\Classes\RoleHelper::isTrainingStaff())
-                                            <li><a href="{{ url("/mgt/facility/training/stats") }}">Training
-                                                    Statistics</a>
-                                            </li>
-                                            <li><a href="{{ url("/mgt/facility/training/evals") }}">OTS
-                                                    Evaluations</a>
-                                            </li>
-                                            <!--This is exactly like the Training tab of records, but with OTS Evals. ARTCC select, position groups, and everything. -->
-                                        @endif
+                                        <li>
+                                            <a href="{{ url("/mgt/facility/training/stats") }}">Training Statistics</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ url("/mgt/facility/training/evals") }}">OTS Evaluations</a>
+                                        </li>
+                                        <!--This is exactly like the Training tab of records, but with OTS Evals. ARTCC select, position groups, and everything. -->
                                     @endif
 
                                     <!-- Division -->
