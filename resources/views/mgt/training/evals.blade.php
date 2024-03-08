@@ -102,7 +102,7 @@
                                                     class="hidden">{{$eval->exam_date->timestamp}}</span>{{ $eval->exam_date }}
                                             </td>
                                             <td>{{ $eval->exam_position }}</td>
-                                            <td>{{ $eval->student->fullname() }}</td>
+                                            <td>{!! $eval->student ? $eval->student->fullname() : "<em> Account Erased</em>" !!}</td>
                                             <td>{!! $eval->instructor ? $eval->instructor->fullname() : "<em> Account Erased</em>" !!}</td>
                                             <td>@if($eval->result) <i class="fas fa-check"></i> Pass @else <i
                                                     class="fas fa-times"></i>
@@ -166,7 +166,7 @@
                                                         class="hidden">{{$eval->exam_date->timestamp}}</span>{{ $eval->exam_date }}
                                                 </td>
                                                 <td>{{ $eval->exam_position }}</td>
-                                                <td>{{ $eval->student->fullname() }}</td>
+                                                <td>{!! $eval->student ? $eval->student->fullname() : "<em> Account Erased</em>" !!}</td>
                                                 <td>{!! $eval->instructor ? $eval->instructor->fullname() : "<em> Account Erased</em>" !!}</td>
                                                 <td>@if($eval->result) <i class="fas fa-check"></i> Pass @else <i
                                                         class="fas fa-times"></i>
