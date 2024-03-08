@@ -609,7 +609,7 @@ class TrainingController extends Controller
         Request $request
     )
     {
-        if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false)) {
+        if (!RoleHelper::isTrainingStaff() && !RoleHelper::isFacilitySeniorStaff()) {
             abort(403);
         }
 
