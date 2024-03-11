@@ -384,6 +384,21 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
 
+        // added to visiting roster in last 60 days check
+        $visiting = Visit::where('cid', $this->cid)
+            ->orderBy('created_at', 'DESC')
+            ->first();
+        if (!$visiting) {
+            $checks['60days'] = 1;
+        } else {
+            $checks['visitingDays'] = Carbon::createFromFormat('Y-m-d H:i:s', $visiting->updated_at)->diffInDays(new Carbon());
+            if ($checks['visitingDays'] >= 60) {
+                $checks['60days'] = 1;
+            } else {
+                $checks['60days'] = 0;
+            }
+        }
+
         // S1-C1 within 90 check
         $promotion = Promotions::where('cid', $this->cid)->where([
             ['to', '<=', Helper::ratingIntFromShort("C1")],
@@ -393,6 +408,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $checks['promo'] = 1;
         } else {
             $checks['promo'] = 0;
+            $checks['promoDays'] = Carbon::createFromFormat('Y-m-d H:i:s', $promotion->created_at)->diffInDays(new Carbon());
         }
 
         // 50 hours consolidating current rating
@@ -453,7 +469,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         /*        if ($this->facility == "ZAE" && !$this->flag_needbasic && !$this->selectionEligible() && !Transfers::where('cid', $this->cid)->where('status',0)->count())
                     return true;*/
 
-        if($checks['hasRating'] && $checks['hasHome'] && $checks['50hrs'] && $checks['needbasic'] && $checks['promo']){
+        if($checks ['60days'] && $checks['hasRating'] && $checks['hasHome'] && $checks['50hrs'] && $checks['needbasic'] && $checks['promo']){
             $checks['visiting'] = 1;
         } else {
             $checks['visiting'] = 0;
