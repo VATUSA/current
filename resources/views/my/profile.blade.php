@@ -209,7 +209,7 @@
                                 @elseif($checks['90days'])
                                     <td><i class="fa fa-check text-success"></i></td>
                                 @else
-                                    <td><i class="fa fa-times text-danger"></i></td>
+                                    <td><i class="fa fa-times text-danger"></i>{!! "(".$checks['days']." days)" !!}</td>
                                 @endif
                             </tr>
                             <tr>
@@ -224,7 +224,7 @@
                             </tr>
                             <tr>
                                 <td>It has been at least 90 days since promotion to S1, S2, S3, or C1</td>
-                                <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['promoDays'].' days)' !!}</td>
                             </tr>
                             <tr>
                                 <td>You have controlled 50 hours since promotion to S1, S2, S3, or C1</td>
@@ -279,8 +279,12 @@
                                 <td>{!! ($checks['hasRating'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
+                                <td>It has been at least 60 days since you joined a visiting roster</td>
+                                <td>{!! ($checks['60days'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['visitingDays'].' days)' !!}</td>
+                            </tr>
+                            <tr>
                                 <td>It has been at least 90 days since promotion to S1, S2, S3, or C1</td>
-                                <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                                <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['promoDays'].' days)' !!}</td>
                             </tr>
                             <tr>
                                 <td>You have controlled 50 hours since promotion to S1, S2, S3, or C1</td>
