@@ -415,15 +415,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $ratingHours = VATSIMApi2Helper::fetchRatingHours($this->cid);
         if($this->rating == Helper::ratingIntFromShort("S1") && $ratingHours['s1'] < 50){
             $checks['50hrs'] = 0;
+            $checks['ratingHours'] = $ratingHours['s1'];
         }
         if($this->rating == Helper::ratingIntFromShort("S2") && $ratingHours['s2'] < 50){
             $checks['50hrs'] = 0;
+            $checks['ratingHours'] = $ratingHours['s2'];
         }
         if($this->rating == Helper::ratingIntFromShort("S3") && $ratingHours['s3'] < 50){
             $checks['50hrs'] = 0;
+            $checks['ratingHours'] = $ratingHours['s3'];
         }
         if($this->rating == Helper::ratingIntFromShort("C1") && $ratingHours['c1'] < 50){
             $checks['50hrs'] = 0;
+            $checks['ratingHours'] = $ratingHours['c1'];
         }
         
         if (!in_array($this->facility, ["ZAE", "ZZI"])) {

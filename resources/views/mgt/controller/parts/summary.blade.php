@@ -168,7 +168,7 @@
                 @elseif($checks['50hrs'] == 1)
                     <td><i class="fa fa-check text-success"></i></td>
                 @else
-                    <td><i class="fa fa-times text-danger"></i></td>
+                    <td><i class="fa fa-times text-danger"></i>{!! "(".$checks['ratingHours']." hours)" !!}</td>
                 @endif
             </tr>
             <tr>
@@ -222,7 +222,7 @@
             </tr>
             <tr>
                 <td>50 controlling hours since promotion to S1, S2, S3, or C1?</td>
-                <td>{!! ($checks['50hrs'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
+                <td>{!! ($checks['50hrs'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['ratingHours'].' hours)' !!}</td>
             </tr>
             <tr>
                 <td>Are they eligible?</td>
