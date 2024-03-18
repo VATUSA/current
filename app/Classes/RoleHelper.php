@@ -97,28 +97,23 @@ class RoleHelper
         if ($fac == "ZHQ") {
             return 'Division Staff';
         }
-        $res = Facility::where('atm', $cid)->where('id', $fac)->count();
-        if ($res) {
+        $facility = Facility::where('id', $fac)->get();
+        if ($cid == $facility->atm) {
             return 'Air Traffic Manager';
         }
-        $res = Facility::where('datm', $cid)->where('id', $fac)->count();
-        if ($res) {
+        if ($cid == $facility->datm) {
             return 'Deputy Air Traffic Manager';
         }
-        $res = Facility::where('ta', $cid)->where('id', $fac)->count();
-        if ($res) {
+        if ($cid == $facility->ta) {
             return 'Training Administrator';
         }
-        $res = Facility::where('ec', $cid)->where('id', $fac)->count();
-        if ($res) {
+        if ($cid == $facility->ec) {
             return 'Events Coordinator';
         }
-        $res = Facility::where('fe', $cid)->where('id', $fac)->count();
-        if ($res) {
+        if ($cid == $facility->fe) {
             return 'Facility Engineer';
         }
-        $res = Facility::where('wm', $cid)->where('id', $fac)->count();
-        if ($res) {
+        if ($cid == $facility->wm) {
             return 'Webmaster';
         }
         $ud = User::where('cid', $cid)->first();
