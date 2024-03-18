@@ -97,7 +97,7 @@ class RoleHelper
         if ($fac == "ZHQ") {
             return 'Division Staff';
         }
-        $facility = Facility::where('id', $fac)->get();
+        $facility = Facility::where('id', $fac)->first();
         if ($cid == $facility->atm) {
             return 'Air Traffic Manager';
         }
