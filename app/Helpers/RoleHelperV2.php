@@ -109,6 +109,7 @@ class RoleHelperV2
                     $fac->wm = 0;
                 break;
         }
+        $fac->save();
     }
 
     // Assigns a role if not assigned, revokes that role if it is assigned
