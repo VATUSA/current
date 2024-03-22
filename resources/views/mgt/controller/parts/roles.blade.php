@@ -1,5 +1,5 @@
 @php
-    $isVATUSAStaff = \App\Classes\RoleHelper::isVATUSAStaff();
+    $isVATUSAStaff = \App\Helpers\AuthHelper::isVATUSAStaff();
 
 @endphp
 

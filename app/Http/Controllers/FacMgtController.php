@@ -3,6 +3,7 @@
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\SMFHelper;
+use App\Helpers\AuthHelper;
 use App\Models\Role;
 use Auth;
 use App\Models\Transfers;
@@ -29,9 +30,8 @@ class FacMgtController extends Controller
 
     public function getIndex($fac = null)
     {
-        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() &&
-            !RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam() && !RoleHelper::hasRole(Auth::user()->cid,
-                $fac ?? Auth::user()->facility, "WM")) {
+        if (!AuthHelper::isMentor() && !AuthHelper::isInstructor() && !AuthHelper::isFacilitySeniorStaff() &&
+            !AuthHelper::isVATUSAStaff() && !AuthHelper::isWebTeam() && !AuthHelper::isWebmaster()) {
             abort(401);
         }
 
@@ -48,7 +48,7 @@ class FacMgtController extends Controller
         }
 
         // Mentor-only users can only view their facility
-        if (RoleHelper::isMentor() && !(RoleHelper::isFacilityStaff() || RoleHelper::isInstructor())) {
+        if (!(AuthHelper::isFacilityStaff() || AuthHelper::isInstructor())) {
             $fac = Auth::user()->facility;
         }
 
@@ -130,9 +130,7 @@ class FacMgtController extends Controller
 
     public function savePointsOfContact(Request $request, $fac)
     {
-        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "ATM")
-            && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "DATM")
-            && !RoleHelper::isVATUSAStaff()) {
+        if (!AuthHelper::isFacilityATMOrDATM($fac) && !AuthHelper::isVATUSAStaff()) {
             abort(401);
         }
         $facility = Facility::findOrFail($fac);
@@ -153,22 +151,22 @@ class FacMgtController extends Controller
         $fe = (int)$request->get('fe');
         $wm = (int)$request->get('wm');
 
-        if (RoleHelper::isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
+        if (AuthHelper::isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
             $facility->atm = $atm;
         }
-        if (RoleHelper::isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
+        if (AuthHelper::isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
             $facility->datm = $datm;
         }
-        if (RoleHelper::isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
+        if (AuthHelper::isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
             $facility->ta = $ta;
         }
-        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($ec == -1 || in_array($ec, $staffPOCOptions["EC"]))) {
+        if (AuthHelper::isFacilityATMOrDATM($fac) && ($ec == -1 || in_array($ec, $staffPOCOptions["EC"]))) {
             $facility->ec = $ec;
         }
-        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($fe == -1 || in_array($fe, $staffPOCOptions["FE"]))) {
+        if (AuthHelper::isFacilityATMOrDATM($fac) && ($fe == -1 || in_array($fe, $staffPOCOptions["FE"]))) {
             $facility->fe = $fe;
         }
-        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($wm == -1 || in_array($wm, $staffPOCOptions["WM"]))) {
+        if (AuthHelper::isFacilityATMOrDATM($fac) && ($wm == -1 || in_array($wm, $staffPOCOptions["WM"]))) {
             $facility->wm = $wm;
         }
         $facility->save();
@@ -180,8 +178,7 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "ATM") && !RoleHelper::hasRole(Auth::user()->cid,
-                $facility, "DATM") && !RoleHelper::isVATUSAStaff()) {
+        if (!AuthHelper::isVATUSAStaff() && !AuthHelper::isFacilityATMOrDATM($facility)) {
             abort(401);
         }
 
@@ -200,9 +197,7 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,
-                "ATM") && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,
-                "DATM") && !RoleHelper::isVATUSAStaff()) {
+        if (!AuthHelper::isVATUSAStaff() && !AuthHelper::isFacilityATMOrDATM()) {
             abort(401);
         }
 

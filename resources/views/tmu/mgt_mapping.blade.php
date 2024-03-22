@@ -5,7 +5,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::isVATUSAStaff())
                         <select id="fac" class="mgt-sel">
                             @foreach(\App\Models\Facility::where('active', 1)->orderBy('name')->get() as $f)
                                 <option name="{{$f->id}}" @if($f->id == $fac) selected="true" @endif>{{$f->id}}</option>

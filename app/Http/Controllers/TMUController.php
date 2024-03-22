@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
+use App\Helpers\AuthHelper;
 use App\Models\tmu_facilities;
 use App\Models\tmu_colors;
 use App\Models\tmu_maps;
@@ -170,8 +171,9 @@ class TMUController
                 $fac = Auth::user()->facility;
             }
         }
-        if (!(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilityStaff() ||
-            \App\Classes\RoleHelper::isMentor())) {
+        if (!(AuthHelper::isInstructor() ||
+            AuthHelper::isFacilityStaff() ||
+            AuthHelper::isMentor())) {
             abort(401);
         }
 

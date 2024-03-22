@@ -5,7 +5,7 @@
         </h3>
     </div>
     <div class="panel-body">
-        @if(\App\Classes\RoleHelper::isVATUSAStaff())
+        @if(\App\Helpers\AuthHelper::isVATUSAStaff())
             <div class="alert alert-success" id="delete-log-success" style="display:none;">
                 <strong><i class='fa fa-check'></i> Success! </strong> The log entry has
                 been
@@ -17,7 +17,7 @@
                 entry.
             </div>
         @endif
-        @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
+        @if(\App\Helpers\AuthHelper::isFacilitySeniorStaff())
             <form class="form-horizontal"
                   action="{{url("/mgt/controller/action/add")}}"
                   method="POST">
@@ -54,7 +54,7 @@
                                 by {{ $name }}</p>
                         @endif</td>
                     <td>
-                        @if(App\Classes\RoleHelper::isVATUSAStaff() && $a->from &&
+                        @if(App\Helpers\AuthHelper::isVATUSAStaff() && $a->from &&
                         !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
                             <a data-id="{{ $a->id }}"
                                href="#"

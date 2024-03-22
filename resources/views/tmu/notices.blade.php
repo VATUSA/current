@@ -31,11 +31,13 @@
                     </div>
                 </div>
                 <section>
-                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                        \App\Helpers\AuthHelper::isInstructor() ||
+                        \App\Helpers\AuthHelper::isVATUSAStaff())
                         <div class="text-center">
                             <a href="{{ url("/mgt/tmu#notices") }}">
                                 <button class="btn btn-default"><i class="fa fa-pencil-alt"></i>
-                                    Edit @if(!\App\Classes\RoleHelper::isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
+                                    Edit @if(!\App\Helpers\AuthHelper::isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
                                     Notices
                                 </button>
                             </a>

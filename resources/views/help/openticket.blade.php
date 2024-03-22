@@ -35,9 +35,9 @@
                         </select>
                     </div>
                 </div>
-                @if(\App\Classes\RoleHelper::isFacilityStaff()
-                    || \App\Classes\RoleHelper::isVATUSAStaff()
-                    || \App\Classes\RoleHelper::isWebTeam()
+                @if(\App\Classes\AuthHelper::isFacilityStaff() ||
+                    \App\Classes\AuthHelper::isVATUSAStaff() ||
+                    \App\Classes\AuthHelper::isWebTeam()
                     )
                     <div class="form-group">
                         <label for="tAssign" class="col-sm-2 control-label">Assign To</label>
@@ -66,7 +66,7 @@
             </form>
         </div>
     </div>
-    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
+    @if(\App\Classes\AuthHelper::isFacilityStaff() || \App\Classes\AuthHelper::isVATUSAStaff())
         <script type="text/javascript">
           $('#tFacility').change(function () {
             if ($('#tFacility').val() == 'ZAE') {

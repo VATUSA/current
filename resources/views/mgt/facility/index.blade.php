@@ -191,13 +191,16 @@
                     if (promotion_date) html += '<td>' + (promotion_date.getMonth() + 1) + '/' + promotion_date.getDate() + '/' + promotion_date.getFullYear() + '</td>'
                     else html += '<td><span class="text-muted">N/A</span></td>'
                     html += '<td class="text-right">'
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isInstructor(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::isFacilitySeniorStaff($fac) ||
+                        \App\Helpers\AuthHelper::isVATUSAStaff() ||
+                        \App\Helpers\AuthHelper::isInstructor($fac))
                     if (resp.data[i].promotion_eligible == true) {
                         html += '<a href="/mgt/controller/' + resp.data[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
                     }
                     @endif
                         html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::isFacilityATMOrDATM($fac) ||
+                        \App\Helpers\AuthHelper::isVATUSAStaff())
                         html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ', \'' + resp.data[i].fname + ' ' + resp.data[i].lname + '\')"><i class="text-danger fa fa-times"></i></a>'
                     @endif
                         html += '</td></tr>'
@@ -232,7 +235,8 @@
                     html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
                     html += '<td class="text-right">'
                     html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::isFacilityATMOrDATM($fac) ||
+                        \App\Helpers\AuthHelper::isVATUSAStaff())
                         html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + resp.data[i].cid + ', \'' + resp.data[i].fname.replace(/'/g, "\\'") + ' ' + resp.data[i].lname.replace(/'/g, "\\'") + '\')"><i class="text-danger fa fa-times"></i></a>'
                     @endif
                         html += '</td></tr>'

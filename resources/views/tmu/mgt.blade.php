@@ -13,7 +13,9 @@
 @endpush
 
 @php
-    $facilityAccess = \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "FE");
+    $facilityAccess = \App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
+                      \App\Helpers\AuthHelper::isWebmaster() ||
+                      \App\Helpers\AuthHelper::isFacilityEngineer();
 @endphp
 
 @section('content')
@@ -21,7 +23,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::isVATUSAStaff())
                         <select id="fac" class="mgt-sel">
                             @foreach(\App\Models\Facility::where('active', 1)->orderBy('name')->get() as $f)
                                 <option name="{{$f->id}}" @if($f->id == $fac) selected="true" @endif>{{$f->id}}</option>

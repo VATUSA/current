@@ -232,8 +232,10 @@
                                     Ticket</a></li>
                             <li><a href="{{ url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My
                                     Tickets</a></li>
-                            @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor()
-                                || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isWebTeam())
+                            @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                                \App\Helpers\AuthHelper::isInstructor() ||
+                                \App\Helpers\AuthHelper::isVATUSAStaff() ||
+                                \App\Helpers\AuthHelper::isWebTeam())
                                 <li class="divider"></li>
                                 <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
                                                                 data-toggle="dropdown" role="button"
@@ -247,7 +249,7 @@
                                         <li><a href="{{ url("/help/ticket/search") }}">Search Tickets</a></li>
                                     </ul>
                                 </li>
-                                @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                @if (\App\Helpers\AuthHelper::isVATUSAStaff())
                                     <li><a href="{{ url("/help/kbe") }}">Knowledgebase Editor</a></li>
                                 @endif
                             @endif
@@ -281,26 +283,38 @@
                                 </li>
                             </ul>
                         </li>
-                        @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isMentor())
-                            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                                                    role="button" aria-expanded="false">
-                                    <i class="fa fa-cogs"></i> Actions<span class="caret"></span></a>
+                        @if(\App\Helpers\AuthHelper::isVATUSAStaff() ||
+                            \App\Helpers\AuthHelper::isFacilityStaff() ||
+                            \App\Helpers\AuthHelper::isInstructor() ||
+                            \App\Helpers\AuthHelper::isMentor())
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                   role="button" aria-expanded="false">
+                                    <i class="fa fa-cogs"></i> Actions<span class="caret"></span>
+                                </a>
 
                                 <ul class="dropdown-menu" role="menu">
 
                                     <!-- Facility -->
                                     <li class="dropdown-header">
                                         <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
-                                            <i class="fas fa-building"></i> Facility Actions</h5>
+                                            <i class="fas fa-building"></i> Facility Actions
+                                        </h5>
                                     </li>
 
                                     <!-- Facility Management [Mentor/Instructors/VATUSA/ATM/DATM/TA/WM] -->
-                                    @if(\App\Classes\RoleHelper::isMentor() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM"))
+                                    @if(\App\Helpers\AuthHelper::isMentor() ||
+                                        \App\Helpers\AuthHelper::isInstructor() ||
+                                        \App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
+                                        \App\Helpers\AuthHelper::isVATUSAStaff() ||
+                                        \App\Helpers\AuthHelper::isWebmaster())
                                         <li><a href="{{url("mgt/facility")}}">Facility Management</a></li>
                                     @endif
 
                                     <!-- TMU Management [ATM/DATM/TA/WM/FE] -->
-                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM") || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "FE"))
+                                    @if(\App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
+                                        \App\Helpers\AuthHelper::isFacilityEngineer() ||
+                                        \App\Helpers\AuthHelper::isWebmaster())
                                         <li><a href="{{url('mgt/tmu')}}">TMU Map Management</a></li>
                                     @else
                                         <li><a href="{{url('mgt/tmu')}}">TMU Notices Management</a></li>
@@ -314,16 +328,21 @@
                                     </li>
 
                                     <!-- Member Management [Mentor/Instructors/ATM/DATM/TA/VATUSA/WM] -->
-                                    @if(\App\Classes\RoleHelper::isMentor() || \App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "WM"))
+                                    @if(\App\Helpers\AuthHelper::isMentor() ||
+                                        \App\Helpers\AuthHelper::isInstructor() ||
+                                        \App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
+                                        \App\Helpers\AuthHelper::isVATUSAStaff() ||
+                                        \App\Helpers\AuthHelper::isWebmaster())
                                         <li><a href="{{url("mgt/controller")}}">Member Management</a></li>
                                     @endif
 
                                     <!-- Submit Transfer Request [VATUSA] -->
-                                    @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                    @if (\App\Helpers\AuthHelper::isVATUSAStaff())
                                         <li><a href="{{url("mgt/transfer") }}">Submit Transfer Request</a></li>
                                     @endif
 
-                                    @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff())
+                                    @if(\App\Helpers\AuthHelper::isInstructor() ||
+                                        \App\Helpers\AuthHelper::isFacilitySeniorStaff())
                                         <!-- Training -->
                                         <li class="nav-divider"></li>
                                         <li class="dropdown-header">
@@ -338,6 +357,9 @@
                                         <li>
                                             <a href="{{ url("/mgt/facility/training/evals") }}">OTS Evaluations</a>
                                         </li>
+                                        <li>
+                                            <a href="{{ url("mgt/solo") }}">Solo Certifications</a>
+                                        </li>
                                         <!--This is exactly like the Training tab of records, but with OTS Evals. ARTCC select, position groups, and everything. -->
                                     @endif
 
@@ -349,7 +371,7 @@
                                     </li>
 
                                     <!-- ACE Team/Division Staff Management [VATUSA] -->
-                                    @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                                    @if (\App\Helpers\AuthHelper::isVATUSAStaff())
                                         <li><a href="{{url("mgt/ace") }}">ACE Team Management</a></li>
                                         <li><a href="{{url("mgt/staff") }}">Division Staff Management</a></li>
                                         <li><a href="{{url("mgt/roles") }}">All Assigned Roles</a></li>
@@ -358,11 +380,6 @@
 
                                     <!-- Division Statistics [All] -->
                                     <li><a href="{{ url("/mgt/stats") }}">Division Statistics</a></li>
-
-                                    <!-- Solo Certifications [Instructors/ATM/DATM/TA/VATUSA] -->
-                                    @if(\App\Classes\RoleHelper::isInstructor() || \App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isVATUSAStaff())
-                                        <li><a href="{{ url("mgt/solo") }}">Solo Certifications</a></li>
-                                    @endif
 
                                 </ul>
                             </li>

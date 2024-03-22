@@ -88,6 +88,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(Visit::class, 'cid', 'cid');
     }
 
+    public function roles() {
+        return $this->hasMany(Role::class, 'cid', 'cid');
+    }
+
     public function getPrimaryRole()
     {
         for ($i = 1; $i <= 14; $i++) {

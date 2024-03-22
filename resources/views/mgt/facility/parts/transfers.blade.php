@@ -20,7 +20,8 @@
             <td>{{$user->cid}}</td>
             <td>{{$user->fname}} {{$user->lname}}</td>
             <td>{{$user->urating->short}}</td>
-            @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
+            @if(\App\Helpers\AuthHelper::isFacilityATMOrDATM(\Auth::user()->cid, $fac) ||
+                \App\Helpers\AuthHelper::isVATUSAStaff())
                 <td><a href="/mgt/controller/{{$t->cid}}" target="_blank"><i
                                 class="fa fa-search"></i></a> &nbsp; <a href="#"
                                                                         onClick="appvTrans({{$t->id}})"><i

@@ -31,7 +31,7 @@
                 <tr>
                     <th>Position</th>
                     <th>Name</th>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::isFacilityATMOrDATM($fac))
                         <th>Select</th>
                     @endif
                 </tr>
@@ -40,9 +40,9 @@
                 <tr>
                     <td>Air Traffic Manager (ATM)</td>
                     <td>{{$atm}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::isFacilityATMOrDATM($fac))
                         <td>
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                            @if(\App\Helpers\AuthHelper::isVATUSAStaff())
                                 <select name="atm">
                                     <option value="-1">None</option>
                                     @foreach($staffPOCOptions["ATM"] as $cid => $name)
@@ -58,9 +58,9 @@
                 <tr>
                     <td>Deputy Air Traffic Manager (DATM)</td>
                     <td>{{$datm}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::isFacilityATMOrDATM($fac))
                         <td>
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                            @if(\App\Helpers\AuthHelper::isVATUSAStaff())
                                 <select name="datm">
                                     <option value="-1">None</option>
                                     @foreach($staffPOCOptions["DATM"] as $cid => $name)
@@ -76,9 +76,9 @@
                 <tr>
                     <td>Training Administrator (TA)</td>
                     <td>{{$ta}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::isFacilityATMOrDATM($fac))
                         <td>
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                            @if(\App\Helpers\AuthHelper::isVATUSAStaff())
                                 <select name="ta">
                                     <option value="-1">None</option>
                                     @foreach($staffPOCOptions["TA"] as $cid => $name)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
+use App\Helpers\AuthHelper;
 use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Http\Request;
@@ -30,9 +31,9 @@ class TrainingController extends Controller
         }
 
         return response()->json(Auth::check() && $record->student_id != Auth::user()->cid &&
-            (RoleHelper::isVATUSAStaff() || !in_array($record->ots_status, [1, 2])) &&
-            (RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $record->facility) ||
-                (RoleHelper::isTrainingStaff(Auth::user()->cid, true, $record->facility)
+            (AuthHelper::isVATUSAStaff() || !in_array($record->ots_status, [1, 2])) &&
+            (AuthHelper::isFacilitySeniorStaff($record->facility) ||
+                (AuthHelper::isTrainingStaff($record->facility)
                     && $record->instructor_id == Auth::user()->cid)));
     }
 
@@ -609,7 +610,7 @@ class TrainingController extends Controller
         Request $request
     )
     {
-        if (!RoleHelper::isTrainingStaff() && !RoleHelper::isFacilitySeniorStaff()) {
+        if (!AuthHelper::isTrainingStaff() && !AuthHelper::isFacilitySeniorStaff()) {
             abort(403);
         }
 
@@ -618,7 +619,7 @@ class TrainingController extends Controller
         $facilities = Facility::active()->get();
 
         if (!$trainingfac) {
-            if (RoleHelper::isVATUSAStaff()) {
+            if (AuthHelper::isVATUSAStaff()) {
                 $trainingfac = "";
                 $trainingfacname = "";
             } else {
@@ -662,7 +663,7 @@ class TrainingController extends Controller
             abort(403);
         }
 
-        $hasGlobalAccess = RoleHelper::isVATUSAStaff();
+        $hasGlobalAccess = AuthHelper::isVATUSAStaff();
         if (!$hasGlobalAccess) {
             $facility = Auth::user()->facilityObj;
         } else if ($facility) {

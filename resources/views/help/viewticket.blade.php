@@ -3,10 +3,10 @@
 
 @section('content')
     <div class="container">
-        @if(\App\Classes\RoleHelper::isFacilityStaff()
-            || \App\Classes\RoleHelper::isInstructor()
-            || \App\Classes\RoleHelper::isVATUSAStaff()
-            || \App\Classes\RoleHelper::isWebTeam()
+        @if(\App\Classes\AuthHelper::isFacilityStaff() ||
+            \App\Classes\AuthHelper::isInstructor() ||
+            \App\Classes\AuthHelper::isVATUSAStaff() ||
+            \App\Classes\AuthHelper::isWebTeam()
             )
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -35,7 +35,8 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Facility:</label>
                                 <div class="col-sm-5">
-                                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                                        \App\Helpers\AuthHelper::isInstructor())
                                         <select id="tFacility" class="form-control">
                                             <option value="ZHQ">VATUSA HQ</option>
                                             @foreach(\App\Models\Facility::where('active', '1')->orWhere('id', 'ZAE')->orderBy('name')->get() as $f)
@@ -52,7 +53,8 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Assigned To:</label>
                                 <div class="col-sm-10">
-                                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                                        \App\Helpers\AuthHelper::isInstructor())
                                         <select id="tAssignTo" class="form-control">
                                             <option value="0">Unassigned</option>
                                             @foreach(\App\Classes\RoleHelper::getStaff($ticket->facility, true) as $s)
@@ -90,7 +92,8 @@
                                     <p class="form-control-static">{{$ticket->updated_at->format('m/d/Y H:i')}}</p>
                                 </div>
                             </div>
-                            @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                            @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                                \App\Helpers\AuthHelper::isInstructor())
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Notes:<br>(Visible to staff only)</label>
                                     <div class="col-sm-10">
@@ -119,11 +122,13 @@
                         <div id="ticketReply0" class="panel panel-default">
                             <div class="panel-body">
                                 <div class="col-lg-2">
-                                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                                        \App\Helpers\AuthHelper::isInstructor())
                                         <a href="/mgt/controller/{{$ticket->cid}}" target="_blank">
                                             @endif
                                             {{$ticket->submitter->fullname()}}
-                                            @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                            @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                                                \App\Helpers\AuthHelper::isInstructor())
                                         </a>
                                     @endif
                                     <br>
@@ -141,11 +146,13 @@
                             <div id="ticketReply{{$r->id}}" class="panel panel-default">
                                 <div class="panel-body">
                                     <div class="col-lg-2">
-                                        @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                        @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                                            \App\Helpers\AuthHelper::isInstructor())
                                             <a href="/mgt/controller/{{$r->cid}}">
                                                 @endif
                                                 {{$r->submitter->fullname()}}
-                                                @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                                @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
+                                                    \App\Helpers\AuthHelper::isInstructor())
                                             </a>
                                         @endif
                                         <br>
