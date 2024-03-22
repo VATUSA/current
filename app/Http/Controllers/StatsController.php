@@ -155,18 +155,13 @@ class StatsController
     }
 
     public function getIndex() {
-        $zae = Facility::where('id', 'ZAE')->get();
-        $west = Facility::where('active', 1)->where('region', 8)->orderBy('name')->get();
-        $midwest = Facility::where('active', 1)->where('region', 6)->orderBy('name')->get();
-        $northeast = Facility::where('active', 1)->where('region', 7)->orderBy('name')->get();
-        $south = Facility::where('active', 1)->where('region', 5)->orderBy('name')->get();
-        $facilities = Facility::where('active', 1)->orWhere('id', 'ZAE')->get();
-        $us2 = Role::where('facility', 'ZHQ')->where('role', 'US2')->first();
-        $regions[0] = $regions[5] = $regions[6] = $regions[7] = $regions[8] = 0;
+        $facilities = Facility::where('active', 1)->get();
+        $academyCount = User::where('facility', 'ZAE')->count();
+        $facilityCount = 0;
         foreach ($facilities as $facility) {
             $transfersPending[$facility->id] = Transfers::where('to', $facility->id)->where('status', 0)->count();
             $controllersCount[$facility->id] = User::where('facility', $facility->id)->count();
-            $regions[$facility->region] += $controllersCount[$facility->id];
+            $facilityCount += $controllersCount[$facility->id];
             if ($facility->atm == 0) {
                 $atms[$facility->id] = "Vacant";
             } else {
@@ -198,10 +193,8 @@ class StatsController
                 $wms[$facility->id] = $facility->wm()->fullname();
             }
         }
-        return view('stats.index', compact('zae',
-            'west', 'midwest', 'northeast', 'south', 'us2',
-            'transfersPending', 'controllersCount',
+        return view('stats.index', compact('transfersPending', 'controllersCount',
             'atms', 'datms', 'tas', 'ecs', 'fes', 'wms',
-            'regions'));
+            'facilities', 'facilityCount', 'academyCount'));
     }
 }

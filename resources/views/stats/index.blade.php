@@ -28,19 +28,15 @@
                             <table border="0" style="width:100%;" class="table table-responsive">
                                 <tr>
                                     <td colspan="8">Total Active Members</td>
-                                    <td>{{$controllersCount['ZAE'] + $regions[5] + $regions[6] + $regions[7]+ + $regions[8]}}</td>
+                                    <td>{{$academyCount + $facilityCount}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="8">Academy Assigned</td>
-                                    <td>{{$controllersCount['ZAE']}}</td>
+                                    <td>{{$academyCount}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Western Region</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us2==null)?"Vacant":$us2->user()->first()->fullname()}}</td>
-                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[6]}}</td>
+                                    <td colspan="8" style="background: #002868; color: #fff; font-weight: bold;">Facilty Breakdown</td>
+                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$facilityCount}}</td>
                                 </tr>
                                 <tr style="background: #cccccc">
                                     <td>FacID</td>
@@ -53,71 +49,7 @@
                                     <td>Transfers</td>
                                     <td>Total</td>
                                 </tr>
-                                @foreach ($midwest as $fac)
-                                    <tr>
-                                        <td>{{$fac->id}}</td>
-                                        <td>{{$atms[$fac->id]}}</td>
-                                        <td>{{$datms[$fac->id]}}</td>
-                                        <td>{{$tas[$fac->id]}}</td>
-                                        <td>{{$ecs[$fac->id]}}</td>
-                                        <td>{{$fes[$fac->id]}}</td>
-                                        <td>{{$wms[$fac->id]}}</td>
-                                        <td>{{$transfersPending[$fac->id]}}</td>
-                                        <td>{{$controllersCount[$fac->id]}}</td>
-                                    </tr>
-                                @endforeach
-                                <tr>
-                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Central Region</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us2==null)?"Vacant":$us2->user()->first()->fullname()}}</td>
-                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[5]}}</td>
-                                </tr>
-                                <tr style="background: #cccccc">
-                                    <td width="14%">FacID</td>
-                                    <td width="13%">ATM</td>
-                                    <td width="13%">DATM</td>
-                                    <td width="13%">TA</td>
-                                    <td width="13%">EC</td>
-                                    <td width="13%">FE</td>
-                                    <td width="13%">WM</td>
-                                    <td width="2%">Transfers</td>
-                                    <td width="3%">Total</td>
-                                </tr>
-                                @foreach ($south as $fac)
-                                    <tr>
-                                        <td>{{$fac->id}}</td>
-                                        <td>{{$atms[$fac->id]}}</td>
-                                        <td>{{$datms[$fac->id]}}</td>
-                                        <td>{{$tas[$fac->id]}}</td>
-                                        <td>{{$ecs[$fac->id]}}</td>
-                                        <td>{{$fes[$fac->id]}}</td>
-                                        <td>{{$wms[$fac->id]}}</td>
-                                        <td>{{$transfersPending[$fac->id]}}</td>
-                                        <td>{{$controllersCount[$fac->id]}}</td>
-                                    </tr>
-                                @endforeach
-                                <tr>
-                                    <td colspan="9" style="background: #002868; color: #fff; font-weight: bold;">Eastern Region</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8"
-                                        style="background: #002868; color: #fff; font-weight: bold;">{{($us2==null)?"Vacant":$us2->user()->first()->fullname()}}</td>
-                                    <td style="background: #002868; color: #fff; font-weight: bold; text-align: right">{{$regions[7]}}</td>
-                                </tr>
-                                <tr style="background: #cccccc">
-                                    <td width="14%">FacID</td>
-                                    <td width="13%">ATM</td>
-                                    <td width="13%">DATM</td>
-                                    <td width="13%">TA</td>
-                                    <td width="13%">EC</td>
-                                    <td width="13%">FE</td>
-                                    <td width="13%">WM</td>
-                                    <td width="2%">Transfers</td>
-                                    <td width="3%">Total</td>
-                                </tr>
-                                @foreach ($northeast as $fac)
+                                @foreach ($facilities as $fac)
                                     <tr>
                                         <td>{{$fac->id}}</td>
                                         <td>{{$atms[$fac->id]}}</td>
@@ -138,7 +70,7 @@
                                     Facility: <select id="detailfacilityselect">
                                         <option value="0">Select Facility</option>
                                         <option value="overview">Overview of Division</option>
-                                        @foreach(\App\Models\Facility::where('active',1)->orderBy("name")->get() as $detfacility)
+                                        @foreach($facilities as $detfacility)
                                             <option value="{{$detfacility->id}}">{{$detfacility->name}}</option>
                                         @endforeach
                                     </select> <span id="detailprocessing"
@@ -191,7 +123,8 @@
                                 <div class="col-md-12">
                                     Facility: <select id="examfacilityselect">
                                         <option value="0">Select Facility</option>
-                                        @foreach(\App\Models\Facility::where('active',1)->orWhere("id", "ZAE")->orderBy("name")->get() as $detfacility)
+                                        <option value="ZAE">Academy</option>
+                                        @foreach($facilities as $detfacility)
                                             <option value="{{$detfacility->id}}">{{$detfacility->name}}</option>
                                         @endforeach
                                     </select> Year: <select id="examYearSelect">
