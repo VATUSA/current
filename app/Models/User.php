@@ -341,7 +341,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $checks['override'] = 0;
         $checks['is_first'] = 1;
         $checks['homecontroller'] = $this->flag_homecontroller;
-        if (!$this->flag_needbasic || ExamHelper::academyPassedExam($this->cid, "basic", 0, 6)) {
+        if (!$this->flag_needbasic) {
             $checks['needbasic'] = 1;
         }
         // 1 = check passed
