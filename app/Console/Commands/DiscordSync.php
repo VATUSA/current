@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Classes\DiscordHelper;
+use App\Helpers\DiscordHelper;
 use App\Models\User;
 use Illuminate\Console\Command;
-use App\Models\Facility;
-use App\Models\Role;
 
 class DiscordSync extends Command
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes;
+namespace App\Helpers;
 
 use App\Models\User;
 use GuzzleHttp\Client as Guzzle;

@@ -1,16 +1,16 @@
 <?php namespace App\Http\Controllers;
 
-use App\Classes\DiscordHelper;
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\VATUSAMoodle;
+use App\Helpers\DiscordHelper;
+use App\Models\Actions;
+use App\Models\Facility;
+use App\Models\Transfers;
+use App\Models\User;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\Transfers;
-use Auth;
-use App\Models\Actions;
-use App\Models\User;
-use App\Models\Facility;
 use Laravel\Socialite\Facades\Socialite;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Wohali\OAuth2\Client\Provider\Discord;

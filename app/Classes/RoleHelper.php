@@ -2,15 +2,12 @@
 
 namespace App\Classes;
 
-use App\Classes\DiscordHelper;
+use App\Models\Facility;
 use App\Models\Policy;
 use App\Models\Role;
-use App\Models\Transfers;
-use App\Models\User;
-use App\Models\Facility;
 use App\Models\RoleTitle;
-use App\Models\Actions;
-use \Auth;
+use App\Models\User;
+use Auth;
 use Illuminate\Support\Facades\Schema;
 
 class RoleHelper

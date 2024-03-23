@@ -2,7 +2,6 @@
 
 namespace App\Helpers;
 
-use App\Classes\DiscordHelper;
 use App\Classes\RoleHelper;
 use App\Models\Actions;
 use App\Models\Facility;
