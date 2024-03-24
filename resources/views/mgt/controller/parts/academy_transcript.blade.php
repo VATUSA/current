@@ -6,19 +6,15 @@
     </div>
     <div class="panel-body">
         <div>
-            @if (\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
-                 \App\Helpers\AuthHelper::authACL()->isInstructor() ||
-                 \App\Helpers\AuthHelper::authACL()->isMentor() ||
-                 \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
-                <div style="text-align: center;">
-                    <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=19&userid={{$moodleUid}}&userview=1"
-                       style="text-decoration: none; font-size: 24px; "
-                       target="_blank"><span
-                                class="label label-success"><i
-                                    class="fas fa-check"
-                                    style="font-size: inherit !important;"></i> View Grades in Academy</span></a>
-                </div>
-            @endif
+            <div style="text-align: center;">
+                <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=19&userid={{$moodleUid}}&userview=1"
+                   style="text-decoration: none; font-size: 24px; " target="_blank">
+                    <span class="label label-success">
+                        <i class="fas fa-check" style="font-size: inherit !important;"></i>
+                        View Grades in Academy
+                    </span>
+                </a>
+            </div>
             <table class="table table-striped">
                 <thead>
                 <tr>

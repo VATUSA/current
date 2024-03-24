@@ -2,8 +2,7 @@
     <div class="col-md-4">
         <ol style="font-size: 110%;list-style-type: none;">
             <li><strong>{{$user->fname}} {{$user->lname}}</strong></li>
-            @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
-                \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff())
+            @if(\App\Helpers\AuthHelper::authACL()->canViewEmail())
                 <li>{{$user->email}} &nbsp; <a href="mailto:{{$user->email}}"><i
                                 class="fa fa-envelope text-primary"
                                 style="font-size:80%"></i></a>
@@ -33,9 +32,9 @@
             @if($user->facility()->active)
                 <li>
                     Training Staff?
-                    @if (\App\Helpers\AuthHelper::authACL()->isInstructor($user->facility))
+                    @if (\App\Helpers\AuthHelper::cidACL($user->cid)->isInstructor($user->facility))
                         Instructor
-                    @elseif(\App\Helpers\AuthHelper::authACL()->isMentor($user->facility))
+                    @elseif(\App\Helpers\AuthHelper::cidACL($user->cid)->isMentor($user->facility))
                         Mentor
                     @else
                         No
@@ -48,12 +47,12 @@
                 @foreach ($user->visits()->get() as $visit)
                     <li>
                         {{$visit->fac->id}} - {{$visit->fac->name}}
-                        @if(\App\Helpers\AuthHelper::authACL()->isTrainingStaff($visit->fac->id))
+                        @if(\App\Helpers\AuthHelper::cidACL($user->cid)->isTrainingStaff($visit->fac->id))
                             <br>
                             <span style="margin-left:2em;">
-                                @if (\App\Helpers\AuthHelper::authACL()->isInstructor($visit->fac->id))
+                                @if (\App\Helpers\AuthHelper::cidACL($user->cid)->isInstructor($visit->fac->id))
                                     Instructor
-                                @elseif(\App\Helpers\AuthHelper::authACL()->isMentor($visit->fac->id))
+                                @elseif(\App\Helpers\AuthHelper::cidACL($user->cid)->isMentor($visit->fac->id))
                                     Mentor
                                 @endif
                                 </span>

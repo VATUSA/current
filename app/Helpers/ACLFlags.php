@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Policy;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -83,9 +84,6 @@ class ACLFlags
 
     public function isFacilityATMOrDATM($facility = null): bool
     {
-        if ($this->isVATUSAStaff) {
-            return true;
-        }
         if ($facility == null) {
             return count($this->atmFacilities) > 0;
         } else {
@@ -95,9 +93,6 @@ class ACLFlags
 
     public function isTrainingAdministrator($facility = null): bool
     {
-        if ($this->isVATUSAStaff) {
-            return true;
-        }
         if ($facility == null) {
             return count($this->taFacilities) > 0;
         } else {
@@ -107,9 +102,6 @@ class ACLFlags
 
     public function isEventCoordinator($facility = null): bool
     {
-        if ($this->isVATUSAStaff) {
-            return true;
-        }
         if ($facility == null) {
             return count($this->ecFacilities) > 0;
         } else {
@@ -120,9 +112,6 @@ class ACLFlags
 
     public function isFacilityEngineer($facility = null): bool
     {
-        if ($this->isVATUSAStaff) {
-            return true;
-        }
         if ($facility == null) {
             return count($this->feFacilities) > 0;
         } else {
@@ -133,9 +122,6 @@ class ACLFlags
 
     public function isWebmaster($facility = null): bool
     {
-        if ($this->isVATUSAStaff) {
-            return true;
-        }
         if ($facility == null) {
             return count($this->wmFacilities) > 0;
         } else {
@@ -145,9 +131,6 @@ class ACLFlags
 
     public function isTrainingStaff($facility = null): bool
     {
-        if ($this->isVATUSAStaff) {
-            return true;
-        }
         $staffFacilities = $this->taFacilities + $this->instructorFacilities + $this->mentorFacilities;
         if ($facility == null) {
             return count($staffFacilities) > 0;
@@ -228,5 +211,102 @@ class ACLFlags
         }
 
         return false;
+    }
+
+    public function canUseActionsMenu(): bool {
+        return $this->isVATUSAStaff() || $this->isWebTeam() || $this->isFacilityStaff() || $this->isTrainingStaff();
+    }
+
+    public function canUseActionLog(): bool {
+        return $this->isVATUSAStaff() || $this->isWebTeam() || $this->isFacilitySeniorStaff();
+    }
+
+    public function canManageRoles(): bool {
+        return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff();
+    }
+
+    public function canViewEmail(): bool {
+        return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff();
+    }
+
+    public function canViewController(User $user): bool {
+        if ($this->isVATUSAStaff() ||
+            $this->isWebTeam() ||
+            $this->isFacilitySeniorStaff() ||
+            $this->isInstructor() ||
+            $this->isMentor($user->facility)) {
+            return true;
+        }
+        foreach ($user->visits()->get() as $visit) {
+            if ($this->isMentor($visit->id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function canViewFacilityRoster($facility = null): bool
+    {
+        return $this->canViewAnyFacilityRoster() || $this->isMentor($facility);
+    }
+
+    public function canViewAnyFacilityRoster(): bool {
+        return $this->isVATUSAStaff() ||
+            $this->isWebTeam() ||
+            $this->isFacilityStaff() ||
+            $this->isInstructor();
+    }
+
+    public function canManageFacilityRoster($facility = null): bool
+    {
+        return $this->isVATUSAStaff() || $this->isFacilityATMOrDATM($facility);
+    }
+
+    public function canManageFacilityStaff($facility = null): bool
+    {
+        return $this->isVATUSAStaff() || $this->isFacilityATMOrDATM($facility);
+    }
+
+    public function canManageFacilityTechConfig($facility = null): bool {
+        return $this->isVATUSAStaff() || $this->isFacilityATMOrDATM($facility) || $this->isWebmaster($facility);
+    }
+
+    public function canManageFacilitySoloCertifications($facility = null): bool
+    {
+        return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff($facility) || $this->isInstructor($facility);
+    }
+
+    public function canManageFacilityTickets($facility = null): bool {
+        return $this->isVATUSAStaff() ||
+            $this->isWebTeam() ||
+            $this->isFacilityStaff($facility) ||
+            $this->isInstructor($facility);
+    }
+
+    public function canManageFacilityTMU($facility = null): bool {
+        return $this->isVATUSAStaff() ||
+            $this->isWebTeam() ||
+            $this->isFacilityStaff($facility);
+    }
+
+    public function canViewTrainingRecords($facility = null): bool {
+        return $this->canViewAllTrainingRecords() || $this->isMentor($facility);
+    }
+
+    public function canViewAllTrainingRecords(): bool {
+        return $this->isVATUSAStaff() ||
+            $this->isWebTeam() ||
+            $this->isFacilitySeniorStaff() ||
+            $this->isInstructor();
+    }
+
+    public function canCreateTrainingRecords($facility = null): bool {
+        return $this->isVATUSAStaff() ||
+            $this->isInstructor($facility) ||
+            $this->isMentor($facility);
+    }
+
+    public function canPromoteForFacility($facility = null): bool {
+        return $this->isVATUSAStaff() || $this->isInstructor($facility);
     }
 }

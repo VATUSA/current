@@ -13,9 +13,7 @@
 @endpush
 
 @php
-    $facilityAccess = \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
-                      \App\Helpers\AuthHelper::authACL()->isWebmaster() ||
-                      \App\Helpers\AuthHelper::authACL()->isFacilityEngineer();
+    $facilityAccess = \App\Helpers\AuthHelper::authACL()->canManageFacilityTMU();
 @endphp
 
 @section('content')

@@ -37,7 +37,7 @@
     <tr>
         <td>Events Coordinator (EC)</td>
         <td>{{$ec}}</td>
-        @if (\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
+        @if (\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
             <td><a href="#" onClick="posEdit(4)"><i class="fa fa-edit"></i></a> &nbsp; <a href="#" onclick="posDel(4)"><i class="text-danger fa fa-times"></i></a></td>
         @else
             <td>&nbsp;</td>
@@ -46,7 +46,7 @@
     <tr>
         <td>Facility Engineer (FE)</td>
         <td>{{$fe}}</td>
-        @if (\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
+        @if (\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
             <td><a href="#" onClick="posEdit(5)"><i class="fa fa-edit"></i></a> &nbsp; <a href="#" onclick="posDel(5)"><i class="text-danger fa fa-times"></i></a></td>
         @else
             <td>&nbsp;</td>
@@ -55,7 +55,7 @@
     <tr>
         <td>Webmaster (WM)</td>
         <td>{{$wm}}</td>
-        @if (\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
+        @if (\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
             <td><a href="#" onClick="posEdit(6)"><i class="fa fa-edit"></i></a> &nbsp; <a href="#" onclick="posDel(6)"><i class="text-danger fa fa-times"></i></a></td>
         @else
             <td>&nbsp;</td>

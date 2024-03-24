@@ -7,17 +7,15 @@
     <div class="panel-body">
         @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
             <div class="alert alert-success" id="delete-log-success" style="display:none;">
-                <strong><i class='fa fa-check'></i> Success! </strong> The log entry has
-                been
-                deleted.
+                <strong><i class='fa fa-check'></i> Success! </strong>
+                The log entry has been deleted.
             </div>
             <div class="alert alert-danger" id="delete-log-error" style="display:none;">
-                <strong><i
-                            class='fa fa-check'></i> Error! </strong> Could not delete log
-                entry.
+                <strong><i class='fa fa-check'></i> Error! </strong>
+                Could not delete log entry.
             </div>
         @endif
-        @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff())
+        @if(\App\Helpers\AuthHelper::authACL()->canUseActionLog())
             <form class="form-horizontal"
                   action="{{url("/mgt/controller/action/add")}}"
                   method="POST">

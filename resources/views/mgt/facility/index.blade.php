@@ -5,9 +5,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
-                        \App\Helpers\AuthHelper::authACL()->isInstructor() ||
-                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::authACL()->canViewAnyFacilityRoster())
                         <select id="facmgt" class="mgt-sel">
                             @foreach(\App\Models\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f)
                                 <option name="{{$f->id}}" @if($f->id == $fac) selected @endif>{{$f->id}}</option>
@@ -27,9 +25,11 @@
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
-                        @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
-                            <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i
-                                            class="fas fa-exchange-alt"></i> Transfers</a>
+                        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
+                            <li role="presentation">
+                                <a href="#trans" aria-controls="trans" role="tab" data-toggle="tab">
+                                    <i class="fas fa-exchange-alt"></i> Pending Transfers
+                                </a>
                             </li>
                         @endif
                         <li role="presentation">
@@ -42,14 +42,7 @@
                                 <i class="fas fa-door-open"></i> Visiting Roster
                             </a>
                         </li>
-                        @if(\App\Helpers\AuthHelper::authACL()->isTrainingStaff())
-                            <li role="presentation">
-                                <a href="{{ url("mgt/facility/training/stats") }}" aria-controls="training">
-                                    <i class="fas fa-chart-line"></i> Training
-                                </a>
-                            </li>
-                        @endif
-                        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
+                        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTechConfig($fac))
                             <li role="presentation">
                                 <a href="#uls" aria-controls="uls" role="tab" data-toggle="tab">
                                     <i class="fas fa-server"></i> Tech Conf
@@ -61,7 +54,7 @@
                         <div role="tabpanel" class="tab-pane active" id="dash">
                             @include("mgt.facility.parts.dashboard")
                         </div>
-                        @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff($fac))
+                        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
                             <div role="tabpanel" class="tab-pane" id="trans">
                                 @include("mgt.facility.parts.transfers")
                             </div>
@@ -72,8 +65,7 @@
                         <div role="tabpanel" class="tab-pane" id="vroster">
                             @include("mgt.facility.parts.visiting_roster")
                         </div>
-                        @if(\App\Helpers\AuthHelper::authACL()->isWebmaster($fac) ||
-                            \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff($fac))
+                        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTechConfig($fac))
                             <div role="tabpanel" class="tab-pane" id="uls">
                                 @include("mgt.facility.parts.tech")
                             </div>
@@ -85,7 +77,7 @@
     </div>
 
     <!-- Add Visitor Modal -->
-    @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
         <div class="modal fade" id="addVisitorModal" tabindex="-1" role="dialog" aria-labelledby="addVisitorModalTitle"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -194,16 +186,13 @@
                     if (promotion_date) html += '<td>' + (promotion_date.getMonth() + 1) + '/' + promotion_date.getDate() + '/' + promotion_date.getFullYear() + '</td>'
                     else html += '<td><span class="text-muted">N/A</span></td>'
                     html += '<td class="text-right">'
-                    @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff($fac) ||
-                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
-                        \App\Helpers\AuthHelper::authACL()->isInstructor($fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->canPromoteForFacility($fac))
                     if (resp.data[i].promotion_eligible == true) {
                         html += '<a href="/mgt/controller/' + resp.data[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
                     }
                     @endif
                         html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
-                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac) ||
-                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
                         html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ', \'' + resp.data[i].fname + ' ' + resp.data[i].lname + '\')"><i class="text-danger fa fa-times"></i></a>'
                     @endif
                         html += '</td></tr>'
@@ -238,8 +227,7 @@
                     html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
                     html += '<td class="text-right">'
                     html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
-                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac) ||
-                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
                         html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + resp.data[i].cid + ', \'' + resp.data[i].fname.replace(/'/g, "\\'") + ' ' + resp.data[i].lname.replace(/'/g, "\\'") + '\')"><i class="text-danger fa fa-times"></i></a>'
                     @endif
                         html += '</td></tr>'
@@ -250,7 +238,7 @@
                 $('#vrostertable').tablesorter()
             })
         })
-        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
+        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTechConfig($fac))
 
         function updateUrl() {
             $.ajax(
@@ -306,7 +294,7 @@
         }
 
         @endif
-        @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
+        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
 
         function appvTrans(id) {
             swal({
@@ -399,7 +387,7 @@
         }
 
         @endif
-        @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
 
         function deleteVisitor(cid, name) {
             swal({

@@ -172,7 +172,7 @@ class TMUController
             }
         }
         $userACL = AuthHelper::authACL();
-        if (!$userACL->isVATUSAStaff() && !$userACL->isFacilityStaff()) {
+        if (!$userACL->canManageFacilityTMU()) {
             abort(403);
         }
 
@@ -211,9 +211,7 @@ class TMUController
             $fac = $tmufac->parent;
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($fac) &&
-            !$authACL->isWebmaster($fac) &&
-            !$authACL->isFacilityEngineer($fac)) {
+        if (!$authACL->canManageFacilityTMU($fac)) {
             abort(403);
         }
 
@@ -252,9 +250,7 @@ class TMUController
             $fac = $ofac;
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($fac) &&
-            !$authACL->isWebmaster($fac) &&
-            !$authACL->isFacilityEngineer($fac)) {
+        if (!$authACL->canManageFacilityTMU($fac)) {
             abort(403);
         }
 
@@ -289,9 +285,7 @@ class TMUController
             $fac = $tmufac->parent;
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($fac) &&
-            !$authACL->isWebmaster($fac) &&
-            !$authACL->isFacilityEngineer($fac)) {
+        if (!$authACL->canManageFacilityTMU($fac)) {
             abort(403);
         }
 
@@ -322,9 +316,7 @@ class TMUController
 
     function getMgtMapping($fac, $id) {
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($fac) &&
-            !$authACL->isWebmaster($fac) &&
-            !$authACL->isFacilityEngineer($fac)) {
+        if (!$authACL->canManageFacilityTMU($fac)) {
             abort(403);
         }
 
@@ -354,9 +346,7 @@ class TMUController
             abort(401);
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($fac) &&
-            !$authACL->isWebmaster($fac) &&
-            !$authACL->isFacilityEngineer($fac)) {
+        if (!$authACL->canManageFacilityTMU($fac)) {
             abort(403);
         }
 

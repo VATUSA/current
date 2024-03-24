@@ -30,13 +30,8 @@ class FacMgtController extends Controller
 
     public function getIndex($fac = null)
     {
-        if (!AuthHelper::authACL()->isMentor() &&
-            !AuthHelper::authACL()->isInstructor() &&
-            !AuthHelper::authACL()->isFacilitySeniorStaff() &&
-            !AuthHelper::authACL()->isVATUSAStaff() &&
-            !AuthHelper::authACL()->isWebTeam() &&
-            !AuthHelper::authACL()->isWebmaster()) {
-            abort(401);
+        if (!AuthHelper::authACL()->canViewFacilityRoster($fac)) {
+            abort(403);
         }
 
         if ($fac === null) {
@@ -49,13 +44,6 @@ class FacMgtController extends Controller
 
         if ($fac == "Winterfell") {
             return view('eastereggs.winterfell');
-        }
-
-        // Mentor-only users can only view their facility
-        if (!AuthHelper::authACL()->isVATUSAStaff() &&
-            !AuthHelper::authACL()->isFacilityStaff() &&
-            !AuthHelper::authACL()->isInstructor()) {
-            $fac = Auth::user()->facility;
         }
 
         $facility = Facility::find($fac);
@@ -92,8 +80,7 @@ class FacMgtController extends Controller
             abort(401);
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($facility) &&
-            !$authACL->isWebmaster($facility)) {
+        if (!$authACL->canManageFacilityTechConfig($facility)) {
             abort(403);
         }
 
@@ -117,8 +104,7 @@ class FacMgtController extends Controller
             abort(401);
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($facility) &&
-            !$authACL->isWebmaster($facility)) {
+        if (!$authACL->canManageFacilityTechConfig($facility)) {
             abort(403);
         }
 
@@ -138,7 +124,7 @@ class FacMgtController extends Controller
 
     public function savePointsOfContact(Request $request, $fac)
     {
-        if (!AuthHelper::authACL()->isFacilityATMOrDATM($fac) && !AuthHelper::authACL()->isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->canManageFacilityStaff($fac)) {
             abort(401);
         }
         $facility = Facility::findOrFail($fac);
@@ -168,13 +154,13 @@ class FacMgtController extends Controller
         if (AuthHelper::authACL()->isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
             $facility->ta = $ta;
         }
-        if (AuthHelper::authACL()->isFacilityATMOrDATM($fac) && ($ec == -1 || in_array($ec, $staffPOCOptions["EC"]))) {
+        if ($ec == -1 || in_array($ec, $staffPOCOptions["EC"])) {
             $facility->ec = $ec;
         }
-        if (AuthHelper::authACL()->isFacilityATMOrDATM($fac) && ($fe == -1 || in_array($fe, $staffPOCOptions["FE"]))) {
+        if ($fe == -1 || in_array($fe, $staffPOCOptions["FE"])) {
             $facility->fe = $fe;
         }
-        if (AuthHelper::authACL()->isFacilityATMOrDATM($fac) && ($wm == -1 || in_array($wm, $staffPOCOptions["WM"]))) {
+        if ($wm == -1 || in_array($wm, $staffPOCOptions["WM"])) {
             $facility->wm = $wm;
         }
         $facility->save();
@@ -186,8 +172,8 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!AuthHelper::authACL()->isVATUSAStaff() && !AuthHelper::authACL()->isFacilityATMOrDATM($facility)) {
-            abort(401);
+        if (!AuthHelper::authACL()->canManageFacilityRoster($facility)) {
+            abort(403);
         }
 
         $user = User::find($cid);
@@ -205,13 +191,13 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!AuthHelper::authACL()->isVATUSAStaff() && !AuthHelper::authACL()->isFacilityATMOrDATM()) {
-            abort(401);
+        $tr = Transfers::find($_POST['id']);
+        if (!AuthHelper::authACL()->canManageFacilityRoster($tr->to)) {
+            abort(403);
         }
 
         if (($status == 1 || $status == 2) && isset($_POST['id'])) {
             if ($status == 2 && isset($_POST['reason']) && !empty($_POST['reason'])) {
-                $tr = Transfers::find($_POST['id']);
                 if ($tr != null) {
                     $tr->reject(Auth::user()->cid, $_POST['reason']);
 
@@ -222,7 +208,6 @@ class FacMgtController extends Controller
 
             }
             if ($status == 1) {
-                $tr = Transfers::find($_POST['id']);
                 if ($tr != null) {
                     $tr->accept(Auth::user()->cid);
 

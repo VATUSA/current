@@ -1,5 +1,5 @@
 <br>
-@if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+@if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
     <div class="text-center">
         <button class="btn btn-success" data-toggle="modal" data-target="#addVisitorModal">
             <i

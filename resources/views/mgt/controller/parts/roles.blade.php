@@ -1,6 +1,5 @@
 @php
     $isVATUSAStaff = \App\Helpers\AuthHelper::authACL()->isVATUSAStaff();
-
 @endphp
 
 <div class="row">
@@ -73,14 +72,16 @@
                             <option value="{{$role->role}}">{{$role->title}}</option>
                         @endforeach
                     @endif
-                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM())
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff())
                         @foreach (\App\Helpers\RoleHelperV2::roleTitles(\App\Helpers\RoleHelperV2::$facilityRolesATM) as $role)
                             <option value="{{$role->role}}">{{$role->title}}</option>
                         @endforeach
                     @endif
-                    @foreach (\App\Helpers\RoleHelperV2::roleTitles(\App\Helpers\RoleHelperV2::$facilityRolesTA) as $role)
-                        <option value="{{$role->role}}">{{$role->title}}</option>
-                    @endforeach
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageRoles())
+                        @foreach (\App\Helpers\RoleHelperV2::roleTitles(\App\Helpers\RoleHelperV2::$facilityRolesTA) as $role)
+                            <option value="{{$role->role}}">{{$role->title}}</option>
+                        @endforeach
+                    @endif
                 </select>
                 <button class="btn btn-success" type="submit">
                     <i class="fa fa-plus"></i> Assign

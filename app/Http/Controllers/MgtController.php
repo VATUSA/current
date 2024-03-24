@@ -42,15 +42,6 @@ class MgtController extends Controller
 
     public function getController(Request $request, $cid = null)
     {
-        if (!AuthHelper::authACL()->isMentor() &&
-            !AuthHelper::authACL()->isInstructor() &&
-            !AuthHelper::authACL()->isFacilitySeniorStaff() &&
-            !AuthHelper::authACL()->isVATUSAStaff() &&
-            !AuthHelper::authACL()->isWebTeam() &&
-            !AuthHelper::authACL()->isWebmaster()) {
-            abort(401);
-        }
-
         if ($cid == null) {
             return view('mgt.controller.blank');
         }
@@ -61,6 +52,9 @@ class MgtController extends Controller
 
         $user = User::where('cid', $cid);
 
+        if (!AuthHelper::authACL()->canViewController($user)) {
+            abort(401);
+        }
         if ($user->count()) {
             $user = $user->first();
             $checks = [];
@@ -72,9 +66,8 @@ class MgtController extends Controller
             $trainingfaclist = $user->trainingRecords()->groupBy('facility_id')->get()->filter(function ($record) use (
                 $user
             ) {
-                return AuthHelper::authACL()->isTrainingStaff($record->facility_id)
-                    || AuthHelper::authACL()->isTrainingStaff($user->facility)
-                    || AuthHelper::authACL()->isWebTeam();
+                return AuthHelper::authACL()->canViewTrainingRecords($record->facility_id)
+                    || AuthHelper::authACL()->canViewTrainingRecords($user->facility);
             });
 
             if (!$trainingfac) {
@@ -103,12 +96,10 @@ class MgtController extends Controller
             foreach ($user->visits()->get() as $visit) {
                 $trainingFacListArray[$visit->fac->id] = $visit->fac->name;
             }
-            $trainingRecords = AuthHelper::authACL()->isTrainingStaff($trainingfac)
-            || AuthHelper::authACL()->isTrainingStaff($user->facility)
-            || AuthHelper::authACL()->isFacilitySeniorStaff()
-            || AuthHelper::authACL()->isWebTeam()
-                ? $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
-            $canAddTR = AuthHelper::authACL()->isTrainingStaff($trainingfac)
+            $trainingRecords = AuthHelper::authACL()->canViewTrainingRecords($trainingfac)  ||
+                AuthHelper::authACL()->canViewTrainingRecords($user->facility)
+                    ? $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
+            $canAddTR = AuthHelper::authACL()->canCreateTrainingRecords($trainingfac)
                 && $user->cid !== Auth::user()->cid;
 
             //Get INS at ARTCC
@@ -190,31 +181,6 @@ class MgtController extends Controller
     }
 
     /* Controller AJAX */
-    public function getControllerTransfers(Request $request, $cid)
-    {
-        if (!$request->ajax()) {
-            abort(500);
-        }
-        if (!AuthHelper::authACL()->isInstructor() &&
-            !AuthHelper::authACL()->isFacilityStaff() &&
-            !AuthHelper::authACL()->isVATUSAStaff() &&
-            !AuthHelper::authACL()->isWebTeam()) {
-            abort(401);
-        }
-
-        $transfers = Transfers::where('cid', $cid)->where('status', '<', 2)->orderBy('updated_at', 'ASC')->get();
-        $data = [];
-        foreach ($transfers as $transfer) {
-            $temp = [
-                'id' => $transfer->id,
-                'date' => substr($transfer->updated_at, 0, 10),
-                'from' => $transfer->from,
-                'to' => $transfer->to
-            ];
-            $data[] = $temp;
-        }
-    }
-
     public function postControllerRating(Request $request, $cid)
     {
         if (!$request->ajax()) {
@@ -475,7 +441,7 @@ class MgtController extends Controller
             abort(404);
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff()) {
+        if (!$authACL->canUseActionLog()) {
             abort(403);
         }
 
@@ -576,11 +542,8 @@ class MgtController extends Controller
 
     function getSolo()
     {
-        if (!AuthHelper::authACL()->isFacilitySeniorStaff() &&
-            !AuthHelper::authACL()->isInstructor() &&
-            !AuthHelper::authACL()->isVATUSAStaff() &&
-            !AuthHelper::authACL()->isWebTeam()) {
-            abort(401);
+        if (!AuthHelper::authACL()->canManageFacilitySoloCertifications()) {
+            abort(403);
         }
 
         return view('mgt.solo');
@@ -588,18 +551,14 @@ class MgtController extends Controller
 
     function postSolo(Request $request)
     {
-        if (!AuthHelper::authACL()->isFacilitySeniorStaff() &&
-            !AuthHelper::authACL()->isInstructor() &&
-            !AuthHelper::authACL()->isVATUSAStaff()) {
-            abort(401);
+        if (!AuthHelper::authACL()->canManageFacilitySoloCertifications()) {
+            abort(403);
         }
         $user = User::find($request->input('cid'));
         if (!$user) {
             return redirect('/mgt/solo')->with('error', "Invalid CID");
         }
-        if (!AuthHelper::authACL()->isInstructor($user->facility) &&
-            !AuthHelper::authACL()->isFacilitySeniorStaff($user->facility) &&
-            !AuthHelper::authACL()->isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->canManageFacilitySoloCertifications($user->facility)) {
             return redirect('/mgt/solo')->with('error',
                 'You do not have permission to assign this solo certification.');
         }
@@ -641,9 +600,7 @@ class MgtController extends Controller
         if (!$user) {
             abort(500);
         }
-        if (!AuthHelper::authACL()->isInstructor($user->facility) &&
-            !AuthHelper::authACL()->isFacilitySeniorStaff( $user->facility) &&
-            !AuthHelper::authACL()->isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->canManageFacilitySoloCertifications($user->facility)) {
             abort(401);
         }
 
@@ -661,9 +618,7 @@ class MgtController extends Controller
             return redirect('mgt/facility#mem')->with('error', 'User not found.');
         }
 
-        if (!AuthHelper::authACL()->isFacilitySeniorStaff($user->facility) &&
-            !AuthHelper::authACL()->isInstructor($user->facility) &&
-            !AuthHelper::authACL()->isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility)) {
             abort(403);
         }
 
@@ -694,9 +649,7 @@ class MgtController extends Controller
             return redirect('mgt/facility#mem')->with('error', 'User not found');
         }
 
-        if (!AuthHelper::authACL()->isFacilitySeniorStaff($user->facility) &&
-            !AuthHelper::authACL()->isInstructor($user->facility) &&
-            !AuthHelper::authACL()->isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility)) {
             abort(403);
         }
 
@@ -950,10 +903,12 @@ class MgtController extends Controller
             return response()->json(false);
         }
 
-        return response()->json(Auth::check() && $record->student_id != Auth::user()->cid &&
+        return response()->json(Auth::check() &&
+            $record->student_id != Auth::user()->cid &&
             (AuthHelper::authACL()->isVATUSAStaff() || !in_array($record->ots_status, [1, 2])) &&
             (AuthHelper::authACL()->isFacilitySeniorStaff($record->facility) ||
-                (AuthHelper::authACL()->isTrainingStaff($record->facility) && $record->instructor_id == Auth::user()->cid)));
+                (AuthHelper::authACL()->isTrainingStaff($record->facility) &&
+                    $record->instructor_id == Auth::user()->cid)));
     }
 
     public function getOTSEval(Request $request, int $cid, $form = null)
@@ -994,8 +949,7 @@ class MgtController extends Controller
         }
         $student = $eval->student;
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($student->facility) &&
-            !$authACL->isInstructor($student->facility)) {
+        if (!$authACL->canViewTrainingRecords($student->facility)) {
             abort(403);
         }
         $positionSplit = explode('_', $eval->exam_position);
@@ -1019,13 +973,13 @@ class MgtController extends Controller
 
     public function viewEvals(Request $request)
     {
-        if (!AuthHelper::authACL()->isTrainingStaff()) {
-            abort(403);
-        }
 
         /** Training Records */
         $trainingfac = $request->input('fac', null);
         $facilities = Facility::active()->get();
+        if (!AuthHelper::authACL()->canViewTrainingRecords($trainingfac)) {
+            abort(403);
+        }
 
         if (!$trainingfac) {
             if (AuthHelper::authACL()->isVATUSAStaff()) {
@@ -1066,8 +1020,7 @@ class MgtController extends Controller
         if (!$interval) {
             abort(400);
         }
-        if (!AuthHelper::authACL()->isInstructor($facility) &&
-            !AuthHelper::authACL()->isFacilitySeniorStaff()) {
+        if (!AuthHelper::authACL()->canViewTrainingRecords($facility)) {
             abort(403);
         }
 

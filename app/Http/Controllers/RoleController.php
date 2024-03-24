@@ -15,9 +15,7 @@ class RoleController extends Controller
 {
 
     public function getRoleList(Request $request, $fac = null) {
-        if (!AuthHelper::authACL()->isFacilityATMOrDATM($fac) &&
-            !AuthHelper::authACL()->isWebmaster($fac) &&
-            !AuthHelper::authACL()->isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->canManageRoles()) {
             abort(401);
         }
         if ($fac != null) {

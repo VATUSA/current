@@ -53,8 +53,7 @@ class TrainingController extends Controller
             : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
                 ->withAll()->where('rating_id', $student->rating + 1)->first();
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($student->facility) &&
-            !$authACL->isInstructor($student->facility)) {
+        if (!$authACL->canViewTrainingRecords($student->facility)) {
             abort(403);
         }
         if (!$student || !$form) {
@@ -80,8 +79,7 @@ class TrainingController extends Controller
         }
         $student = $eval->student;
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff($student->facility) &&
-            !$authACL->isInstructor($student->facility)) {
+        if (!$authACL->canViewTrainingRecords($student->facility)) {
             abort(403);
         }
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
@@ -127,16 +125,14 @@ class TrainingController extends Controller
             }
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isFacilitySeniorStaff() &&
-            !$authACL->isTrainingStaff() &&
-            !$authACL->isVATUSAStaff()) {
+        if (!$authACL->canViewTrainingRecords()) {
             abort(403);
         }
 
 //        abort(500); // Disable training statistics as it's overloading the nodes, will re-enable after performance rework
         ini_set('memory_limit', '512M');
 
-        $globalAccess = $authACL->isFacilitySeniorStaff() || $authACL->isVATUSAStaff();
+        $globalAccess = $authACL->canViewAllTrainingRecords();
 
         $instructor = $request->input('instructor', null);
         $facility = $request->input('facility', null);
@@ -616,7 +612,7 @@ class TrainingController extends Controller
         Request $request
     )
     {
-        if (!AuthHelper::authACL()->isTrainingStaff() && !AuthHelper::authACL()->isFacilitySeniorStaff()) {
+        if (!AuthHelper::authACL()->canViewTrainingRecords()) {
             abort(403);
         }
 
@@ -666,9 +662,7 @@ class TrainingController extends Controller
             abort(400);
         }
         $authACL = AuthHelper::authACL();
-        if (!$authACL->isVATUSAStaff() &&
-            !$authACL->isFacilitySeniorStaff() &&
-            !$authACL->isInstructor()) {
+        if (!$authACL->canViewTrainingRecords()) {
             abort(403);
         }
         if (!$authACL->isVATUSAStaff()) {

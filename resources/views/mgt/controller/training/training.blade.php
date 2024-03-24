@@ -27,11 +27,11 @@
                 <li role="presentation" class="active"><a href="#training" data-controls="all" aria-controls="all"
                                                           role="tab"
                                                           data-toggle="pill"><i
-                            class="fa fa-list"></i> All Records</a></li>
+                                class="fa fa-list"></i> All Records</a></li>
                 <li role="presentation"><a href="#training" data-controls="ots" aria-controls="ots"
                                            role="tab"
                                            data-toggle="pill"><i
-                            class="fa fa-flag"></i> OTS Exams</a></li>
+                                class="fa fa-flag"></i> OTS Exams</a></li>
                 <hr>
                 <li role="presentation"><a href="#training" data-controls="del" aria-controls="del" role="tab"
                                            data-toggle="pill">Clearance
@@ -60,7 +60,7 @@
                         @if($canAddTR)
                             <div class="text-center">
                                 <button class="btn btn-success add-new-record"><span
-                                        class="glyphicon glyphicon-plus"></span> Add New
+                                            class="glyphicon glyphicon-plus"></span> Add New
                                     Record
                                 </button>
                             </div>
@@ -89,7 +89,7 @@
                                 @endphp
                                 <tr @if($color) class="{{ $color }}" @endif>
                                     <td><span
-                                            class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
+                                                class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
                                     </td>
                                     <td>{{ $record->position }}</td>
                                     <td>{!! $record->instructor ? $record->instructor->fullname() : "<em> Account Erased</em>" !!}</td>
@@ -98,7 +98,7 @@
                                         @if(!is_null($record->score))
                                             @for($i = 1; $i <= 5; $i++)
                                                 <span
-                                                    class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
+                                                        class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
                                                 &nbsp;
                                             @endfor
                                         @endif
@@ -107,7 +107,7 @@
                                         <div class="btn-group">
                                             <button class="btn btn-primary view-tr"
                                                     data-id="{{ $record->id }}"><span
-                                                    class="glyphicon glyphicon-eye-open"></span></button>
+                                                        class="glyphicon glyphicon-eye-open"></span></button>
                                             @php $canModify = \App\Helpers\AuthHelper::authACL()->isTrainingStaff($trainingfac)
                                                                    && $record->instructor_id == Auth::user()->cid;
                                                  $isUSAStaff = \App\Helpers\AuthHelper::authACL()->isVATUSAStaff();
@@ -116,13 +116,13 @@
                                             @if(($canModify && $canEditDelete && !$ownRecord) || $isUSAStaff)
                                                 <button class="btn btn-warning edit-tr"
                                                         data-id="{{ $record->id }}"><span
-                                                        class="glyphicon glyphicon-pencil"></span>
+                                                            class="glyphicon glyphicon-pencil"></span>
                                                 </button>
                                             @endif
                                             @if($isUSAStaff)
                                                 <button class="btn btn-danger delete-tr"
                                                         data-id="{{ $record->id }}"><span
-                                                        class="glyphicon glyphicon-remove"></span></button>
+                                                            class="glyphicon glyphicon-remove"></span></button>
                                             @endif
                                         </div>
                                     </td>
@@ -171,7 +171,7 @@
                                     @endphp
                                     <tr @if($color) class="{{ $color }}" @endif>
                                         <td><span
-                                                class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
+                                                    class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
                                         </td>
                                         <td>{{ $record->position }}</td>
                                         <td>{!! $record->instructor ? $record->instructor->fullname() : "<em>Account Erased</em>" !!}</td>
@@ -180,7 +180,7 @@
                                             @if(!is_null($record->score))
                                                 @for($i = 1; $i <= 5; $i++)
                                                     <span
-                                                        class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
+                                                            class="glyphicon @if($i > $record->score) glyphicon-star-empty @else glyphicon-star @endif"></span>
                                                     &nbsp;
                                                 @endfor
                                             @endif
@@ -189,22 +189,25 @@
                                             <div class="btn-group">
                                                 <button class="btn btn-primary view-tr"
                                                         data-id="{{ $record->id }}"><span
-                                                        class="glyphicon glyphicon-eye-open"></span></button>
-                                                @php $canModify = \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff($trainingfac) ||
+                                                            class="glyphicon glyphicon-eye-open"></span></button>
+                                                @php
+                                                    $canModify = \App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
                                                                   (\App\Helpers\AuthHelper::authACL()->isTrainingStaff($trainingfac)
                                                                    && $record->instructor_id == Auth::user()->cid);
-                                                 $canEditDelete = !in_array($record->ots_status, [1, 2]); @endphp
+                                                    $canEditDelete = !in_array($record->ots_status, [1, 2]);
+                                                @endphp
                                                 @if($canModify && $canEditDelete)
                                                     <button class="btn btn-warning edit-tr"
                                                             data-id="{{ $record->id }}"><span
-                                                            class="glyphicon glyphicon-pencil"></span></button>
+                                                                class="glyphicon glyphicon-pencil"></span></button>
                                                     <button class="btn btn-danger delete-tr"
                                                             data-id="{{ $record->id }}"><span
-                                                            class="glyphicon glyphicon-remove"></span></button>
+                                                                class="glyphicon glyphicon-remove"></span></button>
                                                 @endif
                                             </div>
                                         </td>
-                                        <td>@switch($record->location)
+                                        <td>
+                                            @switch($record->location)
                                                 @case(0) Classroom @break
                                                 @case(1) Live @break
                                                 @case(2) Sweatbox @break
@@ -221,7 +224,7 @@
                             @if($canAddTR)
                                 <div class="text-center">
                                     <button class="btn btn-success add-new-record"><span
-                                            class="glyphicon glyphicon-plus"></span> Add New
+                                                class="glyphicon glyphicon-plus"></span> Add New
                                         Record
                                     </button>
                                 </div>
@@ -237,7 +240,7 @@
 @push('scripts')
     <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
     <script
-        src="https://cdn.tiny.cloud/1/zhw7l11edc5qt7r2a27lkrpa8aecclri5bsd4p7vaoet3u00/tinymce/5/tinymce.min.js"></script>
+            src="https://cdn.tiny.cloud/1/zhw7l11edc5qt7r2a27lkrpa8aecclri5bsd4p7vaoet3u00/tinymce/5/tinymce.min.js"></script>
     <script src="https://kit.fontawesome.com/63288b607f.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>

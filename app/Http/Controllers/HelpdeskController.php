@@ -227,9 +227,7 @@ class HelpdeskController
             return redirect('/')->with('error', 'Must be logged in');
         }
 
-        if ($ticket->cid == Auth::user()->cid ||
-            AuthHelper::authACL()->isFacilityStaff($ticket->facility) ||
-            AuthHelper::authACL()->isInstructor($ticket->facility)) {
+        if ($ticket->cid == Auth::user()->cid || AuthHelper::authACL()->canManageFacilityTickets($ticket->facility)) {
             if ($ticket->status == "Open") {
                 $ticket->status = "Closed";
                 $history = new TicketHistory();
@@ -264,9 +262,7 @@ class HelpdeskController
             return redirect('/')->with('error', 'Must be logged in');
         }
 
-        if ($ticket->cid == Auth::user()->cid ||
-            AuthHelper::authACL()->isFacilityStaff($ticket->facility) ||
-            AuthHelper::authACL()->isInstructor($ticket->facility)) {
+        if ($ticket->cid == Auth::user()->cid || AuthHelper::authACL()->canManageFacilityTickets($ticket->facility)) {
             return view('help.viewticket', ['ticket' => $ticket]);
         } else {
             return redirect('/help')->with("error", "Access to ticket denied");
@@ -288,9 +284,7 @@ class HelpdeskController
                 "You cannot post a reply with an empty message.  If you're trying to open/close the ticket, use the toggle in the ticket summary.");
         }
 
-        if ($ticket->cid == Auth::user()->cid ||
-            AuthHelper::authACL()->isFacilityStaff($ticket->facility) ||
-            AuthHelper::authACL()->isInstructor($ticket->facility)) {
+        if ($ticket->cid == Auth::user()->cid || AuthHelper::authACL()->canManageFacilityTickets($ticket->facility)) {
             $ticket->touch();
             $reply = new TicketReplies();
             $reply->ticket_id = $ticket->id;
@@ -382,8 +376,7 @@ class HelpdeskController
             abort(404);
         }
 
-        if (AuthHelper::authACL()->isFacilityStaff($ticket->facility) ||
-            AuthHelper::authACL()->isInstructor($ticket->facility)) {
+        if (AuthHelper::authACL()->canManageFacilityTickets($ticket->facility)) {
             if ($request->input("facility")) {
                 $ticket->facility = $request->input("facility");
                 $ticket->save();

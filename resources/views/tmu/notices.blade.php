@@ -31,9 +31,7 @@
                     </div>
                 </div>
                 <section>
-                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
-                        \App\Helpers\AuthHelper::authACL()->isInstructor() ||
-                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTMU())
                         <div class="text-center">
                             <a href="{{ url("/mgt/tmu#notices") }}">
                                 <button class="btn btn-default"><i class="fa fa-pencil-alt"></i>
