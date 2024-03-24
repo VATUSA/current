@@ -5,7 +5,9 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                        \App\Helpers\AuthHelper::authACL()->isInstructor() ||
+                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                         <select id="facmgt" class="mgt-sel">
                             @foreach(\App\Models\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f)
                                 <option name="{{$f->id}}" @if($f->id == $fac) selected @endif>{{$f->id}}</option>
@@ -25,7 +27,7 @@
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
-                        @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                        @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
                             <li role="presentation"><a href="#trans" aria-controls="trans" role="tab" data-toggle="tab"><i
                                             class="fas fa-exchange-alt"></i> Transfers</a>
                             </li>
@@ -40,14 +42,14 @@
                                 <i class="fas fa-door-open"></i> Visiting Roster
                             </a>
                         </li>
-                        @if(\App\Classes\RoleHelper::isTrainingStaff(\Auth::user()->cid, false))
+                        @if(\App\Helpers\AuthHelper::authACL()->isTrainingStaff())
                             <li role="presentation">
                                 <a href="{{ url("mgt/facility/training/stats") }}" aria-controls="training">
                                     <i class="fas fa-chart-line"></i> Training
                                 </a>
                             </li>
                         @endif
-                        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
                             <li role="presentation">
                                 <a href="#uls" aria-controls="uls" role="tab" data-toggle="tab">
                                     <i class="fas fa-server"></i> Tech Conf
@@ -59,7 +61,7 @@
                         <div role="tabpanel" class="tab-pane active" id="dash">
                             @include("mgt.facility.parts.dashboard")
                         </div>
-                        @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
+                        @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff($fac))
                             <div role="tabpanel" class="tab-pane" id="trans">
                                 @include("mgt.facility.parts.transfers")
                             </div>
@@ -70,7 +72,8 @@
                         <div role="tabpanel" class="tab-pane" id="vroster">
                             @include("mgt.facility.parts.visiting_roster")
                         </div>
-                        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaff(\Auth::user()->cid, $fac))
+                        @if(\App\Helpers\AuthHelper::authACL()->isWebmaster($fac) ||
+                            \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff($fac))
                             <div role="tabpanel" class="tab-pane" id="uls">
                                 @include("mgt.facility.parts.tech")
                             </div>
@@ -82,7 +85,7 @@
     </div>
 
     <!-- Add Visitor Modal -->
-    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+    @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
         <div class="modal fade" id="addVisitorModal" tabindex="-1" role="dialog" aria-labelledby="addVisitorModalTitle"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -247,7 +250,7 @@
                 $('#vrostertable').tablesorter()
             })
         })
-        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+        @if(\App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM") || \App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
 
         function updateUrl() {
             $.ajax(
@@ -303,7 +306,7 @@
         }
 
         @endif
-        @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+        @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
 
         function appvTrans(id) {
             swal({
@@ -396,7 +399,7 @@
         }
 
         @endif
-        @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+        @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
 
         function deleteVisitor(cid, name) {
             swal({

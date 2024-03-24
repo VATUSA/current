@@ -52,7 +52,9 @@ class TrainingController extends Controller
             ->has('perfcats.indicators')->withAll()->find($form)
             : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
                 ->withAll()->where('rating_id', $student->rating + 1)->first();
-        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($student->facility) &&
+            !$authACL->isInstructor($student->facility)) {
             abort(403);
         }
         if (!$student || !$form) {
@@ -77,7 +79,9 @@ class TrainingController extends Controller
             abort(404, "The OTS evaluation form is invalid.");
         }
         $student = $eval->student;
-        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($student->facility) &&
+            !$authACL->isInstructor($student->facility)) {
             abort(403);
         }
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
@@ -122,15 +126,17 @@ class TrainingController extends Controller
                     ($minutes !== 1 ? 's' : '');
             }
         }
-
-        if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false) && !RoleHelper::isFacilitySeniorStaff()) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff() &&
+            !$authACL->isTrainingStaff() &&
+            !$authACL->isVATUSAStaff()) {
             abort(403);
         }
 
 //        abort(500); // Disable training statistics as it's overloading the nodes, will re-enable after performance rework
         ini_set('memory_limit', '512M');
 
-        $globalAccess = RoleHelper::isFacilitySeniorStaff();
+        $globalAccess = $authACL->isFacilitySeniorStaff() || $authACL->isVATUSAStaff();
 
         $instructor = $request->input('instructor', null);
         $facility = $request->input('facility', null);
@@ -659,13 +665,14 @@ class TrainingController extends Controller
         if (!$interval) {
             abort(400);
         }
-        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isVATUSAStaff() &&
+            !$authACL->isFacilitySeniorStaff() &&
+            !$authACL->isInstructor()) {
             abort(403);
         }
-
-        $hasGlobalAccess = AuthHelper::authACL()->isVATUSAStaff();
-        if (!$hasGlobalAccess) {
-            $facility = Auth::user()->facilityObj;
+        if (!$authACL->isVATUSAStaff()) {
+            $facility = Auth::user()->facility();
         } else if ($facility) {
             $facility = Facility::find($facility);
             if (!$facility) {

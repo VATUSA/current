@@ -33,9 +33,9 @@
             @if($user->facility()->active)
                 <li>
                     Training Staff?
-                    @if (\App\Classes\RoleHelper::isInstructor($user->cid, $user->facility, false))
+                    @if (\App\Helpers\AuthHelper::authACL()->isInstructor($user->facility))
                         Instructor
-                    @elseif(\App\Classes\RoleHelper::isMentor($user->cid, $user->facility))
+                    @elseif(\App\Helpers\AuthHelper::authACL()->isMentor($user->facility))
                         Mentor
                     @else
                         No
@@ -48,12 +48,12 @@
                 @foreach ($user->visits()->get() as $visit)
                     <li>
                         {{$visit->fac->id}} - {{$visit->fac->name}}
-                        @if(\App\Classes\RoleHelper::isTrainingStaff($user->cid, true, $visit->fac->id, false))
+                        @if(\App\Helpers\AuthHelper::authACL()->isTrainingStaff($visit->fac->id))
                             <br>
                             <span style="margin-left:2em;">
-                                    @if (\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id, false))
+                                @if (\App\Helpers\AuthHelper::authACL()->isInstructor($visit->fac->id))
                                     Instructor
-                                @elseif(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))
+                                @elseif(\App\Helpers\AuthHelper::authACL()->isMentor($visit->fac->id))
                                     Mentor
                                 @endif
                                 </span>
@@ -87,7 +87,7 @@
                             @if(in_array($rating->id, [1,2,3,4,5,7,8,10]))
                                 <option
                                         @if ($user->rating == $rating->id) selected @endif
-                                        value="{{$rating->id}}">{{$rating->short}} - {{$rating->long}}</option>
+                                value="{{$rating->id}}">{{$rating->short}} - {{$rating->long}}</option>
                             @endif
                         @endforeach
                     </select>

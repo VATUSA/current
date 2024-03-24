@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 
+use App\Helpers\AuthHelper;
 use App\Models\User;
 
 class SMFHelper
@@ -41,9 +42,10 @@ class SMFHelper
         $roles = [];
 
         $user = User::find($cid);
+        $userACL = AuthHelper::cidACL($user->cid);
 
         if ($user->rating == Helper::ratingIntFromShort("ADM")) {
-            if (!RoleHelper::isVATUSAStaff()) {
+            if (!$userACL->isVATUSAStaff()) {
                 static::setGroups($cid, static::findGroup("VATSIM Leadership"));
 
                 return;
@@ -82,7 +84,7 @@ class SMFHelper
             $secondary[] = static::findGroup($role);
         }
 
-        if (RoleHelper::isVATUSAStaff($cid, true)) {
+        if ($userACL->isVATUSAStaff()) {
             $primary = static::findGroup("VATUSA Staff");
             if (RoleHelper::hasRole($user->cid, "ZHQ", "US1") ||
                 RoleHelper::hasRole($user->cid, "ZHQ", "US2") ||
@@ -101,7 +103,7 @@ class SMFHelper
             $primary = static::findGroup("VATSIM Supervisors");
             $secondary[] = static::findGroup("Members");
         }
-        if (RoleHelper::isWebTeam($cid)) {
+        if ($userACL->isWebTeam()) {
             if ($primary === static::findGroup("Members")) {
                 //WT Priority over INS, MTRs, Members
                 $primary = static::findGroup("Web Team");
@@ -110,7 +112,7 @@ class SMFHelper
                 $secondary[] = static::findGroup("Web Team");
             }
         }
-        if (RoleHelper::isInstructor($cid)) {
+        if ($userACL->isInstructor()) {
             if ($primary === static::findGroup("Members")) {
                 //INS Priority over Members and MTRs
                 $primary = static::findGroup("Instructors");
@@ -120,7 +122,7 @@ class SMFHelper
             }
         }
 
-        if (RoleHelper::hasRole($cid, $user->facility, "MTR")) {
+        if ($userACL->isMentor()) {
             if ($primary === static::findGroup("Members")) {
                 //MTR Priority over Members
                 $primary = static::findGroup("Mentors");

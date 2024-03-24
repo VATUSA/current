@@ -1,5 +1,5 @@
 <br>
-@if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
+@if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac) || \App\Classes\RoleHelper::hasRole(\Auth::user()->cid, $fac, "WM"))
     <div class="text-center">
         <button class="btn btn-success" data-toggle="modal" data-target="#addVisitorModal">
             <i

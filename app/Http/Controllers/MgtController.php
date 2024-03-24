@@ -108,7 +108,7 @@ class MgtController extends Controller
             || AuthHelper::authACL()->isFacilitySeniorStaff()
             || AuthHelper::authACL()->isWebTeam()
                 ? $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
-            $canAddTR = RoleHelper::isTrainingStaff(Auth::user()->cid, true, $trainingfac)
+            $canAddTR = AuthHelper::authACL()->isTrainingStaff($trainingfac)
                 && $user->cid !== Auth::user()->cid;
 
             //Get INS at ARTCC
@@ -474,9 +474,9 @@ class MgtController extends Controller
         if (!$user) {
             abort(404);
         }
-
-        if (!RoleHelper::isFacilitySeniorStaff()) {
-            abort(401);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff()) {
+            abort(403);
         }
 
         $le = new Actions;
@@ -576,8 +576,10 @@ class MgtController extends Controller
 
     function getSolo()
     {
-        if (!AuthHelper::authACL()->isFacilitySeniorStaff() && !AuthHelper::authACL()->isInstructor() && !AuthHelper::authACL()->isVATUSAStaff()
-            && !AuthHelper::authACL()->isWebTeam()) {
+        if (!AuthHelper::authACL()->isFacilitySeniorStaff() &&
+            !AuthHelper::authACL()->isInstructor() &&
+            !AuthHelper::authACL()->isVATUSAStaff() &&
+            !AuthHelper::authACL()->isWebTeam()) {
             abort(401);
         }
 
@@ -586,7 +588,9 @@ class MgtController extends Controller
 
     function postSolo(Request $request)
     {
-        if (!AuthHelper::authACL()->isFacilitySeniorStaff() && !AuthHelper::authACL()->isInstructor() && !AuthHelper::authACL()->isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->isFacilitySeniorStaff() &&
+            !AuthHelper::authACL()->isInstructor() &&
+            !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(401);
         }
         $user = User::find($request->input('cid'));
@@ -989,8 +993,9 @@ class MgtController extends Controller
             abort(404, "The OTS evaluation form is invalid.");
         }
         $student = $eval->student;
-        if (!RoleHelper::isInstructor(Auth::user()->cid,
-                $student->facility) && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $student->facility)) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($student->facility) &&
+            !$authACL->isInstructor($student->facility)) {
             abort(403);
         }
         $positionSplit = explode('_', $eval->exam_position);
@@ -1061,8 +1066,8 @@ class MgtController extends Controller
         if (!$interval) {
             abort(400);
         }
-        if (!RoleHelper::isInstructor(Auth::user()->cid,
-                $facility) || ($instructor && !RoleHelper::isInstructor($instructor, $facility))) {
+        if (!AuthHelper::authACL()->isInstructor($facility) &&
+            !AuthHelper::authACL()->isFacilitySeniorStaff()) {
             abort(403);
         }
 

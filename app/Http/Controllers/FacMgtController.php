@@ -30,8 +30,12 @@ class FacMgtController extends Controller
 
     public function getIndex($fac = null)
     {
-        if (!AuthHelper::authACL()->isMentor() && !AuthHelper::authACL()->isInstructor() && !AuthHelper::authACL()->isFacilitySeniorStaff() &&
-            !AuthHelper::authACL()->isVATUSAStaff() && !AuthHelper::authACL()->isWebTeam() && !AuthHelper::authACL()->isWebmaster()) {
+        if (!AuthHelper::authACL()->isMentor() &&
+            !AuthHelper::authACL()->isInstructor() &&
+            !AuthHelper::authACL()->isFacilitySeniorStaff() &&
+            !AuthHelper::authACL()->isVATUSAStaff() &&
+            !AuthHelper::authACL()->isWebTeam() &&
+            !AuthHelper::authACL()->isWebmaster()) {
             abort(401);
         }
 
@@ -48,7 +52,9 @@ class FacMgtController extends Controller
         }
 
         // Mentor-only users can only view their facility
-        if (!(AuthHelper::authACL()->isFacilityStaff() || AuthHelper::authACL()->isInstructor())) {
+        if (!AuthHelper::authACL()->isVATUSAStaff() &&
+            !AuthHelper::authACL()->isFacilityStaff() &&
+            !AuthHelper::authACL()->isInstructor()) {
             $fac = Auth::user()->facility;
         }
 
@@ -85,9 +91,10 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(401);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, $facility,
-                "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) {
-            abort(500);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($facility) &&
+            !$authACL->isWebmaster($facility)) {
+            abort(403);
         }
 
         $key = base64_encode(random_bytes(ceil(0.75 * 16)));
@@ -109,9 +116,10 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(401);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, $facility,
-                "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) {
-            abort(500);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($facility) &&
+            !$authACL->isWebmaster($facility)) {
+            abort(403);
         }
 
         $key = base64_encode(random_bytes(ceil(0.75 * 16)));

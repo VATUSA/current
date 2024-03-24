@@ -417,19 +417,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         // 50 hours consolidating current rating
         $ratingHours = VATSIMApi2Helper::fetchRatingHours($this->cid);
-        if($this->rating == Helper::ratingIntFromShort("S1") && $ratingHours['s1'] < 50){
+        if ($ratingHours == null) {
+            $checks['50hrs'] = 0;
+            $checks['ratingHours'] = 0;
+        }
+        else if($this->rating == Helper::ratingIntFromShort("S1") && $ratingHours['s1'] < 50){
             $checks['50hrs'] = 0;
             $checks['ratingHours'] = $ratingHours['s1'];
         }
-        if($this->rating == Helper::ratingIntFromShort("S2") && $ratingHours['s2'] < 50){
+        else if($this->rating == Helper::ratingIntFromShort("S2") && $ratingHours['s2'] < 50){
             $checks['50hrs'] = 0;
             $checks['ratingHours'] = $ratingHours['s2'];
         }
-        if($this->rating == Helper::ratingIntFromShort("S3") && $ratingHours['s3'] < 50){
+        else if($this->rating == Helper::ratingIntFromShort("S3") && $ratingHours['s3'] < 50){
             $checks['50hrs'] = 0;
             $checks['ratingHours'] = $ratingHours['s3'];
         }
-        if($this->rating == Helper::ratingIntFromShort("C1") && $ratingHours['c1'] < 50){
+        else if($this->rating == Helper::ratingIntFromShort("C1") && $ratingHours['c1'] < 50){
             $checks['50hrs'] = 0;
             $checks['ratingHours'] = $ratingHours['c1'];
         }

@@ -28,9 +28,8 @@
             @endforeach
         </table>
     </div>
-    @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                        || \App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
+    @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+        \App\Helpers\AuthHelper::authACL()->isWebmaster($user->facility))
         <div class="col-md-6">
             <table class="table table-striped panel panel-default">
                 <thead>

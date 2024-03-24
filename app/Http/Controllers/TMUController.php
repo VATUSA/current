@@ -171,10 +171,9 @@ class TMUController
                 $fac = Auth::user()->facility;
             }
         }
-        if (!(AuthHelper::authACL()->isInstructor() ||
-            AuthHelper::authACL()->isFacilityStaff() ||
-            AuthHelper::authACL()->isMentor())) {
-            abort(401);
+        $userACL = AuthHelper::authACL();
+        if (!$userACL->isVATUSAStaff() && !$userACL->isFacilityStaff()) {
+            abort(403);
         }
 
         $tmufac = tmu_facilities::where('id', $fac)->orWhere('parent', $fac)->orderBy('id')->get();
@@ -211,9 +210,11 @@ class TMUController
             // Might be child... get parent facility
             $fac = $tmufac->parent;
         }
-        if (!RoleHelper::isFacilitySeniorStaff(null, $fac) && !RoleHelper::hasRole(Auth::user()->cid, $fac,
-                "WM") && !RoleHelper::hasRole(Auth::user()->cid, $fac, "FE")) {
-            abort(401);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($fac) &&
+            !$authACL->isWebmaster($fac) &&
+            !$authACL->isFacilityEngineer($fac)) {
+            abort(403);
         }
 
         $data = json_decode($request->input("coords"));
@@ -250,10 +251,11 @@ class TMUController
         } else {
             $fac = $ofac;
         }
-
-        if (!RoleHelper::isFacilitySeniorStaff(null, $fac) && !RoleHelper::hasRole(Auth::user()->cid, $fac,
-                "WM") && !RoleHelper::hasRole(Auth::user()->cid, $fac, "FE")) {
-            abort(401);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($fac) &&
+            !$authACL->isWebmaster($fac) &&
+            !$authACL->isFacilityEngineer($fac)) {
+            abort(403);
         }
 
         $colors = tmu_colors::find($ofac);
@@ -286,9 +288,11 @@ class TMUController
             // Might be child... get parent facility
             $fac = $tmufac->parent;
         }
-        if (!RoleHelper::isFacilitySeniorStaff(null, $fac) && !RoleHelper::hasRole(Auth::user()->cid, $fac,
-                "WM") && !RoleHelper::hasRole(Auth::user()->cid, $fac, "FE")) {
-            abort(401);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($fac) &&
+            !$authACL->isWebmaster($fac) &&
+            !$authACL->isFacilityEngineer($fac)) {
+            abort(403);
         }
 
         $colors = tmu_colors::find($tmufac->id);
@@ -317,9 +321,11 @@ class TMUController
     }
 
     function getMgtMapping($fac, $id) {
-        if (!RoleHelper::isFacilitySeniorStaff(null, $fac) && !RoleHelper::hasRole(Auth::user()->cid, $fac,
-                "WM") && !RoleHelper::hasRole(Auth::user()->cid, $fac, "FE")) {
-            abort(401);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($fac) &&
+            !$authACL->isWebmaster($fac) &&
+            !$authACL->isFacilityEngineer($fac)) {
+            abort(403);
         }
 
         if ($id == 0) {
@@ -347,9 +353,11 @@ class TMUController
         if ($fac != $map->parent_facility) {
             abort(401);
         }
-        if (!RoleHelper::isFacilitySeniorStaff(null, $fac) && !RoleHelper::hasRole(Auth::user()->cid, $fac,
-                "WM") && !RoleHelper::hasRole(Auth::user()->cid, $fac, "FE")) {
-            abort(401);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->isFacilitySeniorStaff($fac) &&
+            !$authACL->isWebmaster($fac) &&
+            !$authACL->isFacilityEngineer($fac)) {
+            abort(403);
         }
 
         $map->name = $request->input("name");

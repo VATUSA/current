@@ -13,7 +13,7 @@
                                                   <i class="fas fa-school"></i> {{$promotionEligible}}</span></h1></td>
     </tr>
 </table>
-@if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+@if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
     <hr>
     <h4>
         Facility Staff Point of Contact
@@ -94,7 +94,7 @@
                 <tr>
                     <td>Events Coordinator (EC)</td>
                     <td>{{$ec}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
                         <td>
                             <select name="ec">
                                 <option value="-1">None</option>
@@ -110,7 +110,7 @@
                 <tr>
                     <td>Facility Engineer (FE)</td>
                     <td>{{$fe}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
                         <td>
                             <select name="fe">
                                 <option value="-1">None</option>
@@ -126,7 +126,7 @@
                 <tr>
                     <td>Webmaster (WM)</td>
                     <td>{{$wm}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
                         <td>
                             <select name="wm">
                                 <option value="-1">None</option>
@@ -142,7 +142,7 @@
                 </tbody>
             </table>
         </div>
-        @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+        @if(\App\Helpers\AuthHelper::authACL()->isFacilityATMOrDATM($fac))
             <div class="text-center">
                 <button type="submit" class="btn btn-success">
                     <i class="fa fa-save"></i> Save Facility Staff POCs

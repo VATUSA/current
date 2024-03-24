@@ -342,7 +342,8 @@
                                     @endif
 
                                     @if(\App\Helpers\AuthHelper::authACL()->isInstructor() ||
-                                        \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff())
+                                        \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                         <!-- Training -->
                                         <li class="nav-divider"></li>
                                         <li class="dropdown-header">

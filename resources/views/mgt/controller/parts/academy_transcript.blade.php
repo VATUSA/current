@@ -6,9 +6,10 @@
     </div>
     <div class="panel-body">
         <div>
-            @if (\App\Classes\RoleHelper::isFacilitySeniorStaff()
-                || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid)
-                || \App\Classes\RoleHelper::isMentor(Auth::user()->cid))
+            @if (\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                 \App\Helpers\AuthHelper::authACL()->isInstructor() ||
+                 \App\Helpers\AuthHelper::authACL()->isMentor() ||
+                 \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                 <div style="text-align: center;">
                     <a href="https://academy.vatusa.net/grade/report/overview/index.php?id=19&userid={{$moodleUid}}&userview=1"
                        style="text-decoration: none; font-size: 24px; "
@@ -90,8 +91,9 @@
                             @elseif($data['examInfo']['id'] == config('exams.BASIC.id') || $data['examInfo']['rating'] <= $user->rating)
                                 <em>Auto-Enrolled</em>
                             @elseif($data['examInfo']['rating'] - 1 == $user->rating)
-                                @if(\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility) && $data['examInfo']['rating'] <= Auth::user()->rating ||
-                                      !\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility))
+                                @if((\App\Helpers\AuthHelper::authACL()->isMentor($user->facility) &&
+                                    $data['examInfo']['rating'] <= Auth::user()->rating) ||
+                                    \App\Helpers\AuthHelper::authACL()->isInstructor($user->facility))
                                     <button
                                             class="btn btn-success btn-sm enrol-exam-course"
                                             data-id="{{ $data['examInfo']['courseId'] }}"
