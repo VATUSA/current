@@ -70,7 +70,6 @@ class RoleController extends Controller
         if (RoleHelperV2::hasRole($user, $role, $facility)) {
             RoleHelperV2::revokeRole($cid, $role, $facility);
         }
-
         return redirect("/mgt/controller/$cid#roles");
     }
 

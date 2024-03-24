@@ -50,13 +50,12 @@ class MgtController extends Controller
             return view('eastereggs.katniss');
         }
 
-        $user = User::where('cid', $cid);
+        $user = User::where('cid', $cid)->first();
 
         if (!AuthHelper::authACL()->canViewController($user)) {
-            abort(401);
+            abort(403);
         }
-        if ($user->count()) {
-            $user = $user->first();
+        if ($user) {
             $checks = [];
             $eligible = $user->transferEligible($checks);
             $user->promotionEligible();

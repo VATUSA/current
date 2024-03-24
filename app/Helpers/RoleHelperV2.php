@@ -41,16 +41,17 @@ class RoleHelperV2
             return AuthHelper::authACL()->isVATUSAStaff();
         }
         if (in_array($role, self::$facilityRolesATM)) {
-            return AuthHelper::authACL()->isFacilityATMOrDATM($facility);
+            return AuthHelper::authACL()->canManageFacilityStaff($facility);
         }
         if (in_array($role, self::$facilityRolesTA)) {
-            return AuthHelper::authACL()->isFacilitySeniorStaff($facility);
+            return AuthHelper::authACL()->canManageTrainingStaff($facility);
         }
         return false; // Only allow groups in one of the above lists to be assigned
     }
 
     public static function hasRole(User $user, string $role, string $facility) {
-        foreach ($user->roles() as $userRole) {
+        foreach ($user->roles()->get() as $userRole) {
+            var_dump($userRole);
             if ($userRole->role == $role && $userRole->facility == $facility) {
                 return true;
             }

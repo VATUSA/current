@@ -213,23 +213,28 @@ class ACLFlags
         return false;
     }
 
-    public function canUseActionsMenu(): bool {
+    public function canUseActionsMenu(): bool
+    {
         return $this->isVATUSAStaff() || $this->isWebTeam() || $this->isFacilityStaff() || $this->isTrainingStaff();
     }
 
-    public function canUseActionLog(): bool {
+    public function canUseActionLog(): bool
+    {
         return $this->isVATUSAStaff() || $this->isWebTeam() || $this->isFacilitySeniorStaff();
     }
 
-    public function canManageRoles(): bool {
+    public function canManageRoles(): bool
+    {
         return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff();
     }
 
-    public function canViewEmail(): bool {
+    public function canViewEmail(): bool
+    {
         return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff();
     }
 
-    public function canViewController(User $user): bool {
+    public function canViewController(User $user): bool
+    {
         if ($this->isVATUSAStaff() ||
             $this->isWebTeam() ||
             $this->isFacilitySeniorStaff() ||
@@ -250,7 +255,8 @@ class ACLFlags
         return $this->canViewAnyFacilityRoster() || $this->isMentor($facility);
     }
 
-    public function canViewAnyFacilityRoster(): bool {
+    public function canViewAnyFacilityRoster(): bool
+    {
         return $this->isVATUSAStaff() ||
             $this->isWebTeam() ||
             $this->isFacilityStaff() ||
@@ -267,7 +273,13 @@ class ACLFlags
         return $this->isVATUSAStaff() || $this->isFacilityATMOrDATM($facility);
     }
 
-    public function canManageFacilityTechConfig($facility = null): bool {
+    public function canManageTrainingStaff($facility = null): bool
+    {
+        return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff($facility);
+    }
+
+    public function canManageFacilityTechConfig($facility = null): bool
+    {
         return $this->isVATUSAStaff() || $this->isFacilityATMOrDATM($facility) || $this->isWebmaster($facility);
     }
 
@@ -276,37 +288,43 @@ class ACLFlags
         return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff($facility) || $this->isInstructor($facility);
     }
 
-    public function canManageFacilityTickets($facility = null): bool {
+    public function canManageFacilityTickets($facility = null): bool
+    {
         return $this->isVATUSAStaff() ||
             $this->isWebTeam() ||
             $this->isFacilityStaff($facility) ||
             $this->isInstructor($facility);
     }
 
-    public function canManageFacilityTMU($facility = null): bool {
+    public function canManageFacilityTMU($facility = null): bool
+    {
         return $this->isVATUSAStaff() ||
             $this->isWebTeam() ||
             $this->isFacilityStaff($facility);
     }
 
-    public function canViewTrainingRecords($facility = null): bool {
+    public function canViewTrainingRecords($facility = null): bool
+    {
         return $this->canViewAllTrainingRecords() || $this->isMentor($facility);
     }
 
-    public function canViewAllTrainingRecords(): bool {
+    public function canViewAllTrainingRecords(): bool
+    {
         return $this->isVATUSAStaff() ||
             $this->isWebTeam() ||
             $this->isFacilitySeniorStaff() ||
             $this->isInstructor();
     }
 
-    public function canCreateTrainingRecords($facility = null): bool {
+    public function canCreateTrainingRecords($facility = null): bool
+    {
         return $this->isVATUSAStaff() ||
             $this->isInstructor($facility) ||
             $this->isMentor($facility);
     }
 
-    public function canPromoteForFacility($facility = null): bool {
+    public function canPromoteForFacility($facility = null): bool
+    {
         return $this->isVATUSAStaff() || $this->isInstructor($facility);
     }
 }
