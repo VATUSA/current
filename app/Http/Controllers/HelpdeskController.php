@@ -44,7 +44,7 @@ class HelpdeskController
             $status = "My Assigned";
         } else if ($status == "open") {
             $status = "Open";
-            if (AuthHelper::isVATUSAStaff() || AuthHelper::isWebTeam()) {
+            if (AuthHelper::authACL()->isVATUSAStaff() || AuthHelper::authACL()->isWebTeam()) {
                 $tickets = Ticket::where('status', 'Open')->orderBy('created_at', 'asc')->get();
             } else {
                 $tickets = Ticket::where('status', 'Open')->where(function ($query) {
@@ -58,7 +58,7 @@ class HelpdeskController
             // Build query
             $tickets = new Ticket;
             $tickets = $tickets->where('status', 'Closed');
-            if (!AuthHelper::isVATUSAStaff() && !AuthHelper::isWebTeam()) {
+            if (!AuthHelper::authACL()->isVATUSAStaff() && !AuthHelper::authACL()->isWebTeam()) {
                 $tickets = $tickets->where(function ($query) {
                     $query->where('facility', Auth::user()->facility)
                         ->orwhere('assigned_to', Auth::user()->cid);
@@ -228,8 +228,8 @@ class HelpdeskController
         }
 
         if ($ticket->cid == Auth::user()->cid ||
-            AuthHelper::isFacilityStaff($ticket->facility) ||
-            AuthHelper::isInstructor($ticket->facility)) {
+            AuthHelper::authACL()->isFacilityStaff($ticket->facility) ||
+            AuthHelper::authACL()->isInstructor($ticket->facility)) {
             if ($ticket->status == "Open") {
                 $ticket->status = "Closed";
                 $history = new TicketHistory();
@@ -265,8 +265,8 @@ class HelpdeskController
         }
 
         if ($ticket->cid == Auth::user()->cid ||
-            AuthHelper::isFacilityStaff($ticket->facility) ||
-            AuthHelper::isInstructor($ticket->facility)) {
+            AuthHelper::authACL()->isFacilityStaff($ticket->facility) ||
+            AuthHelper::authACL()->isInstructor($ticket->facility)) {
             return view('help.viewticket', ['ticket' => $ticket]);
         } else {
             return redirect('/help')->with("error", "Access to ticket denied");
@@ -289,8 +289,8 @@ class HelpdeskController
         }
 
         if ($ticket->cid == Auth::user()->cid ||
-            AuthHelper::isFacilityStaff($ticket->facility) ||
-            AuthHelper::isInstructor($ticket->facility)) {
+            AuthHelper::authACL()->isFacilityStaff($ticket->facility) ||
+            AuthHelper::authACL()->isInstructor($ticket->facility)) {
             $ticket->touch();
             $reply = new TicketReplies();
             $reply->ticket_id = $ticket->id;
@@ -382,8 +382,8 @@ class HelpdeskController
             abort(404);
         }
 
-        if (AuthHelper::isFacilityStaff($ticket->facility) ||
-            AuthHelper::isInstructor($ticket->facility)) {
+        if (AuthHelper::authACL()->isFacilityStaff($ticket->facility) ||
+            AuthHelper::authACL()->isInstructor($ticket->facility)) {
             if ($request->input("facility")) {
                 $ticket->facility = $request->input("facility");
                 $ticket->save();
@@ -466,7 +466,7 @@ class HelpdeskController
 
     public
     function getKBE() {
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -481,7 +481,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -500,7 +500,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -526,7 +526,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -542,7 +542,7 @@ class HelpdeskController
         Request $request,
                 $id
     ) {
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -582,7 +582,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -614,7 +614,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -632,7 +632,7 @@ class HelpdeskController
         $cid,
         $id
     ) {
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
         $question = null;
@@ -655,7 +655,7 @@ class HelpdeskController
         $cid,
         $id
     ) {
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
         $question = null;
@@ -696,7 +696,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -730,7 +730,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !AuthHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 

@@ -2,8 +2,8 @@
     <div class="col-md-4">
         <ol style="font-size: 110%;list-style-type: none;">
             <li><strong>{{$user->fname}} {{$user->lname}}</strong></li>
-            @if(\App\Helpers\AuthHelper::isVATUSAStaff() ||
-                \App\Helpers\AuthHelper::isFacilitySeniorStaff())
+            @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
+                \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff())
                 <li>{{$user->email}} &nbsp; <a href="mailto:{{$user->email}}"><i
                                 class="fa fa-envelope text-primary"
                                 style="font-size:80%"></i></a>
@@ -65,7 +65,7 @@
             <li>Last Website Activity: {{$user->lastActivityWebsite()}} days ago</li>
             <br>
             <li>Needs Basic ATC or RCE:
-                @if (\App\Helpers\AuthHelper::isVATUSAStaff())
+                @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                     <a href="/mgt/controller/{{$user->cid}}/togglebasic">
                         @endif
                         @if ($user->flag_needbasic)
@@ -73,12 +73,12 @@
                         @else
                             No
                         @endif
-                        @if (\App\Helpers\AuthHelper::isVATUSAStaff())
+                        @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                     </a>
                 @endif
             </li>
             <br>
-            @if (\App\Helpers\AuthHelper::isVATUSAStaff() &&
+            @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff() &&
                 $user->rating >= \App\Classes\Helper::ratingIntFromShort("OBS") &&
                 $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
                 <li>Rating Change

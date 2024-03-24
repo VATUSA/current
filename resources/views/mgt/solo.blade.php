@@ -26,7 +26,7 @@
                             <td>{{$cert->position}}</td>
                             <td>{{$cert->expires}}</td>
                             <td>
-                                @if($cert->user->facility == Auth::user()->facility || \App\Classes\AuthHelper::isVATUSAStaff())
+                                @if($cert->user->facility == Auth::user()->facility || \App\Classes\AuthHelper::authACL()->isVATUSAStaff())
                                     <button type="button" class="btn btn-danger delete-solo" data-id="{{ $cert->id }}">
                                         <i class="fa fa-times"></i></button>
                                 @else

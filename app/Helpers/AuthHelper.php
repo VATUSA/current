@@ -17,6 +17,122 @@ class ACLFlags {
     public $mentorFacilities = [];
     public $instructorFacilities = [];
 
+    public function isVATUSAStaff(): bool {
+        return $this->isVATUSAStaff;
+    }
+
+    public function isWebTeam(): bool {
+        return $this->isVATUSAWebTeam;
+    }
+    public function isFacilityStaff($facility = null): bool {
+        $staffFacilities = $this->atmFacilities +
+            $this->taFacilities +
+            $this->ecFacilities +
+            $this->feFacilities +
+            $this->wmFacilities;
+        if ($facility == null) {
+            return count($staffFacilities) > 0;
+        } else {
+            return in_array($facility, $staffFacilities);
+        }
+    }
+
+    public function isFacilitySeniorStaff($facility = null): bool {
+        $staffFacilities = $this->atmFacilities + $this->taFacilities;
+        if ($facility == null) {
+            return count($staffFacilities) > 0;
+        } else {
+            return in_array($facility, $staffFacilities);
+        }
+    }
+
+    public function isFacilityATMOrDATM($facility = null): bool {
+        if ($this->isVATUSAStaff) {
+            return true;
+        }
+        if ($facility == null) {
+            return count($this->atmFacilities) > 0;
+        } else {
+            return in_array($facility, $this->atmFacilities);
+        }
+    }
+
+    public function isTrainingAdministrator($facility = null): bool {
+        if ($this->isVATUSAStaff) {
+            return true;
+        }
+        if ($facility == null) {
+            return count($this->taFacilities) > 0;
+        } else {
+            return in_array($facility, $this->taFacilities);
+        }
+    }
+
+    public function isEventCoordinator($facility = null): bool {
+        if ($this->isVATUSAStaff) {
+            return true;
+        }
+        if ($facility == null) {
+            return count($this->ecFacilities) > 0;
+        } else {
+            return in_array($facility, $this->ecFacilities);
+        }
+
+    }
+
+    public function isFacilityEngineer($facility = null): bool {
+        if ($this->isVATUSAStaff) {
+            return true;
+        }
+        if ($facility == null) {
+            return count($this->feFacilities) > 0;
+        } else {
+            return in_array($facility, $this->feFacilities);
+        }
+
+    }
+
+    public function isWebmaster($facility = null): bool {
+        if ($this->isVATUSAStaff) {
+            return true;
+        }
+        if ($facility == null) {
+            return count($this->wmFacilities) > 0;
+        } else {
+            return in_array($facility, $this->wmFacilities);
+        }
+    }
+
+    public function isTrainingStaff($facility = null): bool {
+        if ($this->isVATUSAStaff) {
+            return true;
+        }
+        $staffFacilities = $this->taFacilities + $this->instructorFacilities + $this->mentorFacilities;
+        if ($facility == null) {
+            return count($staffFacilities) > 0;
+        } else {
+            return in_array($facility, $staffFacilities);
+        }
+    }
+
+    public function isMentor($facility = null): bool {
+        if ($facility == null) {
+            return count($this->mentorFacilities) > 0;
+        } else {
+            return in_array($facility, $this->mentorFacilities);
+        }
+    }
+
+    public function isInstructor($facility = null): bool {
+        if ($this->isVATUSAStaff) {
+            return true;
+        }
+        if ($facility == null) {
+            return count($this->instructorFacilities) > 0;
+        } else {
+            return in_array($facility, $this->instructorFacilities);
+        }
+    }
 }
 class AuthHelper
 {
@@ -28,6 +144,27 @@ class AuthHelper
         $flags = self::calculateACLFlags($user);
         self::$aclFlagsMap[$user->cid] = $flags;
         return $flags;
+    }
+    private static function aclFlagsNew(int $cid): ACLFlags {
+        if (array_key_exists($cid, self::$aclFlagsMap)) {
+            return self::$aclFlagsMap[$cid];
+        }
+        $user = User::where('cid', $cid)::with('roles')->first();
+        $flags = self::calculateACLFlags($user);
+        self::$aclFlagsMap[$user->cid] = $flags;
+        return $flags;
+    }
+
+    public static function authACL(): ACLFlags {
+        if (!Auth::check()) {
+            return new ACLFlags();
+        }
+        $user = Auth::user();
+        return self::aclFlagsNew($user->cid);
+    }
+
+    public static function cidACL($cid): ACLFlags {
+        return self::aclFlagsNew($cid);
     }
 
     private static function calculateACLFlags(User $user): ACLFlags {
@@ -55,184 +192,5 @@ class AuthHelper
         }
         Log::debug(sprintf("Calculated ACL flags for %d - %s", $user->cid, var_export($flags, true)));
         return $flags;
-    }
-    public static function isVATUSAStaff(): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        return $flags->isVATUSAStaff;
-    }
-
-    public static function isWebTeam(): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        return $flags->isVATUSAWebTeam;
-    }
-    public static function isFacilityStaff($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        $staffFacilities = $flags->atmFacilities +
-            $flags->taFacilities +
-            $flags->ecFacilities +
-            $flags->feFacilities +
-            $flags->wmFacilities;
-        if ($facility == null) {
-            return count($staffFacilities) > 0;
-        } else {
-            return in_array($facility, $staffFacilities);
-        }
-    }
-
-    public static function isFacilitySeniorStaff($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($flags->isVATUSAStaff) {
-            return true;
-        }
-        $staffFacilities = $flags->atmFacilities + $flags->taFacilities;
-        if ($facility == null) {
-            return count($staffFacilities) > 0;
-        } else {
-            return in_array($facility, $staffFacilities);
-        }
-    }
-
-    public static function isFacilityATMOrDATM($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($flags->isVATUSAStaff) {
-            return true;
-        }
-        if ($facility == null) {
-            return count($flags->atmFacilities) > 0;
-        } else {
-            return in_array($facility, $flags->atmFacilities);
-        }
-    }
-
-    public static function isTrainingAdministrator($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($flags->isVATUSAStaff) {
-            return true;
-        }
-        if ($facility == null) {
-            return count($flags->taFacilities) > 0;
-        } else {
-            return in_array($facility, $flags->taFacilities);
-        }
-    }
-
-    public static function isEventCoordinator($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($flags->isVATUSAStaff) {
-            return true;
-        }
-        if ($facility == null) {
-            return count($flags->ecFacilities) > 0;
-        } else {
-            return in_array($facility, $flags->ecFacilities);
-        }
-
-    }
-
-    public static function isFacilityEngineer($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($flags->isVATUSAStaff) {
-            return true;
-        }
-        if ($facility == null) {
-            return count($flags->feFacilities) > 0;
-        } else {
-            return in_array($facility, $flags->feFacilities);
-        }
-
-    }
-
-    public static function isWebmaster($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($flags->isVATUSAStaff) {
-            return true;
-        }
-        if ($facility == null) {
-            return count($flags->wmFacilities) > 0;
-        } else {
-            return in_array($facility, $flags->wmFacilities);
-        }
-    }
-
-    public static function isTrainingStaff($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($flags->isVATUSAStaff) {
-            return true;
-        }
-        $staffFacilities = $flags->taFacilities + $flags->instructorFacilities + $flags->mentorFacilities;
-        if ($facility == null) {
-            return count($staffFacilities) > 0;
-        } else {
-            return in_array($facility, $staffFacilities);
-        }
-    }
-
-    public static function isMentor($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($facility == null) {
-            return count($flags->mentorFacilities) > 0;
-        } else {
-            return in_array($facility, $flags->mentorFacilities);
-        }
-    }
-
-    public static function isInstructor($facility = null): bool {
-        if (!Auth::check()) {
-            return false;
-        }
-        $user = Auth::user();
-        $flags = self::aclFlags($user);
-        if ($flags->isVATUSAStaff) {
-            return true;
-        }
-        if ($facility == null) {
-            return count($flags->instructorFacilities) > 0;
-        } else {
-            return in_array($facility, $flags->instructorFacilities);
-        }
     }
 }

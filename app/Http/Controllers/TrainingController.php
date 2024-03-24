@@ -31,9 +31,9 @@ class TrainingController extends Controller
         }
 
         return response()->json(Auth::check() && $record->student_id != Auth::user()->cid &&
-            (AuthHelper::isVATUSAStaff() || !in_array($record->ots_status, [1, 2])) &&
-            (AuthHelper::isFacilitySeniorStaff($record->facility) ||
-                (AuthHelper::isTrainingStaff($record->facility)
+            (AuthHelper::authACL()->isVATUSAStaff() || !in_array($record->ots_status, [1, 2])) &&
+            (AuthHelper::authACL()->isFacilitySeniorStaff($record->facility) ||
+                (AuthHelper::authACL()->isTrainingStaff($record->facility)
                     && $record->instructor_id == Auth::user()->cid)));
     }
 
@@ -610,7 +610,7 @@ class TrainingController extends Controller
         Request $request
     )
     {
-        if (!AuthHelper::isTrainingStaff() && !AuthHelper::isFacilitySeniorStaff()) {
+        if (!AuthHelper::authACL()->isTrainingStaff() && !AuthHelper::authACL()->isFacilitySeniorStaff()) {
             abort(403);
         }
 
@@ -619,7 +619,7 @@ class TrainingController extends Controller
         $facilities = Facility::active()->get();
 
         if (!$trainingfac) {
-            if (AuthHelper::isVATUSAStaff()) {
+            if (AuthHelper::authACL()->isVATUSAStaff()) {
                 $trainingfac = "";
                 $trainingfacname = "";
             } else {
@@ -663,7 +663,7 @@ class TrainingController extends Controller
             abort(403);
         }
 
-        $hasGlobalAccess = AuthHelper::isVATUSAStaff();
+        $hasGlobalAccess = AuthHelper::authACL()->isVATUSAStaff();
         if (!$hasGlobalAccess) {
             $facility = Auth::user()->facilityObj;
         } else if ($facility) {

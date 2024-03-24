@@ -171,9 +171,9 @@ class TMUController
                 $fac = Auth::user()->facility;
             }
         }
-        if (!(AuthHelper::isInstructor() ||
-            AuthHelper::isFacilityStaff() ||
-            AuthHelper::isMentor())) {
+        if (!(AuthHelper::authACL()->isInstructor() ||
+            AuthHelper::authACL()->isFacilityStaff() ||
+            AuthHelper::authACL()->isMentor())) {
             abort(401);
         }
 

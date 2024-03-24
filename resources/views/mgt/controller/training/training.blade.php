@@ -108,9 +108,9 @@
                                             <button class="btn btn-primary view-tr"
                                                     data-id="{{ $record->id }}"><span
                                                     class="glyphicon glyphicon-eye-open"></span></button>
-                                            @php $canModify = \App\Helpers\AuthHelper::isTrainingStaff($trainingfac)
+                                            @php $canModify = \App\Helpers\AuthHelper::authACL()->isTrainingStaff($trainingfac)
                                                                    && $record->instructor_id == Auth::user()->cid;
-                                                 $isUSAStaff = \App\Helpers\AuthHelper::isVATUSAStaff();
+                                                 $isUSAStaff = \App\Helpers\AuthHelper::authACL()->isVATUSAStaff();
                                                  $ownRecord = $record->student_id == Auth::user()->cid;
                                                  $canEditDelete = !in_array($record->ots_status, [1, 2]); @endphp
                                             @if(($canModify && $canEditDelete && !$ownRecord) || $isUSAStaff)

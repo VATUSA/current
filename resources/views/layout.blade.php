@@ -232,10 +232,10 @@
                                     Ticket</a></li>
                             <li><a href="{{ url("/help/ticket/mine") }}"><i class="far fa-life-ring"></i> My
                                     Tickets</a></li>
-                            @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
-                                \App\Helpers\AuthHelper::isInstructor() ||
-                                \App\Helpers\AuthHelper::isVATUSAStaff() ||
-                                \App\Helpers\AuthHelper::isWebTeam())
+                            @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                \App\Helpers\AuthHelper::authACL()->isInstructor() ||
+                                \App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
+                                \App\Helpers\AuthHelper::authACL()->isWebTeam())
                                 <li class="divider"></li>
                                 <li class="dropdown-submenu"><a href="#" class="dropdown-toggle"
                                                                 data-toggle="dropdown" role="button"
@@ -249,7 +249,7 @@
                                         <li><a href="{{ url("/help/ticket/search") }}">Search Tickets</a></li>
                                     </ul>
                                 </li>
-                                @if (\App\Helpers\AuthHelper::isVATUSAStaff())
+                                @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                     <li><a href="{{ url("/help/kbe") }}">Knowledgebase Editor</a></li>
                                 @endif
                             @endif
@@ -283,10 +283,10 @@
                                 </li>
                             </ul>
                         </li>
-                        @if(\App\Helpers\AuthHelper::isVATUSAStaff() ||
-                            \App\Helpers\AuthHelper::isFacilityStaff() ||
-                            \App\Helpers\AuthHelper::isInstructor() ||
-                            \App\Helpers\AuthHelper::isMentor())
+                        @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
+                            \App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                            \App\Helpers\AuthHelper::authACL()->isInstructor() ||
+                            \App\Helpers\AuthHelper::authACL()->isMentor())
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                                    role="button" aria-expanded="false">
@@ -303,18 +303,18 @@
                                     </li>
 
                                     <!-- Facility Management [Mentor/Instructors/VATUSA/ATM/DATM/TA/WM] -->
-                                    @if(\App\Helpers\AuthHelper::isMentor() ||
-                                        \App\Helpers\AuthHelper::isInstructor() ||
-                                        \App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                                        \App\Helpers\AuthHelper::isVATUSAStaff() ||
-                                        \App\Helpers\AuthHelper::isWebmaster())
+                                    @if(\App\Helpers\AuthHelper::authACL()->isMentor() ||
+                                        \App\Helpers\AuthHelper::authACL()->isInstructor() ||
+                                        \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isWebmaster())
                                         <li><a href="{{url("mgt/facility")}}">Facility Management</a></li>
                                     @endif
 
                                     <!-- TMU Management [ATM/DATM/TA/WM/FE] -->
-                                    @if(\App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                                        \App\Helpers\AuthHelper::isFacilityEngineer() ||
-                                        \App\Helpers\AuthHelper::isWebmaster())
+                                    @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isFacilityEngineer() ||
+                                        \App\Helpers\AuthHelper::authACL()->isWebmaster())
                                         <li><a href="{{url('mgt/tmu')}}">TMU Map Management</a></li>
                                     @else
                                         <li><a href="{{url('mgt/tmu')}}">TMU Notices Management</a></li>
@@ -328,21 +328,21 @@
                                     </li>
 
                                     <!-- Member Management [Mentor/Instructors/ATM/DATM/TA/VATUSA/WM] -->
-                                    @if(\App\Helpers\AuthHelper::isMentor() ||
-                                        \App\Helpers\AuthHelper::isInstructor() ||
-                                        \App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                                        \App\Helpers\AuthHelper::isVATUSAStaff() ||
-                                        \App\Helpers\AuthHelper::isWebmaster())
+                                    @if(\App\Helpers\AuthHelper::authACL()->isMentor() ||
+                                        \App\Helpers\AuthHelper::authACL()->isInstructor() ||
+                                        \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isWebmaster())
                                         <li><a href="{{url("mgt/controller")}}">Member Management</a></li>
                                     @endif
 
                                     <!-- Submit Transfer Request [VATUSA] -->
-                                    @if (\App\Helpers\AuthHelper::isVATUSAStaff())
+                                    @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                         <li><a href="{{url("mgt/transfer") }}">Submit Transfer Request</a></li>
                                     @endif
 
-                                    @if(\App\Helpers\AuthHelper::isInstructor() ||
-                                        \App\Helpers\AuthHelper::isFacilitySeniorStaff())
+                                    @if(\App\Helpers\AuthHelper::authACL()->isInstructor() ||
+                                        \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff())
                                         <!-- Training -->
                                         <li class="nav-divider"></li>
                                         <li class="dropdown-header">
@@ -371,7 +371,7 @@
                                     </li>
 
                                     <!-- ACE Team/Division Staff Management [VATUSA] -->
-                                    @if (\App\Helpers\AuthHelper::isVATUSAStaff())
+                                    @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                         <li><a href="{{url("mgt/ace") }}">ACE Team Management</a></li>
                                         <li><a href="{{url("mgt/staff") }}">Division Staff Management</a></li>
                                         <li><a href="{{url("mgt/roles") }}">All Assigned Roles</a></li>

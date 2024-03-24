@@ -30,8 +30,8 @@ class FacMgtController extends Controller
 
     public function getIndex($fac = null)
     {
-        if (!AuthHelper::isMentor() && !AuthHelper::isInstructor() && !AuthHelper::isFacilitySeniorStaff() &&
-            !AuthHelper::isVATUSAStaff() && !AuthHelper::isWebTeam() && !AuthHelper::isWebmaster()) {
+        if (!AuthHelper::authACL()->isMentor() && !AuthHelper::authACL()->isInstructor() && !AuthHelper::authACL()->isFacilitySeniorStaff() &&
+            !AuthHelper::authACL()->isVATUSAStaff() && !AuthHelper::authACL()->isWebTeam() && !AuthHelper::authACL()->isWebmaster()) {
             abort(401);
         }
 
@@ -48,7 +48,7 @@ class FacMgtController extends Controller
         }
 
         // Mentor-only users can only view their facility
-        if (!(AuthHelper::isFacilityStaff() || AuthHelper::isInstructor())) {
+        if (!(AuthHelper::authACL()->isFacilityStaff() || AuthHelper::authACL()->isInstructor())) {
             $fac = Auth::user()->facility;
         }
 
@@ -130,7 +130,7 @@ class FacMgtController extends Controller
 
     public function savePointsOfContact(Request $request, $fac)
     {
-        if (!AuthHelper::isFacilityATMOrDATM($fac) && !AuthHelper::isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->isFacilityATMOrDATM($fac) && !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(401);
         }
         $facility = Facility::findOrFail($fac);
@@ -151,22 +151,22 @@ class FacMgtController extends Controller
         $fe = (int)$request->get('fe');
         $wm = (int)$request->get('wm');
 
-        if (AuthHelper::isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
+        if (AuthHelper::authACL()->isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
             $facility->atm = $atm;
         }
-        if (AuthHelper::isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
+        if (AuthHelper::authACL()->isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
             $facility->datm = $datm;
         }
-        if (AuthHelper::isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
+        if (AuthHelper::authACL()->isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
             $facility->ta = $ta;
         }
-        if (AuthHelper::isFacilityATMOrDATM($fac) && ($ec == -1 || in_array($ec, $staffPOCOptions["EC"]))) {
+        if (AuthHelper::authACL()->isFacilityATMOrDATM($fac) && ($ec == -1 || in_array($ec, $staffPOCOptions["EC"]))) {
             $facility->ec = $ec;
         }
-        if (AuthHelper::isFacilityATMOrDATM($fac) && ($fe == -1 || in_array($fe, $staffPOCOptions["FE"]))) {
+        if (AuthHelper::authACL()->isFacilityATMOrDATM($fac) && ($fe == -1 || in_array($fe, $staffPOCOptions["FE"]))) {
             $facility->fe = $fe;
         }
-        if (AuthHelper::isFacilityATMOrDATM($fac) && ($wm == -1 || in_array($wm, $staffPOCOptions["WM"]))) {
+        if (AuthHelper::authACL()->isFacilityATMOrDATM($fac) && ($wm == -1 || in_array($wm, $staffPOCOptions["WM"]))) {
             $facility->wm = $wm;
         }
         $facility->save();
@@ -178,7 +178,7 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!AuthHelper::isVATUSAStaff() && !AuthHelper::isFacilityATMOrDATM($facility)) {
+        if (!AuthHelper::authACL()->isVATUSAStaff() && !AuthHelper::authACL()->isFacilityATMOrDATM($facility)) {
             abort(401);
         }
 
@@ -197,7 +197,7 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!AuthHelper::isVATUSAStaff() && !AuthHelper::isFacilityATMOrDATM()) {
+        if (!AuthHelper::authACL()->isVATUSAStaff() && !AuthHelper::authACL()->isFacilityATMOrDATM()) {
             abort(401);
         }
 

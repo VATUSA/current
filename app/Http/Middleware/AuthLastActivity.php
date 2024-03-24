@@ -25,8 +25,8 @@ class AuthLastActivity
             $user->save();
 
             if (app()->environment("livedev") &&
-                !AuthHelper::isVATUSAStaff($user->cid) &&
-                !AuthHelper::isWebTeam() &&
+                !AuthHelper::authACL()->isVATUSAStaff($user->cid) &&
+                !AuthHelper::authACL()->isWebTeam() &&
                 !in_array($user->cid, explode(',', env("LIVEDEV_CIDS", "")))) {
                 \Auth::logout();
 

@@ -35,7 +35,7 @@ class VATUSAStaff {
      */
     public function handle($request, Closure $next)
     {
-        if (AuthHelper::isVATUSAStaff())
+        if (AuthHelper::authACL()->isVATUSAStaff())
             return $next($request);
         else
             response('Unauthorized.', 403);

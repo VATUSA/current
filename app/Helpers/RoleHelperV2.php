@@ -38,13 +38,13 @@ class RoleHelperV2
     public static function canAssignRole(int $cid, string $role, string $facility = null)
     {
         if (in_array($role, self::$globalRoles) || in_array($role, self::$facilityRolesUSA)) {
-            return AuthHelper::isVATUSAStaff();
+            return AuthHelper::authACL()->isVATUSAStaff();
         }
         if (in_array($role, self::$facilityRolesATM)) {
-            return AuthHelper::isFacilitySeniorStaffExceptTA(null, $facility);
+            return AuthHelper::authACL()->isFacilityATMOrDATM($facility);
         }
         if (in_array($role, self::$facilityRolesTA)) {
-            return AuthHelper::isFacilitySeniorStaff(null, $facility);
+            return AuthHelper::authACL()->isFacilitySeniorStaff($facility);
         }
         return false; // Only allow groups in one of the above lists to be assigned
     }

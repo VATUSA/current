@@ -107,7 +107,7 @@
 @section('content')
     <div class="container">
         <div
-            class="panel panel-{{ ((\App\Helpers\AuthHelper::isVATUSAStaff() || \App\Helpers\AuthHelper::isFacilitySeniorStaff()) && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
+            class="panel panel-{{ ((\App\Helpers\AuthHelper::authACL()->isVATUSAStaff() || \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff()) && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
             id="user-info-panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
@@ -128,21 +128,21 @@
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#csp" aria-controls="csp" role="tab"
                                                               data-toggle="tab">Summary</a></li>
-                    @if (\App\Helpers\AuthHelper::isMentor($user->facility)
-                        || \App\Helpers\AuthHelper::isFacilitySeniorStaff()
-                        || \App\Helpers\AuthHelper::isWebmaster($user->facility)
-                        || \App\Helpers\AuthHelper::isInstructor($user->facility))
+                    @if (\App\Helpers\AuthHelper::authACL()->isMentor($user->facility)
+                        || \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff()
+                        || \App\Helpers\AuthHelper::authACL()->isWebmaster($user->facility)
+                        || \App\Helpers\AuthHelper::authACL()->isInstructor($user->facility))
                         <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab"
                                                    data-toggle="tab">Ratings
                                 &amp; Transfers</a></li>
                     @endif
                     @php $canViewTraining = ($user->facility == Auth::user()->facility
-                                            || \App\Helpers\AuthHelper::isMentor($user->facility)
-                                            || \App\Helpers\AuthHelper::isInstructor($user->facility)
+                                            || \App\Helpers\AuthHelper::authACL()->isMentor($user->facility)
+                                            || \App\Helpers\AuthHelper::authACL()->isInstructor($user->facility)
                                             || $user->visits()->where('facility', Auth::user()->facility)->exists()
                                             || $user->trainingRecords()->where('facility_id', Auth::user()->facility)->exists()
-                                            || \App\Helpers\AuthHelper::isVATUSAStaff()
-                                            || \App\Helpers\AuthHelper::isFacilitySeniorStaff()) @endphp
+                                            || \App\Helpers\AuthHelper::authACL()->isVATUSAStaff()
+                                            || \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff()) @endphp
                     @if($canViewTraining)
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Academy Transcript</a></li>
@@ -154,15 +154,15 @@
                            role="tab"
                            data-toggle="tab" @endif>Training</a>
                     </li>
-                    @if (\App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                        \App\Helpers\AuthHelper::isInstructor(Auth::user()->cid, $user->facility) ||
-                        \App\Helpers\AuthHelper::isWebmaster($user->facility))
+                    @if (\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                        \App\Helpers\AuthHelper::authACL()->isInstructor(Auth::user()->cid, $user->facility) ||
+                        \App\Helpers\AuthHelper::authACL()->isWebmaster($user->facility))
                         <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
                                 Log</a></li>
                    ) @endif
-                    @if(\App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                        \App\Helpers\AuthHelper::isVATUSAStaff() ||
-                        \App\Helpers\AuthHelper::isWebTeam()
+                    @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
+                        \App\Helpers\AuthHelper::authACL()->isWebTeam()
                         )
                         <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
                                                    data-toggle="tab">Roles</a></li>
@@ -172,10 +172,10 @@
                     <div role="tabpanel" class="tab-pane active" id="csp"><br>
                         @include('mgt.controller.parts.summary')
                     </div>
-                    @if(\App\Helpers\AuthHelper::isMentor($user->facility) ||
-                        \App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                        \App\Helpers\AuthHelper::isWebmaster($user->facility) ||
-                        \App\Helpers\AuthHelper::isInstructor($user->facility))
+                    @if(\App\Helpers\AuthHelper::authACL()->isMentor($user->facility) ||
+                        \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                        \App\Helpers\AuthHelper::authACL()->isWebmaster($user->facility) ||
+                        \App\Helpers\AuthHelper::authACL()->isInstructor($user->facility))
                         <div class="tab-pane" role="tabpanel" id="ratings">
                             @include('mgt.controller.parts.rating_transfer')
                         </div>
@@ -187,15 +187,15 @@
                     @endif
                     <div class="tab-pane" role="tabpanel"
                          id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
-                    @if(\App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                        \App\Helpers\AuthHelper::isWebmaster($user->facility))
+                    @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                        \App\Helpers\AuthHelper::authACL()->isWebmaster($user->facility))
                         <div class="tab-pane" role="tabpanel" id="actions">
                             @include('mgt.controller.parts.action_log')
                         </div>
                     @endif
-                    @if(\App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                        \App\Helpers\AuthHelper::isVATUSAStaff() ||
-                        \App\Helpers\AuthHelper::isWebTeam()
+                    @if(\App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                        \App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
+                        \App\Helpers\AuthHelper::authACL()->isWebTeam()
                         )
                         <div class="tab-pane" role="tabpanel" id="roles">
                             @include('mgt.controller.parts.roles')

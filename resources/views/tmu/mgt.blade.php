@@ -13,9 +13,9 @@
 @endpush
 
 @php
-    $facilityAccess = \App\Helpers\AuthHelper::isFacilitySeniorStaff() ||
-                      \App\Helpers\AuthHelper::isWebmaster() ||
-                      \App\Helpers\AuthHelper::isFacilityEngineer();
+    $facilityAccess = \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff() ||
+                      \App\Helpers\AuthHelper::authACL()->isWebmaster() ||
+                      \App\Helpers\AuthHelper::authACL()->isFacilityEngineer();
 @endphp
 
 @section('content')
@@ -23,7 +23,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    @if(\App\Helpers\AuthHelper::isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                         <select id="fac" class="mgt-sel">
                             @foreach(\App\Models\Facility::where('active', 1)->orderBy('name')->get() as $f)
                                 <option name="{{$f->id}}" @if($f->id == $fac) selected="true" @endif>{{$f->id}}</option>

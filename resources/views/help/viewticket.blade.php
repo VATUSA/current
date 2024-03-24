@@ -3,10 +3,10 @@
 
 @section('content')
     <div class="container">
-        @if(\App\Classes\AuthHelper::isFacilityStaff() ||
-            \App\Classes\AuthHelper::isInstructor() ||
-            \App\Classes\AuthHelper::isVATUSAStaff() ||
-            \App\Classes\AuthHelper::isWebTeam()
+        @if(\App\Classes\AuthHelper::authACL()->isFacilityStaff() ||
+            \App\Classes\AuthHelper::authACL()->isInstructor() ||
+            \App\Classes\AuthHelper::authACL()->isVATUSAStaff() ||
+            \App\Classes\AuthHelper::authACL()->isWebTeam()
             )
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -35,8 +35,8 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Facility:</label>
                                 <div class="col-sm-5">
-                                    @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
-                                        \App\Helpers\AuthHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isInstructor())
                                         <select id="tFacility" class="form-control">
                                             <option value="ZHQ">VATUSA HQ</option>
                                             @foreach(\App\Models\Facility::where('active', '1')->orWhere('id', 'ZAE')->orderBy('name')->get() as $f)
@@ -53,8 +53,8 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Assigned To:</label>
                                 <div class="col-sm-10">
-                                    @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
-                                        \App\Helpers\AuthHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isInstructor())
                                         <select id="tAssignTo" class="form-control">
                                             <option value="0">Unassigned</option>
                                             @foreach(\App\Classes\RoleHelper::getStaff($ticket->facility, true) as $s)
@@ -92,8 +92,8 @@
                                     <p class="form-control-static">{{$ticket->updated_at->format('m/d/Y H:i')}}</p>
                                 </div>
                             </div>
-                            @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
-                                \App\Helpers\AuthHelper::isInstructor())
+                            @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                \App\Helpers\AuthHelper::authACL()->isInstructor())
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Notes:<br>(Visible to staff only)</label>
                                     <div class="col-sm-10">
@@ -122,13 +122,13 @@
                         <div id="ticketReply0" class="panel panel-default">
                             <div class="panel-body">
                                 <div class="col-lg-2">
-                                    @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
-                                        \App\Helpers\AuthHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                        \App\Helpers\AuthHelper::authACL()->isInstructor())
                                         <a href="/mgt/controller/{{$ticket->cid}}" target="_blank">
                                             @endif
                                             {{$ticket->submitter->fullname()}}
-                                            @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
-                                                \App\Helpers\AuthHelper::isInstructor())
+                                            @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                                \App\Helpers\AuthHelper::authACL()->isInstructor())
                                         </a>
                                     @endif
                                     <br>
@@ -146,13 +146,13 @@
                             <div id="ticketReply{{$r->id}}" class="panel panel-default">
                                 <div class="panel-body">
                                     <div class="col-lg-2">
-                                        @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
-                                            \App\Helpers\AuthHelper::isInstructor())
+                                        @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                            \App\Helpers\AuthHelper::authACL()->isInstructor())
                                             <a href="/mgt/controller/{{$r->cid}}">
                                                 @endif
                                                 {{$r->submitter->fullname()}}
-                                                @if(\App\Helpers\AuthHelper::isFacilityStaff() ||
-                                                    \App\Helpers\AuthHelper::isInstructor())
+                                                @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                                    \App\Helpers\AuthHelper::authACL()->isInstructor())
                                             </a>
                                         @endif
                                         <br>

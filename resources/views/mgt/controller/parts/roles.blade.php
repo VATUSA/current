@@ -1,5 +1,5 @@
 @php
-    $isVATUSAStaff = \App\Helpers\AuthHelper::isVATUSAStaff();
+    $isVATUSAStaff = \App\Helpers\AuthHelper::authACL()->isVATUSAStaff();
 
 @endphp
 

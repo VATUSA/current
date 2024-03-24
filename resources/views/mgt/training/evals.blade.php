@@ -9,12 +9,12 @@
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-heading"><h3 class="panel-title"><i class="fas fa-check-double"></i> OTS
-                    Evaluations @if(!\App\Helpers\AuthHelper::isVATUSAStaff())
+                    Evaluations @if(!\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                         - {{ Auth::user()->facility()->name }} @endif</h3>
             </div>
             <div class="panel-body">
                 <div class="col-md-3" style="border-right: 1px solid #ccc;">
-                    @if(\App\Helpers\AuthHelper::isVATUSAStaff())
+                    @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                         <form class="form-inline" action="{{ url("/mgt/facility/training/evals") }}" method="POST"
                               id="training-artcc-select-form">
                             <div class="form-group">
