@@ -2,10 +2,10 @@
 @section('title', 'Search Tickets')
 @section('content')
     <div class="container">
-        @if(\App\Classes\RoleHelper::isFacilityStaff()
-            || \App\Classes\RoleHelper::isInstructor()
-            || \App\Classes\RoleHelper::isVATUSAStaff()
-            || \App\Classes\RoleHelper::isWebTeam()
+        @if(\App\Classes\AuthHelper::authACL()->isFacilityStaff() ||
+            \App\Classes\AuthHelper::authACL()->isInstructor() ||
+            \App\Classes\AuthHelper::authACL()->isVATUSAStaff() ||
+            \App\Classes\AuthHelper::authACL()->isWebTeam()
             )
             <div class="row">
                 <div class="col-lg-12 text-center">

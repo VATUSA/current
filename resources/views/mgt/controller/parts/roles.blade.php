@@ -1,6 +1,5 @@
 @php
-    $isVATUSAStaff = \App\Classes\RoleHelper::isVATUSAStaff();
-
+    $isVATUSAStaff = \App\Helpers\AuthHelper::authACL()->isVATUSAStaff();
 @endphp
 
 <div class="row">
@@ -60,7 +59,7 @@
                 <select id="frFacility" name="facility">
                     <option>---</option>
                     @foreach(\App\Models\Facility::where('active', 1)->orderby('id', 'ASC')->get() as $f)
-                        @if($isVATUSAStaff || \App\Classes\RoleHelper::isFacilitySeniorStaff(null, $f->id, false, false))
+                        @if($isVATUSAStaff || \App\Helpers\AuthHelper::authACL()->isFacilitySeniorStaff($f->id))
                             <option value="{{$f->id}}">{{$f->id}}</option>
                         @endif
                     @endforeach
@@ -73,14 +72,16 @@
                             <option value="{{$role->role}}">{{$role->title}}</option>
                         @endforeach
                     @endif
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA())
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff())
                         @foreach (\App\Helpers\RoleHelperV2::roleTitles(\App\Helpers\RoleHelperV2::$facilityRolesATM) as $role)
                             <option value="{{$role->role}}">{{$role->title}}</option>
                         @endforeach
                     @endif
-                    @foreach (\App\Helpers\RoleHelperV2::roleTitles(\App\Helpers\RoleHelperV2::$facilityRolesTA) as $role)
-                        <option value="{{$role->role}}">{{$role->title}}</option>
-                    @endforeach
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageRoles())
+                        @foreach (\App\Helpers\RoleHelperV2::roleTitles(\App\Helpers\RoleHelperV2::$facilityRolesTA) as $role)
+                            <option value="{{$role->role}}">{{$role->title}}</option>
+                        @endforeach
+                    @endif
                 </select>
                 <button class="btn btn-success" type="submit">
                     <i class="fa fa-plus"></i> Assign

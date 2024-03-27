@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
+use App\Helpers\AuthHelper;
 use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Http\Request;
@@ -30,9 +31,9 @@ class TrainingController extends Controller
         }
 
         return response()->json(Auth::check() && $record->student_id != Auth::user()->cid &&
-            (RoleHelper::isVATUSAStaff() || !in_array($record->ots_status, [1, 2])) &&
-            (RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $record->facility) ||
-                (RoleHelper::isTrainingStaff(Auth::user()->cid, true, $record->facility)
+            (AuthHelper::authACL()->isVATUSAStaff() || !in_array($record->ots_status, [1, 2])) &&
+            (AuthHelper::authACL()->isFacilitySeniorStaff($record->facility) ||
+                (AuthHelper::authACL()->isTrainingStaff($record->facility)
                     && $record->instructor_id == Auth::user()->cid)));
     }
 
@@ -51,7 +52,8 @@ class TrainingController extends Controller
             ->has('perfcats.indicators')->withAll()->find($form)
             : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
                 ->withAll()->where('rating_id', $student->rating + 1)->first();
-        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->canViewTrainingRecords($student->facility)) {
             abort(403);
         }
         if (!$student || !$form) {
@@ -76,7 +78,8 @@ class TrainingController extends Controller
             abort(404, "The OTS evaluation form is invalid.");
         }
         $student = $eval->student;
-        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->canViewTrainingRecords($student->facility)) {
             abort(403);
         }
         $attempt = Helper::numToOrdinalWord(OTSEval::where([
@@ -121,15 +124,15 @@ class TrainingController extends Controller
                     ($minutes !== 1 ? 's' : '');
             }
         }
-
-        if (!RoleHelper::isTrainingStaff(Auth::user()->cid, false) && !RoleHelper::isFacilitySeniorStaff()) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->canViewTrainingRecords()) {
             abort(403);
         }
 
 //        abort(500); // Disable training statistics as it's overloading the nodes, will re-enable after performance rework
         ini_set('memory_limit', '512M');
 
-        $globalAccess = RoleHelper::isFacilitySeniorStaff();
+        $globalAccess = $authACL->canViewAllTrainingRecords();
 
         $instructor = $request->input('instructor', null);
         $facility = $request->input('facility', null);
@@ -609,7 +612,7 @@ class TrainingController extends Controller
         Request $request
     )
     {
-        if (!RoleHelper::isTrainingStaff() && !RoleHelper::isFacilitySeniorStaff()) {
+        if (!AuthHelper::authACL()->canViewTrainingRecords()) {
             abort(403);
         }
 
@@ -618,7 +621,7 @@ class TrainingController extends Controller
         $facilities = Facility::active()->get();
 
         if (!$trainingfac) {
-            if (RoleHelper::isVATUSAStaff()) {
+            if (AuthHelper::authACL()->isVATUSAStaff()) {
                 $trainingfac = "";
                 $trainingfacname = "";
             } else {
@@ -658,13 +661,12 @@ class TrainingController extends Controller
         if (!$interval) {
             abort(400);
         }
-        if (!RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff()) {
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->canViewTrainingRecords()) {
             abort(403);
         }
-
-        $hasGlobalAccess = RoleHelper::isVATUSAStaff();
-        if (!$hasGlobalAccess) {
-            $facility = Auth::user()->facilityObj;
+        if (!$authACL->isVATUSAStaff()) {
+            $facility = Auth::user()->facility();
         } else if ($facility) {
             $facility = Facility::find($facility);
             if (!$facility) {

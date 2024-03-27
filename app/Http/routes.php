@@ -176,7 +176,6 @@ Route::group([
                     Route::get('/', 'MgtController@getController')->name('mgt.controller.index');
                     Route::post('/', 'MgtController@getController');
                     Route::post('rating', 'MgtController@postControllerRating');
-                    Route::get('transfers', 'MgtController@getControllerTransfers');
                     Route::get('transferwaiver', 'MgtController@getControllerTransferWaiver');
                     Route::get('actions', 'MgtController@getControllerActions');
                     Route::get('transfer/override', 'MgtController@getControllerTransferOverride');

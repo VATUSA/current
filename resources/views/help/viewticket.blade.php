@@ -3,10 +3,10 @@
 
 @section('content')
     <div class="container">
-        @if(\App\Classes\RoleHelper::isFacilityStaff()
-            || \App\Classes\RoleHelper::isInstructor()
-            || \App\Classes\RoleHelper::isVATUSAStaff()
-            || \App\Classes\RoleHelper::isWebTeam()
+        @if(\App\Classes\AuthHelper::authACL()->isFacilityStaff() ||
+            \App\Classes\AuthHelper::authACL()->isInstructor() ||
+            \App\Classes\AuthHelper::authACL()->isVATUSAStaff() ||
+            \App\Classes\AuthHelper::authACL()->isWebTeam()
             )
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -35,7 +35,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Facility:</label>
                                 <div class="col-sm-5">
-                                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
                                         <select id="tFacility" class="form-control">
                                             <option value="ZHQ">VATUSA HQ</option>
                                             @foreach(\App\Models\Facility::where('active', '1')->orWhere('id', 'ZAE')->orderBy('name')->get() as $f)
@@ -52,7 +52,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Assigned To:</label>
                                 <div class="col-sm-10">
-                                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
                                         <select id="tAssignTo" class="form-control">
                                             <option value="0">Unassigned</option>
                                             @foreach(\App\Classes\RoleHelper::getStaff($ticket->facility, true) as $s)
@@ -90,7 +90,7 @@
                                     <p class="form-control-static">{{$ticket->updated_at->format('m/d/Y H:i')}}</p>
                                 </div>
                             </div>
-                            @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                            @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Notes:<br>(Visible to staff only)</label>
                                     <div class="col-sm-10">
@@ -119,11 +119,11 @@
                         <div id="ticketReply0" class="panel panel-default">
                             <div class="panel-body">
                                 <div class="col-lg-2">
-                                    @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
                                         <a href="/mgt/controller/{{$ticket->cid}}" target="_blank">
                                             @endif
                                             {{$ticket->submitter->fullname()}}
-                                            @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                            @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets())
                                         </a>
                                     @endif
                                     <br>
@@ -141,11 +141,11 @@
                             <div id="ticketReply{{$r->id}}" class="panel panel-default">
                                 <div class="panel-body">
                                     <div class="col-lg-2">
-                                        @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
                                             <a href="/mgt/controller/{{$r->cid}}">
                                                 @endif
                                                 {{$r->submitter->fullname()}}
-                                                @if(\App\Classes\RoleHelper::isFacilityStaff() || \App\Classes\RoleHelper::isInstructor())
+                                                @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets())
                                             </a>
                                         @endif
                                         <br>
@@ -164,7 +164,7 @@
                 </div>
             </div>
         </div>
-        @if(\Auth::user()->cid == $ticket->cid || \App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility))
+        @if(\Auth::user()->cid == $ticket->cid || \App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
             <form method="post" action="{{ url("/help/ticket/{$ticket->id}") }}" class="form" id="reply-form">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
@@ -212,7 +212,7 @@
 
     <script type="text/javascript">
 
-        @if(\App\Classes\RoleHelper::isFacilityStaff(null, $ticket->facility) || \App\Classes\RoleHelper::isInstructor())
+        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
         $('#tFacility').change(function () {
           // Show Waiting Dialog
           waitingDialog.show('Loading... make sure to change "Assigned To" drop-down to save!', {

@@ -3,10 +3,10 @@
 
 @section('content')
     <div class="container">
-        @if(\App\Classes\RoleHelper::isFacilityStaff()
-            || \App\Classes\RoleHelper::isInstructor()
-            || \App\Classes\RoleHelper::isVATUSAStaff()
-            || \App\Classes\RoleHelper::isWebTeam())
+        @if(\App\Classes\AuthHelper::authACL()->isFacilityStaff()
+            || \App\Classes\AuthHelper::authACL()->isInstructor()
+            || \App\Classes\AuthHelper::authACL()->isVATUSAStaff()
+            || \App\Classes\AuthHelper::authACL()->isWebTeam())
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <a href="/help/ticket/myassigned" class="btn btn-primary">My Assigned Tickets</a>
@@ -26,7 +26,7 @@
                         <thead>
                             <tr>
                                 <th class="fit">ID</th>
-                                @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                @if(\App\Classes\AuthHelper::authACL()->isVATUSAStaff())
                                 <th class="fit">Facility</th>
                                 @endif
                                 <th>Subject</th>
@@ -39,12 +39,12 @@
                         </thead>
                         <tbody>
                         @if(count($tickets)==0)
-                            <tr><td colspan="{{(\App\Classes\RoleHelper::isVATUSAStaff()?"8":"7")}}" class="text-center"><i>No {{$status}} to display</i></td></tr>
+                            <tr><td colspan="{{(\App\Classes\AuthHelper::authACL()->isVATUSAStaff()?"8":"7")}}" class="text-center"><i>No {{$status}} to display</i></td></tr>
                         @else
                             @foreach($tickets as $ticket)
                                 <tr class="clickable-row ticket-{{strtolower($ticket->status)}}" data-href="/help/ticket/{{$ticket->id}}">
                                     <td>{{$ticket->id}}</td>
-                                    @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                    @if(\App\Classes\AuthHelper::authACL()->isVATUSAStaff())
                                     <td>{{$ticket->facility}}</td>
                                     @endif
                                     <td>{{$ticket->subject}}</td>

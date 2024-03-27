@@ -20,13 +20,20 @@
             <td>{{$user->cid}}</td>
             <td>{{$user->fname}} {{$user->lname}}</td>
             <td>{{$user->urating->short}}</td>
-            @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac) || \App\Classes\RoleHelper::isVATUSAStaff())
-                <td><a href="/mgt/controller/{{$t->cid}}" target="_blank"><i
-                                class="fa fa-search"></i></a> &nbsp; <a href="#"
-                                                                        onClick="appvTrans({{$t->id}})"><i
-                                class="fa fa-check"></i></a> &nbsp; <a href="#"
-                                                                       onClick="rejTrans({{$t->id}})"><i
-                                class="fa fa-times"></i></a></td>
+            @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
+                <td>
+                    <a href="/mgt/controller/{{$t->cid}}" target="_blank">
+                        <i class="fa fa-search"></i>
+                    </a>
+                    &nbsp;
+                    <a href="#" onClick="appvTrans({{$t->id}})">
+                        <i class="fa fa-check"></i>
+                    </a>
+                    &nbsp;
+                    <a href="#" onClick="rejTrans({{$t->id}})">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </td>
             @else
                 <td>&nbsp;</td>
             @endif

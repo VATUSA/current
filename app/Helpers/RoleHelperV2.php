@@ -7,7 +7,9 @@ use App\Models\Actions;
 use App\Models\Facility;
 use App\Models\Role;
 use App\Models\RoleTitle;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use PhpParser\Node\Expr\Array_;
 
 class RoleHelperV2
 {
@@ -36,20 +38,34 @@ class RoleHelperV2
     public static function canAssignRole(int $cid, string $role, string $facility = null)
     {
         if (in_array($role, self::$globalRoles) || in_array($role, self::$facilityRolesUSA)) {
-            return RoleHelper::isVATUSAStaff();
+            return AuthHelper::authACL()->isVATUSAStaff();
         }
         if (in_array($role, self::$facilityRolesATM)) {
-            return RoleHelper::isFacilitySeniorStaffExceptTA(null, $facility);
+            return AuthHelper::authACL()->canManageFacilityStaff($facility);
         }
         if (in_array($role, self::$facilityRolesTA)) {
-            return RoleHelper::isFacilitySeniorStaff(null, $facility);
+            return AuthHelper::authACL()->canManageTrainingStaff($facility);
         }
         return false; // Only allow groups in one of the above lists to be assigned
     }
 
-    public static function hasRole(int $cid, string $role, string $facility)
-    {
-        return Role::where('role', $role)->where('cid', $cid)->where('facility', $facility)->exists();
+    public static function hasRole(User $user, string $role, string $facility) {
+        foreach ($user->roles()->get() as $userRole) {
+            var_dump($userRole);
+            if ($userRole->role == $role && $userRole->facility == $facility) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function hasRoleArray(User $user, array $roles, string $facility): bool {
+        foreach ($user->roles() as $userRole) {
+            if (in_array($userRole->role, $roles) && $userRole->facility == $facility) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static function assignRole(int $cid, string $role, string $facility)
@@ -114,10 +130,12 @@ class RoleHelperV2
     // Assigns a role if not assigned, revokes that role if it is assigned
     public static function toggleRole(int $cid, string $role, string $facility)
     {
-        if (RoleHelperV2::hasRole($cid, $role, $facility)) {
+        $user = User::where('cid', $cid)->first();
+        if (RoleHelperV2::hasRole($user, $role, $facility)) {
             RoleHelperV2::revokeRole($cid, $role, $facility);
         } else {
             RoleHelperV2::assignRole($cid, $role, $facility);
         }
     }
+
 }

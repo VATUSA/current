@@ -315,7 +315,7 @@
                             <tr>
                                 <td class="vctr"><label for="n-training-instructor">Instructor/Mentor</label></td>
                                 <td>
-                                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, Auth::user()->facility))
+                                    @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                         <select class="form-control training-instructor" name="instructor"
                                                 id="n-training-instructor"
                                                 required

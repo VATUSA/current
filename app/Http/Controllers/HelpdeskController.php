@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Classes\EmailHelper;
+use App\Helpers\AuthHelper;
 use App\Models\Facility;
 use App\Models\KnowledgebaseCategories;
 use App\Models\KnowledgebaseQuestions;
@@ -43,7 +44,7 @@ class HelpdeskController
             $status = "My Assigned";
         } else if ($status == "open") {
             $status = "Open";
-            if (RoleHelper::isVATUSAStaff() || RoleHelper::isWebTeam()) {
+            if (AuthHelper::authACL()->isVATUSAStaff() || AuthHelper::authACL()->isWebTeam()) {
                 $tickets = Ticket::where('status', 'Open')->orderBy('created_at', 'asc')->get();
             } else {
                 $tickets = Ticket::where('status', 'Open')->where(function ($query) {
@@ -57,7 +58,7 @@ class HelpdeskController
             // Build query
             $tickets = new Ticket;
             $tickets = $tickets->where('status', 'Closed');
-            if (!RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam()) {
+            if (!AuthHelper::authACL()->isVATUSAStaff() && !AuthHelper::authACL()->isWebTeam()) {
                 $tickets = $tickets->where(function ($query) {
                     $query->where('facility', Auth::user()->facility)
                         ->orwhere('assigned_to', Auth::user()->cid);
@@ -226,8 +227,7 @@ class HelpdeskController
             return redirect('/')->with('error', 'Must be logged in');
         }
 
-        if ($ticket->cid == Auth::user()->cid || RoleHelper::isFacilityStaff(null,
-                $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility)) {
+        if ($ticket->cid == Auth::user()->cid || AuthHelper::authACL()->canManageFacilityTickets($ticket->facility)) {
             if ($ticket->status == "Open") {
                 $ticket->status = "Closed";
                 $history = new TicketHistory();
@@ -262,8 +262,7 @@ class HelpdeskController
             return redirect('/')->with('error', 'Must be logged in');
         }
 
-        if ($ticket->cid == Auth::user()->cid || RoleHelper::isFacilityStaff(null,
-                $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility)) {
+        if ($ticket->cid == Auth::user()->cid || AuthHelper::authACL()->canManageFacilityTickets($ticket->facility)) {
             return view('help.viewticket', ['ticket' => $ticket]);
         } else {
             return redirect('/help')->with("error", "Access to ticket denied");
@@ -285,8 +284,7 @@ class HelpdeskController
                 "You cannot post a reply with an empty message.  If you're trying to open/close the ticket, use the toggle in the ticket summary.");
         }
 
-        if ($ticket->cid == Auth::user()->cid || RoleHelper::isFacilityStaff(null,
-                $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility)) {
+        if ($ticket->cid == Auth::user()->cid || AuthHelper::authACL()->canManageFacilityTickets($ticket->facility)) {
             $ticket->touch();
             $reply = new TicketReplies();
             $reply->ticket_id = $ticket->id;
@@ -378,7 +376,7 @@ class HelpdeskController
             abort(404);
         }
 
-        if (RoleHelper::isFacilityStaff(null, $ticket->facility) || RoleHelper::isInstructor(null, $ticket->facility)) {
+        if (AuthHelper::authACL()->canManageFacilityTickets($ticket->facility)) {
             if ($request->input("facility")) {
                 $ticket->facility = $request->input("facility");
                 $ticket->save();
@@ -461,7 +459,7 @@ class HelpdeskController
 
     public
     function getKBE() {
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -476,7 +474,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -495,7 +493,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -521,7 +519,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -537,7 +535,7 @@ class HelpdeskController
         Request $request,
                 $id
     ) {
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -577,7 +575,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -609,7 +607,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -627,7 +625,7 @@ class HelpdeskController
         $cid,
         $id
     ) {
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
         $question = null;
@@ -650,7 +648,7 @@ class HelpdeskController
         $cid,
         $id
     ) {
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
         $question = null;
@@ -691,7 +689,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 
@@ -725,7 +723,7 @@ class HelpdeskController
         if (!$request->ajax()) {
             abort(403);
         }
-        if (!Auth::check() || !RoleHelper::isVATUSAStaff()) {
+        if (!Auth::check() || !AuthHelper::authACL()->isVATUSAStaff()) {
             abort(403);
         }
 

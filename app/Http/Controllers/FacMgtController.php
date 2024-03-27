@@ -3,6 +3,7 @@
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\SMFHelper;
+use App\Helpers\AuthHelper;
 use App\Models\Role;
 use Auth;
 use App\Models\Transfers;
@@ -29,10 +30,8 @@ class FacMgtController extends Controller
 
     public function getIndex($fac = null)
     {
-        if (!RoleHelper::isMentor() && !RoleHelper::isInstructor() && !RoleHelper::isFacilitySeniorStaff() &&
-            !RoleHelper::isVATUSAStaff() && !RoleHelper::isWebTeam() && !RoleHelper::hasRole(Auth::user()->cid,
-                $fac ?? Auth::user()->facility, "WM")) {
-            abort(401);
+        if (!AuthHelper::authACL()->canViewFacilityRoster($fac)) {
+            abort(403);
         }
 
         if ($fac === null) {
@@ -45,11 +44,6 @@ class FacMgtController extends Controller
 
         if ($fac == "Winterfell") {
             return view('eastereggs.winterfell');
-        }
-
-        // Mentor-only users can only view their facility
-        if (RoleHelper::isMentor() && !(RoleHelper::isFacilityStaff() || RoleHelper::isInstructor())) {
-            $fac = Auth::user()->facility;
         }
 
         $facility = Facility::find($fac);
@@ -85,9 +79,9 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(401);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, $facility,
-                "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) {
-            abort(500);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->canManageFacilityTechConfig($facility)) {
+            abort(403);
         }
 
         $key = base64_encode(random_bytes(ceil(0.75 * 16)));
@@ -109,9 +103,9 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(401);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, $facility,
-                "WM") && !RoleHelper::isFacilitySeniorStaff(Auth::user()->cid, $facility)) {
-            abort(500);
+        $authACL = AuthHelper::authACL();
+        if (!$authACL->canManageFacilityTechConfig($facility)) {
+            abort(403);
         }
 
         $key = base64_encode(random_bytes(ceil(0.75 * 16)));
@@ -130,9 +124,7 @@ class FacMgtController extends Controller
 
     public function savePointsOfContact(Request $request, $fac)
     {
-        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "ATM")
-            && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility, "DATM")
-            && !RoleHelper::isVATUSAStaff()) {
+        if (!AuthHelper::authACL()->canManageFacilityStaff($fac)) {
             abort(401);
         }
         $facility = Facility::findOrFail($fac);
@@ -153,22 +145,22 @@ class FacMgtController extends Controller
         $fe = (int)$request->get('fe');
         $wm = (int)$request->get('wm');
 
-        if (RoleHelper::isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
+        if (AuthHelper::authACL()->isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
             $facility->atm = $atm;
         }
-        if (RoleHelper::isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
+        if (AuthHelper::authACL()->isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
             $facility->datm = $datm;
         }
-        if (RoleHelper::isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
+        if (AuthHelper::authACL()->isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
             $facility->ta = $ta;
         }
-        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($ec == -1 || in_array($ec, $staffPOCOptions["EC"]))) {
+        if ($ec == -1 || in_array($ec, $staffPOCOptions["EC"])) {
             $facility->ec = $ec;
         }
-        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($fe == -1 || in_array($fe, $staffPOCOptions["FE"]))) {
+        if ($fe == -1 || in_array($fe, $staffPOCOptions["FE"])) {
             $facility->fe = $fe;
         }
-        if (RoleHelper::isFacilitySeniorStaffExceptTA(null, $fac) && ($wm == -1 || in_array($wm, $staffPOCOptions["WM"]))) {
+        if ($wm == -1 || in_array($wm, $staffPOCOptions["WM"])) {
             $facility->wm = $wm;
         }
         $facility->save();
@@ -180,9 +172,8 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, $facility, "ATM") && !RoleHelper::hasRole(Auth::user()->cid,
-                $facility, "DATM") && !RoleHelper::isVATUSAStaff()) {
-            abort(401);
+        if (!AuthHelper::authACL()->canManageFacilityRoster($facility)) {
+            abort(403);
         }
 
         $user = User::find($cid);
@@ -200,15 +191,13 @@ class FacMgtController extends Controller
         if (!$request->ajax()) {
             abort(500);
         }
-        if (!RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,
-                "ATM") && !RoleHelper::hasRole(Auth::user()->cid, Auth::user()->facility,
-                "DATM") && !RoleHelper::isVATUSAStaff()) {
-            abort(401);
+        $tr = Transfers::find($_POST['id']);
+        if (!AuthHelper::authACL()->canManageFacilityRoster($tr->to)) {
+            abort(403);
         }
 
         if (($status == 1 || $status == 2) && isset($_POST['id'])) {
             if ($status == 2 && isset($_POST['reason']) && !empty($_POST['reason'])) {
-                $tr = Transfers::find($_POST['id']);
                 if ($tr != null) {
                     $tr->reject(Auth::user()->cid, $_POST['reason']);
 
@@ -219,7 +208,6 @@ class FacMgtController extends Controller
 
             }
             if ($status == 1) {
-                $tr = Transfers::find($_POST['id']);
                 if ($tr != null) {
                     $tr->accept(Auth::user()->cid);
 

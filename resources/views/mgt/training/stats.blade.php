@@ -9,7 +9,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h5 class="panel-title"><i class="fas fa-chart-line"></i> Training Statistics
-                    @if(!\App\Classes\RoleHelper::isFacilitySeniorStaff())
+                    @if(!\App\Helpers\AuthHelper::authACL()->canViewAllTrainingRecords())
                         - {{ \App\Classes\Helper::facShtLng($facility) }}
                     @else -
                     <form class="form-inline" action="{{ url("mgt/facility/training/stats") }}#training"

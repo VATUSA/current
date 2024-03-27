@@ -5,19 +5,17 @@
         </h3>
     </div>
     <div class="panel-body">
-        @if(\App\Classes\RoleHelper::isVATUSAStaff())
+        @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
             <div class="alert alert-success" id="delete-log-success" style="display:none;">
-                <strong><i class='fa fa-check'></i> Success! </strong> The log entry has
-                been
-                deleted.
+                <strong><i class='fa fa-check'></i> Success! </strong>
+                The log entry has been deleted.
             </div>
             <div class="alert alert-danger" id="delete-log-error" style="display:none;">
-                <strong><i
-                            class='fa fa-check'></i> Error! </strong> Could not delete log
-                entry.
+                <strong><i class='fa fa-check'></i> Error! </strong>
+                Could not delete log entry.
             </div>
         @endif
-        @if(\App\Classes\RoleHelper::isFacilitySeniorStaff())
+        @if(\App\Helpers\AuthHelper::authACL()->canUseActionLog())
             <form class="form-horizontal"
                   action="{{url("/mgt/controller/action/add")}}"
                   method="POST">
@@ -54,7 +52,7 @@
                                 by {{ $name }}</p>
                         @endif</td>
                     <td>
-                        @if(App\Classes\RoleHelper::isVATUSAStaff() && $a->from &&
+                        @if(App\Helpers\AuthHelper::authACL()->isVATUSAStaff() && $a->from &&
                         !str_contains($a->log, 'by ' . App\Classes\Helper::nameFromCID($a->from)))
                             <a data-id="{{ $a->id }}"
                                href="#"

@@ -111,7 +111,7 @@ class PolicyController extends Controller {
      */
     public function show(string $slug) {
         $policy = Policy::where('slug', $slug)->first();
-        if (!RoleHelper::canView($policy)) {
+        if (!\App\Helpers\AuthHelper::authACL()->canViewPolicy($policy)) {
             abort(403, "You are not allowed to access that file.");
         }
         if ($policy && Storage::disk('public')->exists("docs/$policy->slug.$policy->extension")) {

@@ -107,13 +107,14 @@
 @section('content')
     <div class="container">
         <div
-            class="panel panel-{{ ((\App\Classes\RoleHelper::isVATUSAStaff() || \App\Classes\RoleHelper::isFacilitySeniorStaff()) && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
+            class="panel panel-{{ (\App\Helpers\AuthHelper::authACL()->canManageRoles() && $user->flag_preventStaffAssign) ? "warning" : "default"}}"
             id="user-info-panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <div class="row">
-                        <div class="col-md-8" style="font-size: 16pt;">{{$user->fname}} {{$user->lname}}
-                            - {{$user->cid}}</div>
+                        <div class="col-md-8" style="font-size: 16pt;">
+                            {{$user->fname}} {{$user->lname}} - {{$user->cid}}
+                        </div>
                         <form class="form-inline" id="controllerForm">
                             <div class="col-md-4 text-right form-group">
                                 <input type="text" id="cidsearch" class="form-control" placeholder="CID, Discord ID, Last Name">
@@ -128,21 +129,12 @@
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#csp" aria-controls="csp" role="tab"
                                                               data-toggle="tab">Summary</a></li>
-                    @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                        || \App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM")
-                        || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility))
+                    @if (\App\Helpers\AuthHelper::authACL()->canViewController($user))
                         <li role="presentation"><a href="#ratings" aria-controls="ratings" role="tab"
                                                    data-toggle="tab">Ratings
                                 &amp; Transfers</a></li>
                     @endif
-                    @php $canViewTraining = ($user->facility == Auth::user()->facility
-                                            || \App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                                            || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility)
-                                            || $user->visits()->where('facility', Auth::user()->facility)->exists()
-                                            || $user->trainingRecords()->where('facility_id', Auth::user()->facility)->exists()
-                                            || \App\Classes\RoleHelper::isVATUSAStaff()
-                                            || \App\Classes\RoleHelper::isFacilitySeniorStaff()) @endphp
+                    @php $canViewTraining = \App\Helpers\AuthHelper::authACL()->canViewTrainingRecords($user->facility) @endphp
                     @if($canViewTraining)
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Academy Transcript</a></li>
@@ -154,26 +146,26 @@
                            role="tab"
                            data-toggle="tab" @endif>Training</a>
                     </li>
-                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
-                        <li role="presentation"><a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">Action
-                                Log</a></li>
-                    @endif
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::isVATUSAStaff()
-                        || \App\Classes\RoleHelper::isWebTeam()
-                        )
-                        <li role="presentation"><a href="#roles" data-controls="roles" role="tab"
-                                                   data-toggle="tab">Roles</a></li>
+                    @if (\App\Helpers\AuthHelper::authACL()->canUseActionLog())
+                        <li role="presentation">
+                            <a href="#actions" aria-controls="actions" role="tab" data-toggle="tab">
+                                Action Log
+                            </a>
+                        </li>
+                   @endif
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageRoles())
+                        <li role="presentation">
+                            <a href="#roles" data-controls="roles" role="tab" data-toggle="tab">
+                                Roles
+                            </a>
+                        </li>
                     @endif
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="csp"><br>
                         @include('mgt.controller.parts.summary')
                     </div>
-                    @if (\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                        || \App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM")
-                        || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility))
+                    @if(\App\Helpers\AuthHelper::authACL()->canViewController($user))
                         <div class="tab-pane" role="tabpanel" id="ratings">
                             @include('mgt.controller.parts.rating_transfer')
                         </div>
@@ -183,17 +175,15 @@
                             @include('mgt.controller.parts.academy_transcript')
                         </div>
                     @endif
-                    <div class="tab-pane" role="tabpanel"
-                         id="training">@includeWhen($canViewTraining, 'mgt.controller.training.training')</div>
-                    @if (\App\Classes\RoleHelper::isFacilitySeniorStaff() || \App\Classes\RoleHelper::isInstructor(Auth::user()->cid, $user->facility) || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
+                    <div class="tab-pane" role="tabpanel" id="training">
+                        @includeWhen($canViewTraining, 'mgt.controller.training.training')
+                    </div>
+                    @if(\App\Helpers\AuthHelper::authACL()->canUseActionLog())
                         <div class="tab-pane" role="tabpanel" id="actions">
                             @include('mgt.controller.parts.action_log')
                         </div>
                     @endif
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::isVATUSAStaff()
-                        || \App\Classes\RoleHelper::isWebTeam()
-                        )
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageRoles())
                         <div class="tab-pane" role="tabpanel" id="roles">
                             @include('mgt.controller.parts.roles')
                         </div>

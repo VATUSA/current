@@ -2,8 +2,7 @@
     <div class="col-md-4">
         <ol style="font-size: 110%;list-style-type: none;">
             <li><strong>{{$user->fname}} {{$user->lname}}</strong></li>
-            @if(\App\Classes\RoleHelper::isVATUSAStaff() ||
-                \App\Classes\RoleHelper::isFacilitySeniorStaff())
+            @if(\App\Helpers\AuthHelper::authACL()->canViewEmail())
                 <li>{{$user->email}} &nbsp; <a href="mailto:{{$user->email}}"><i
                                 class="fa fa-envelope text-primary"
                                 style="font-size:80%"></i></a>
@@ -33,9 +32,9 @@
             @if($user->facility()->active)
                 <li>
                     Training Staff?
-                    @if (\App\Classes\RoleHelper::isInstructor($user->cid, $user->facility, false))
+                    @if (\App\Helpers\AuthHelper::cidACL($user->cid)->isInstructor($user->facility))
                         Instructor
-                    @elseif(\App\Classes\RoleHelper::isMentor($user->cid, $user->facility))
+                    @elseif(\App\Helpers\AuthHelper::cidACL($user->cid)->isMentor($user->facility))
                         Mentor
                     @else
                         No
@@ -48,12 +47,12 @@
                 @foreach ($user->visits()->get() as $visit)
                     <li>
                         {{$visit->fac->id}} - {{$visit->fac->name}}
-                        @if(\App\Classes\RoleHelper::isTrainingStaff($user->cid, true, $visit->fac->id, false))
+                        @if(\App\Helpers\AuthHelper::cidACL($user->cid)->isTrainingStaff($visit->fac->id))
                             <br>
                             <span style="margin-left:2em;">
-                                    @if (\App\Classes\RoleHelper::isInstructor($user->cid, $visit->fac->id, false))
+                                @if (\App\Helpers\AuthHelper::cidACL($user->cid)->isInstructor($visit->fac->id))
                                     Instructor
-                                @elseif(\App\Classes\RoleHelper::isMentor($user->cid, $visit->fac->id))
+                                @elseif(\App\Helpers\AuthHelper::cidACL($user->cid)->isMentor($visit->fac->id))
                                     Mentor
                                 @endif
                                 </span>
@@ -65,7 +64,7 @@
             <li>Last Website Activity: {{$user->lastActivityWebsite()}} days ago</li>
             <br>
             <li>Needs Basic ATC or RCE:
-                @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                     <a href="/mgt/controller/{{$user->cid}}/togglebasic">
                         @endif
                         @if ($user->flag_needbasic)
@@ -73,20 +72,21 @@
                         @else
                             No
                         @endif
-                        @if (\App\Classes\RoleHelper::isVATUSAStaff())
+                        @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                     </a>
                 @endif
             </li>
             <br>
-            @if (\App\Classes\RoleHelper::isVATUSAStaff() &&
-                $user->rating >= \App\Classes\Helper::ratingIntFromShort("OBS") && $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
+            @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff() &&
+                $user->rating >= \App\Classes\Helper::ratingIntFromShort("OBS") &&
+                $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
                 <li>Rating Change
                     <select id="ratingchange">
                         @foreach (\App\Models\Rating::get() as $rating)
                             @if(in_array($rating->id, [1,2,3,4,5,7,8,10]))
                                 <option
                                         @if ($user->rating == $rating->id) selected @endif
-                                        value="{{$rating->id}}">{{$rating->short}} - {{$rating->long}}</option>
+                                value="{{$rating->id}}">{{$rating->short}} - {{$rating->long}}</option>
                             @endif
                         @endforeach
                     </select>

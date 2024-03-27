@@ -39,7 +39,7 @@
                     <div class="col-sm-10">
                         @if(empty($cid))
                             <select class="form-control" name="recipients" id="recipients">
-                                @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                                @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                     <optgroup label="All Facilities">
                                         <option value="ALL">All VATUSA Controllers</option>
                                         <option value="STAFF">All Facility Staff</option>

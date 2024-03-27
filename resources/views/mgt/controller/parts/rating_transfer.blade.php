@@ -28,43 +28,41 @@
             @endforeach
         </table>
     </div>
-    @if(!\App\Classes\RoleHelper::isMentor(Auth::user()->cid, $user->facility)
-                        || \App\Classes\RoleHelper::isFacilitySeniorStaff()
-                        || \App\Classes\RoleHelper::hasRole(Auth::user()->cid, $user->facility, "WM"))
-        <div class="col-md-6">
-            <table class="table table-striped panel panel-default">
-                <thead>
-                <tr style="background:#F5F5F5" class="panel-heading">
-                    <td colspan="5" style="text-align:center"><h3 class="panel-title">
-                            Transfer
-                            History</h3>
+    <div class="col-md-6">
+        <table class="table table-striped panel panel-default">
+            <thead>
+            <tr style="background:#F5F5F5" class="panel-heading">
+                <td colspan="5" style="text-align:center"><h3 class="panel-title">
+                        Transfer
+                        History</h3>
+                </td>
+            </tr>
+            </thead>
+            @foreach(\App\Models\Transfers::where('cid', $user->cid)->orderby('id', 'desc')->get() as $t)
+                <tr style="text-align: center">
+                    <td>{{substr($t->updated_at, 0,10)}}</td>
+                    <td><strong>{{$t->from}}</strong></td>
+                    <td class="text-{{($t->status == 2 ? 'danger' : ($t->status == 1 ? 'success' : 'warning'))}}">
+                        <i class="fa fa-arrow-right" data-toggle="tooltip"
+                           data-original-title="{{($t->status == 2 ? 'Declined - '.$t->actiontext.' by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : ($t->status == 1 ? 'Approved by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : 'Pending'))}}"
+                           style="cursor: pointer"></i></td>
+                    <td><strong>{{$t->to}}</strong></td>
+                    <td><a href="#" onClick="viewXfer({{$t->id}})"><i
+                                    class="fa fa-search"></i></a>
                     </td>
                 </tr>
-                </thead>
-                @foreach(\App\Models\Transfers::where('cid', $user->cid)->orderby('id', 'desc')->get() as $t)
-                    <tr style="text-align: center">
-                        <td>{{substr($t->updated_at, 0,10)}}</td>
-                        <td><strong>{{$t->from}}</strong></td>
-                        <td class="text-{{($t->status == 2 ? 'danger' : ($t->status == 1 ? 'success' : 'warning'))}}">
-                            <i class="fa fa-arrow-right" data-toggle="tooltip"
-                               data-original-title="{{($t->status == 2 ? 'Declined - '.$t->actiontext.' by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : ($t->status == 1 ? 'Approved by '.\App\Classes\Helper::nameFromCID($t->actionby, 1) : 'Pending'))}}"
-                               style="cursor: pointer"></i></td>
-                        <td><strong>{{$t->to}}</strong></td>
-                        <td><a href="#" onClick="viewXfer({{$t->id}})"><i
-                                        class="fa fa-search"></i></a>
-                        </td>
-                    </tr>
-                @endforeach
-                @if(\App\Classes\RoleHelper::isVATUSAStaff() && $user->flag_homecontroller == 1)
-                    <tr>
-                        <td colspan="5">Transfer Waiver: <span id="waiverToggle"><i
-                                        id="waivertogglei"
-                                        class="fa {{(($user->flag_xferOverride==1) ? "fa-toggle-on text-success" : "fa-toggle-off text-danger")}}"></i></span>
-                            <a href="/mgt/transfer?cid={{$user->cid}}">Submit TR</a>
-                        </td>
-                    </tr>
-                @endif
-            </table>
-        </div>
-    @endif
+            @endforeach
+            @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff() && $user->flag_homecontroller == 1)
+                <tr>
+                    <td colspan="5">
+                        Transfer Waiver:
+                        <span id="waiverToggle">
+                            <i id="waivertogglei" class="fa {{(($user->flag_xferOverride==1) ? "fa-toggle-on text-success" : "fa-toggle-off text-danger")}}"></i>
+                        </span>
+                        <a href="/mgt/transfer?cid={{$user->cid}}">Submit TR</a>
+                    </td>
+                </tr>
+            @endif
+        </table>
+    </div>
 </div>

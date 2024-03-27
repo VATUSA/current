@@ -13,7 +13,7 @@
                                                   <i class="fas fa-school"></i> {{$promotionEligible}}</span></h1></td>
     </tr>
 </table>
-@if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+@if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
     <hr>
     <h4>
         Facility Staff Point of Contact
@@ -31,7 +31,7 @@
                 <tr>
                     <th>Position</th>
                     <th>Name</th>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
                         <th>Select</th>
                     @endif
                 </tr>
@@ -40,9 +40,9 @@
                 <tr>
                     <td>Air Traffic Manager (ATM)</td>
                     <td>{{$atm}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
                         <td>
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                            @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                 <select name="atm">
                                     <option value="-1">None</option>
                                     @foreach($staffPOCOptions["ATM"] as $cid => $name)
@@ -58,9 +58,9 @@
                 <tr>
                     <td>Deputy Air Traffic Manager (DATM)</td>
                     <td>{{$datm}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
                         <td>
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                            @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                 <select name="datm">
                                     <option value="-1">None</option>
                                     @foreach($staffPOCOptions["DATM"] as $cid => $name)
@@ -76,9 +76,9 @@
                 <tr>
                     <td>Training Administrator (TA)</td>
                     <td>{{$ta}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
                         <td>
-                            @if(\App\Classes\RoleHelper::isVATUSAStaff())
+                            @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                 <select name="ta">
                                     <option value="-1">None</option>
                                     @foreach($staffPOCOptions["TA"] as $cid => $name)
@@ -94,7 +94,7 @@
                 <tr>
                     <td>Events Coordinator (EC)</td>
                     <td>{{$ec}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
                         <td>
                             <select name="ec">
                                 <option value="-1">None</option>
@@ -110,7 +110,7 @@
                 <tr>
                     <td>Facility Engineer (FE)</td>
                     <td>{{$fe}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
                         <td>
                             <select name="fe">
                                 <option value="-1">None</option>
@@ -126,7 +126,7 @@
                 <tr>
                     <td>Webmaster (WM)</td>
                     <td>{{$wm}}</td>
-                    @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
                         <td>
                             <select name="wm">
                                 <option value="-1">None</option>
@@ -142,7 +142,7 @@
                 </tbody>
             </table>
         </div>
-        @if(\App\Classes\RoleHelper::isFacilitySeniorStaffExceptTA(\Auth::user()->cid, $fac))
+        @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))
             <div class="text-center">
                 <button type="submit" class="btn btn-success">
                     <i class="fa fa-save"></i> Save Facility Staff POCs

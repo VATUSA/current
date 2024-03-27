@@ -15,7 +15,7 @@
                         @php $canView = []; @endphp
                         @foreach($categories as $category)
                             @foreach($category->policies as $policy)
-                                @if(\App\Classes\RoleHelper::canView($policy))
+                                @if(\App\Helpers\AuthHelper::authACL()->canViewPolicy($policy))
                                     @php $canView[] = $category->id; @endphp
 
                                     <li role="presentation" @if(!$category->order) class="active" @endif><a
@@ -44,7 +44,7 @@
                                     </thead>
                                     <tbody>
                                     @foreach($category->policies as $policy)
-                                        @if(!\App\Classes\RoleHelper::canView($policy)) @continue @endif
+                                        @if(!\App\Helpers\AuthHelper::authACL()->canViewPolicy($policy)) @continue @endif
                                         <tr @if(!$policy->visible) class="danger" @endif>
                                             <td>{{ $policy->ident }} &mdash; {{ $policy->title }}</td>
                                             <td>{{ $policy->effective_date->format('m/d/Y') }}
