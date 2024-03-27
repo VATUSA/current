@@ -48,13 +48,13 @@
                     </div>
                     <div class="panel-body">
                         <section>
-                            @if(\App\Classes\AuthHelper::authACL()->isFacilityStaff() ||
-                                \App\Classes\AuthHelper::authACL()->isInstructor() ||
-                                \App\Classes\AuthHelper::authACL()->isVATUSAStaff())
+                            @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                                \App\Helpers\AuthHelper::authACL()->isInstructor() ||
+                                \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                 <div class="text-center">
                                     <a href="{{ url("/mgt/tmu#notices") }}">
                                         <button class="btn btn-default"><i class="fa fa-pencil-alt"></i>
-                                            Edit @if(!\App\Classes\AuthHelper::authACL()->isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
+                                            Edit @if(!\App\Helpers\AuthHelper::authACL()->isVATUSAStaff()) {{ \Illuminate\Support\Facades\Auth::user()->facility }} @endif
                                             Notices
                                         </button>
                                     </a>

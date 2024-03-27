@@ -35,9 +35,9 @@
                         </select>
                     </div>
                 </div>
-                @if(\App\Classes\AuthHelper::authACL()->isFacilityStaff() ||
-                    \App\Classes\AuthHelper::authACL()->isVATUSAStaff() ||
-                    \App\Classes\AuthHelper::authACL()->isWebTeam()
+                @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() ||
+                    \App\Helpers\AuthHelper::authACL()->isVATUSAStaff() ||
+                    \App\Helpers\AuthHelper::authACL()->isWebTeam()
                     )
                     <div class="form-group">
                         <label for="tAssign" class="col-sm-2 control-label">Assign To</label>
@@ -66,7 +66,7 @@
             </form>
         </div>
     </div>
-    @if(\App\Classes\AuthHelper::authACL()->isFacilityStaff() || \App\Classes\AuthHelper::authACL()->isVATUSAStaff())
+    @if(\App\Helpers\AuthHelper::authACL()->isFacilityStaff() || \App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
         <script type="text/javascript">
           $('#tFacility').change(function () {
             if ($('#tFacility').val() == 'ZAE') {
