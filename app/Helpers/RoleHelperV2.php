@@ -51,7 +51,6 @@ class RoleHelperV2
 
     public static function hasRole(User $user, string $role, string $facility) {
         foreach ($user->roles()->get() as $userRole) {
-            var_dump($userRole);
             if ($userRole->role == $role && $userRole->facility == $facility) {
                 return true;
             }
