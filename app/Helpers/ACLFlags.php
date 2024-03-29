@@ -45,7 +45,6 @@ class ACLFlags
                 $this->instructorFacilities[] = $role->facility;
             }
         }
-        Log::debug(sprintf("Calculated ACL flags for %d - %s", $user->cid, var_export($this, true)));
     }
 
     public function isVATUSAStaff(): bool
