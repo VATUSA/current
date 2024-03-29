@@ -172,7 +172,7 @@ class ACLFlags
             if ($perm === Policy::PERMS_ALL) {
                 return true;
             }
-            if ($perm === Policy::PERMS_HOME && Auth::user()->flag_homecontroller) {
+            if ($perm === Policy::PERMS_HOME && Auth::user() != null && Auth::user()->flag_homecontroller) {
                 return true;
             }
             if ($perm === Policy::PERMS_WM &&
