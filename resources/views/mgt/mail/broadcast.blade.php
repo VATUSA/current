@@ -1,4 +1,5 @@
-@extends('mgt.mail.layout')
+@extends('layout')
+@section('title', 'Broadcast')
 
 @section('scripts')
     <script>
@@ -10,7 +11,7 @@
     </script>
 @endsection
 
-@section('mailcontent')
+@section('content')
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">

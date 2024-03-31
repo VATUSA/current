@@ -1,5 +1,6 @@
-@extends('mgt.mail.layout')
-@section('mailcontent')
+@extends('layout')
+@section('title', 'Facility Welcome Message')
+@section('content')
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">
