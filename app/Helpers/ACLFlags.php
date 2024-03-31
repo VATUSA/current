@@ -232,6 +232,11 @@ class ACLFlags
         return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff();
     }
 
+    public function canSendBroadcastEmail(): bool
+    {
+        return $this->isVATUSAStaff() || $this->isFacilityStaff();
+    }
+
     public function canViewController(User $user): bool
     {
         if ($this->isVATUSAStaff() ||

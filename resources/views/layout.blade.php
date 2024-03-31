@@ -341,6 +341,19 @@
                                         </li>
                                     @endif
 
+                                    <!-- Communication -->
+                                    <li class="nav-divider"></li>
+                                    <li class="dropdown-header">
+                                        <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">
+                                            <i class="fas fa-broadcast-tower"></i> Communication Actions</h5>
+                                    </li>
+
+                                    @if(\App\Helpers\AuthHelper::authACL()->canSendBroadcastEmail())
+                                        <li><a href="{{ url("mgt/mail/broadcast") }}">Broadcast</a></li>
+                                    @endif
+                                    @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTechConfig())
+                                        <li><a href="{{ url("mgt/mail/welcome") }}">Facility Welcome Message</a></li>
+                                    @endif
 
                                     <!-- Division -->
                                     <li class="nav-divider"></li>

@@ -276,6 +276,15 @@ Route::group([
                 Route::post('{fac}/mapping/{id}', 'TMUController@postMgtMapping');
             });
 
+            // * * * * * * Mail * * * * * *
+            Route::group(['prefix' => 'mail'], function () {
+                Route::get('broadcast', 'EmailMgtController@getBroadcast');
+                Route::post('broadcast', 'EmailMgtController@postBroadcast');
+                Route::get('{cid}', 'EmailMgtController@getIndividual')->where('cid', '[0-9]+');
+                Route::get('welcome', 'EmailMgtController@getWelcome');
+                Route::post('welcome', 'EmailMgtController@postWelcome');
+            });
+
             /* * * * * * * * *
              *   Statistics  *
              * * * * * * * * */

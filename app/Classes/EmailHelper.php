@@ -6,31 +6,6 @@ use Mail;
 class EmailHelper
 {
     /**
-     * Send Email, checking for facility template first
-     *
-     * @param string|array $email
-     * @param string $subject
-     * @param string $template
-     * @param array $data
-     */
-    public static function sendEmailFacilityTemplate($email, $subject, $fac, $template, $data)
-    {
-        $global_templates = [
-            'examassigned' => "emails.exam.assign",
-            'exampassed' => 'emails.exam.passed',
-            'examfailed' => 'emails.exam.failed',
-            'transferpending' => 'emails.transfers.pending'
-        ];
-        if (view()->exists("emails.facility.$fac." . $template)) {
-            $template = "emails.facility.$fac.$template";
-        } else {
-            $template = $global_templates[$template];
-        }
-
-        static::sendEmail($email, $subject, $template, $data);
-    }
-
-    /**
      * Send an email from support
      *
      * @param string|array $email
@@ -131,4 +106,37 @@ class EmailHelper
         }
     }
 
+    /**
+     * @param string $email
+     * @param string $from_email
+     * @param string $from_name
+     * @param string $subject
+     * @param string $template
+     * @param array $data
+     */
+    public static function sendEmailFrom($email, $from_email, $from_name, $subject, $template, $data)
+    {
+        try {
+            Mail::send($template, $data, function ($msg) use ($data, $from_email, $from_name, $email, $subject) {
+                $msg->from("no-reply@vatusa.net", "$from_name");
+                $msg->replyTo($from_email, $from_name);
+                $msg->to($email);
+                $msg->subject("[VATUSA] $subject");
+            });
+        } catch (\Exception $exception) {
+            // Don't do anything - temporary workaround due to mail host failures
+        }
+    }
+
+    /**
+     * Check if user has opted in to broadcast emails.
+     * @param $cid
+     *
+     * @return int
+     */
+    public static function isOptedIn($cid) {
+        $user = \App\Models\User::find($cid);
+
+        return $user && $user->flag_broadcastOptedIn;
+    }
 }
