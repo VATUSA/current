@@ -1,7 +1,7 @@
 @extends('emails.layout')
 @section('title','Removed from Facility')
 @section('content')
-    Dear {{$name}},<br><br>
+    Dear {{$name}} ({{$rating}}),<br><br>
 
     This email is to inform you that you have been removed from your facility by {{$by}}.<br>
     <br>

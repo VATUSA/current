@@ -418,6 +418,7 @@ class MgtController extends Controller
                     'msg' => "Auto Transfer to " . $tr->to . ": set as staff.",
                     'facid' => $u->facility,
                     'region' => $u->facilityObj->region,
+                    'rating' => Helper::ratingShortFromInt($u->rating),
                     'obsInactive' => 0
                 ]
             );

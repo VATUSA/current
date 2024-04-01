@@ -214,6 +214,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     'msg' => $msg,
                     'facid' => $facility,
                     'region' => $region,
+                    'rating' => Helper::ratingShortFromInt($this->rating),
                     'obsInactive' => $this->rating == 1 && Str::contains($msg,
                             ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
