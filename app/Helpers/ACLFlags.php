@@ -244,7 +244,7 @@ class ACLFlags
     {
         if ($this->isVATUSAStaff() ||
             $this->isWebTeam() ||
-            $this->isFacilitySeniorStaff() ||
+            $this->isFacilityStaff() ||
             $this->isInstructor() ||
             $this->isMentor($user->facility)) {
             return true;
