@@ -24,6 +24,9 @@ class ACLFlags
         if ($user == null) {
             return;
         }
+        if ($user->rating == 12) {
+            $this->isVATUSAStaff = true;
+        }
         foreach ($user->roles()->get() as $role) {
             if (in_array($role->role, ['US1', 'US2', 'US3', 'US4', 'US5', 'US6', 'US7', 'US8', 'US9'])) {
                 $this->isVATUSAStaff = true;
