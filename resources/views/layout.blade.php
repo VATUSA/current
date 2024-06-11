@@ -101,30 +101,68 @@
                             @endforeach
                         </ul>
                     </li>
-                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                            aria-expanded="false">
-                            Division Info <span class="caret"></span>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            Division Info
+                            <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="https://discord.gg/a7Qcse7" target="_blank"><i class="fab fa-discord"></i>
-                                    Official Discord</a></li>
-                            <li><a href="https://forums.vatusa.net"><i class="fas fa-comment"></i> Forums</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{{ url('info/members') }}"><i class="fas fa-users"></i> Members and
-                                    Staff</a>
+                            <li>
+                                <a href="https://discord.gg/a7Qcse7" target="_blank">
+                                    <i class="fab fa-discord"></i>
+                                    Official Discord
+                                </a>
                             </li>
-                            <li><a href="{{ url('info/policies') }}"><i class="fas fa-clipboard"></i> Policies
-                                    and
-                                    Downloads</a>
+                            <li>
+                                <a href="https://forums.vatusa.net">
+                                    <i class="fas fa-comment"></i>
+                                    Forums
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://donorbox.org/donate-to-vatusa">
+                                    <i class="fas fa-heart"></i>
+                                    Donate
+                                </a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="https://forums.vatusa.net/?action=calendar"><i class="fas fa-calendar"></i>
-                                    Events Calendar</a></li>
+                            <li>
+                                <a href="{{ url('info/members') }}">
+                                    <i class="fas fa-users"></i>
+                                    Members and Staff
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('info/policies') }}">
+                                    <i class="fas fa-clipboard"></i>
+                                    Policies and Downloads
+                                </a>
+                            </li>
                             <li class="divider"></li>
-                            <li><a href="{{ url('info/ace') }}"><i class="fas fa-star"></i> ACE Team</a></li>
-                            <li><a href="{{ url('info/dice') }}"><i class="fas fa-star"></i> DICE Team</a></li>
-                            <li><a href="{{ url('info/solo') }}"><i class="fas fa-certificate"></i> Solo
-                                    Certs</a>
+                            <li>
+                                <a href="https://forums.vatusa.net/?action=calendar">
+                                    <i class="fas fa-calendar"></i>
+                                    Events Calendar
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="{{ url('info/ace') }}">
+                                    <i class="fas fa-star"></i>
+                                    ACE Team
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('info/dice') }}">
+                                    <i class="fas fa-star"></i>
+                                    DICE Team
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('info/solo') }}">
+                                    <i class="fas fa-certificate"></i>
+                                    Solo Certs
+                                </a>
                             </li>
                         </ul>
                     </li>

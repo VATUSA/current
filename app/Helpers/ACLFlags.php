@@ -28,7 +28,7 @@ class ACLFlags
             $this->isVATUSAStaff = true;
         }
         foreach ($user->roles()->get() as $role) {
-            if (in_array($role->role, ['US1', 'US2', 'US3', 'US4', 'US5', 'US6', 'US7', 'US8', 'US9'])) {
+            if (in_array($role->role, ['US0', 'US1', 'US2', 'US3', 'US4', 'US5', 'US6', 'US7', 'US8', 'US9'])) {
                 $this->isVATUSAStaff = true;
             } else if ($role->role == 'USWT') {
                 $this->isVATUSAWebTeam = true;
