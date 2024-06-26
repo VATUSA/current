@@ -419,7 +419,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         // 50 hours consolidating current rating
         $ratingHours = VATSIMApi2Helper::fetchRatingHours($this->cid);
         if ($ratingHours == null) {
-            $checks['50hrs'] = 0;
+            $checks['50hrs'] = 1;
             $checks['ratingHours'] = 0;
         }
         else if($this->rating == Helper::ratingIntFromShort("S1") && $ratingHours['s1'] < 50){
