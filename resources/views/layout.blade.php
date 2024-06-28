@@ -290,6 +290,7 @@
                             @endif
                         </ul>
                     </li>
+										<li><a href="https://donorbox.org/donate-to-vatusa" target="_blank">Donate</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if(Auth::check())
