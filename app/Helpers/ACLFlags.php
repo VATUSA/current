@@ -250,7 +250,7 @@ class ACLFlags
             return true;
         }
         foreach ($user->visits()->get() as $visit) {
-            if ($this->isMentor($visit->id)) {
+            if ($this->isMentor($visit->fac->id)) {
                 return true;
             }
         }
