@@ -48,6 +48,7 @@ return [
         'mysql'  => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),
+            'port'      => env('DB_PORT', '3306'),
             //'host'      => [env('DB_HOST2', 'localhost'), env('DB_HOST1','')],
             'database'  => env('DB_DATABASE', 'forge'),
             'username'  => env('DB_USERNAME', 'forge'),
