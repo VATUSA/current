@@ -195,7 +195,7 @@
                             </tr>
                             </thead>
                             <tr>
-                                <td>You are in the VATUSA Division</td>
+                                <td>You are an active member in the VATUSA Division</td>
                                 <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>

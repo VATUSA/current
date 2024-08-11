@@ -130,7 +130,7 @@
             </tr>
             </thead>
             <tr>
-                <td>In VATUSA division?</td>
+                <td>Active member in the VATUSA division?</td>
                 <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
             </tr>
             <tr>

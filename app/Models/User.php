@@ -346,6 +346,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $checks['override'] = 0;
         $checks['is_first'] = 1;
         $checks['homecontroller'] = $this->flag_homecontroller;
+
+        if($this->facility == "ZZI"){
+            $checks['homecontroller'] = 0;
+        }
+
         if (!$this->flag_needbasic) {
             $checks['needbasic'] = 1;
         }
