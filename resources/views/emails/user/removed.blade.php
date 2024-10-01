@@ -11,7 +11,7 @@
         <br><br>
         Thank you for taking a step towards becoming a controller on VATSIM. To improve our onboarding process, please take a short survey about your experience. Your responses will remain anonymous.
         <br>
-        <a href="https://form.jotform.com/80467151384155">https://form.jotform.com/80467151384155</a>
+        <a href="https://vats.im/vatusa-exit-survey">https://vats.im/vatusa-exit-survey</a>
     @endif
 
     <br><br>

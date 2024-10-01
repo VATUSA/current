@@ -5,7 +5,7 @@
 
     There is a transfer pending that is older than {{$days}} days.<br><br>
 
-    <p>Pursuant to DP001 12.8 - All transfer requests shall be processed within 7 days. If not processed within this period, the transfer request may be approved or denied by the Deputy Division Director, Air Traffic Services.</p>
+    <p>Pursuant to DP001 13-3 : All transfer requests shall be processed within 7 days. If not processed within this period, the transfer request may be approved or denied by the Deputy Division Director, Air Traffic Services.</p>
 
     <table class="callout"
            style="Margin-bottom: 16px; border-collapse: collapse; border-spacing: 0; margin-bottom: 16px; padding: 0; text-align: left; vertical-align: top;">
