@@ -1,12 +1,6 @@
 @extends('layout')
 @section('title', 'Facility Transfer')
 @section('content')
-    <div class="container" id="ztlalert" hidden>
-        <div class="alert alert-danger">
-            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> ZTL (Atlanta ARTCC) currently has a substantial training backlog</br>
-            By transferring here you acknowledge there may be a delay in or extended periods of time without training availability
-        </div>
-    </div>
     <div class="container" id="znyalert" hidden>
         <div class="alert alert-danger">
             <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> ZNY (New York ARTCC) currently has a substantial training backlog</br>
@@ -64,11 +58,6 @@
 @push('scripts')
     <script type="text/javascript">
         function checkAlerts(facility) {
-            if (facility.value === "ZTL") {
-                document.getElementById('ztlalert').hidden = false;
-            }else{
-                document.getElementById('ztlalert').hidden = true;
-            }
             if (facility.value === "ZNY") {
                 document.getElementById('znyalert').hidden = false;
             }else{
