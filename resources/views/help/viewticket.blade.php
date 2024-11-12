@@ -63,8 +63,7 @@
                                         </select>
                                     @else
                                         @if ($ticket->assigned_to)
-                                            <p class="form-control-static">{{$ticket->assignedto->fullname()}}
-                                                ($ticket->assigned_to)</p>
+                                            <p class="form-control-static">{{$ticket->assignedto->fullname()}}</p>
                                         @else
                                             <p class="form-control-static">Unassigned</p>
                                         @endif
