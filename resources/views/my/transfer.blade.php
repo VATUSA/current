@@ -8,6 +8,13 @@
         </div>
     </div>
 
+    <div class="container" id="zanalert" hidden>
+        <div class="alert alert-danger">
+            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> ZAN (Anchorage ARTCC) does not currently have a ratings training program</br>
+            Transfers into ZAN are only allowed under special circumstances and must be approved by VATUSA2, Deputy Division Director - Air Traffic Services
+        </div>
+    </div>
+
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -62,6 +69,11 @@
                 document.getElementById('znyalert').hidden = false;
             }else{
                 document.getElementById('znyalert').hidden = true;
+            }
+            if (facility.value === "ZAN") {
+                document.getElementById('zanalert').hidden = false;
+            }else{
+                document.getElementById('zanalert').hidden = true;
             }
         }
     </script>

@@ -7,6 +7,13 @@
             By transferring here you acknowledge there may be a delay in or extended periods of time without training availability
         </div>
     </div>
+
+    <div class="container" id="zanalert" hidden>
+        <div class="alert alert-danger">
+            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> ZAN (Anchorage ARTCC) does not currently have a ratings training program</br>
+            This facility cannot be selected at this time
+        </div>
+    </div>
     
     <div class="container">
         <div class="panel panel-default">
@@ -48,6 +55,11 @@
                 document.getElementById('znyalert').hidden = false;
             }else{
                 document.getElementById('znyalert').hidden = true;
+            }
+            if (facility.value === "ZAN") {
+                document.getElementById('zanalert').hidden = false;
+            }else{
+                document.getElementById('zanalert').hidden = true;
             }
         }
     </script>
