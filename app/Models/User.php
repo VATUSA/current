@@ -293,7 +293,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $log = new Actions();
             $log->from = 0;
             $log->to = $this->cid;
-            $log->log = "User removed from {$visit->facility} visiting roster: {$reason}}";
+            $log->log = "User removed from {$visit->facility} visiting roster: {$reason}";
             $log->save();
 
             $facility = $visit->facility;
