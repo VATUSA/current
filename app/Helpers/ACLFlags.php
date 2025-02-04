@@ -292,7 +292,7 @@ class ACLFlags
 
     public function canManageFacilitySoloCertifications($facility = null): bool
     {
-        return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff($facility) || $this->isInstructor($facility);
+        return $this->isVATUSAStaff() || $this->isFacilitySeniorStaff($facility) || $this->isInstructor($facility) || $this->isMentor($facility);
     }
 
     public function canManageFacilityTickets($facility = null): bool

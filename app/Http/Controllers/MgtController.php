@@ -561,7 +561,7 @@ class MgtController extends Controller
                 'You do not have permission to assign this solo certification.');
         }
 
-        if (!preg_match("/^([A-Z0-9]{2,3})_(TWR|APP|CTR)$/i", $request->input("position"))) {
+        if (!preg_match("/^([A-Z0-9]{2,3})_(TWR|APP|DEP|CTR)$/i", $request->input("position"))) {
             return redirect("/mgt/solo")->with("error", "Invalid position defined.");
         }
 
@@ -570,8 +570,8 @@ class MgtController extends Controller
             return redirect("/mgt/solo")->with("error",
                 "Expiration date is malformed. Try a different browser.");
         }
-        if (Carbon::createFromFormat('Y-m-d', $exp)->diffInDays() > 30) {
-            return redirect("/mgt/solo")->with("error", "Expiration date cannot be more than 30 days away.");
+        if (Carbon::createFromFormat('Y-m-d', $exp)->diffInDays() > 45) {
+            return redirect("/mgt/solo")->with("error", "Expiration date cannot be more than 45 days away.");
         }
 
         $solo = new SoloCert();
