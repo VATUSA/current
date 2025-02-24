@@ -529,7 +529,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return !$this->flag_needbasic && !Transfers::where('cid', $this->cid)->where('to',
-                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists();
+                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists() && $this->rating < Helper::ratingIntFromShort("S1");
     }
 
     public function promotionEligible()
