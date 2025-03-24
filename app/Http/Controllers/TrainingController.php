@@ -50,7 +50,7 @@ class TrainingController extends Controller
         }
         $form = $form ? OTSEvalForm::has('perfcats')
             ->has('perfcats.indicators')->withAll()->find($form)
-            : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
+            : OTSEvalForm::active()->has('perfcats')->has('perfcats.indicators')
                 ->withAll()->where('rating_id', $student->rating + 1)->first();
         $authACL = AuthHelper::authACL();
         if (!$authACL->canViewTrainingRecords($student->facility)) {
