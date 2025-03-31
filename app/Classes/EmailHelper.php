@@ -33,6 +33,7 @@ class EmailHelper
                         $msg->bcc($e);
                         $msg->subject("[VATUSA Help Desk] (Ticket #$ticket) $subject");
                     });
+                    Log::info("Email sent to $e");
                 } catch (\Exception $exception) {
                     Log::error("Failed to send support email to {$e} for ticket #{$ticket}: " . $exception->getMessage());
                 }
@@ -45,6 +46,7 @@ class EmailHelper
                     $msg->bcc($email);
                     $msg->subject("[VATUSA Help Desk] (Ticket #$ticket) $subject");
                 });
+                Log::info("Email sent to {$email} for ticket #$ticket");
             } catch (\Exception $exception) {
                 Log::error("Failed to send support email to {$email} for ticket #{$ticket}: " . $exception->getMessage());
             }
