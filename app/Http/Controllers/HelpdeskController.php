@@ -185,8 +185,7 @@ class HelpdeskController
                     $emails[] = "vat" . strtolower(str_replace("US", "usa", $user->role)) . "@vatusa.net";
                 }
             } else if ($ticket->facility == "ZAE") {
-                $emails[] = "vatusa3@vatusa.net";
-                $emails[] = "vatusa13@vatusa.net";
+                $emails[] = "training@vatusa.net"; 
             } else {
                 $fac = Facility::find($ticket->facility);
                 if (!$fac) {
@@ -318,7 +317,7 @@ class HelpdeskController
 
             $emails = [];
             //$emails[] = "vatusa6@vatusa.net"; // During debug period
-            $emails[] = Auth::user()->email;
+            //$emails[] = Auth::user()->email; //Removing Auth'd user from email list... We don't need the person who posted the reply to be notified
             if (Auth::user()->cid != $ticket->cid) {
                 $emails[] = $ticket->submitter->email;
             }
@@ -332,7 +331,7 @@ class HelpdeskController
                         $emails[] = "vat" . strtolower(str_replace("US", "usa", $role->role)) . "@vatusa.net";
                     }
                 } else if ($ticket->facility == "ZAE") {
-                    $emails[] = "vatusa3@vatusa.net";
+                    $emails[] = "training@vatusa.net";
                 } else {
                     $fac = Facility::find($ticket->facility);
                     if (!$fac) {
@@ -356,7 +355,7 @@ class HelpdeskController
                 }
                 $emails[] = $u->email;
             }
-
+            
             EmailHelper::sendSupportEmail(array_unique($emails), $ticket->id, "New Reply", "emails.help.newreply",
                 ["ticket" => $ticket, "reply" => $reply]);
 
@@ -441,9 +440,11 @@ class HelpdeskController
                         Auth::user()->fullname() . " (" . Auth::user()->cid . ") assigned the ticket to " .
                         $user->fullname() . " (" . $user->cid . ").";
                     $history->save();
-
-                    EmailHelper::sendSupportEmail($user->email, $id, "Ticket Assigned to You", "emails.help.assigned",
-                        ["ticket" => $ticket]);
+                    //If the user who is assigning is also the user being assigned to, do not send the email (self-assignment)
+                    if(Auth::user()->cid != $user->cid){
+                        EmailHelper::sendSupportEmail($user->email, $id, "Ticket Assigned to You", "emails.help.assigned",
+                            ["ticket" => $ticket]);
+                    }
                 }
             }
             if (isset($_POST['note'])) {
