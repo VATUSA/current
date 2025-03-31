@@ -28,7 +28,7 @@
                 <h3>Join as Pilot</h3>
                 <p>To join a pilot, all you need is a <a href="https://www.vatsim.net">VATSIM account</a>. For more
                     information,
-                    see VATSIM's <a href="https://www.vatsim.net/pilots/getting-started">Getting Started</a> page.</p>
+                    see VATSIM's <a href="https://vatsim.net/docs/basics/getting-started">Getting Started</a> page.</p>
             </div>
         </div>
     </div>
