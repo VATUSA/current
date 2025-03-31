@@ -46,7 +46,7 @@ class EmailHelper
                     $msg->subject("[VATUSA Help Desk] (Ticket #$ticket) $subject");
                 });
             } catch (\Exception $exception) {
-                Log::error("Failed to send support email to {$e} for ticket #{$ticket}: " . $exception->getMessage());
+                Log::error("Failed to send support email to {$email} for ticket #{$ticket}: " . $exception->getMessage());
             }
         }
 //        Mail::setSwiftMailer($backup);
@@ -69,7 +69,7 @@ class EmailHelper
                 $msg->subject("[VATUSA] $subject");
             });
         } catch (\Exception $exception) {
-            Log::error("Failed to send support email to {$e} for ticket #{$ticket}: " . $exception->getMessage());
+            Log::error("Failed to send email to {$email}: " . $exception->getMessage());
         }
     }
 
@@ -102,7 +102,7 @@ class EmailHelper
                     $msg->bcc($email);
                 });
             } catch (\Exception $exception) {
-                Log::error("Failed to send support email to {$e} for ticket #{$ticket}: " . $exception->getMessage());
+                Log::error("Failed to send email: " . $exception->getMessage());
             }
         }
     }
