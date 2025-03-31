@@ -2,6 +2,7 @@
 namespace App\Classes;
 
 use Mail;
+use Log;
 
 class EmailHelper
 {
@@ -33,7 +34,7 @@ class EmailHelper
                         $msg->subject("[VATUSA Help Desk] (Ticket #$ticket) $subject");
                     });
                 } catch (\Exception $exception) {
-                    // Don't do anything - temporary workaround due to mail host failures
+                    Log::error("Failed to send support email to {$e} for ticket #{$ticket}: " . $exception->getMessage());
                 }
                 $sent[] = $e;
             }
@@ -45,7 +46,7 @@ class EmailHelper
                     $msg->subject("[VATUSA Help Desk] (Ticket #$ticket) $subject");
                 });
             } catch (\Exception $exception) {
-                // Don't do anything - temporary workaround due to mail host failures
+                Log::error("Failed to send support email to {$e} for ticket #{$ticket}: " . $exception->getMessage());
             }
         }
 //        Mail::setSwiftMailer($backup);
@@ -68,7 +69,7 @@ class EmailHelper
                 $msg->subject("[VATUSA] $subject");
             });
         } catch (\Exception $exception) {
-            // Don't do anything - temporary workaround due to mail host failures
+            Log::error("Failed to send support email to {$e} for ticket #{$ticket}: " . $exception->getMessage());
         }
     }
 
@@ -101,7 +102,7 @@ class EmailHelper
                     $msg->bcc($email);
                 });
             } catch (\Exception $exception) {
-                // Don't do anything - temporary workaround due to mail host failures
+                Log::error("Failed to send support email to {$e} for ticket #{$ticket}: " . $exception->getMessage());
             }
         }
     }
