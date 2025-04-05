@@ -6,7 +6,7 @@
 @endpush
 
 @extends('layout')
-@section('title', 'OTS Evaluation')
+@section('title', 'Rating Exam Evaluation')
 @section('content')
     <div id="scroll-control" class="btn-group btn-group-lg">
         <button class="btn btn-default" id="scroll-top"><i class="fas fa-angle-double-up"></i></button>
@@ -26,7 +26,7 @@
                         <thead>
                         <tr>
                             <td colspan="5">
-                                OTS Evaluation: {{ $form->name }}
+                                {{ $form->name }}
                             </td>
                         </tr>
                         </thead>
@@ -240,7 +240,7 @@
                                                 <i class="fas fa-info-circle" style="display: table-cell"></i>
                                                 <p style="display: table-cell; padding-left: 5px;"> By submitting this
                                                     form, you agree
-                                                    that you are the examining instructor and have conducted the OTS
+                                                    that you are the examining instructor and have conducted the Rating Exam
                                                     to the standards set forth by the VATUSA training staff and by
                                                     your own ARTCC. You also agree that all data and selections are
                                                     accurate to the best of your ability. <br><strong>Ensure that the
@@ -404,7 +404,7 @@
                 signature = $('#signature').jSignature('getData', 'svgbase64').join(','),
                 form      = $('#form-id').val()
 
-          if (!position || !position.match(/^([A-Z]{2,3})(_([A-Z]{1,3}))?_(TWR|APP|CTR)$/))
+          if (!position || !position.match(/^([A-Z]{2,3})(_([A-Z]{1,3}))?_(DEL|GND|TWR|DEP|APP|CTR)$/))
             return swal('Invalid Position', 'The position field is invalid. Format: ABC_POS or AB_POS', 'error')
           if (!date || moment(moment().utc().format('YYYY-MM-DD')).diff(moment(date)) < 0)
             return swal('Invalid Date', 'The exam date is invalid. It must be in UTC and in the past.', 'error')
@@ -436,12 +436,12 @@
             result => {
               btn.html('<i class="fas fa-check-double"></i> eSign and Submit').prop('disabled', false)
               if (result.data.status !== 'OK') {
-                return swal('Error!', 'Unable to submit OTS evaluation. ' + result.data.msg + 'Please try again later.', 'error')
+                return swal('Error!', 'Unable to submit Rating Exam evaluation. ' + result.data.msg + 'Please try again later.', 'error')
               }
               window.onbeforeunload = null
               swal({
                 title  : 'Success!',
-                text   : 'The OTS evaluation has been successfully submitted.',
+                text   : 'The Rating Exam evaluation has been successfully submitted.',
                 icon   : 'success',
                 buttons: {
                   join: {
@@ -457,7 +457,7 @@
           ).fail((xhr, status, error) => {
             const msg = xhr.responseJSON.data.hasOwnProperty('msg') ? xhr.responseJSON.data.msg : ''
             btn.html('<i class="fas fa-check-double"></i> eSign and Submit').prop('disabled', false)
-            return swal('Error!', 'Unable to submit OTS evaluation. ' + msg + ' Please try again later.', 'error')
+            return swal('Error!', 'Unable to submit Rating Exam evaluation. ' + msg + ' Please try again later.', 'error')
           })
         })
 

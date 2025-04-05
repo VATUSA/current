@@ -57,7 +57,7 @@ class TrainingController extends Controller
             abort(403);
         }
         if (!$student || !$form) {
-            abort(404, "The OTS evaluation form is invalid.");
+            abort(404, "The Rating Exam evaluation form is invalid.");
         }
         if ($form->rating_id !== $student->rating + 1 || !$student->promotionEligible()) {
             return redirect('/mgt/facility#mem')->with('error', 'The controller is not eligible for that evaluation.');
@@ -75,7 +75,7 @@ class TrainingController extends Controller
     {
         $eval = OTSEval::withAll()->find($eval);
         if (!$eval) {
-            abort(404, "The OTS evaluation form is invalid.");
+            abort(404, "The Rating Exam evaluation form is invalid.");
         }
         $student = $eval->student;
         $authACL = AuthHelper::authACL();
@@ -651,7 +651,7 @@ class TrainingController extends Controller
     {
         $form = OTSEvalForm::withAll()->find($form);
         if (!$form) {
-            abort(404, "The OTS evaluation form is invalid.");
+            abort(404, "The Rating Exam evaluation form is invalid.");
         }
 
         $instructor = $request->input('instructor', null);

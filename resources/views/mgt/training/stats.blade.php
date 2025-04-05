@@ -41,7 +41,7 @@
                     <li role="presentation"><a href="#evals" aria-controls="evals" role="tab"
                                                data-toggle="tab"><i
                                 class="fas fa-check-double"></i>
-                            OTS
+                            Rating Exam
                             Evaluations</a></li>
                     <li role="presentation"
                         @if($facility && empty($recordsPerTypeData['datasets'][0]['data'])) class="disabled"
@@ -71,12 +71,12 @@
                             <div class="col-md-4">
                                 <div class="panel panel-default training-stat-block">
                                     <div class="panel-body training-stat-static">
-                                        @if(!$sumNumPass && !$sumNumFail) <em>No OTS
+                                        @if(!$sumNumPass && !$sumNumFail) <em>No Rating Exam
                                             Evaluations</em> @else {{ $sumPassRate }}% @endif<br><span
                                             class="text-success">Pass: <strong>{{ $sumNumPass }}</strong></span> |
                                         <span class="text-danger">Fail: <strong>{{ $sumNumFail }}</strong></span>
                                     </div>
-                                    <div class="panel-footer">OTS Pass Rate<br><em>last 30 days</em></div>
+                                    <div class="panel-footer">Rating Exam Pass Rate<br><em>last 30 days</em></div>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -152,7 +152,7 @@
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane training-stat-section" id="evals">
-                        <h3 class="training-stat-section-header"><i class="fas fa-check-double"></i> OTS
+                        <h3 class="training-stat-section-header"><i class="fas fa-check-double"></i> Rating Exam
                             Evaluations</h3>
                         @if($facility)
                             <br>

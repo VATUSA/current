@@ -70,7 +70,7 @@
                                             @break
                                         @case(0)
                                             <span class="label label-danger" style="font-size:90%;" rel="tooltip"
-                                                  title="There must be a training record present in the CTRS that is marked OTS Pass under the specified position."
+                                                  title="There must be a training record present in the CTRS that is marked Rating Exam Pass under the specified position."
                                                   onclick="window.open('/mgt/controller/{{ $user->cid }}#training', 'blank')"><span
                                                         class="glyphicon glyphicon-remove"></span> Does Not Exist</span>
                                             @break
@@ -84,7 +84,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-3 control-label">
-                                    <b>OTS Evaluation</b><br><em>Temporarily Waived</em>
+                                    <b>Rating Exam Evaluation</b><br><em>Temporarily Waived</em>
                                 </div>
                                 <p class="col-sm-9 form-control-static">
                                     @switch($otsEvalStatus)
@@ -95,7 +95,7 @@
                                             @break
                                         @case(0)
                                             <span class="label label-danger" style="font-size:90%;" rel="tooltip"
-                                                  title="The OTS evalulation form must be completely and correctly filled out on the right."><span
+                                                  title="The Rating Exam evalulation form must be completely and correctly filled out on the right."><span
                                                         class="glyphicon glyphicon-remove"></span> Not Complete</span>
                                             @break
                                         @case(1)
@@ -124,14 +124,14 @@
                             </div>
                             <div class="alert alert-warning"><span class="glyphicon glyphicon-info-sign"></span>
                                 If you press the Promote button, the controller will
-                                be promoted even if they have failed the OTS!
+                                be promoted even if they have failed the Rating Exam!
                                 Please only hit Promote if you mean it!
                             </div>
                         </form>
                     </div>
                     <div class="col-md-6" style="position: absolute;left: 40%;width: 40%; max-width: 800px">
                         <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> Enter the
-                            position on the left to view the applicable OTS Evaluation Form.
+                            position on the left to view the applicable Rating Exam Evaluation Form.
                         </div>
                         <div class="list-group">
                             @foreach($forms as $form)

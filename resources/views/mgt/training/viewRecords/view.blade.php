@@ -60,7 +60,7 @@
                             <td id="training-instructor"></td>
                         </tr>
                         <tr id="training-ots-exam">
-                            <td>OTS Exam</td>
+                            <td>Rating Exam</td>
                             <td><span class="label label-danger" id="training-ots-exam-fail"><span
                                         class="glyphicon glyphicon-remove"></span> Fail</span>
                                 <span class="label label-info" id="training-ots-exam-rec"><span

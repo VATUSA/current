@@ -370,7 +370,7 @@
                                                 <i class="fas fa-chalkboard-teacher"></i> Training Actions</h5>
                                         </li>
                                         <li>
-                                            <a href="{{ url("/mgt/facility/training/evals") }}">OTS Evaluations</a>
+                                            <a href="{{ url("/mgt/facility/training/evals") }}">Rating Exam Evaluations</a>
                                         </li>
                                         <!--This is exactly like the Training tab of records, but with OTS Evals. ARTCC select, position groups, and everything. -->
                                     @endif

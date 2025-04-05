@@ -60,7 +60,7 @@
                             <td id="training-instructor"></td>
                         </tr>
                         <tr id="training-ots-exam">
-                            <td>OTS Exam</td>
+                            <td>Rating Exam</td>
                             <td><span class="label label-danger" id="training-ots-exam-fail" rel="tooltip"><span
                                         class="glyphicon glyphicon-remove"></span> Fail</span>
                                 <span class="label label-info" id="training-ots-exam-rec"><span
@@ -177,13 +177,13 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label for="e-training-ots-grp">OTS Exam</label></td>
+                                <td><label for="e-training-ots-grp">Rating Exam</label></td>
                                 <td>
                                     <div class="btn-group" data-toggle="buttons" id="e-training-ots-grp">
                                         <label class="btn btn-default active ots-status-input-label">
                                             <input type="radio" name="ots_status" id="e-ots-status-0" value="0"
                                                    autocomplete="off" class="ots-status-input" checked>
-                                            No OTS
+                                            No Rating Exam
                                         </label>
                                         <label class="btn btn-default ots-status-input-label">
                                             <input type="radio" name="ots_status" id="e-ots-status-1" value="1"
@@ -217,7 +217,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="alert alert-warning ots-exam-warning" style="text-align: center !important;"><i
-                            class="fas fa-exclamation-triangle"></i> <strong>Warning!</strong> This record is an OTS
+                            class="fas fa-exclamation-triangle"></i> <strong>Warning!</strong> This record is a Rating
                         exam and will not be able to be edited or deleted. <br>If a mistake is made, you must contact a
                         VATUSA staff member to make modifications.
                     </div>
@@ -336,13 +336,13 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="vctr"><label for="e-training-ots-grp">OTS Exam</label></td>
+                                <td class="vctr"><label for="e-training-ots-grp">Rating Exam</label></td>
                                 <td>
                                     <div class="btn-group" data-toggle="buttons" id="n-training-ots-grp">
                                         <label class="btn btn-default active ots-status-input-label">
                                             <input type="radio" name="ots_status" id="n-ots-status-0" value="0"
                                                    autocomplete="off" class="ots-status-input" checked>
-                                            No OTS
+                                            No Rating Exam
                                         </label>
                                         <label class="btn btn-default ots-status-input-label">
                                             <input type="radio" name="ots_status" id="n-ots-status-1" value="1"
@@ -376,7 +376,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="alert alert-warning ots-exam-warning" style="text-align: center !important;"><i
-                            class="fas fa-exclamation-triangle"></i> <strong>Warning!</strong> This record is an OTS
+                            class="fas fa-exclamation-triangle"></i> <strong>Warning!</strong> This record is a Rating
                         exam and will not be able to be edited or deleted. <br>If a mistake is made, you must contact a
                         VATUSA staff member to make modifications.
                     </div>
