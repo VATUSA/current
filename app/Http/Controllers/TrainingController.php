@@ -665,7 +665,9 @@ class TrainingController extends Controller
         if (!$authACL->canViewTrainingRecords()) {
             abort(403);
         }
-        if (!$authACL->isVATUSAStaff()) {
+
+        $hasGlobalAccess = $authACL->isVATUSAStaff();
+        if (!$hasGlobalAccess) {
             $facility = Auth::user()->facility();
         } else if ($facility) {
             $facility = Facility::find($facility);

@@ -21,36 +21,10 @@
                                 <label for="tng-artcc-select">ARTCC:</label>
                                 <select class="form-control" id="tng-artcc-select" autocomplete="off" name="fac">
                                     <option value="" @if(!$trainingfac) selected @endif>-- Select One --</option>
-                                    <optgroup label="Western Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 4; }) as $fac)
+                                        @foreach($facilities as $fac)
                                             <option value="{{ $fac->id }}"
                                                     @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
                                         @endforeach
-                                    </optgroup>
-                                    <optgroup label="South Central Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 5; }) as $fac)
-                                            <option value="{{ $fac->id }}"
-                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                    <optgroup label="Midwestern Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 6; }) as $fac)
-                                            <option value="{{ $fac->id }}"
-                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                    <optgroup label="Northeastern Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 7; }) as $fac)
-                                            <option value="{{ $fac->id }}"
-                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                    <optgroup label="Southeastern Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
-                                            <option value="{{ $fac->id }}"
-                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                        @endforeach
-                                    </optgroup>
                                 </select>
                             </div>
                         </form>
