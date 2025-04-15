@@ -60,7 +60,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-3 control-label">
-                                    <b>Training Record</b><br><em>Temporarily Waived</em>
+                                    <b>Training Record</b>
                                 </div>
                                 <p class="col-sm-9 form-control-static">
                                     @switch($trainingRecordStatus)
@@ -84,7 +84,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-3 control-label">
-                                    <b>Rating Exam Evaluation</b><br><em>Temporarily Waived</em>
+                                    <b>Rating Exam Evaluation</b>
                                 </div>
                                 <p class="col-sm-9 form-control-static">
                                     @switch($otsEvalStatus)
@@ -113,7 +113,7 @@
                                 <div class="col-sm-3 col-sm-offset-3">
                                     <button type="button" id="submit-promotion" class="btn btn-success btn-block"
                                             style="width:150px;"
-                                            @if(!($otsEvalStatus == 1 /* && $trainingRecordStatus == 1*/)) disabled @endif>
+                                            @if(!($otsEvalStatus == 1 && $trainingRecordStatus == 1)) disabled @endif>
                                         <i class="fas fa-check"></i> Promote
                                     </button>
                                     <button type="button" id="cancel-promotion" class="btn btn-danger btn-block"
@@ -200,7 +200,6 @@
                 if ((pos.length === 2 || pos.length === 3) && (pos.length >= 2 && pos[pos.length - 1].length === 3)) {
                     pos = pos.pop()
                     if (pos !== '') {
-                        $('#submit-promotion').attr('disabled', false)
                         $('#' + pos.toLowerCase() + '.temp-disabled').removeClass('disabled')
                     } else $('#submit-promotion').attr('disabled', true)
                 } else

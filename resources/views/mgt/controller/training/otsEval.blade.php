@@ -404,7 +404,7 @@
                 signature = $('#signature').jSignature('getData', 'svgbase64').join(','),
                 form      = $('#form-id').val()
 
-          if (!position || !position.match(/^([A-Z]{2,3})(_([A-Z]{1,3}))?_(DEL|GND|TWR|DEP|APP|CTR)$/))
+          if (!position || !position.match(/^([A-Z]{2,3})(_([A-Z]{1,3}))?_(GND|TWR|APP|CTR)$/))
             return swal('Invalid Position', 'The position field is invalid. Format: ABC_POS or AB_POS', 'error')
           if (!date || moment(moment().utc().format('YYYY-MM-DD')).diff(moment(date)) < 0)
             return swal('Invalid Date', 'The exam date is invalid. It must be in UTC and in the past.', 'error')

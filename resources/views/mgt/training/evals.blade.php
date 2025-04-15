@@ -63,6 +63,8 @@
                                                                   data-toggle="pill"><i
                                     class="fa fa-list"></i> All Evaluations</a></li>
                         <hr>
+                        <li role="presentation"><a href="#training" data-controls="gnd" aria-controls="gnd" role="tab"
+                                                   data-toggle="pill">Ground</a></li>
                         <li role="presentation"><a href="#training" data-controls="twr" aria-controls="twr" role="tab"
                                                    data-toggle="pill">Tower</a></li>
                         <li role="presentation"><a href="#training" data-controls="app" aria-controls="app" role="tab"
@@ -75,7 +77,7 @@
                 <div class="col-md-9" id="training-content">
                     <div class="tab-content">
                         <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
-                        @php $postypes = ['twr', 'app', 'ctr']; @endphp
+                        @php $postypes = ['gnd', 'twr', 'app', 'ctr']; @endphp
                         <div role="tabpanel" class="tab-pane active" id="all">
                             @if(!$trainingfac)
                                 <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> Please
