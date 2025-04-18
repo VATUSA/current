@@ -616,7 +616,7 @@ class MgtController extends Controller
             return redirect('mgt/facility#mem')->with('error', 'User not found.');
         }
 
-        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility)) {
+        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility, $user->rating + 1)) {
             abort(403);
         }
 
@@ -647,7 +647,7 @@ class MgtController extends Controller
             return redirect('mgt/facility#mem')->with('error', 'User not found');
         }
 
-        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility)) {
+        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility, $user->rating + 1)) {
             abort(403);
         }
 
@@ -915,7 +915,7 @@ class MgtController extends Controller
         if (!$student) {
             abort(404);
         }
-        if (!AuthHelper::authACL()->isInstructor($student->facility)) {
+        if (!AuthHelper::authACL()->canPromoteForFacility($student->facility, $student->rating + 1)) {
             abort(403);
         }
         $form = $form ? OTSEvalForm::has('perfcats')

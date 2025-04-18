@@ -240,7 +240,7 @@
                                                 <i class="fas fa-info-circle" style="display: table-cell"></i>
                                                 <p style="display: table-cell; padding-left: 5px;"> By submitting this
                                                     form, you agree
-                                                    that you are the examining instructor and have conducted the Rating Exam
+                                                    that you are the examiner and have conducted the Rating Exam
                                                     to the standards set forth by the VATUSA training staff and by
                                                     your own ARTCC. You also agree that all data and selections are
                                                     accurate to the best of your ability. <br><strong>Ensure that the

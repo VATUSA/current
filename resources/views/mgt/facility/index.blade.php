@@ -156,6 +156,15 @@
             $('#facmgt').change(function () {
                 window.location = '/mgt/facility/' + $('#facmgt').val()
             })
+
+            @if(\App\Helpers\AuthHelper::authACL()->canPromoteForFacility($fac))
+            var advance = 1
+            @elseif(\App\Helpers\AuthHelper::authACL()->canPromoteForFacility($fac, 2))
+            var advance = 2
+            @else
+            var advance = 0
+            @endif
+
             var hash = document.location.hash
             if (hash)
                 $('.nav-tabs a[href=' + hash + ']').tab('show')
@@ -186,11 +195,9 @@
                     if (promotion_date) html += '<td>' + (promotion_date.getMonth() + 1) + '/' + promotion_date.getDate() + '/' + promotion_date.getFullYear() + '</td>'
                     else html += '<td><span class="text-muted">N/A</span></td>'
                     html += '<td class="text-right">'
-                    @if(\App\Helpers\AuthHelper::authACL()->canPromoteForFacility($fac))
-                    if (resp.data[i].promotion_eligible == true) {
+                    if (resp.data[i].promotion_eligible == true && ((resp.data[i].rating == 1 && advance == 2) || advance == 1)) {
                         html += '<a href="/mgt/controller/' + resp.data[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
                     }
-                    @endif
                         html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
                     @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
                         html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ', \'' + resp.data[i].fname + ' ' + resp.data[i].lname + '\')"><i class="text-danger fa fa-times"></i></a>'

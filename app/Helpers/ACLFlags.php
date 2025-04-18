@@ -330,8 +330,12 @@ class ACLFlags
             $this->isMentor($facility);
     }
 
-    public function canPromoteForFacility($facility = null): bool
+    public function canPromoteForFacility($facility = null, $rating = null): bool
     {
-        return $this->isVATUSAStaff() || $this->isInstructor($facility);
+        if($rating == 2){
+            return $this->isVATUSAStaff() || $this->isInstructor($facility) || ($this->isMentor($facility) && Auth::user()->rating>=4) ;
+        }else{
+            return $this->isVATUSAStaff() || $this->isInstructor($facility);
+        }
     }
 }
