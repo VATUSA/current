@@ -24,9 +24,8 @@
                 <p>
                     VATUSA is a division of the <a href="http://www.vatsim.net/">VATSIM</a> Americas region comprising
                     of almost all airspace operated by the real
-                    world Federal Aviation Administration. The airspace comprises of 20 Air Route Traffic Control
-                    Centers
-                    (contiguous US and Anchorage), 1 Control Facility (Honolulu Control Facility) and 1 CERAP (Guam
+                    world Federal Aviation Administration. The airspace comprises of 21 Air Route Traffic Control
+                    Centers, 1 Combined Control Facility (Honolulu Control Facility) and 1 CERAP (Guam
                     CERAP, under management of HCF). All
                     information contained within this website is designated for use with the VATSIM network and for
                     flight
