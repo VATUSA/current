@@ -71,7 +71,7 @@ class EmailHelper
                 $msg->subject("[VATUSA] $subject");
             });
         } catch (\Exception $exception) {
-            Log::error("Failed to send email to {$email}: " . $exception->getMessage());
+            Log::error("Failed to send email to " . (is_array($email) ? implode(', ', $email) : $email) . ": " . $exception->getMessage());
         }
     }
 
