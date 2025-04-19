@@ -59,7 +59,7 @@ class VATSIMSync extends Command {
         }
 
         $requestsPerBatch = 10;
-        $delaySeconds = 1;
+        $delaySeconds = 60;
 
         $requestCounter = 0;
         $unsynced_division_controllers = User::where('flag_homecontroller', 1)
