@@ -57,7 +57,7 @@ class VATSIMApi2Helper {
     }
 
     static function fetchOrgMemberPage($page) {
-        $limit = 100;
+        $limit = 2500;
         $offset = $limit * $page;
         $path = "/v2/orgs/division/USA?limit={$limit}&offset={$offset}";
         $client = self::_client();
