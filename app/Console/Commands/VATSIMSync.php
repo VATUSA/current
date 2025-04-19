@@ -58,10 +58,6 @@ class VATSIMSync extends Command {
             $page++;
         }
 
-        $requestsPerBatch = 10;
-        $delaySeconds = 60;
-
-        $requestCounter = 0;
         $unsynced_division_controllers = User::where('flag_homecontroller', 1)
             ->where('rating', '>=', 0)
             ->where(function ($query) {
@@ -73,17 +69,8 @@ class VATSIMSync extends Command {
         foreach ($unsynced_division_controllers as $controller) {
             echo "USD - Syncing {$controller->cid} - Last Sync: {$controller->last_cert_sync}\n";
             VATSIMApi2Helper::syncCID($controller->cid);
-            $requestCounter++;
-
-            if ($requestCounter >= $requestsPerBatch) {
-                echo "USD Sync--> Processed batch of {$requestsPerBatch}. Waiting {$delaySeconds} second(s) for rate limit...";
-                sleep($delaySeconds);
-                $requestCounter = 0;
-            }
         }
 
-        sleep($delaySeconds); // So there is no overlap in the rate limit
-        $requestCounter = 0;
         $external_visit_eligible = User::where('facility', 'ZZN')
             ->where('rating', '>', 1)
             ->where(function ($query) {
@@ -94,13 +81,6 @@ class VATSIMSync extends Command {
         foreach ($external_visit_eligible as $controller) {
             echo "EVE - Syncing {$controller->cid} - Last Sync: {$controller->last_cert_sync}\n";
             VATSIMApi2Helper::syncCID($controller->cid);
-            $requestCounter++;
-
-            if ($requestCounter >= $requestsPerBatch) {
-                echo "EVE Sync --> Processed batch of {$requestsPerBatch}. Waiting {$delaySeconds} second(s) for rate limit...";
-                sleep($delaySeconds);
-                $requestCounter = 0;
-            }
         }
         return 0;
     }
