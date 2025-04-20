@@ -52,6 +52,7 @@ class Kernel extends ConsoleKernel
         $commandName = 'UpdateVATSIM';
         $schedule->command($commandName)
             ->everyMinute()
+            ->onOneServer()
             ->before($createBeforeHook($commandName))
             ->after($createAfterHook($commandName));
 
