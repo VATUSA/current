@@ -33,14 +33,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        $schedule->command('CERTSync')->twiceDaily(11, 23);
-        $schedule->command('UpdateVATSIM')->everyMinute();
-        $schedule->command('TattlerTransfers')->cron('15 0 * * *');
+        // $schedule->command('CERTSync')->twiceDaily(11, 23);
+        $schedule->command('UpdateVATSIM')->everyMinute()->onOneServer()->withoutOverlapping();
+        $schedule->command('TattlerTransfers')->cron('15 0 * * *')->onOneServer()->withoutOverlapping();
         // $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00");
-//        $schedule->command('rolesync')->cron('45 * * * *');
-        $schedule->command('ntos:expire')->weekly();
-        $schedule->command('promos:cacheeligible')->dailyAt('05:00');
-        $schedule->command('vatsim:sync')->hourly();
+        // $schedule->command('rolesync')->cron('45 * * * *');
+        $schedule->command('ntos:expire')->weekly()->onOneServer()->withoutOverlapping();
+        $schedule->command('promos:cacheeligible')->dailyAt('05:00')->onOneServer()->withoutOverlapping();
+        $schedule->command('vatsim:sync')->hourly()->onOneServer()->withoutOverlapping();
     }
-
 }
