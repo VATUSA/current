@@ -60,7 +60,6 @@ class Kernel extends ConsoleKernel
         $schedule->command($commandName)
             ->cron('15 0 * * *')
             ->onOneServer()
-            ->withoutOverlapping()
             ->before($createBeforeHook($commandName))
             ->after($createAfterHook($commandName));
 
@@ -68,7 +67,6 @@ class Kernel extends ConsoleKernel
         $schedule->command($commandName)
             ->weekly()
             ->onOneServer()
-            ->withoutOverlapping()
             ->before($createBeforeHook($commandName))
             ->after($createAfterHook($commandName));
 
@@ -76,7 +74,6 @@ class Kernel extends ConsoleKernel
         $schedule->command($commandName)
             ->dailyAt('05:00')
             ->onOneServer()
-            ->withoutOverlapping()
             ->before($createBeforeHook($commandName))
             ->after($createAfterHook($commandName));
 
@@ -84,7 +81,6 @@ class Kernel extends ConsoleKernel
         $schedule->command($commandName)
             ->hourly()
             ->onOneServer()
-            ->withoutOverlapping()
             ->before($createBeforeHook($commandName))
             ->after($createAfterHook($commandName));
 
