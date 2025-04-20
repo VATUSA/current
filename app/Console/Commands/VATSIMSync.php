@@ -61,7 +61,7 @@ class VATSIMSync extends Command {
         $unsynced_division_controllers = User::where('flag_homecontroller', 1)
             ->where('rating', '>=', 0)
             ->where(function ($query) {
-                $query->where('last_cert_sync', '<=', Carbon::now()->subHour()->toDateTimeString());
+                $query->where('last_cert_sync', '<=', Carbon::now()->subDay()->toDateTimeString());
                 $query->orWhereNull('last_cert_sync');
             })
             ->get();
@@ -74,7 +74,7 @@ class VATSIMSync extends Command {
         $external_visit_eligible = User::where('facility', 'ZZN')
             ->where('rating', '>', 1)
             ->where(function ($query) {
-                $query->where('last_cert_sync', '<=', Carbon::now()->subHour()->toDateTimeString());
+                $query->where('last_cert_sync', '<=', Carbon::now()->subDay()->toDateTimeString());
                 $query->orWhereNull('last_cert_sync');
             })
             ->get();
