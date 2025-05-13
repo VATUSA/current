@@ -439,9 +439,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $checks['50hrs'] = 0;
             $checks['ratingHours'] = $ratingHours['s3'];
         }
-        else if($this->rating == Helper::ratingIntFromShort("C1") && $ratingHours['c1'] < 50){
+        else if($this->rating == Helper::ratingIntFromShort("C1") && ($ratingHours['c1']+$ratingHours['c3']+$ratingHours['i1']+$ratingHours['i3']) < 50){
             $checks['50hrs'] = 0;
-            $checks['ratingHours'] = $ratingHours['c1'];
+            $checks['ratingHours'] = $ratingHours['c1']+$ratingHours['c3']+$ratingHours['i1']+$ratingHours['i3'];
         }
         
         if (!in_array($this->facility, ["ZAE", "ZZI"])) {
