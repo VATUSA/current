@@ -81,10 +81,14 @@ class Facility extends Model
         $users = Role::where('facility', $facility)->where('role', 'INS')->get();
         if ($users) {
             foreach ($users as $user) {
-                $ins['ins'][] = [
+                if(!in_array([
                     'cid'  => $user->cid,
-                    'name' => $user->user->fullname()
-                ];
+                    'name' => $user->user->fullname()],$ins['ins'])){
+                    $ins['ins'][] = [
+                        'cid'  => $user->cid,
+                        'name' => $user->user->fullname()
+                    ];
+                }
             }
         }
         $users = Role::where('facility', $facility)->where('role', 'MTR')->get();

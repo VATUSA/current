@@ -33,14 +33,63 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        $schedule->command('CERTSync')->twiceDaily(11, 23);
-        $schedule->command('UpdateVATSIM')->everyMinute();
-        $schedule->command('TattlerTransfers')->cron('15 0 * * *');
-        // $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00");
-//        $schedule->command('rolesync')->cron('45 * * * *');
-        $schedule->command('ntos:expire')->weekly();
-        $schedule->command('promos:cacheeligible')->dailyAt('05:00');
-        $schedule->command('vatsim:sync')->hourly();
-    }
+        // Helper function to create a 'before' hook closure with the command name
+        $createBeforeHook = function (string $commandName) {
+            return function () use ($commandName) {
+                // Use logger() or Log::info() etc.
+                logger("Starting scheduled task: {$commandName}");
+            };
+        };
 
+        // Helper function to create an 'after' hook closure with the command name
+        $createAfterHook = function (string $commandName) {
+            return function () use ($commandName) {
+                logger("Finished scheduled task: {$commandName}");
+            };
+        };
+
+
+        $commandName = 'UpdateVATSIM';
+        $schedule->command($commandName)
+            ->everyMinute()
+            ->onOneServer()
+            ->before($createBeforeHook($commandName))
+            ->after($createAfterHook($commandName));
+
+        $commandName = 'TattlerTransfers';
+        $schedule->command($commandName)
+            ->cron('15 0 * * *')
+            ->onOneServer()
+            ->before($createBeforeHook($commandName))
+            ->after($createAfterHook($commandName));
+
+        $commandName = 'ntos:expire';
+        $schedule->command($commandName)
+            ->weekly()
+            ->onOneServer()
+            ->before($createBeforeHook($commandName))
+            ->after($createAfterHook($commandName));
+
+        $commandName = 'promos:cacheeligible';
+        $schedule->command($commandName)
+            ->dailyAt('05:00')
+            ->onOneServer()
+            ->before($createBeforeHook($commandName))
+            ->after($createAfterHook($commandName));
+
+        $commandName = 'vatsim:sync';
+        $schedule->command($commandName)
+            ->hourly()
+            ->onOneServer()
+            ->before($createBeforeHook($commandName))
+            ->after($createAfterHook($commandName));
+
+
+        // Apply hooks individually to each command
+        // $schedule->command('CERTSync')->twiceDaily(11, 23)->before($beforeHook)->after($afterHook);
+
+        // $schedule->command("TattlerStaffVisit")->weekly()->sundays()->at("23:00")->before($beforeHook)->after($afterHook);
+        // $schedule->command('rolesync')->cron('45 * * * *')->before($beforeHook)->after($afterHook);
+
+    }
 }

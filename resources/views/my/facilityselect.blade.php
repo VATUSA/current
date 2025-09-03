@@ -1,10 +1,17 @@
 @extends('layout')
 @section('title', 'Select Facility')
 @section('content')
-    <div class="container" id="znyalert" hidden>
+    <div class="container" id="ztlalert" hidden>
         <div class="alert alert-danger">
-            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> ZNY (New York ARTCC) currently has a substantial training backlog</br>
+            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> ZTL (Atlanta ARTCC) currently has a substantial training backlog</br>
             By transferring here you acknowledge there may be a delay in or extended periods of time without training availability
+        </div>
+    </div>
+
+    <div class="container" id="zanalert" hidden>
+        <div class="alert alert-danger">
+            <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> ZAN (Anchorage ARTCC) does not currently have a ratings training program</br>
+            This facility cannot be selected at this time
         </div>
     </div>
     
@@ -44,10 +51,15 @@
 @push('scripts')
     <script type="text/javascript">
         function checkAlerts(facility) {
-            if (facility.value === "ZNY") {
-                document.getElementById('znyalert').hidden = false;
+            if (facility.value === "ZTL") {
+                document.getElementById('ztlalert').hidden = false;
             }else{
-                document.getElementById('znyalert').hidden = true;
+                document.getElementById('ztlalert').hidden = true;
+            }
+            if (facility.value === "ZAN") {
+                document.getElementById('zanalert').hidden = false;
+            }else{
+                document.getElementById('zanalert').hidden = true;
             }
         }
     </script>

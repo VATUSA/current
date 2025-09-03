@@ -57,7 +57,7 @@ class VATSIMApi2Helper {
     }
 
     static function fetchOrgMemberPage($page) {
-        $limit = 100;
+        $limit = 2500;
         $offset = $limit * $page;
         $path = "/v2/orgs/division/USA?limit={$limit}&offset={$offset}";
         $client = self::_client();
@@ -75,28 +75,62 @@ class VATSIMApi2Helper {
         $fullURL = VATSIMApi2Helper::_url() . $path;
         $key = VATSIMApi2Helper::_key();
         if ($key === null) {
+           echo "VATSIM API Key not configured. Skipping sync for CID: {$cid}";
             return false;
         }
         $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
-        try {
-            $response = $client->get($fullURL);
-        } catch (Exception\GuzzleException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) {
-                $user = User::find($cid);
-                if (!$user) {
+
+        $maxRetries = 3; // Maximum number of retries for 429 errors
+        $retryDelaySeconds = 60; // Delay in seconds before retrying
+
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                $response = $client->get($fullURL);
+                // If successful, process data and exit the retry loop
+                $data = json_decode($response->getBody(), true);
+                self::processMemberData($data);
+                return true;
+
+            } catch (Exception\GuzzleException $e) {
+                if ($e->hasResponse()) {
+                    $statusCode = $e->getResponse()->getStatusCode();
+
+                    if ($statusCode == 429) {
+                        // Rate limit hit
+                        echo "VATSIM API rate limit hit for CID: {$cid}. Attempt {$attempt}/{$maxRetries}. Waiting {$retryDelaySeconds} seconds...";
+                        if ($attempt < $maxRetries) {
+                            sleep($retryDelaySeconds);
+                            continue;
+                        } else {
+                            echo "VATSIM API rate limit persisted after {$maxRetries} attempts for CID: {$cid}. Aborting sync for this user.";
+                            return false;
+                        }
+                    } elseif ($statusCode == 404) {
+                        // Handle 404 (User not found)
+                        echo "VATSIM API returned 404 for CID: {$cid}. Marking as inactive.";
+                        $user = User::find($cid);
+                        if ($user) {
+                            $user->rating = -1;
+                            $user->flag_homecontroller = 0;
+                            $user->save();
+                            $user->removeFromFacility("Automated", "Inactive", "ZZI");
+                        } else {
+                            echo "User with CID {$cid} not found in local database during 404 handling.";
+                        }
+                        return false;
+                    } else {
+                        echo "VATSIM API request failed for CID: {$cid} with status code {$statusCode}: " . $e->getMessage();
+                        return false;
+                    }
+                } else {
+                    echo "VATSIM API request failed for CID: {$cid} with no response: " . $e->getMessage();
                     return false;
                 }
-                $user->rating = -1;
-                $user->flag_homecontroller = 0;
-                $user->save();
-                $user->removeFromFacility("Automated", "Inactive", "ZZI");
             }
-            echo $e->getMessage(). "\n";
-            return false;
         }
-        $data = json_decode($response->getBody(), true);
-        self::processMemberData($data);
-        return true;
+
+        echo "Exited syncCID retry loop unexpectedly for CID: {$cid}.";
+        return false;
     }
 
     static function processMemberData($data) {

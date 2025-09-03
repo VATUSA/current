@@ -1,5 +1,5 @@
 @extends('layout')
-@section('title', 'OTS Evaluations')
+@section('title', 'Rating Exam Evaluations')
 @push('styles')
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.css"/>
@@ -8,7 +8,7 @@
 @section('content')
     <div class="container">
         <div class="panel panel-default">
-            <div class="panel-heading"><h3 class="panel-title"><i class="fas fa-check-double"></i> OTS
+            <div class="panel-heading"><h3 class="panel-title"><i class="fas fa-check-double"></i> Rating Exam
                     Evaluations @if(!\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                         - {{ Auth::user()->facility()->name }} @endif</h3>
             </div>
@@ -21,36 +21,10 @@
                                 <label for="tng-artcc-select">ARTCC:</label>
                                 <select class="form-control" id="tng-artcc-select" autocomplete="off" name="fac">
                                     <option value="" @if(!$trainingfac) selected @endif>-- Select One --</option>
-                                    <optgroup label="Western Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 4; }) as $fac)
+                                        @foreach($facilities as $fac)
                                             <option value="{{ $fac->id }}"
                                                     @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
                                         @endforeach
-                                    </optgroup>
-                                    <optgroup label="South Central Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 5; }) as $fac)
-                                            <option value="{{ $fac->id }}"
-                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                    <optgroup label="Midwestern Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 6; }) as $fac)
-                                            <option value="{{ $fac->id }}"
-                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                    <optgroup label="Northeastern Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 7; }) as $fac)
-                                            <option value="{{ $fac->id }}"
-                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                    <optgroup label="Southeastern Region">
-                                        @foreach($facilities->filter(function($fac) { return $fac->region == 8; }) as $fac)
-                                            <option value="{{ $fac->id }}"
-                                                    @if($trainingfac == $fac->id) selected @endif>{{ $fac->name }}</option>
-                                        @endforeach
-                                    </optgroup>
                                 </select>
                             </div>
                         </form>
@@ -63,6 +37,8 @@
                                                                   data-toggle="pill"><i
                                     class="fa fa-list"></i> All Evaluations</a></li>
                         <hr>
+                        <li role="presentation"><a href="#training" data-controls="gnd" aria-controls="gnd" role="tab"
+                                                   data-toggle="pill">Ground</a></li>
                         <li role="presentation"><a href="#training" data-controls="twr" aria-controls="twr" role="tab"
                                                    data-toggle="pill">Tower</a></li>
                         <li role="presentation"><a href="#training" data-controls="app" aria-controls="app" role="tab"
@@ -75,7 +51,7 @@
                 <div class="col-md-9" id="training-content">
                     <div class="tab-content">
                         <!-- Filters: Major/Minor | Sweatbox/Live | OTS -->
-                        @php $postypes = ['twr', 'app', 'ctr']; @endphp
+                        @php $postypes = ['gnd', 'twr', 'app', 'ctr']; @endphp
                         <div role="tabpanel" class="tab-pane active" id="all">
                             @if(!$trainingfac)
                                 <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> Please
@@ -128,7 +104,7 @@
                             @else
                                 <div class="alert alert-warning"><span class="glyphicon glyphicon-warning-sign"></span>
                                     There
-                                    are no OTS evaluations.
+                                    are no Rating Exam evaluations.
                                 </div>
                             @endif
                             <input type="hidden" id="fac" value="{{ $trainingfac }}">
@@ -192,7 +168,7 @@
                                 @else
                                     <div class="alert alert-warning"><span
                                             class="glyphicon glyphicon-warning-sign"></span>
-                                        There are no OTS evaluations.
+                                        There are no Rating Exam evaluations.
                                     </div>
                                 @endif
                             </div>

@@ -219,10 +219,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                             ['inactive', 'inactivity', 'Inactive', 'Inactivity', 'activity', 'Activity'])
                 ]
             );
-            /** Remove Mentor Role */
-            Role::where("cid", $this->cid)->where("facility", $facility)->where(function ($query) {
-                $query->where("role", "MTR")->orWhere("role", "INS");
-            })->delete();
 
             // Remove All roles
             foreach (Role::where('cid', $this->cid)->get() as $role) {
@@ -233,6 +229,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                     $fu->$spos = 0;
                     $fu->save();
                 }
+                $log = new Actions();
+                $log->to = $this->cid;
+                $log->log = $role->facility . " " . $role->role . " role revoked by $by";
+                $log->save();
                 $role->delete();
             }
             $moodle = new VATUSAMoodle();
@@ -293,7 +293,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $log = new Actions();
             $log->from = 0;
             $log->to = $this->cid;
-            $log->log = "User removed from {$visit->facility} visiting roster: {$reason}}";
+            $log->log = "User removed from {$visit->facility} visiting roster: {$reason}";
             $log->save();
 
             $facility = $visit->facility;
@@ -439,9 +439,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $checks['50hrs'] = 0;
             $checks['ratingHours'] = $ratingHours['s3'];
         }
-        else if($this->rating == Helper::ratingIntFromShort("C1") && $ratingHours['c1'] < 50){
+        else if($this->rating == Helper::ratingIntFromShort("C1") && ($ratingHours['c1']+$ratingHours['c3']+$ratingHours['i1']+$ratingHours['i3']) < 50){
             $checks['50hrs'] = 0;
-            $checks['ratingHours'] = $ratingHours['c1'];
+            $checks['ratingHours'] = $ratingHours['c1']+$ratingHours['c3']+$ratingHours['i1']+$ratingHours['i3'];
         }
         
         if (!in_array($this->facility, ["ZAE", "ZZI"])) {
@@ -529,7 +529,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return !$this->flag_needbasic && !Transfers::where('cid', $this->cid)->where('to',
-                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists();
+                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists() && $this->rating < Helper::ratingIntFromShort("S1");
     }
 
     public function promotionEligible()
@@ -709,10 +709,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             'ots_status' => 1
         ])->exists()) {
             $trainingRecordStatus = 1;
-        }
-
-        if ($pos == "GND") {
-            $trainingRecordStatus = $otsEvalStatus = -1;
         }
     }
 }

@@ -245,7 +245,7 @@ $(function () {
             $('#training-ots-exam-pass').show()
             if (result.ots_eval_id && $('#canAdd').length) $('#training-ots-exam-pass')
               .attr('title', 'View OTS Evaluation').css('cursor', 'pointer').click(function () {
-                document.location = '/mgt/controller/' + result.student_id + '/eval/' + result.ots_eval_id + '/view'
+                document.location = '/mgt/facility/training/eval/' + result.ots_eval_id + '/view'
               })
             else $('#training-ots-exam-pass')
               .attr('title', '').off('click').css('cursor', 'default')
@@ -254,7 +254,7 @@ $(function () {
             $('#training-ots-exam-fail').show()
             if (result.ots_eval_id && $('#canAdd').length) $('#training-ots-exam-fail')
               .attr('title', 'View OTS Evaluation').css('cursor', 'pointer').click(function () {
-                document.location = '/mgt/controller/' + result.student_id + '/eval/' + result.ots_eval_id + '/view'
+                document.location = '/mgt/facility/training/eval/' + result.ots_eval_id + '/view'
               })
             else $('#training-ots-exam-fail')
               .attr('title', '').off('click').css('cursor', 'default')

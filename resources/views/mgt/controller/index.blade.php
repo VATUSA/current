@@ -134,7 +134,7 @@
                                                    data-toggle="tab">Ratings
                                 &amp; Transfers</a></li>
                     @endif
-                    @php $canViewTraining = \App\Helpers\AuthHelper::authACL()->canViewTrainingRecords($user->facility) @endphp
+                    @php $canViewTraining = \App\Helpers\AuthHelper::authACL()->canViewTrainingRecords($trainingfac) @endphp
                     @if($canViewTraining)
                         <li role="presentation"><a href="#exams" aria-controls="exams" role="tab"
                                                    data-toggle="tab">Academy Transcript</a></li>

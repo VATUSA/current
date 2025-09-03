@@ -6,7 +6,7 @@
 @endpush
 
 @extends('layout')
-@section('title', 'OTS Evaluation')
+@section('title', 'Rating Exam Evaluation')
 @section('content')
     <div id="scroll-control" class="btn-group btn-group-lg">
         <button class="btn btn-default" id="scroll-top"><i class="fas fa-angle-double-up"></i></button>
@@ -26,7 +26,7 @@
                         <thead>
                         <tr>
                             <td colspan="5">
-                                OTS Evaluation: {{ $eval->form->name }}
+                                {{ $eval->form->name }}
                             </td>
                         </tr>
                         </thead>

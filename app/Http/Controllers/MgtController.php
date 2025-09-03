@@ -561,7 +561,7 @@ class MgtController extends Controller
                 'You do not have permission to assign this solo certification.');
         }
 
-        if (!preg_match("/^([A-Z0-9]{2,3})_(TWR|APP|CTR)$/i", $request->input("position"))) {
+        if (!preg_match("/^([A-Z0-9]{2,3})_(TWR|APP|DEP|CTR)$/i", $request->input("position"))) {
             return redirect("/mgt/solo")->with("error", "Invalid position defined.");
         }
 
@@ -570,8 +570,8 @@ class MgtController extends Controller
             return redirect("/mgt/solo")->with("error",
                 "Expiration date is malformed. Try a different browser.");
         }
-        if (Carbon::createFromFormat('Y-m-d', $exp)->diffInDays() > 30) {
-            return redirect("/mgt/solo")->with("error", "Expiration date cannot be more than 30 days away.");
+        if (Carbon::createFromFormat('Y-m-d', $exp)->diffInDays() > 45) {
+            return redirect("/mgt/solo")->with("error", "Expiration date cannot be more than 45 days away.");
         }
 
         $solo = new SoloCert();
@@ -616,7 +616,7 @@ class MgtController extends Controller
             return redirect('mgt/facility#mem')->with('error', 'User not found.');
         }
 
-        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility)) {
+        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility, $user->rating + 1)) {
             abort(403);
         }
 
@@ -647,7 +647,7 @@ class MgtController extends Controller
             return redirect('mgt/facility#mem')->with('error', 'User not found');
         }
 
-        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility)) {
+        if (!AuthHelper::authACL()->canPromoteForFacility($user->facility, $user->rating + 1)) {
             abort(403);
         }
 
@@ -915,7 +915,7 @@ class MgtController extends Controller
         if (!$student) {
             abort(404);
         }
-        if (!AuthHelper::authACL()->isInstructor($student->facility)) {
+        if (!AuthHelper::authACL()->canPromoteForFacility($student->facility, $student->rating + 1)) {
             abort(403);
         }
         $form = $form ? OTSEvalForm::has('perfcats')
@@ -923,7 +923,7 @@ class MgtController extends Controller
             : OTSEvalForm::has('perfcats')->has('perfcats.indicators')
                 ->withAll()->where('rating_id', $student->rating + 1)->first();
         if (!$student || !$form) {
-            abort(404, "The OTS evaluation form is invalid.");
+            abort(404, "The Rating Exam evaluation form is invalid.");
         }
         if ($form->rating_id !== $student->rating + 1 || !$student->promotionEligible()) {
             return redirect('/mgt/facility#mem')->with('error', 'The controller is not eligible for that evaluation.');
@@ -943,7 +943,7 @@ class MgtController extends Controller
     {
         $eval = OTSEval::withAll()->find($eval);
         if (!$eval) {
-            abort(404, "The OTS evaluation form is invalid.");
+            abort(404, "The Rating Exam evaluation form is invalid.");
         }
         $student = $eval->student;
         $authACL = AuthHelper::authACL();
@@ -1008,7 +1008,7 @@ class MgtController extends Controller
     {
         $form = OTSEvalForm::withAll()->find($form);
         if (!$form) {
-            abort(404, "The OTS evaluation form is invalid.");
+            abort(404, "The Rating Exam evaluation form is invalid.");
         }
 
         $instructor = $request->input('instructor', null);

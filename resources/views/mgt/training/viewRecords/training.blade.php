@@ -13,7 +13,7 @@
         <li role="presentation"><a href="#training" data-controls="ots" aria-controls="ots"
                                    role="tab"
                                    data-toggle="pill"><i
-                    class="fa fa-flag"></i> OTS Exams</a></li>
+                    class="fa fa-flag"></i> Rating Exams</a></li>
         <hr>
         <li role="presentation"><a href="#training" data-controls="del" aria-controls="del" role="tab"
                                    data-toggle="pill">Clearance
