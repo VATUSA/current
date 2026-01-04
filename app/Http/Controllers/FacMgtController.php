@@ -147,6 +147,10 @@ class FacMgtController extends Controller
 
         if (AuthHelper::authACL()->isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
             if($facility->atm != $atm){
+                $log = new Actions();
+                $log->to = $facility->atm;
+                $log->log = "Removed as " . $fac . " ATM by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
                 $facility->atm = $atm;
                 $log = new Actions();
                 $log->to = $atm;
@@ -156,6 +160,10 @@ class FacMgtController extends Controller
         }
         if (AuthHelper::authACL()->isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
             if($facility->datm != $datm){
+                $log = new Actions();
+                $log->to = $facility->datm;
+                $log->log = "Removed as " . $fac . " DATM by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
                 $facility->datm = $datm;
                 $log = new Actions();
                 $log->to = $datm;
@@ -165,6 +173,10 @@ class FacMgtController extends Controller
         }
         if (AuthHelper::authACL()->isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
             if($facility->ta != $ta){
+                $log = new Actions();
+                $log->to = $facility->ta;
+                $log->log = "Removed as " . $fac . " TA by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
                 $facility->ta = $ta;
                 $log = new Actions();
                 $log->to = $ta;
@@ -174,6 +186,10 @@ class FacMgtController extends Controller
         }
         if ($ec == -1 || in_array($ec, $staffPOCOptions["EC"])) {
             if($facility->ec != $ec){
+                $log = new Actions();
+                $log->to = $facility->ec;
+                $log->log = "Removed as " . $fac . " EC by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
                 $facility->ec = $ec;
                 $log = new Actions();
                 $log->to = $ec;
@@ -183,6 +199,10 @@ class FacMgtController extends Controller
         }
         if ($fe == -1 || in_array($fe, $staffPOCOptions["FE"])) {
             if($facility->fe != $fe){
+                $log = new Actions();
+                $log->to = $facility->fe;
+                $log->log = "Removed as " . $fac . " FE by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
                 $facility->fe = $fe;
                 $log = new Actions();
                 $log->to = $fe;
@@ -192,6 +212,10 @@ class FacMgtController extends Controller
         }
         if ($wm == -1 || in_array($wm, $staffPOCOptions["WM"])) {
             if($facility->wm != $wm){
+                $log = new Actions();
+                $log->to = $facility->wm;
+                $log->log = "Removed as " . $fac . " WM by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
                 $facility->wm = $wm;
                 $log = new Actions();
                 $log->to = $wm;
