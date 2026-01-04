@@ -146,22 +146,58 @@ class FacMgtController extends Controller
         $wm = (int)$request->get('wm');
 
         if (AuthHelper::authACL()->isVATUSAStaff() && ($atm == -1 || in_array($atm, $staffPOCOptions["ATM"]))) {
-            $facility->atm = $atm;
+            if($facility->atm != $atm){
+                $facility->atm = $atm;
+                $log = new Actions();
+                $log->to = $atm;
+                $log->log = "Set as " . $fac . " ATM by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
+            }
         }
         if (AuthHelper::authACL()->isVATUSAStaff() && ($datm == -1 || in_array($datm, $staffPOCOptions["DATM"]))) {
-            $facility->datm = $datm;
+            if($facility->datm != $datm){
+                $facility->datm = $datm;
+                $log = new Actions();
+                $log->to = $datm;
+                $log->log = "Set as " . $fac . " DATM by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
+            }
         }
         if (AuthHelper::authACL()->isVATUSAStaff() && ($ta == -1 || in_array($ta, $staffPOCOptions["TA"]))) {
-            $facility->ta = $ta;
+            if($facility->ta != $ta){
+                $facility->ta = $ta;
+                $log = new Actions();
+                $log->to = $ta;
+                $log->log = "Set as " . $fac . " TA by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
+            }
         }
         if ($ec == -1 || in_array($ec, $staffPOCOptions["EC"])) {
-            $facility->ec = $ec;
+            if($facility->ec != $ec){
+                $facility->ec = $ec;
+                $log = new Actions();
+                $log->to = $ec;
+                $log->log = "Set as " . $fac . " EC by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
+            }
         }
         if ($fe == -1 || in_array($fe, $staffPOCOptions["FE"])) {
-            $facility->fe = $fe;
+            if($facility->fe != $fe){
+                $facility->fe = $fe;
+                $log = new Actions();
+                $log->to = $fe;
+                $log->log = "Set as " . $fac . " FE by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
+            }
         }
         if ($wm == -1 || in_array($wm, $staffPOCOptions["WM"])) {
-            $facility->wm = $wm;
+            if($facility->wm != $wm){
+                $facility->wm = $wm;
+                $log = new Actions();
+                $log->to = $wm;
+                $log->log = "Set as " . $fac . " WM by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
+                $log->save();
+            }
         }
         $facility->save();
         return redirect("/mgt/facility/" . $fac);
