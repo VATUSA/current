@@ -71,8 +71,7 @@
                                     }
                         @endphp
                         <tr @if($color) class="{{ $color }}" @endif>
-                            <td><span
-                                    class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
+                            <td>{{ $record->session_date }}
                             </td>
                             <td>{{ $record->position }}</td>
                             <td>{!! $record->instructor ? $record->instructor->fullname() : "<em> Account Erased</em>" !!}</td>
@@ -142,8 +141,7 @@
                                     }
                             @endphp
                             <tr @if($color) class="{{ $color }}" @endif>
-                                <td><span
-                                        class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
+                                <td>{{ $record->session_date }}
                                 </td>
                                 <td>{{ $record->position }}</td>
                                 <td>{!! $record->instructor ? $record->instructor->fullname() : "<em> Account Erased</em>" !!}</td>
