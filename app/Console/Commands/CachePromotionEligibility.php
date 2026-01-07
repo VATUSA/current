@@ -51,9 +51,10 @@ class CachePromotionEligibility extends Command
                 if ($member->promotionEligible()) {
                     $count++;
                 }
+                logger("Promotion eligibility for CID $member->cid");
             }
             Cache::set("promotionEligible-$fac->id", $count);
-            sleep(3);
+            logger("Promotion eligibility for $fac->name");
         }
     }
 }
