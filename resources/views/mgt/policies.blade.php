@@ -288,9 +288,9 @@
                                                     <br><em>{{ strtoupper($policy->extension) }}</em></td>
                                                 <td>{{ $policy->title }}</td>
                                                 <td>@if($policy->effective_date)
-                                                        Effective: {{ $policy->effective_date->format("m/d/Y") }}
+                                                        Effective: {{ $policy->effective_date }}
                                                         <br>@endif
-                                                    Modified: {{ $policy->updated_at->format("m/d/Y") }}</td>
+                                                    Modified: {{ $policy->updated_at }}</td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <button

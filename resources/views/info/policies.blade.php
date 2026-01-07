@@ -47,10 +47,10 @@
                                         @if(!\App\Helpers\AuthHelper::authACL()->canViewPolicy($policy)) @continue @endif
                                         <tr @if(!$policy->visible) class="danger" @endif>
                                             <td>{{ $policy->ident }} &mdash; {{ $policy->title }}</td>
-                                            <td>{{ $policy->effective_date->format('m/d/Y') }}
-                                                @if($policy->updated_at->format('m/d/Y') !== $policy->effective_date->format('m/d/Y'))
+                                            <td>{{ $policy->effective_date }}
+                                                @if($policy->updated_at !== $policy->effective_date)
                                                     <br>
-                                                    <strong>Modified: </strong>{{ $policy->updated_at->format('m/d/Y') }}@endif
+                                                    <strong>Modified: </strong>{{ $policy->updated_at }}@endif
                                             </td>
                                             <td class="hidden-xs">{{ $policy->description }}</td>
                                             <td><a href="https://vatusa-storage.nyc3.cdn.digitaloceanspaces.com/docs/{{ $policy->slug }}.{{ $policy->extension }}" target="_blank">
