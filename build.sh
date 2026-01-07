@@ -16,4 +16,5 @@ then
   # echo "*    *    *     *     *    cd /www && php artisan schedule:run" >> /etc/crontabs/application
   cd /www && php artisan migrate
   chmod -R 775 /www/storage/logs
+  chmod -R ugo+rw /www/storage
 fi
