@@ -75,7 +75,7 @@
                                         @php $color = $eval->result ? 'success' : 'danger'; @endphp
                                         <tr @if($color) class="{{ $color }}" @endif>
                                             <td><span
-                                                    class="hidden">{{$eval->exam_date->timestamp}}</span>{{ $eval->exam_date }}
+                                                    class="hidden">{{$eval->exam_date}}</span>{{ $eval->exam_date }}
                                             </td>
                                             <td>{{ $eval->exam_position }}</td>
                                             <td>{!! $eval->student ? $eval->student->fullname() : "<em> Account Erased</em>" !!}</td>
@@ -139,7 +139,7 @@
                                             @php $color = $eval->result ? 'success' : 'danger'; @endphp
                                             <tr @if($color) class="{{ $color }}" @endif>
                                                 <td><span
-                                                        class="hidden">{{$eval->exam_date->timestamp}}</span>{{ $eval->exam_date }}
+                                                        class="hidden">{{$eval->exam_date}}</span>{{ $eval->exam_date }}
                                                 </td>
                                                 <td>{{ $eval->exam_position }}</td>
                                                 <td>{!! $eval->student ? $eval->student->fullname() : "<em> Account Erased</em>" !!}</td>
