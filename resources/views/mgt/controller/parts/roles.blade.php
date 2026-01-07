@@ -14,7 +14,7 @@
             @foreach ($assignedRoles as $role)
                 <tr style="text-align: center">
                     <td>{{ $role->facility }}</td>
-                    <td>{{ $role->title->title }}</td>
+                    <td>{{ $role->role }} | {{ $role->title?->title }}</td>
                     <td>
                         @if(\App\Helpers\RoleHelperV2::canAssignRole($user->cid, $role->role, $role->facility))
                             <form action="/mgt/controller/{{$user->cid}}/role/revoke" method="POST">
