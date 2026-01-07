@@ -12,6 +12,8 @@ mkdir -p /www/storage/framework/session
 chown -R application:application /www/storage
 chmod -R ugo+rw /www/storage
 
+php artisan optimize
+
 if [[ "$ENV" == "prod" ]] || [[ "$ENV" == "livedev" ]] || [[ "$ENV" == "staging" ]]
 then
   # echo "*    *    *     *     *    cd /www && php artisan schedule:run" >> /etc/crontabs/application
