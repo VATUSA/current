@@ -10,11 +10,11 @@ chown application:application /www/.env
 mkdir -p /www/storage/framework/views
 mkdir -p /www/storage/framework/session
 chown -R application:application /www/storage
+chmod -R ugo+rw /www/storage
 
 if [[ "$ENV" == "prod" ]] || [[ "$ENV" == "livedev" ]] || [[ "$ENV" == "staging" ]]
 then
   # echo "*    *    *     *     *    cd /www && php artisan schedule:run" >> /etc/crontabs/application
   cd /www && php artisan migrate
   chmod -R 775 /www/storage/logs
-  chmod -R ugo+rw /www/storage
 fi
