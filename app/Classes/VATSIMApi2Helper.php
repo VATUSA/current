@@ -10,11 +10,11 @@ use Illuminate\Support\Str;
 class VATSIMApi2Helper {
 
     private static function _url() {
-        return env('VATSIM_API2_URL');
+        return config('app.vatsim_api2_url');
     }
 
     private static function _key() {
-        return env('VATSIM_API2_KEY', null);
+        return config('app.vatsim_api2_key', null);
     }
 
     private static function _client(): Client {

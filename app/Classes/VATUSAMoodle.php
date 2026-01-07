@@ -294,7 +294,7 @@ class VATUSAMoodle extends MoodleRest
                 0 => [
                     'createpassword' => 0,
                     'username'       => $user->cid,
-                    'password'       => env('APP_KEY'),
+                    'password'       => config('app.key'),
                     'auth'           => 'manual',
                     'firstname'      => $user->fname,
                     'lastname'       => $user->lname,

@@ -314,7 +314,7 @@
                                 @endif
                                 <li role="separator" class="divider"></li>
                                 <li>
-                                    <a href="{{ (env('APP_ENV', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i
+                                    <a href="{{ (config('app.env', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i
                                                 class="fas fa-sign-out-alt"></i> Logout</a>
                                 </li>
                             </ul>
@@ -467,7 +467,7 @@
         </div>
     @endif
 </div>
-@if(env('APP_ENV', 'dev') != 'prod')
+@if(config('app.env', 'dev') != 'prod')
     <div class="container">
         <div class="alert alert-danger">
             <strong><i class="fas fa-exclamation-triangle"></i> WARNING</strong> This is a development environment!!!
@@ -476,7 +476,7 @@
         </div>
     </div>
 @endif
-@if(env('APP_ENV') == 'alpha')
+@if(config('app.env') == 'alpha')
     <div class="container">
         <div class="alert alert-danger">
             <strong>WARNING</strong> This is an active development environment. Features are likely to be broken or in

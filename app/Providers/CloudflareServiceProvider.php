@@ -21,7 +21,7 @@ class CloudflareServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (env('APP_ENV') != "dev") {
+        if (config('app.env') != "dev") {
             if (IpUtils::checkIp(request()->ip(), $this->fetchIps())) {
                 request()->server->add([
                     'ORIGINAL_REMOTE_ADDR' => request()->ip(),

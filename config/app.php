@@ -3,6 +3,12 @@
 return [
     'app' => "VATUSA",
     'env' => env('APP_ENV', 'production'),
+    'dev_cid_login' => env('DEV_CID_LOGIN', ''),
+    'login_env' => env('LOGIN_ENV', ''),
+    'livedev_cids' => env('LIVEDEV_CIDS', ''),
+    'api_url' => env('API_URL', ''),
+    'vatsim_api2_url' => env('VATSIM_API2_URL', ''),
+    'vatsim_api2_key' => env('VATSIM_API2_KEY', ''),
 
 	/*
 	|--------------------------------------------------------------------------

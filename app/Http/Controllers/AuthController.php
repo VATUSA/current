@@ -25,9 +25,9 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function getLogin() {
-        if (env('APP_ENV', 'prod') == "dev" && !\Auth::check()) {
+        if (config('app.env', 'prod') == "dev" && !\Auth::check()) {
             /** In Development Environment */
-            Auth::loginUsingId(env('DEV_CID_LOGIN', 0), true);
+            Auth::loginUsingId(config('app.dev_cid_login', 0), true);
             /*$moodle = new VATUSAMoodle(true);
             $response = $moodle->request("auth_userkey_request_login_url",
                 ['user' => ['idnumber' => \Illuminate\Support\Facades\Auth::user()->cid]]);
@@ -38,7 +38,7 @@ class AuthController extends Controller {
         if (!Auth::check()) {
             //If agreed on privacy policy, redirect to profile (opt in setting)
             //Otherwise, normal redirect to home
-            $return = request()->has('agreed') ? "agreed" : env('LOGIN_ENV');
+            $return = request()->has('agreed') ? "agreed" : config('app.login_env');
 
             return redirect()->guest(config('app.loginUrl') . "/?" . $return);
         } else {

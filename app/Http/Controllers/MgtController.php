@@ -206,7 +206,7 @@ class MgtController extends Controller
             abort(400);
         }
 
-        if (env('APP_ENV', 'dev') == "prod") {
+        if (config('app.env', 'dev') == "prod") {
             $return = PromoHelper::handle($cid, Auth::user()->cid, $rating, [
                 "exam" => "0000-00-00 00:00:00",
                 "examiner" => Auth::user()->cid,
