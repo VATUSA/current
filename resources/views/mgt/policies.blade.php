@@ -359,12 +359,12 @@
     </div>
 @endsection
 @push('styles')
-    <link rel="stylesheet" type="text/css" href="{{ secure_asset("datetimepicker/datetimepicker.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset("datetimepicker/datetimepicker.css") }}">
 @endpush
 @section('scripts')
-    <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("datetimepicker/datetimepicker.js") }}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="{{ secure_asset("js/moment.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/moment.js") }}" type="text/javascript"></script>
 
     <script type="text/javascript">
       $(document).ready(function () {

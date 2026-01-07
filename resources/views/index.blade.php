@@ -140,7 +140,7 @@
         </div>
     </div>
     @push('scripts')
-        <script src="{{ secure_asset("js/moment.js") }}" type="text/javascript"></script>
+        <script src="{{ asset("js/moment.js") }}" type="text/javascript"></script>
         <script type="text/javascript">
           $(document).ready(function () {
             $.ajax({

@@ -1,7 +1,7 @@
 @push('styles')
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.css"/>
-    <link rel="stylesheet" type="text/css" href="{{ secure_asset("datetimepicker/datetimepicker.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset("datetimepicker/datetimepicker.css") }}">
 @endpush
 
 @extends('layout')
@@ -169,7 +169,7 @@
 @endsection
 @section('scripts')
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("datetimepicker/datetimepicker.js") }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             /*$('[name=examiner]').autocomplete({

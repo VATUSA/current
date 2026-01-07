@@ -298,7 +298,7 @@
             src="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="{{ secure_asset("js/jquery.sparkline.js") }}"></script>
+    <script src="{{ asset("js/jquery.sparkline.js") }}"></script>
     <script type="text/javascript">
       $(function () {
         if (document.location.hash)

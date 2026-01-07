@@ -3,7 +3,7 @@
 @push('styles')
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.css"/>
-    <link rel="stylesheet" type="text/css" href="{{ secure_asset("datetimepicker/datetimepicker.css") }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset("datetimepicker/datetimepicker.css") }}">
 @endpush
 @section('content')
     <div class="container">
@@ -180,7 +180,7 @@
     </div>
 @endsection
 @push('scripts')
-    <script type="text/javascript" src="{{ secure_asset("datetimepicker/datetimepicker.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("datetimepicker/datetimepicker.js") }}"></script>
     <script
         src="https://cdn.tiny.cloud/1/zhw7l11edc5qt7r2a27lkrpa8aecclri5bsd4p7vaoet3u00/tinymce/5/tinymce.min.js"></script>
     <script src="https://kit.fontawesome.com/63288b607f.js" crossorigin="anonymous"></script>
@@ -191,6 +191,6 @@
             src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript"
             src="https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
-    <script src="{{ secure_asset("js/moment.js") }}" type="text/javascript"></script>
-    <script src="{{ secure_asset("js/training.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/moment.js") }}" type="text/javascript"></script>
+    <script src="{{ asset("js/training.js") }}" type="text/javascript"></script>
 @endpush
