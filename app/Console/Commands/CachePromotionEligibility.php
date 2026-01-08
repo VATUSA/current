@@ -45,6 +45,7 @@ class CachePromotionEligibility extends Command
         foreach (Facility::active()->get() as $fac) {
             $count = 0;
             foreach ($fac->members as $member) {
+                logger("Starting Promotion eligibility for $fac->name");
                 if ($member->rating >= Helper::ratingIntFromShort("C1")) {
                     continue;
                 }
@@ -54,7 +55,7 @@ class CachePromotionEligibility extends Command
                 logger("Promotion eligibility for CID $member->cid");
             }
             Cache::set("promotionEligible-$fac->id", $count);
-            logger("Promotion eligibility for $fac->name");
+            logger("Finished Promotion eligibility for $fac->name");
         }
     }
 }
