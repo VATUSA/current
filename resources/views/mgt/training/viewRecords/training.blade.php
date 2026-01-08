@@ -44,7 +44,6 @@
                         <th>Duration</th>
                         <th>Instructor</th>
                         <th class="alert-ignore">Actions</th>
-                        <th class="alert-ignore">Month</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -57,8 +56,7 @@
                                     }
                         @endphp
                         <tr @if($color) class="{{ $color }}" @endif>
-                            <td><span
-                                    class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
+                            <td>{{ $record->session_date }}
                             </td>
                             <td>{{ $record->position }}</td>
                             <td>{{ isset($record->student) ? $record->student->fullname(): "<em> Account Erased</em>" }}</td>
@@ -72,7 +70,6 @@
                                     </button>
                                 </div>
                             </td>
-                            <td>{{ $record->session_date->format('F') }} </td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -101,7 +98,6 @@
                             <th>Duration</th>
                             <th>Instructor</th>
                             <th class="alert-ignore">Actions</th>
-                            <th class="alert-ignore">Month</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -114,8 +110,7 @@
                                     }
                             @endphp
                             <tr @if($color) class="{{ $color }}" @endif>
-                                <td><span
-                                        class="hidden">{{$record->session_date->timestamp}}</span>{{ $record->session_date->format('m/d/Y') }}
+                                <td>{{ $record->session_date }}
                                 </td>`
                                 <td>{{ $record->position }}</td>
                                 <td>{{ isset($record->student) ? $record->student->fullname(): "<em> Account Erased</em>"  }}</td>
@@ -129,7 +124,6 @@
                                         </button>
                                     </div>
                                 </td>
-                                <td>{{ $record->session_date->format('F') }} </td>
                             </tr>
                         @endforeach
                         </tbody>
