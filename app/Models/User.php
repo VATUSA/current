@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Models\AcademyCompetency;
 use App\Classes\ExamHelper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
@@ -535,28 +536,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function promotionEligible()
     {
         if (!$this->flag_homecontroller) {
-            Cache::set("promotionEligible-$this->cid", false);
-
             return false;
         }
 
-        $result = false;
-        if ($this->rating == Helper::ratingIntFromShort("OBS")) {
-            $result = $this->isS1Eligible();
+        $competencies = AcademyCompetency::where('cid', $this->cid)->get();
+        foreach ($competencies as $competency) {
+            $expireCarbon = Carbon::createFromFormat("Y-m-d H:i:s", $competency->expiration_timestamp);
+            if (Carbon::now()->isBefore($expireCarbon) && $competency->course->rating == $this->rating + 1) {
+                return true;
+            }
         }
-        if ($this->rating == Helper::ratingIntFromShort("S1")) {
-            $result = $this->isS2Eligible();
-        }
-        if ($this->rating == Helper::ratingIntFromShort("S2")) {
-            $result = $this->isS3Eligible();
-        }
-        if ($this->rating == Helper::ratingIntFromShort("S3")) {
-            $result = $this->isC1Eligible();
-        }
-
-        Cache::set("promotionEligible-$this->cid", $result);
-
-        return $result;
+        return false;
     }
 
     public function isS1Eligible()

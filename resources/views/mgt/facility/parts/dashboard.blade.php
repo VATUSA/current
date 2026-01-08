@@ -8,9 +8,6 @@
                                          title="Pending Transfers"><i
                             class="fa fa-user-plus"></i> {{\App\Models\Transfers::where('to', $fac)->where('status', 0)->count()}}</span>
             </h1></td>
-        <td><h1><span data-toggle="tooltip" data-placement="bottom"
-                      title="Total Eligible for Promotion">
-                                                  <i class="fas fa-school"></i> {{$promotionEligible}}</span></h1></td>
     </tr>
 </table>
 @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityStaff($fac))

@@ -48,8 +48,6 @@ class FacMgtController extends Controller
 
         $facility = Facility::find($fac);
 
-        $promotionEligible = Cache::get("promotionEligible-$fac") ?? "N/A";
-
         $staffPOCOptions = [];
 
         foreach (["ATM", "DATM", "TA", "EC", "FE", "WM"] as $role) {
@@ -63,7 +61,6 @@ class FacMgtController extends Controller
             [
                 'fac' => $fac,
                 'facility' => $facility,
-                'promotionEligible' => $promotionEligible,
                 'atm' => RoleHelper::getNameFromRole('ATM', $fac, 1),
                 'datm' => RoleHelper::getNameFromRole('DATM', $fac, 1),
                 'ta' => RoleHelper::getNameFromRole('TA', $fac, 1),
