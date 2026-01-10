@@ -541,8 +541,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         $competencies = AcademyCompetency::where('cid', $this->cid)->get();
         foreach ($competencies as $competency) {
-            $expireCarbon = Carbon::createFromFormat("Y-m-d H:i:s", $competency->expiration_timestamp);
-            if (Carbon::now()->isBefore($expireCarbon) && $competency->course->rating == $this->rating + 1) {
+            if ($competency->course->rating == $this->rating + 1) {
                 return true;
             }
         }
