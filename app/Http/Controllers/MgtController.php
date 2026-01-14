@@ -100,33 +100,6 @@ class MgtController extends Controller
             $canAddTR = AuthHelper::authACL()->canCreateTrainingRecords($trainingfac)
                 && $user->cid !== Auth::user()->cid;
 
-            //Get INS at ARTCC
-            $ins = ['ins' => [], 'mtr' => []];
-            $users = User::where('facility', $trainingfac)
-                ->where('rating', '>=', Helper::ratingIntFromShort("I1"))
-                ->where('rating', '<=', Helper::ratingIntFromShort("I3"))
-                ->get();
-            if ($users) {
-                foreach ($users as $tUser) {
-                    $ins['ins'][$tUser->cid] = $tUser->fullname();
-                }
-            }
-            $users = Role::where('facility', $trainingfac)->where('role', 'INS')->get();
-            if ($users) {
-                foreach ($users as $tUser) {
-                    $ins['ins'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
-                }
-            }
-            $users = Role::where('facility', $trainingfac)->where('role', 'MTR')->get();
-            if ($users) {
-                foreach ($users as $tUser) {
-                    $ins['mtr'][$tUser->cid] = Helper::nameFromCID($tUser->cid);
-                }
-            }
-            foreach ($ins as $type => $users) {
-                asort($ins[$type]);
-            }
-
             $moodle = new VATUSAMoodle();
             try {
                 $uid = $moodle->getUserId($cid);
@@ -166,7 +139,7 @@ class MgtController extends Controller
 
             return view('mgt.controller.index',
                 compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingFacListArray', 'trainingfac',
-                    'trainingfacname', 'ins', 'canAddTR', 'examAttempts', 'moodleUid', 'assignedRoles'));
+                    'trainingfacname', 'canAddTR', 'examAttempts', 'moodleUid', 'assignedRoles'));
         } else {
             if ($user = User::where('discord_id', $cid)->first()) {
                 return redirect()->route('mgt.controller.index', ['cid' => $user->cid]);
