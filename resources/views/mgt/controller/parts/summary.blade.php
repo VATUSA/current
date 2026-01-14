@@ -61,7 +61,7 @@
                 @endforeach
                 <br>
             @endif
-            <li>Last Website Activity: {{$user->lastActivityWebsite()}} days ago</li>
+            <li>Last Website Activity: {{$user->lastActivityWebsiteHumanReadable()}}</li>
             <br>
             <li>Needs Basic ATC or RCE:
                 @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())

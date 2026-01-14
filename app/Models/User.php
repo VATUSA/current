@@ -537,6 +537,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function lastActivityWebsite()
     {
         return $this->lastactivity->diffInDays(null);
+
+    }
+
+    public function lastActivityWebsiteHumanReadable() {
+        return $this->lastactivity->diffForHumans();
     }
 
     public function lastActivityForum()
