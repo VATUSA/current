@@ -21,7 +21,7 @@ Route::get('readiness', function () {
 
 Route::group([
     'domain'     => config('app.url'),
-    'middleware' => ['smf', 'csrf', 'lastactivity']
+    'middleware' => ['csrf', 'lastactivity']
 ], function () {
     Route::get('/login', 'AuthController@getLogin');
     Route::get('/logout', function () {
