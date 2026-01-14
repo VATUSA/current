@@ -25,6 +25,7 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth'          => 'App\Http\Middleware\Authenticate',
+        'bindings'      => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         "csrf"          => 'App\Http\Middleware\VerifyCsrfToken',
         'lastactivity'  => 'App\Http\Middleware\AuthLastActivity',
         'privacy-agree' => 'App\Http\Middleware\PrivacyAgree',
