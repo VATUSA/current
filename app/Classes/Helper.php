@@ -4,6 +4,7 @@ namespace App\Classes;
 
 use App\Models\User;
 use App\Models\Facility;
+use Carbon\Carbon;
 
 class Helper
 {
@@ -30,6 +31,13 @@ class Helper
     public static function mainUrl()
     {
        return config('app.url');
+    }
+
+    public static function daysSince($date) {
+        if ($date === null) {
+            return null;
+        }
+        return Carbon::createFromFormat('Y-m-d', $date)->diffInDays(Carbon::now());
     }
 
     public static function nameFromCID($cid, $retCID = 0)

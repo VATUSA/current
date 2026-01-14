@@ -343,10 +343,40 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $checks['initial'] = 0;
         $checks['90days'] = 0;
         $checks['promo'] = 0;
-        $checks['50hrs'] = 1;
+        $checks['50hrs'] = 0;
         $checks['override'] = 0;
-        $checks['is_first'] = 1;
+        $checks['is_first'] = 0;
         $checks['homecontroller'] = $this->flag_homecontroller;
+
+        $controllerEligibilityCache = ControllerEligibilityCache::where('cid', $this->cid)->first();
+        if ($controllerEligibilityCache !== null) {
+            $checks['initial'] = $controllerEligibilityCache->is_initial_selection ? 1 : 0;
+
+            $daysSinceFirstSelection = Helper::daysSince($controllerEligibilityCache->first_selection_date);
+            $checks['is_first'] = $daysSinceFirstSelection === null || $daysSinceFirstSelection < 30 ? 1 : 0;
+
+            $daysSinceLastTransfer = Helper::daysSince($controllerEligibilityCache->last_transfer_date);
+            $checks['90days'] = $daysSinceLastTransfer === null || $daysSinceLastTransfer >= 90 ? 1 : 0;
+            $checks['days'] = $daysSinceLastTransfer;
+
+            $daysSinceLastVisit = Helper::daysSince($controllerEligibilityCache->last_visit_date);
+            $checks['60days'] = $daysSinceLastVisit === null || $daysSinceLastVisit >= 60 ? 1 : 0;
+            $checks['visitingDays'] = $daysSinceLastVisit;
+
+            $daysSinceLastPromotion = Helper::daysSince($controllerEligibilityCache->last_promotion_date);
+            $checks['promo'] = $daysSinceLastPromotion === null || $daysSinceLastPromotion >= 90 ? 1 : 0;
+            $checks['promoDays'] = $daysSinceLastPromotion;
+
+            $checks['50hrs'] = $controllerEligibilityCache->has_consolidation_hours == 1 ? 1 : 0;
+            $checks['ratingHours'] = $controllerEligibilityCache->consolidation_hours;
+
+            $target_competency_rating = ($this->rating > 5) ? 5 : (($this->rating == 1) ? 2 : $this->rating);
+            $daysSinceCompetency = Helper::daysSince($controllerEligibilityCache->competency_date);
+            $checks['needbasic'] =
+                ($controllerEligibilityCache->competency_rating == $target_competency_rating
+                && $daysSinceCompetency !== null
+                && $daysSinceCompetency < 180) ? 1 : 0;
+        }
 
         if($this->facility == "ZZI"){
             $checks['homecontroller'] = 0;
@@ -361,88 +391,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $transfer = Transfers::where('cid', $this->cid)->where('status', 0)->count();
         if (!$transfer) {
             $checks['pending'] = 1;
-        }
-
-        $checks['initial'] = 1;
-        if (!in_array($this->facility, ["ZAE", "ZZN", "ZHQ"])) {
-            if (Transfers::where('cid', $this->cid)->where('to', 'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE',
-                    'ZZN')->where('status', 1)->count() == 1) {
-                if (Carbon::createFromFormat('Y-m-d H:i:s', $this->facility_join)->diffInDays(new Carbon()) <= 30) {
-                    $checks['initial'] = 1;
-                }
-            } else {
-                $checks['is_first'] = 0;
-            }
-        } else {
-            $checks['is_first'] = 0;
-        }
-        $transfer = Transfers::where('cid', $this->cid)
-            ->where('to', '!=', 'ZAE')
-            ->where('to', '!=', 'ZZN')
-            ->where('to', '!=', 'ZZI')
-            ->where('status', 1)
-            ->orderBy('created_at', 'DESC')
-            ->first();
-        if (!$transfer) {
-            $checks['90days'] = 1;
-        } else {
-            $checks['days'] = Carbon::createFromFormat('Y-m-d H:i:s',
-                $transfer->updated_at)->diffInDays(new Carbon());
-            if ($checks['days'] >= 90) {
-                $checks['90days'] = 1;
-            } else {
-                $checks['90days'] = 0;
-            }
-        }
-
-        // added to visiting roster in last 60 days check
-        $visiting = Visit::where('cid', $this->cid)
-            ->orderBy('created_at', 'DESC')
-            ->first();
-        if (!$visiting) {
-            $checks['60days'] = 1;
-        } else {
-            $checks['visitingDays'] = Carbon::createFromFormat('Y-m-d H:i:s', $visiting->updated_at)->diffInDays(new Carbon());
-            if ($checks['visitingDays'] >= 60) {
-                $checks['60days'] = 1;
-            } else {
-                $checks['60days'] = 0;
-            }
-        }
-
-        // S1-C1 within 90 check
-        $promotion = Promotions::where('cid', $this->cid)->where([
-            ['to', '<=', Helper::ratingIntFromShort("C1")],
-            ['created_at', '>=', \DB::raw("DATE(NOW() - INTERVAL 90 DAY)")]
-        ])->whereRaw('promotions.to > promotions.from')->first();
-        if ($promotion == null) {
-            $checks['promo'] = 1;
-        } else {
-            $checks['promo'] = 0;
-            $checks['promoDays'] = Carbon::createFromFormat('Y-m-d H:i:s', $promotion->created_at)->diffInDays(new Carbon());
-        }
-
-        // 50 hours consolidating current rating
-        $ratingHours = VATSIMApi2Helper::fetchRatingHours($this->cid);
-        if ($ratingHours == null) {
-            $checks['50hrs'] = 1;
-            $checks['ratingHours'] = 0;
-        }
-        else if($this->rating == Helper::ratingIntFromShort("S1") && $ratingHours['s1'] < 50){
-            $checks['50hrs'] = 0;
-            $checks['ratingHours'] = $ratingHours['s1'];
-        }
-        else if($this->rating == Helper::ratingIntFromShort("S2") && $ratingHours['s2'] < 50){
-            $checks['50hrs'] = 0;
-            $checks['ratingHours'] = $ratingHours['s2'];
-        }
-        else if($this->rating == Helper::ratingIntFromShort("S3") && $ratingHours['s3'] < 50){
-            $checks['50hrs'] = 0;
-            $checks['ratingHours'] = $ratingHours['s3'];
-        }
-        else if($this->rating == Helper::ratingIntFromShort("C1") && ($ratingHours['c1']+$ratingHours['c3']+$ratingHours['i1']+$ratingHours['i3']) < 50){
-            $checks['50hrs'] = 0;
-            $checks['ratingHours'] = $ratingHours['c1']+$ratingHours['c3']+$ratingHours['i1']+$ratingHours['i3'];
         }
         
         if (!in_array($this->facility, ["ZAE", "ZZI"])) {
