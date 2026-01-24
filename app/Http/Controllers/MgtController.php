@@ -52,10 +52,10 @@ class MgtController extends Controller
 
         $user = User::where('cid', $cid)->first();
 
-        if (!AuthHelper::authACL()->canViewController($user)) {
-            abort(403);
-        }
         if ($user) {
+            if (!AuthHelper::authACL()->canViewController($user)) {
+                abort(403);
+            }
             $checks = [];
             $eligible = $user->transferEligible($checks);
 
