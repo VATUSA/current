@@ -9,6 +9,7 @@ return [
     'api_url' => env('API_URL', ''),
     'vatsim_api2_url' => env('VATSIM_API2_URL', ''),
     'vatsim_api2_key' => env('VATSIM_API2_KEY', ''),
+    'vatsim_api2_identifier' => env('VATSIM_API2_IDENTIFIER', ''),
 
 	/*
 	|--------------------------------------------------------------------------
