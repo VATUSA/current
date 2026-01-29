@@ -343,7 +343,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $checks['initial'] = 0;
         $checks['90days'] = 0;
         $checks['promo'] = 0;
-        $checks['50hrs'] = 0;
+        $checks['50hrs'] = ($this->rating == 1) ? 1 : 0;
         $checks['override'] = 0;
         $checks['is_first'] = 0;
         $checks['homecontroller'] = $this->flag_homecontroller;
