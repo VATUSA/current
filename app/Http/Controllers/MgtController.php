@@ -80,7 +80,8 @@ class MgtController extends Controller
                 if (Facility::find($trainingfac)) {
                     $trainingfacname = Helper::facShtLng($trainingfac);
                 } else {
-                    abort(500);
+                    $trainingfac = $user->facilityObj->id;
+                    $trainingfacname = $user->facilityObj->name;
                 }
             }
             $trainingFacListArray = array();
