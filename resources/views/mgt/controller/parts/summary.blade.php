@@ -139,7 +139,7 @@
             </tr>
             <tr>
                 <td>90 days since last transfer?</td>
-                @if($checks['is_first'] == 1)
+                @if($checks['is_first'] == 1 || !$checks['homecontroller'])
                     <td><span class="text-success">N/A</span></td>
                 @elseif($checks['90days'])
                     <td><i class="fa fa-check text-success"></i></td>
@@ -149,7 +149,7 @@
             </tr>
             <tr>
                 <td>In first facility?</td>
-                @if($checks['is_first'] == 0)
+                @if($checks['is_first'] == 0 || !$checks['homecontroller'])
                     <td><span class="text-success">N/A</span></td>
                 @elseif($checks['initial'] == 1)
                     <td><i class="fa fa-check text-success"></i></td>
@@ -159,7 +159,11 @@
             </tr>
             <tr>
                 <td>90 days since promotion to S1, S2, S3, or C1?</td>
-                <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['promoDays'].' days)' !!}</td>
+                @if(!$checks['homecontroller'])
+                    <td><span class="text-success">N/A</span></td>
+                @else
+                    <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['promoDays'].' days)' !!}</td>
+                @endif
             </tr>
             <tr>
                 <td>50 controlling hours since promotion to S1, S2, S3, or C1?</td>
@@ -214,15 +218,27 @@
             </tr>
             <tr>
                 <td>60 days since last addition to a visiting roster?</td>
-                <td>{!! ($checks['60days'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['visitingDays'].' days)' !!}</td>
+                @if(!$checks['hasRating'])
+                    <td><span class="text-success">N/A</span></td>
+                @else
+                    <td>{!! ($checks['60days'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['visitingDays'].' days)' !!}</td>
+                @endif
             </tr>
             <tr>
                 <td>90 days since promotion to S1, S2, S3, or C1?</td>
-                <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['promoDays'].' days)' !!}</td>
+                @if(!$checks['hasRating'])
+                    <td><span class="text-success">N/A</span></td>
+                @else
+                    <td>{!! ($checks['promo'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['promoDays'].' days)' !!}</td>
+                @endif
             </tr>
             <tr>
                 <td>50 controlling hours since promotion to S1, S2, S3, or C1?</td>
-                <td>{!! ($checks['50hrs'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['ratingHours'].' hours)' !!}</td>
+                @if(!$checks['hasRating'])
+                    <td><span class="text-success">N/A</span></td>
+                @else
+                    <td>{!! ($checks['50hrs'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>('.$checks['ratingHours'].' hours)' !!}</td>
+                @endif
             </tr>
             <tr>
                 <td>Are they eligible?</td>

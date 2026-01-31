@@ -342,7 +342,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $checks['pending'] = 0;
         $checks['initial'] = 0;
         $checks['90days'] = 0;
+        $checks['days'] = 0;
+        $checks['60days'] = 0;
+        $checks['visitingDays'] = 0;
         $checks['promo'] = 0;
+        $checks['promoDays'] = 0;
         $checks['50hrs'] = ($this->rating == 1) ? 1 : 0;
         $checks['override'] = 0;
         $checks['is_first'] = 0;
