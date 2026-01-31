@@ -150,7 +150,7 @@ class TrainingController extends Controller
         if ($facility) {
             $insByRoleQuery->where('facility', $facility);
         }
-        $insByRole = $insByRoleQuery->get();
+        $insByRole = $insByRoleQuery->with('user')->get();
 
         $insByRatingQuery = User::where('flag_homecontroller', 1)
             ->where('rating', '>=', Helper::ratingIntFromShort("I1"))
@@ -172,7 +172,7 @@ class TrainingController extends Controller
         if ($facility) {
             $mtrByRoleQuery->where('facility', $facility);
         }
-        $mtrByRole = $mtrByRoleQuery->get();
+        $mtrByRole = $mtrByRoleQuery->with('user')->get();
         $mentors = [];
         foreach ($mtrByRole as $mtr) {
             $mentors[] = $mtr->user;
@@ -304,6 +304,15 @@ class TrainingController extends Controller
         $hoursPerMonthData = ['labels' => [], 'datasets' => []];
         $datasets = [];
         $allIns = Facility::getFacTrainingStaff($facility);
+        $activeInstructors = null;
+        if ($facility) {
+            $allInsCids = [];
+            foreach ($allIns as $type => $arr) {
+                $allInsCids = array_merge($allInsCids, array_column($arr, 'cid'));
+            }
+            $activeInstructors = User::whereIn('cid', array_unique($allInsCids))->pluck('cid')->flip();
+        }
+
         for ($i = 6; $i >= 0; $i--) {
             $month = Carbon::parse('first day of this month')->subMonths($i)->format('Y-m');
             $hoursPerMonthData['labels'][] = Carbon::parse('first day of this month')->subMonths($i)->format('F');
@@ -325,7 +334,7 @@ class TrainingController extends Controller
             if ($facility) {
                 foreach ($allIns as $type => $arr) {
                     foreach ($arr as $ins) {
-                        if (!User::find($ins['cid'])) {
+                        if (!isset($activeInstructors[$ins['cid']])) {
                             continue;
                         }
                         $datasets[$ins['cid']]['label'] = $ins['name'];
@@ -336,10 +345,12 @@ class TrainingController extends Controller
                     }
                 }
             } else {
+                $instructorIds = $hoursPerMonth->pluck('instructor_id')->unique()->toArray();
+                $existingInstructors = User::whereIn('cid', $instructorIds)->pluck('cid')->flip();
                 $datasets[0]['label'] = "Total";
-                $datasets[0]['data'][] = floor($hoursPerMonth->filter(function ($q) {
-                        return !is_null(User::find($q->instructor_id));
-                    })->pluck('sum')->sum() / 3600);
+                $datasets[0]['data'][] = floor($hoursPerMonth->filter(function ($q) use ($existingInstructors) {
+                    return isset($existingInstructors[$q->instructor_id]);
+                })->pluck('sum')->sum() / 3600);
             }
         }
         foreach ($datasets as $k => $v) {
@@ -363,7 +374,7 @@ class TrainingController extends Controller
                 ->selectRaw('SUM(TIME_TO_SEC(duration)) AS total, instructor_id')
                 ->groupBy(['instructor_id']);
             foreach ($timePerInstructor->get() as $time) {
-                if (!User::find($time->instructor_id)) {
+                if (!$time->instructor) {
                     continue;
                 }
                 $timePerInstructorData['labels'][] = $time->instructor->fullname();
@@ -731,10 +742,10 @@ class TrainingController extends Controller
             $evalsPerMonth = $evalsPerMonth->where('form_id',
                 $form->id)->whereRaw("DATE_FORMAT(exam_date, '%Y-%m') = '$month'")->orderBy('month', 'ASC')->get();
             if ($facility && !$instructor) {
+                $allInsCids = array_column($allIns, 'cid');
+                $activeInstructors = User::whereIn('cid', $allInsCids)->get()->keyBy('cid');
                 foreach ($allIns as $ins) {
-                    // dd(str_replace_array('?', $evalsPerMonth->getBindings(), $evalsPerMonth->toSql()));
-                    //dd($hoursPerMonth->get()->toArray());
-                    if (!User::find($ins['cid'])) {
+                    if (!$activeInstructors->has($ins['cid'])) {
                         continue;
                     }
 
@@ -744,9 +755,12 @@ class TrainingController extends Controller
                     })->count();
                 }
             } else {
+                $instructorIds = $evalsPerMonth->pluck('instructor_id')->unique()->toArray();
+                $existingInstructors = User::whereIn('cid', $instructorIds)->pluck('cid')->flip();
                 $datasets[0]['label'] = "Total";
-                $datasets[0]['data'][] = $instructor ? $evalsPerMonth->filter(function ($e) use ($instructor) {
-                    return User::find($e->instructor_id) && $e->instructor_id == $instructor;
+                $datasets[0]['data'][] = $instructor ? $evalsPerMonth->filter(function ($e) use ($instructor,
+                    $existingInstructors) {
+                    return isset($existingInstructors[$e->instructor_id]) && $e->instructor_id == $instructor;
                 })->count() : $evalsPerMonth->count();
             }
         }
