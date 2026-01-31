@@ -76,12 +76,13 @@ class VATSIMApi2Helper {
         return json_decode($response->getBody(), true);
     }
 
-    static function syncCID (int $cid): bool {
+    static function syncCID(int $cid): bool
+    {
         $path = "/members/{$cid}";
         $fullURL = VATSIMApi2Helper::_url() . $path;
         $key = VATSIMApi2Helper::_key();
         if ($key === null) {
-           echo "VATSIM API Key not configured. Skipping sync for CID: {$cid}";
+            echo "VATSIM API Key not configured. Skipping sync for CID: {$cid}";
             return false;
         }
         $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
@@ -94,7 +95,13 @@ class VATSIMApi2Helper {
                 $response = $client->get($fullURL);
                 // If successful, process data and exit the retry loop
                 $data = json_decode($response->getBody(), true);
-                self::processMemberData($data);
+                $user = User::find($cid);
+                if ($user) {
+                    self::processMemberData($data, $user);
+                    if ($user->isDirty()) {
+                        $user->save();
+                    }
+                }
                 return true;
 
             } catch (Exception\GuzzleException $e) {
@@ -139,8 +146,11 @@ class VATSIMApi2Helper {
         return false;
     }
 
-    static function processMemberData($data) {
-        $user = User::find($data['id']);
+    static function processMemberData($data, User $user = null)
+    {
+        if (!$user) {
+            $user = User::find($data['id']);
+        }
         if (!$user) {
             // TODO: Create User
             return false;
@@ -166,7 +176,7 @@ class VATSIMApi2Helper {
         $user->rating = $data['rating'];
         $user->flag_homecontroller = $data['division_id'] == 'USA';
         $user->last_cert_sync = Carbon::now();
-        $user->save();
+
         if ($user->rating == -1) {
             $user->removeFromFacility("Automated", "Inactive", "ZZI");
             $user->removeFromVisitingFacilities("Inactive");
@@ -183,11 +193,11 @@ class VATSIMApi2Helper {
             $user->removeFromFacility("Automated", "Left Division", "ZZN");
         } else if ($user->facility == "ZZI" && $user->flag_homecontroller) {
             $user->flag_needbasic = 1;
-            $user->save();
+
             TransferHelper::forceTransfer($user, "ZAE", "Returned from Inactivity");
         } else if ($user->facility == "ZZN" && $user->flag_homecontroller) {
             $user->flag_needbasic = 1;
-            $user->save();
+
             TransferHelper::forceTransfer($user, "ZAE", "Joined division");
         } else if ($user->facility == "ZZI" && !$user->flag_homecontroller) {
             $user->removeFromFacility("Automated", "Returned from Inactivity", "ZZN");

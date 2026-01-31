@@ -45,17 +45,41 @@ class VATSIMSync extends Command {
         }
 
         $page = 0;
+        $allItems = [];
         while (true) {
             echo "Fetching page {$page} \n";
             $data = VATSIMApi2Helper::fetchOrgMemberPage($page);
             if ($data) {
-                if (count($data['items']) == 0) break;
-                foreach ($data['items'] as $item) {
-                    echo "Syncing {$item['id']} from VATSIM Org Roster \n";
-                    VATSIMApi2Helper::processMemberData($item);
+                if (count($data['items']) == 0) {
+                    break;
                 }
+                $allItems = array_merge($allItems, $data['items']);
+                if (count($data['items']) < 2500) {
+                    break;
+                } // Last page
+            } else {
+                break; // Error
             }
             $page++;
+        }
+
+        $cids = array_column($allItems, 'id');
+        $users = User::whereIn('id', $cids)->get()->keyBy('id');
+        $dirtyUsers = [];
+
+        foreach ($allItems as $item) {
+            echo "Processing {$item['id']} from VATSIM Org Roster \n";
+            if ($users->has($item['id'])) {
+                $user = $users->get($item['id']);
+                VATSIMApi2Helper::processMemberData($item, $user);
+                if ($user->isDirty()) {
+                    $dirtyUsers[] = $user;
+                }
+            }
+        }
+
+        foreach ($dirtyUsers as $user) {
+            $user->save();
         }
 
         $unsynced_division_controllers = User::where('flag_homecontroller', 1)
