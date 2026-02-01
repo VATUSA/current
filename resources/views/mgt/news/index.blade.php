@@ -3,7 +3,6 @@
 
 @section('scripts')
     <script>
-        let cobaltBaseURL = '{{ config('cobalt.url') }}';
         $.ajaxSetup({
             xhrFields: {
                 withCredentials: true
@@ -12,12 +11,8 @@
         $('#postbutton').click(function() {
                 $('#postspan').html('Saving...');
                 $.ajax({
-                    url: cobaltBaseURL + '/web/news/new',
+                    url: '/cobalt/news/new',
                     type: 'POST',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossOrigin: true,
                     data: {
                         title: $('#post_title').val(),
                         body: $('#post_body').val(),
