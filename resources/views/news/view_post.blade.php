@@ -17,9 +17,7 @@
                     {{ $post['title'] }}
                 </h3>
                 <span>by {{ $authorName }}</span>
-                <pre id="post_body">
-                    {{ $post['body'] }}
-                </pre>
+                <pre id="post_body">{{ $post['body'] }}</pre>
             </div>
         </div>
     </div>
