@@ -163,6 +163,10 @@ class ACLFlags
         return $this->isVATUSAStaff() || $this->isFacilityATMOrDATM();
     }
 
+    public function canManageNews(): bool {
+        return $this->isVATUSAStaff();
+    }
+
 
     public function canViewPolicy(Policy $policy): bool
     {

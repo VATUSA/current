@@ -21,6 +21,7 @@ class NewsController extends Controller
         $post = CobaltAPIHelper::getNewsPost($postId);
         $author = User::find($post['author_cid']);
         $authorName = $author->fullname();
-        return view('news.view_post', compact('post', 'authorName'));
+        $canDeletePost = $post['author_cid'] == \Auth::user()->cid || AuthHelper::authACL()->canManageNews();
+        return view('news.view_post', compact('post', 'authorName', 'canDeletePost'));
     }
 }
