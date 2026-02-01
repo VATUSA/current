@@ -81,6 +81,8 @@ class RoleHelperV2
         $log->log = $roleStr . " role assigned by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
         $log->save();
         DiscordHelper::assignRoles($cid);
+        $user = User::find($cid);
+        CobaltAPIHelper::syncRolesForUser($user);
     }
 
     public static function revokeRole(int $cid, string $role, string $facility)
@@ -94,6 +96,8 @@ class RoleHelperV2
         $log->log = $roleStr . " role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
         $log->save();
         DiscordHelper::assignRoles($cid);
+        $user = User::find($cid);
+        CobaltAPIHelper::syncRolesForUser($user);
 
         // Also remove from point of contact, if set
         $fac = Facility::where('id', $facility)->first();

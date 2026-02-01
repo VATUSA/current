@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\RoleHelper;
 use App\Helpers\AuthHelper;
+use App\Helpers\CobaltAPIHelper;
 use App\Helpers\RoleHelperV2;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
@@ -49,7 +50,6 @@ class RoleController extends Controller
         if (!RoleHelperV2::hasRole($user, $role, $facility)) {
             RoleHelperV2::assignRole($cid, $role, $facility);
         }
-
         return redirect("/mgt/controller/$cid#roles");
     }
 

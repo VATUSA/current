@@ -2,9 +2,11 @@
 
 use App\Classes\RoleHelper;
 use App\Helpers\AuthHelper;
+use App\Helpers\CobaltAPIHelper;
 use Auth;
 use Closure;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthLastActivity
 {
@@ -31,6 +33,11 @@ class AuthLastActivity
                 \Auth::logout();
 
                 return redirect("/")->with('error', 'You are not authorized to access the live development website.');
+            }
+            if (!$request->hasCookie("vatusa-cobalt-token")) {
+                $token = CobaltAPIHelper::getCobaltUserToken($user->cid);
+                Cookie::queue("vatusa-cobalt-token", $token, 60*24);
+                CobaltAPIHelper::syncRolesForUser($user);
             }
         }
 
