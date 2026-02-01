@@ -142,21 +142,60 @@
     @push('scripts')
         <script src="{{ asset("js/moment.js") }}" type="text/javascript"></script>
         <script type="text/javascript">
-          $(document).ready(function () {
+            function updateNews () {
+                console.log(forumPosts);
+                console.log(cobaltPosts);
+                var html = '';
+                cobaltPosts.forEach(function(e) {
+                    html = html + '<tr onClick="window.location=\'' + e.link + '\';" style="cursor: pointer">'
+                    html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
+                    html = html + '<td><p><strong>' + e.title + '</strong><br><small>' + e.date + '</small></p></td></tr>'
+                });
+                forumPosts.forEach(function(e) {
+                    html = html + '<tr onClick="window.location=\'' + e.link + '\';" style="cursor: pointer">'
+                    html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
+                    html = html + '<td><p><strong>' + e.title + '</strong><br><small>' + e.date + '</small></p></td></tr>'
+                });
+                $('#newsbody').html(html);
+            }
+            var forumPosts = [];
+            var cobaltPosts = [];
+            $(document).ready(function () {
             $.ajax({
-              url : 'https://api.vatusa.net/v2/public/news/10',
+                url : 'https://api.vatusa.net/v2/public/news/10',
                 beforeSend: function(xhr) { xhr.withCredentials = true },
-              type: 'GET'
+                type: 'GET'
             }).success(function (resp) {
-              var html = ''
-              $.each(resp.data, function (i) {
-                if(resp.data[i].subject === undefined) return
-                html = html + '<tr onClick="window.location=\'https://forums.vatusa.net/index.php?topic=' + resp.data[i].id_topic + '\';" style="cursor: pointer">'
-                html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
-                html = html + '<td><p><strong>' + resp.data[i].subject + '</strong><br><small>' + moment(moment.unix(resp.data[i].poster_time)).format('MM/DD/YYYY') + '</small></p></td></tr>'
-              })
-              $('#newsbody').html(html)
-            })
+                $.each(resp.data, function (i) {
+                    if(resp.data[i].subject === undefined) return;
+                    let post = {
+                        link: 'https://forums.vatusa.net/index.php?topic='+ resp.data[i].id_topic,
+                        title: resp.data[i].subject,
+                        date: moment(moment.unix(resp.data[i].poster_time)).format('MM/DD/YYYY'),
+                    };
+                    forumPosts.push(post);
+                })
+                updateNews();
+            });
+
+
+            $.ajax({
+                url : '/cobalt/news/10',
+                beforeSend: function(xhr) { xhr.withCredentials = true },
+                type: 'GET'
+            }).success(function (resp) {
+                $.each(resp.data, function (i) {
+                    if(resp.data[i].subject === undefined) return;
+                    let post = {
+                        link: '/news/'+ resp[i].id,
+                        title: resp[i].title,
+                        date: resp[i].post_date,
+                    };
+                    cobaltPosts.push(post);
+                })
+                updateNews();
+            });
+
             $.ajax({
               url : 'https://api.vatusa.net/v2/public/events/10',
                 beforeSend: function(xhr) { xhr.withCredentials = true },
@@ -170,8 +209,8 @@
                 html = html + '<td><p><strong>' + resp.data[i].title + '</strong><br><small>' + moment(resp.data[i].start_date).format('MM/DD/YYYY') + '</small></p></td></tr>'
               })
               $('#eventbody').html(html)
-            })
-          })
+            });
+          });
         </script>
     @endpush
 @stop
