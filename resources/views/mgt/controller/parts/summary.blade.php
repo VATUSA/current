@@ -66,13 +66,13 @@
             <li>Needs Basic ATC or RCE:
                 @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                     <a href="/mgt/controller/{{$user->cid}}/togglebasic">
-                        @endif
-                        @if ($user->flag_needbasic)
-                            Yes
-                        @else
-                            No
-                        @endif
-                        @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
+                @endif
+                    @if ($user->flag_needbasic)
+                        Yes
+                    @else
+                        No
+                    @endif
+                @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                     </a>
                 @endif
             </li>
