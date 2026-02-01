@@ -36,7 +36,9 @@ class AuthLastActivity
             }
             if (!$request->hasCookie("vatusa-cobalt-token")) {
                 $token = CobaltAPIHelper::getCobaltUserToken($user->cid);
-                Cookie::queue("vatusa-cobalt-token", $token, 60*24);
+                if (strlen($token) > 0) {
+                    Cookie::queue("vatusa-cobalt-token", $token, 60*24);
+                }
                 CobaltAPIHelper::syncRolesForUser($user);
             }
         }
