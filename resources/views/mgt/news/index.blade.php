@@ -11,7 +11,7 @@
         $('#postbutton').click(function() {
                 $('#postspan').html('Saving...');
                 $.ajax({
-                    url: '/cobalt/news/new',
+                    url: '/cobalt/web/news/new',
                     type: 'POST',
                     data: {
                         title: $('#post_title').val(),
