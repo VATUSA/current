@@ -18,17 +18,17 @@
                         title: $('#post_title').val(),
                         body: $('#post_body').val(),
                     })
-                })
-        }).success(function() {
-            $('#postspan').html('Posted');
-            setTimeout(function () {
-                $('#postspan').html('')
-            }, 3000);
-        }).error(function () {
-            $('#postspan').html('Error');
-            setTimeout(function () {
-                $('#postspan').html('')
-            }, 3000);
+                }).success(function() {
+                    $('#postspan').html('Posted');
+                    setTimeout(function () {
+                        $('#postspan').html('')
+                    }, 3000);
+                }).error(function () {
+                    $('#postspan').html('Error');
+                    setTimeout(function () {
+                        $('#postspan').html('')
+                    }, 3000);
+                });
         });
     </script>
 @endsection
