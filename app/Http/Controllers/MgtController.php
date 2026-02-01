@@ -61,7 +61,7 @@ class MgtController extends Controller
 
             /** Training Records */
             $trainingfac = $request->input('fac', null);
-            $trainingfaclist = $user->trainingRecords()->groupBy('facility_id')->get()->filter(function ($record) use (
+            $trainingfaclist = $user->trainingRecords()->with('facility')->groupBy('facility_id')->get()->filter(function ($record) use (
                 $user
             ) {
                 return AuthHelper::authACL()->canViewTrainingRecords($record->facility_id)
@@ -92,7 +92,7 @@ class MgtController extends Controller
                 $trainingFacListArray = array_merge($trainingFacListArray,
                     [$user->facility => $user->facilityObj->name]);
             }
-            foreach ($user->visits()->get() as $visit) {
+            foreach ($user->visits()->with('fac')->get() as $visit) {
                 $trainingFacListArray[$visit->fac->id] = $visit->fac->name;
             }
             $trainingRecords = AuthHelper::authACL()->canViewTrainingRecords($trainingfac)  ||
@@ -255,7 +255,7 @@ class MgtController extends Controller
         if (!AuthHelper::authACL()->isVATUSAStaff()) {
             abort(401);
         }
-        $roles = Role::where('role', 'ACE')->orderBy('cid')->get();
+        $roles = Role::where('role', 'ACE')->with('user')->orderBy('cid')->get();
 
         return view('mgt.ace', ['roles' => $roles]);
     }
