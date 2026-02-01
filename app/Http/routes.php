@@ -29,6 +29,7 @@ Route::group([
 
         return redirect("/");
     });
+    Route::get('/news/{postId}', 'NewsController@getPost');
 
     /* * * * *
      *  TMU  *
