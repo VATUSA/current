@@ -185,7 +185,6 @@
                 type: 'GET'
             }).success(function (resp) {
                 $.each(resp.data, function (i) {
-                    if(resp.data[i].subject === undefined) return;
                     let post = {
                         link: '/news/'+ resp[i].id,
                         title: resp[i].title,
