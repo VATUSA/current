@@ -14,10 +14,10 @@
                     url: '/cobalt/news/new',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: {
+                    data: JSON.stringify({
                         title: $('#post_title').val(),
                         body: $('#post_body').val(),
-                    }
+                    })
                 })
         }).success(function() {
             $('#postspan').html('Posted');
