@@ -50,10 +50,16 @@ class FacMgtController extends Controller
 
         $staffPOCOptions = [];
 
-        foreach (["ATM", "DATM", "TA", "EC", "FE", "WM"] as $role) {
-            $staffPOCOptions[$role] = [];
-            foreach (Role::where("facility", $fac)->where("role", $role)->get() as $userRole) {
-                $staffPOCOptions[$role][$userRole->user->cid] = $userRole->user->fname . " " . $userRole->user->lname;
+        $roles = Role::where('facility', $fac)
+                     ->whereIn('role', ["ATM", "DATM", "TA", "EC", "FE", "WM"])
+                     ->with('user')
+                     ->get();
+
+        $staffPOCOptions = array_fill_keys(["ATM", "DATM", "TA", "EC", "FE", "WM"], []);
+
+        foreach ($roles as $userRole) {
+            if ($userRole->user) {
+                $staffPOCOptions[$userRole->role][$userRole->user->cid] = $userRole->user->fname . " " . $userRole->user->lname;
             }
         }
 
@@ -128,10 +134,16 @@ class FacMgtController extends Controller
 
         $staffPOCOptions = [];
 
-        foreach (["ATM", "DATM", "TA", "EC", "FE", "WM"] as $role) {
-            $staffPOCOptions[$role] = [];
-            foreach (Role::where("facility", $fac)->where("role", $role)->get() as $userRole) {
-                $staffPOCOptions[$role][] = $userRole->user->cid;
+        $roles = Role::where('facility', $fac)
+                     ->whereIn('role', ["ATM", "DATM", "TA", "EC", "FE", "WM"])
+                     ->with('user')
+                     ->get();
+
+        $staffPOCOptions = array_fill_keys(["ATM", "DATM", "TA", "EC", "FE", "WM"], []);
+
+        foreach ($roles as $userRole) {
+            if ($userRole->user) {
+                $staffPOCOptions[$userRole->role][] = $userRole->user->cid;
             }
         }
 
@@ -285,10 +297,8 @@ class FacMgtController extends Controller
         //if (!RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "ATM") && !RoleHelper::hasRole(\Auth::user()->cid, \Auth::user()->facility, "DATM") && !RoleHelper::isVATUSAStaff()) abort(401);
 
         if (isset($_REQUEST['id'])) {
-            $t = Transfers::where('id', $_REQUEST['id'])->count();
+            $t = Transfers::find($_REQUEST['id']);
             if ($t) {
-                $t = Transfers::where('id', $_REQUEST['id'])->first();
-
                 return $t->reason;
             }
         }
