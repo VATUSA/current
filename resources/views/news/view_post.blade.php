@@ -9,8 +9,8 @@
                 beforeSend: function(xhr) { xhr.withCredentials = true },
                 type: 'GET'
             }).success(function (resp) {
-                $('post_title').html(resp.title);
-                $('post_body').html(resp.body);
+                $('#post_title').html(resp.title);
+                $('#post_body').html(resp.body);
             })
         })
     </script>
