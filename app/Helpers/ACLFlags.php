@@ -159,6 +159,10 @@ class ACLFlags
         }
     }
 
+    public function canPostNews(): bool {
+        return $this->isVATUSAStaff() || $this->isFacilityATMOrDATM();
+    }
+
 
     public function canViewPolicy(Policy $policy): bool
     {

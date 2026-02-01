@@ -394,6 +394,10 @@
                                         <li><a href="{{ url("mgt/mail/welcome") }}">Facility Welcome Message</a></li>
                                     @endif
 
+                                    @if(\App\Helpers\AuthHelper::authACL()->canPostNews())
+                                        <li><a href="{{ url("mgt/news") }}">News Posts</a></li>
+                                    @endif
+
                                     <!-- Division -->
                                     <li class="nav-divider"></li>
                                     <li class="dropdown-header">

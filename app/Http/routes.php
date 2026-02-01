@@ -160,6 +160,9 @@ Route::group([
             Route::get('roles', 'RoleController@getRoleList');
             Route::get('roles/{fac}', 'RoleController@getRoleList');
 
+            // * * * * * * News * * * * * *
+            Route::get('news', 'NewsController@getIndex');
+
 
             // * * * * * * AJAX * * * * * *
             Route::group(['prefix' => 'ajax'], function () {
