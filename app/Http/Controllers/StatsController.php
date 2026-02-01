@@ -15,16 +15,21 @@ class StatsController
     public function getExportOverview() {
         header("Content-Type: text/csv");
         $response = "facility,atm,datm,ta,ec,fa,wm,transfers,controllers,\n";
-        foreach (Facility::where('active', 1)->orWhere('id', 'ZAE')->orderBy('id')->get() as $facility) {
+        $facilities = Facility::where('active', 1)->orWhere('id', 'ZAE')
+            ->with(['atm_user', 'datm_user', 'ta_user', 'ec_user', 'fe_user', 'wm_user'])
+            ->withCount(['transfers' => function($q) { $q->where('status', 0); }, 'members'])
+            ->orderBy('id')->get();
+
+        foreach ($facilities as $facility) {
             $response .= $facility->id . ",";
-            $response .= (($facility->atm == 0) ? "Vacant" : $facility->atm()->fullname()) . ",";
-            $response .= (($facility->datm == 0) ? "Vacant" : $facility->datm()->fullname()) . ",";
-            $response .= (($facility->ta == 0) ? "Vacant" : $facility->ta()->fullname()) . ",";
-            $response .= (($facility->ec == 0) ? "Vacant" : $facility->ec()->fullname()) . ",";
-            $response .= (($facility->fe == 0) ? "Vacant" : $facility->fe()->fullname()) . ",";
-            $response .= (($facility->wm == 0) ? "Vacant" : $facility->wm()->fullname()) . ",";
-            $response .= Transfers::where('to', $facility->id)->where('status', 0)->count() . ",";
-            $response .= User::where('facility', $facility->id)->count() . ",\n";
+            $response .= ($facility->atm_user ? $facility->atm_user->fullname() : "Vacant") . ",";
+            $response .= ($facility->datm_user ? $facility->datm_user->fullname() : "Vacant") . ",";
+            $response .= ($facility->ta_user ? $facility->ta_user->fullname() : "Vacant") . ",";
+            $response .= ($facility->ec_user ? $facility->ec_user->fullname() : "Vacant") . ",";
+            $response .= ($facility->fe_user ? $facility->fe_user->fullname() : "Vacant") . ",";
+            $response .= ($facility->wm_user ? $facility->wm_user->fullname() : "Vacant") . ",";
+            $response .= $facility->transfers_count . ",";
+            $response .= $facility->members_count . ",\n";
         }
         return response()->make($response, 200, [
             'Content-Type' => 'text/csv',
@@ -36,31 +41,64 @@ class StatsController
     public function getExportDetails() {
         header("Content-type: text/csv");
         $response = "facility,obs,obsg30,s1,s2,s3,c1,c3,i1,i3,sup,adm,total,\n";
-        foreach (Facility::where('active', 1)->orWhere('id', 'ZAE')->orderBy('region')->orderBy('id')->get() as $fac) {
+        $facilities = Facility::where('active', 1)->orWhere('id', 'ZAE')->orderBy('region')->orderBy('id')->get();
+        $users = User::whereIn('facility', $facilities->pluck('id'))
+            ->select('facility', 'rating', 'facility_join')
+            ->get();
+
+        $stats = [];
+
+        foreach ($facilities as $fac) {
+            $stats[$fac->id] = [
+                'OBS' => 0, 'OBSg30' => 0, 'S1' => 0, 'S2' => 0, 'S3' => 0,
+                'C1' => 0, 'C3' => 0, 'I1' => 0, 'I3' => 0, 'SUP' => 0, 'ADM' => 0,
+                'total' => 0
+            ];
+        }
+
+        foreach ($users as $user) {
+            if (!isset($stats[$user->facility])) {
+                continue;
+            }
+            $s = &$stats[$user->facility];
+            $s['total']++;
+            $rating = Helper::ratingShortFromInt($user->rating);
+            switch($rating) {
+                case 'OBS':
+                    $joinDate = strtotime($user->facility_join);
+                    if (time() - $joinDate < 60*60*24*30) {
+                        $s['OBS']++;
+                    } else {
+                        $s['OBSg30']++;
+                    }
+                    break;
+                case 'S1': $s['S1']++; break;
+                case 'S2': $s['S2']++; break;
+                case 'S3': $s['S3']++; break;
+                case 'C1': $s['C1']++; break;
+                case 'C3': $s['C3']++; break;
+                case 'I1': $s['I1']++; break;
+                case 'I3': $s['I3']++; break;
+                case 'SUP': $s['SUP']++; break;
+                case 'ADM': $s['ADM']++; break;
+            }
+        }
+
+        foreach ($facilities as $fac) {
+            $s = $stats[$fac->id];
             $response .= $fac->id . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))
-                    ->whereRaw("DATE_ADD(`facility_join`, INTERVAL 30 DAY) < NOW()")->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))
-                    ->whereRaw("DATE_ADD(`facility_join`, INTERVAL 30 DAY) >= NOW()")->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S1"))->count() .
-                ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S2"))->count() .
-                ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S3"))->count() .
-                ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("C1"))->count() .
-                ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("C3"))->count() .
-                ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("I1"))->count() .
-                ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("I3"))->count() .
-                ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("SUP"))
-                    ->count() . ",";
-            $response .= User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("ADM"))
-                    ->count() . ",";
-            $response .= User::where('facility', $fac->id)->count() . ",\n";
+            $response .= $s['OBSg30'] . ",";
+            $response .= $s['OBS'] . ",";
+            $response .= $s['S1'] . ",";
+            $response .= $s['S2'] . ",";
+            $response .= $s['S3'] . ",";
+            $response .= $s['C1'] . ",";
+            $response .= $s['C3'] . ",";
+            $response .= $s['I1'] . ",";
+            $response .= $s['I3'] . ",";
+            $response .= $s['SUP'] . ",";
+            $response .= $s['ADM'] . ",";
+            $response .= $s['total'] . ",\n";
         }
         return response()->make($response, 200, [
             'Content-Type' => 'text/csv',
@@ -78,26 +116,38 @@ class StatsController
                 'C1' => [],
                 'I1' => [],
             ];
-            foreach (Facility::where('active', 1)->get() as $fac) {
-                $data['OBS'][] =
-                    ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("OBS"))
-                        ->count(), "label" => $fac->id];
-                $data['S1'][] =
-                    ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S1"))
-                        ->count(), "label" => $fac->id];
-                $data['S2'][] =
-                    ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S2"))
-                        ->count(), "label" => $fac->id];
-                $data['S3'][] =
-                    ["y" => User::where('facility', $fac->id)->where('rating', Helper::ratingIntFromShort("S3"))
-                        ->count(), "label" => $fac->id];
-                $data['C1'][] = ["y" => User::where('facility', $fac->id)->where(function ($query) {
-                    $query->where('rating', Helper::ratingIntFromShort("C1"))
-                        ->orWhere('rating', Helper::ratingIntFromShort("C3"));
-                })->count(), "label" => $fac->id];
-                $data['I1'][] =
-                    ["y" => User::where('facility', $fac->id)->where('rating', '>=', Helper::ratingIntFromShort("I1"))
-                        ->count(), "label" => $fac->id];
+            $facilities = Facility::where('active', 1)->get();
+            $userCounts = User::whereIn('facility', $facilities->pluck('id'))
+                ->select('facility', 'rating', \DB::raw('count(*) as total'))
+                ->groupBy('facility', 'rating')
+                ->get();
+
+            $stats = [];
+            foreach ($facilities as $fac) {
+                $stats[$fac->id] = ['OBS' => 0, 'S1' => 0, 'S2' => 0, 'S3' => 0, 'C1' => 0, 'I1' => 0];
+            }
+
+            foreach ($userCounts as $count) {
+                if (!isset($stats[$count->facility])) {
+                    continue;
+                }
+                $s = &$stats[$count->facility];
+                if ($count->rating == Helper::ratingIntFromShort("OBS")) $s['OBS'] += $count->total;
+                if ($count->rating == Helper::ratingIntFromShort("S1")) $s['S1'] += $count->total;
+                if ($count->rating == Helper::ratingIntFromShort("S2")) $s['S2'] += $count->total;
+                if ($count->rating == Helper::ratingIntFromShort("S3")) $s['S3'] += $count->total;
+                if ($count->rating == Helper::ratingIntFromShort("C1") || $count->rating == Helper::ratingIntFromShort("C3")) $s['C1'] += $count->total;
+                if ($count->rating >= Helper::ratingIntFromShort("I1")) $s['I1'] += $count->total;
+            }
+
+            foreach ($facilities as $fac) {
+                $s = $stats[$fac->id];
+                $data['OBS'][] = ["y" => $s['OBS'], "label" => $fac->id];
+                $data['S1'][] = ["y" => $s['S1'], "label" => $fac->id];
+                $data['S2'][] = ["y" => $s['S2'], "label" => $fac->id];
+                $data['S3'][] = ["y" => $s['S3'], "label" => $fac->id];
+                $data['C1'][] = ["y" => $s['C1'], "label" => $fac->id];
+                $data['I1'][] = ["y" => $s['I1'], "label" => $fac->id];
             }
             echo json_encode($data, JSON_HEX_APOS);
             return;
@@ -155,43 +205,22 @@ class StatsController
     }
 
     public function getIndex() {
-        $facilities = Facility::where('active', 1)->get();
+        $facilities = Facility::where('active', 1)
+            ->with(['atm_user', 'datm_user', 'ta_user', 'ec_user', 'fe_user', 'wm_user'])
+            ->withCount(['transfers' => function($q) { $q->where('status', 0); }, 'members'])
+            ->get();
         $academyCount = User::where('facility', 'ZAE')->count();
         $facilityCount = 0;
         foreach ($facilities as $facility) {
-            $transfersPending[$facility->id] = Transfers::where('to', $facility->id)->where('status', 0)->count();
-            $controllersCount[$facility->id] = User::where('facility', $facility->id)->count();
+            $transfersPending[$facility->id] = $facility->transfers_count;
+            $controllersCount[$facility->id] = $facility->members_count;
             $facilityCount += $controllersCount[$facility->id];
-            if ($facility->atm == 0) {
-                $atms[$facility->id] = "Vacant";
-            } else {
-                $atms[$facility->id] = $facility->atm()->fullname();
-            }
-            if ($facility->datm == 0) {
-                $datms[$facility->id] = "Vacant";
-            } else {
-                $datms[$facility->id] = $facility->datm()->fullname();
-            }
-            if ($facility->ta == 0) {
-                $tas[$facility->id] = "Vacant";
-            } else {
-                $tas[$facility->id] = $facility->ta()->fullname();
-            }
-            if ($facility->ec == 0) {
-                $ecs[$facility->id] = "Vacant";
-            } else {
-                $ecs[$facility->id] = $facility->ec()->fullname();
-            }
-            if ($facility->fe == 0) {
-                $fes[$facility->id] = "Vacant";
-            } else {
-                $fes[$facility->id] = $facility->fe()->fullname();
-            }
-            if ($facility->wm == 0) {
-                $wms[$facility->id] = "Vacant";
-            } else {
-                $wms[$facility->id] = $facility->wm()->fullname();
-            }
+            $atms[$facility->id] = $facility->atm_user ? $facility->atm_user->fullname() : "Vacant";
+            $datms[$facility->id] = $facility->datm_user ? $facility->datm_user->fullname() : "Vacant";
+            $tas[$facility->id] = $facility->ta_user ? $facility->ta_user->fullname() : "Vacant";
+            $ecs[$facility->id] = $facility->ec_user ? $facility->ec_user->fullname() : "Vacant";
+            $fes[$facility->id] = $facility->fe_user ? $facility->fe_user->fullname() : "Vacant";
+            $wms[$facility->id] = $facility->wm_user ? $facility->wm_user->fullname() : "Vacant";
         }
         return view('stats.index', compact('transfersPending', 'controllersCount',
             'atms', 'datms', 'tas', 'ecs', 'fes', 'wms',

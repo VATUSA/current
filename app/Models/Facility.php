@@ -50,6 +50,41 @@ class Facility extends Model
         return $this->hasOne(User::class, 'cid', 'wm')->first();
     }
 
+    public function atm_user()
+    {
+        return $this->hasOne(User::class, 'cid', 'atm');
+    }
+
+    public function datm_user()
+    {
+        return $this->hasOne(User::class, 'cid', 'datm');
+    }
+
+    public function ta_user()
+    {
+        return $this->hasOne(User::class, 'cid', 'ta');
+    }
+
+    public function ec_user()
+    {
+        return $this->hasOne(User::class, 'cid', 'ec');
+    }
+
+    public function fe_user()
+    {
+        return $this->hasOne(User::class, 'cid', 'fe');
+    }
+
+    public function wm_user()
+    {
+        return $this->hasOne(User::class, 'cid', 'wm');
+    }
+
+    public function transfers()
+    {
+        return $this->hasMany(Transfers::class, 'to', 'id');
+    }
+
     public function returnPaths()
     {
         return $this->hasMany(ReturnPaths::class);
