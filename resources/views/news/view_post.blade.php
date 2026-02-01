@@ -17,7 +17,8 @@
                     {{ $post['title'] }}
                 </h3>
                 <span>by {{ $authorName }} on {{ $post['post_date'] }}</span>
-                <pre id="post_body">{{ $post['body'] }}</pre>
+                <br />
+                <div id="post_body">{!! Illuminate\Support\Str::markdown($post['body']) !!}</div>
             </div>
         </div>
     </div>
