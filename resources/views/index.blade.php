@@ -184,7 +184,7 @@
                 beforeSend: function(xhr) { xhr.withCredentials = true },
                 type: 'GET'
             }).success(function (resp) {
-                $.each(resp.data, function (i) {
+                $.each(resp, function (i) {
                     let post = {
                         link: '/news/'+ resp[i].id,
                         title: resp[i].title,
