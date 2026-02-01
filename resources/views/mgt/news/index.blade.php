@@ -13,6 +13,7 @@
                 $.ajax({
                     url: '/cobalt/news/new',
                     type: 'POST',
+                    contentType: 'application/json',
                     data: {
                         title: $('#post_title').val(),
                         body: $('#post_body').val(),
