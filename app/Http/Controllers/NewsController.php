@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AuthHelper;
+use App\Helpers\CobaltAPIHelper;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class NewsController extends Controller
 {
@@ -16,6 +18,9 @@ class NewsController extends Controller
 
     public function getPost(Request $request, $postId = null) {
         if ($postId == null) abort(404);
-        return view('news.view_post', compact('postId'));
+        $post = CobaltAPIHelper::getNewsPost($postId);
+        $author = User::find($post['author_cid']);
+        $authorName = $author->fullname();
+        return view('news.view_post', compact('post', 'authorName'));
     }
 }

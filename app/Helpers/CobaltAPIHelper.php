@@ -56,4 +56,15 @@ class CobaltAPIHelper
         }
         return $response->getStatusCode() == 200;
     }
+
+    public static function getNewsPost($id) {
+        $path = "/api/news/{$id}";
+        $client = self::_client();
+        try {
+            $response = $client->get($path);
+        } catch (Exception\GuzzleException $e) {
+            return null;
+        }
+        return json_decode($response->getBody(), true);
+    }
 }
