@@ -16,7 +16,7 @@
                 <h3 id="post_title">
                     {{ $post['title'] }}
                 </h3>
-                <span>by {{ $authorName }}</span>
+                <span>by {{ $authorName }} on {{ $post['post_date'] }}</span>
                 <pre id="post_body">{{ $post['body'] }}</pre>
             </div>
         </div>
