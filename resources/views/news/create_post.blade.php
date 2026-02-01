@@ -41,6 +41,11 @@
                     News Post
                 </h3>
             </div>
+            <div>
+                Markdown is supported for the post body field.
+                <a href="https://www.markdownguide.org/basic-syntax/">Basic Markdown Syntax</a> contains details about Markdown.
+                HTML is not supported.
+            </div>
             <div class="panel-body">
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="post_title">Title</label>
