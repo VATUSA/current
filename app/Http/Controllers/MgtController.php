@@ -117,22 +117,22 @@ class MgtController extends Controller
                 'Basic ATC/S1 Exam' => [
                     'examInfo' => config('exams.BASIC'),
                     'assignDate' => $basicAssignmentDate ?
-                        Carbon::createFromTimestampUTC($basicAssignmentDate)->format('Y-m-d H:i') : false,
+                        Carbon::createFromTimestampUTC($basicAssignmentDate)->format('Y-m-d H:i') : null,
                     'attempts' => $moodle->getQuizAttempts(config('exams.BASIC.id'), null, $uid)],
                 'S2 Rating (TWR) Controller Exam' => [
                     'examInfo' => config('exams.S2'),
                     'assignDate' => $s2AssignmentDate ?
-                        Carbon::createFromTimestampUTC($s2AssignmentDate)->format('Y-m-d H:i') : false,
+                        Carbon::createFromTimestampUTC($s2AssignmentDate)->format('Y-m-d H:i') : null,
                     'attempts' => $moodle->getQuizAttempts(config('exams.S2.id'), null, $uid)],
                 'S3 Rating (DEP/APP) Controller Exam' => [
                     'examInfo' => config('exams.S3'),
                     'assignDate' => $s3AssignmentDate ?
-                        Carbon::createFromTimestampUTC($s3AssignmentDate)->format('Y-m-d H:i') : false,
+                        Carbon::createFromTimestampUTC($s3AssignmentDate)->format('Y-m-d H:i') : null,
                     'attempts' => $moodle->getQuizAttempts(config('exams.S3.id'), null, $uid)],
                 'C1 Rating (CTR) Controller Exam' => [
                     'examInfo' => config('exams.C1'),
                     'assignDate' => $c1AssignmentDate ?
-                        Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : false,
+                        Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : null,
                     'attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)],
             ];
 
