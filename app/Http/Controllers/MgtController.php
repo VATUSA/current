@@ -25,6 +25,7 @@ use App\Classes\RoleHelper;
 use App\Classes\EmailHelper;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; // Added Log Facade
 use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
 
 class MgtController extends Controller
@@ -43,23 +44,32 @@ class MgtController extends Controller
     public function getController(Request $request, $cid = null)
     {
         if ($cid == null) {
+            Log::info("MgtController: cid is null, returning blank view.");
             return view('mgt.controller.blank');
         }
 
         if ($cid == "Katniss") {
+            Log::info("MgtController: cid is Katniss, returning easter egg view.");
             return view('eastereggs.katniss');
         }
+
+        Log::info("MgtController: Attempting to find user with CID: $cid");
 
         $user = User::where('cid', $cid)->first();
 
         if ($user) {
+            Log::info("MgtController: User found for CID: $cid. Checking ACL.");
             if (!AuthHelper::authACL()->canViewController($user)) {
+                Log::warning("MgtController: ACL check failed for CID: $cid.");
                 abort(403);
             }
+            Log::info("MgtController: ACL check passed for CID: $cid. Checking transfer eligibility.");
             $checks = [];
             $eligible = $user->transferEligible($checks);
+            Log::info("MgtController: Transfer eligibility checked for CID: $cid. Eligible: " . ($eligible ? 'true' : 'false'));
 
             /** Training Records */
+            Log::info("MgtController: Starting training records processing for CID: $cid.");
             $trainingfac = $request->input('fac', null);
             $trainingfaclist = $user->trainingRecords()->with('facility')->groupBy('facility_id')->get()->filter(function ($record) use (
                 $user
@@ -95,23 +105,28 @@ class MgtController extends Controller
             foreach ($user->visits()->with('fac')->get() as $visit) {
                 $trainingFacListArray[$visit->fac->id] = $visit->fac->name;
             }
+            Log::info("MgtController: Finished training records and visits processing for CID: $cid.");
             $trainingRecords = AuthHelper::authACL()->canViewTrainingRecords($trainingfac)  ||
                 AuthHelper::authACL()->canViewTrainingRecords($user->facility)
                     ? $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
             $canAddTR = AuthHelper::authACL()->canCreateTrainingRecords($trainingfac)
                 && $user->cid !== Auth::user()->cid;
 
+            Log::info("MgtController: Starting Moodle interaction for CID: $cid.");
             $moodle = new VATUSAMoodle();
             try {
                 $uid = $moodle->getUserId($cid);
+                Log::info("MgtController: Moodle UID for $cid: $uid.");
             } catch (Exception $e) {
                 $uid = -1;
+                Log::error("MgtController: Failed to get Moodle UID for $cid: " . $e->getMessage());
             }
             $moodleUid = $uid;
             $basicAssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.BASIC.enrolId'));
             $s2AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.S2.enrolId'));
             $s3AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.S3.enrolId'));
             $c1AssignmentDate = $moodle->getUserEnrolmentTimestamp($uid, config('exams.C1.enrolId'));
+            Log::info("MgtController: Moodle enrolment dates retrieved for CID: $cid.");
 
             $examAttempts = [
                 'Basic ATC/S1 Exam' => [
@@ -135,8 +150,10 @@ class MgtController extends Controller
                         Carbon::createFromTimestampUTC($c1AssignmentDate)->format('Y-m-d H:i') : null,
                     'attempts' => $moodle->getQuizAttempts(config('exams.C1.id'), null, $uid)],
             ];
+            Log::info("MgtController: Moodle exam attempts processed for CID: $cid.");
 
             $assignedRoles = RoleHelperV2::assignedRoles($cid);
+            Log::info("MgtController: Roles assigned for CID: $cid. Returning view.");
 
             return view('mgt.controller.index',
                 compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingFacListArray', 'trainingfac',
@@ -146,6 +163,7 @@ class MgtController extends Controller
                 return redirect()->route('mgt.controller.index', ['cid' => $user->cid]);
             }
 
+            Log::warning("MgtController: User not found for CID: $cid (nor Discord ID). Returning 404 view.");
             return view('mgt.controller.404');
         }
     }
