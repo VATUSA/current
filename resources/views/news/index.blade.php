@@ -7,6 +7,11 @@
 @section('content')
     <div class="container">
         <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    News
+                </h3>
+            </div>
             <div class="row">
                 <div class="col-md-offset-4 col-md-4">
                     @if ($page > 1)
