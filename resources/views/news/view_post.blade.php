@@ -3,6 +3,9 @@
 
 @section('scripts')
     <script>
+        $('#editbutton').click(function() {
+            location.href = '/mgt/news/edit/{{ $post['id'] }}'
+        });
         $('#deletebutton').click(function() {
             $('#postspan').html('Saving...');
             $.ajax({
@@ -43,7 +46,8 @@
                 <span>by {{ $authorName }} on {{ $post['post_date'] }}</span>
                 <br />
                 <div id="post_body">{!! Illuminate\Support\Str::markdown($post['body']) !!}</div>
-                @if($canDeletePost)
+                @if($canManagePost)
+                    <button class="btn btn-info" id="editbutton">Edit</button>
                     <button class="btn btn-danger" id="deletebutton">Delete</button>
                     <span class="" id="postspan"></span>
                 @endif

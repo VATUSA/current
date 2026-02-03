@@ -163,6 +163,7 @@ Route::group([
             Route::get('roles/{fac}', 'RoleController@getRoleList');
 
             // * * * * * * News * * * * * *
+            Route::get('news/edit/{id}', 'NewsController@getEditPost');
             Route::get('news', 'NewsController@getCreatePost');
 
 

@@ -27,13 +27,24 @@ class NewsController extends Controller
         return view('news.create_post');
     }
 
+    public function getEditPost(Request $request, $id) {
+        if (!AuthHelper::authACL()->canPostNews()) {
+            abort(403);
+        }
+        $post = CobaltAPIHelper::getNewsPost($id);
+        if ($post['author_cid'] != \Auth::user()->cid && !AuthHelper::authACL()->canManageNews()) {
+            abort(403);
+        }
+        return view('news.update_post', compact('post'));
+    }
+
     public function getPost(Request $request, $postId = null) {
         if ($postId == null) abort(404);
         $post = CobaltAPIHelper::getNewsPost($postId);
         $author = User::find($post['author_cid']);
         $authorName = $author->fullname();
-        $canDeletePost = $post['author_cid'] == \Auth::check() &&
-            (\Auth::user()->cid || AuthHelper::authACL()->canManageNews());
-        return view('news.view_post', compact('post', 'authorName', 'canDeletePost'));
+        $canManagePost = \Auth::check() &&
+            ($post['author_cid'] == \Auth::user()->cid || AuthHelper::authACL()->canManageNews());
+        return view('news.view_post', compact('post', 'authorName', 'canManagePost'));
     }
 }
