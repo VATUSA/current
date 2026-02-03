@@ -9,7 +9,18 @@ use App\Models\User;
 
 class NewsController extends Controller
 {
-    public function getIndex(Request $request) {
+
+    public function getIndex(Request $request, $page = 1) {
+        $posts = CobaltAPIHelper::getNewsPage($page);
+
+        foreach ($posts as $k => $post) {
+            $author = User::find($post['author_cid']);
+            $post['author_name'] = $author->fullname();
+            $posts[$k] = $post;
+        }
+        return view('news.index', compact('posts', 'page'));
+    }
+    public function getCreatePost(Request $request) {
         if (!AuthHelper::authACL()->canPostNews()) {
             abort(403);
         }

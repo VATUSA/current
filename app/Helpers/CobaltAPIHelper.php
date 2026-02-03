@@ -69,4 +69,15 @@ class CobaltAPIHelper
         }
         return json_decode($response->getBody(), true);
     }
+
+    public static function getNewsPage($page) {
+        $path = "/api/news/page/{$page}";
+        $client = self::_client();
+        try {
+            $response = $client->get($path);
+        } catch (Exception\GuzzleException $e) {
+            return [];
+        }
+        return json_decode($response->getBody(), true);
+    }
 }

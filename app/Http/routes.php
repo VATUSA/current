@@ -29,7 +29,8 @@ Route::group([
 
         return redirect("/");
     });
-    Route::get('/news/{postId}', 'NewsController@getPost');
+    Route::get('/news/page/{page?}', 'NewsController@getIndex');
+    Route::get('/news/post/{postId}', 'NewsController@getPost');
 
     /* * * * *
      *  TMU  *
@@ -162,7 +163,7 @@ Route::group([
             Route::get('roles/{fac}', 'RoleController@getRoleList');
 
             // * * * * * * News * * * * * *
-            Route::get('news', 'NewsController@getIndex');
+            Route::get('news', 'NewsController@getCreatePost');
 
 
             // * * * * * * AJAX * * * * * *

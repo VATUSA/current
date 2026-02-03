@@ -186,7 +186,7 @@
             }).success(function (resp) {
                 $.each(resp, function (i) {
                     let post = {
-                        link: '/news/'+ resp[i].id,
+                        link: '/news/post/'+ resp[i].id,
                         title: resp[i].title,
                         date: resp[i].post_date,
                     };

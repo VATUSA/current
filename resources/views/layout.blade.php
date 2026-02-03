@@ -120,6 +120,12 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="/news/page/1">
+                                    <i class="fas fa-newspaper"></i>
+                                    News
+                                </a>
+                            </li>
+                            <li>
                                 <a href="https://donorbox.org/donate-to-vatusa">
                                     <i class="fas fa-heart"></i>
                                     Donate
