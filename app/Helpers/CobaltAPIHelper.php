@@ -10,6 +10,8 @@ class CobaltAPIHelper
 {
     private static function _client() {
         $client = new Client([
+            'timeout' => 10.0,
+            'connect_timeout' => 2.0,
             'base_uri' => config('cobalt.url'),
             'headers' => [
                 'X-Auth-Token' => config('cobalt.token'),
