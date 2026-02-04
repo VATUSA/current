@@ -32,6 +32,13 @@
 @endsection
 
 @section('content')
+    <style>
+        div#post_body img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -43,7 +50,7 @@
                 <h3 id="post_title">
                     {{ $post['title'] }}
                 </h3>
-                <span>by {{ $authorName }} on {{ $post['post_date'] }}</span>
+                <p>by {{ $authorName }} on {{ $post['post_date'] }}</p>
                 <br />
                 <div id="post_body">{!! Illuminate\Support\Str::markdown($post['body']) !!}</div>
                 @if($canManagePost)
