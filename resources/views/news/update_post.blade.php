@@ -38,8 +38,9 @@
             <div class="panel-body">
                 <div class="col-sm-offset-2 col-sm-10">
                     <p>Markdown is supported for the post body field.</p>
-                    <p></p><a href="https://www.markdownguide.org/basic-syntax/">Basic Markdown Syntax</a> contains details about Markdown.
+                    <p><a href="https://www.markdownguide.org/basic-syntax/">Basic Markdown Syntax</a> contains details about Markdown.
                     HTML is not supported.</p>
+                    <p><a href="https://markdownlivepreview.com/">Markdown Live Preview</a> might be useful to preview your post, if you want to check the formatting first.</p>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="post_title">Title</label>
