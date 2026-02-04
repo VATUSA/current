@@ -1,14 +1,10 @@
 <?php namespace App\Models;
 
-use App\Models\AcademyCompetency;
-use App\Classes\ExamHelper;
-use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
 use App\Classes\VATUSAMoodle;
 use Carbon\Carbon;
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
-use App\Classes\VATSIMApi2Helper;
 use Exception;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -91,35 +87,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function roles() {
         return $this->hasMany(Role::class, 'cid', 'cid');
-    }
-
-    public function getPrimaryRole()
-    {
-        for ($i = 1; $i <= 14; $i++) {
-            if (RoleHelper::hasRole($this->cid, "ZHQ", "US$i")) {
-                return $i;
-            }
-        }
-        if ($this->facility()->atm == $this->cid) {
-            return "ATM";
-        }
-        if ($this->facility()->datm == $this->cid) {
-            return "DATM";
-        }
-        if ($this->facility()->ta == $this->cid) {
-            return "TA";
-        }
-        if ($this->facility()->ec == $this->cid) {
-            return "EC";
-        }
-        if ($this->facility()->fe == $this->cid) {
-            return "FE";
-        }
-        if ($this->facility()->wm == $this->cid) {
-            return "WM";
-        }
-
-        return false;
     }
 
     public function addToFacility($facility)
@@ -495,40 +462,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function lastPromotion()
     {
         return $this->hasMany(Promotions::class, 'cid', 'cid')->latest()->first();
-    }
-
-    public function isActive()
-    {
-        $website = false;
-        $forum = false;
-        if ($this->lastActivityWebsite() >= config('tattlers.staffacitivity.days')) {
-            $website = true;
-        }
-
-        if ($this->lastActivityForum() >= config('tattlers.staffacitivity.days')) {
-            $forum = true;
-        }
-
-        if ($forum || $website) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public function getTrainingActivitySparkline()
-    {
-        $vals = [];
-        for ($i = 10; $i >= 0; $i--) {
-            $vals[] = $this->trainingRecordsIns()->selectRaw("SUM(TIME_TO_SEC(duration)) AS sum, DATE_FORMAT(session_date, '%Y-%U') AS week")
-                ->where(DB::raw("DATE_FORMAT(session_date, '%Y-%U')"), '=',
-                    Carbon::now()->subWeeks($i)->format('Y-W'))->groupBy(['week'])->orderBy('week',
-                    'ASC')->pluck('sum')->map(function ($v) {
-                    return floor($v / 3600);
-                })->pop() ?? 0;
-        }
-
-        return implode(",", $vals);
     }
 
     public function checkPromotionCriteria(
