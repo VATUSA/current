@@ -437,10 +437,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $checks['staff'] = 0;
         }
 
-        // Exempt if in ZAE
-        /*        if ($this->facility == "ZAE" && !$this->flag_needbasic && !$this->selectionEligible() && !Transfers::where('cid', $this->cid)->where('status',0)->count())
-                    return true;*/
-
         if($checks ['60days'] && $checks['hasRating'] && $checks['hasHome'] && $checks['50hrs'] && $checks['needbasic'] && $checks['promo']){
             $checks['visiting'] = 1;
         } else {
@@ -464,28 +460,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
     }
 
-    public function toggleBasic()
-    {
-        $this->flag_needbasic = (($this->flag_needbasic) ? 0 : 1);
-        $this->save();
-    }
-
-    public function selectionEligible()
-    {
-        if ($this->flag_homecontroller == 0 || $this->facility != "ZAE") {
-            return false;
-        }
-
-        $passedBasic = ExamHelper::academyPassedExam($this->cid, "basic", 0, 6);
-        if ($passedBasic && $this->flag_needbasic && $this->rating <= Helper::ratingIntFromShort("S1")) {
-            $this->flag_needbasic = 0;
-            $this->save();
-        }
-
-        return !$this->flag_needbasic && !Transfers::where('cid', $this->cid)->where('to',
-                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists() && $this->rating < Helper::ratingIntFromShort("S1");
-    }
-
     public function promotionEligible()
     {
         if (!$this->flag_homecontroller) {
@@ -499,44 +473,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             }
         }
         return false;
-    }
-
-    public function isS1Eligible()
-    {
-        if ($this->rating > Helper::ratingIntFromShort("OBS")) {
-            return false;
-        }
-
-        return !$this->flag_needbasic;
-    }
-
-    public function isS2Eligible()
-    {
-        if ($this->rating != Helper::ratingIntFromShort("S1")) {
-            return false;
-        }
-
-        return ExamHelper::academyPassedExam($this->cid, "S2") || ExamHelper::academyPassedExam($this->cid, "S2_RCE");
-    }
-
-    public function isS3Eligible()
-    {
-        if ($this->rating != Helper::ratingIntFromShort("S2")) {
-            return false;
-        }
-
-        return ExamHelper::academyPassedExam($this->cid, "S3") || ExamHelper::academyPassedExam($this->cid, "S3_RCE");
-
-    }
-
-    public function isC1Eligible()
-    {
-        if ($this->rating != Helper::ratingIntFromShort("S3")) {
-            return false;
-        }
-
-        return ExamHelper::academyPassedExam($this->cid, "C1") || ExamHelper::academyPassedExam($this->cid, "C1_RCE");
-
     }
 
     public function lastActivityWebsite()

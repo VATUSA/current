@@ -306,17 +306,21 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('my/profile') }}"><i class="fas fa-id-badge"></i> Profile</a>
                                 </li>
-                                @if(Auth::user()->selectionEligible())
-                                    <li><a href="{{ url('my/select') }}"><i class="fas fa-star"></i> Join
-                                            Facility</a>
+                                @if(Auth::user()->transferEligible())
+                                    <li>
+                                        <a href="{{ url('my/transfer') }}">
+                                            <i class="fas fa-exchange-alt"></i>
+                                            Transfer Request
+                                        </a>
                                     </li>
-                                @elseif(Auth::user()->transferEligible())
-                                    <li><a href="{{ url('my/transfer') }}"><i class="fas fa-exchange-alt"></i>
-                                            Transfer Request</a></li>
                                 @else
-                                    <li><a href="{{ url("/my/profile") }}"><i class="fas fa-question-circle"></i>
+                                    <li>
+                                        <a href="{{ url("/my/profile") }}">
+                                            <i class="fas fa-question-circle"></i>
                                             Why can I not join
-                                            a facility or transfer?</a></li>
+                                            a facility or transfer?
+                                        </a>
+                                    </li>
                                 @endif
                                 <li role="separator" class="divider"></li>
                                 <li>

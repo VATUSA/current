@@ -110,8 +110,6 @@ Route::group([
                 Route::post('profile', 'MyController@getProfile');
                 Route::post('profile/toggleBroadcast', 'MyController@toggleBroadcastEmails');
                 Route::post('profile/toggleNamePrivacy', 'MyController@toggleNamePrivacy');
-                Route::get('select', 'MyController@getSelect');
-                Route::post('select', 'MyController@postSelect');
                 Route::get('transfer', 'MyController@getTransfer');
                 Route::post('transfer/do', 'MyController@doTransfer');
                 Route::get('discord/{mode}', 'MyController@linkDiscord');
@@ -187,7 +185,6 @@ Route::group([
                     Route::get('transfer/override', 'MgtController@getControllerTransferOverride');
                     Route::put('transfer/override', 'MgtController@putControllerTransferOverride');
                     Route::get('promote', 'MgtController@getControllerPromote');
-                    Route::get('togglebasic', 'MgtController@getControllerToggleBasic');
                     Route::post('promote', 'MgtController@postControllerPromote');
                     Route::post('role/assign', 'RoleController@postAssignRole');
                     Route::post('role/revoke', 'RoleController@postRevokeRole');

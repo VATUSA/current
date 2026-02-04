@@ -250,21 +250,6 @@ class MgtController extends Controller
         return;
     }
 
-    public function getControllerToggleBasic($cid)
-    {
-        if (!AuthHelper::authACL()->isVATUSAStaff()) {
-            abort(401);
-        }
-        $user = User::find($cid);
-        if (!$user) {
-            return redirect("/mgt/controller")->with("error", "Cannot find user with that CID");
-        }
-
-        $user->toggleBasic();
-
-        return redirect("/mgt/controller/$cid")->with("success", "Basic Exam Requirement Toggled");
-    }
-
     /*
      * Ace Team
      */

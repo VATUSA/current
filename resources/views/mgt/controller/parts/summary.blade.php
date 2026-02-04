@@ -63,20 +63,6 @@
             @endif
             <li>Last Website Activity: {{$user->lastActivityWebsiteHumanReadable()}}</li>
             <br>
-            <li>Needs Basic ATC or RCE:
-                @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
-                    <a href="/mgt/controller/{{$user->cid}}/togglebasic">
-                @endif
-                    @if ($user->flag_needbasic)
-                        Yes
-                    @else
-                        No
-                    @endif
-                @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
-                    </a>
-                @endif
-            </li>
-            <br>
             @if (\App\Helpers\AuthHelper::authACL()->isVATUSAStaff() &&
                 $user->rating >= \App\Classes\Helper::ratingIntFromShort("OBS") &&
                 $user->rating < \App\Classes\Helper::ratingIntFromShort("SUP"))
