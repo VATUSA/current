@@ -387,9 +387,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $checks['homecontroller'] = 0;
         }
 
-        if (!$this->flag_needbasic) {
-            $checks['needbasic'] = 1;
-        }
         if ($this->rating == 1) {
             $checks['50hrs'] = 1;
         }
