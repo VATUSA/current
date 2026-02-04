@@ -1,11 +1,10 @@
 <?php namespace App\Http\Middleware;
 
-use App\Classes\RoleHelper;
+use App\Cobalt\CobaltAPIHelper;
 use App\Helpers\AuthHelper;
-use App\Helpers\CobaltAPIHelper;
 use Auth;
-use Closure;
 use Carbon\Carbon;
+use Closure;
 use Illuminate\Support\Facades\Cookie;
 
 class AuthLastActivity

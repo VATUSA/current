@@ -2,14 +2,13 @@
 
 namespace App\Helpers;
 
-use App\Classes\RoleHelper;
+use App\Cobalt\CobaltAPIHelper;
 use App\Models\Actions;
 use App\Models\Facility;
 use App\Models\Role;
 use App\Models\RoleTitle;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use PhpParser\Node\Expr\Array_;
 
 class RoleHelperV2
 {

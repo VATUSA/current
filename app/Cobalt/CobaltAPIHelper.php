@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Cobalt;
 use App\Models\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception;

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Cobalt\CobaltAPIHelper;
 use App\Helpers\AuthHelper;
-use App\Helpers\CobaltAPIHelper;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {

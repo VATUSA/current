@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\RoleHelper;
 use App\Helpers\AuthHelper;
-use App\Helpers\CobaltAPIHelper;
 use App\Helpers\RoleHelperV2;
-use App\Http\Controllers\Controller;
 use App\Models\Role;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
