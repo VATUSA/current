@@ -91,7 +91,7 @@ class VATSIMSync extends Command {
 
     private function processMemberPage($allItems) {
         $cids = array_column($allItems, 'id');
-        $users = User::whereIn('id', $cids)->get()->keyBy('id');
+        $users = User::whereIn('cid', $cids)->get()->keyBy('id');
         $dirtyUsers = [];
 
         foreach ($allItems as $item) {
