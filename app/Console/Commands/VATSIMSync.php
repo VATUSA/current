@@ -45,7 +45,6 @@ class VATSIMSync extends Command {
         }
 
         $page = 0;
-        $allItems = [];
         while (true) {
             echo "Fetching page {$page} \n";
             $data = VATSIMApi2Helper::fetchOrgMemberPage($page);
@@ -53,7 +52,7 @@ class VATSIMSync extends Command {
                 if (count($data['items']) == 0) {
                     break;
                 }
-                $allItems = array_merge($allItems, $data['items']);
+                $this->processMemberPage($data['items']);
                 if (count($data['items']) < 2500) {
                     break;
                 } // Last page
@@ -61,25 +60,6 @@ class VATSIMSync extends Command {
                 break; // Error
             }
             $page++;
-        }
-
-        $cids = array_column($allItems, 'id');
-        $users = User::whereIn('id', $cids)->get()->keyBy('id');
-        $dirtyUsers = [];
-
-        foreach ($allItems as $item) {
-            echo "Processing {$item['id']} from VATSIM Org Roster \n";
-            if ($users->has($item['id'])) {
-                $user = $users->get($item['id']);
-                VATSIMApi2Helper::processMemberData($item, $user);
-                if ($user->isDirty()) {
-                    $dirtyUsers[] = $user;
-                }
-            }
-        }
-
-        foreach ($dirtyUsers as $user) {
-            $user->save();
         }
 
         $unsynced_division_controllers = User::where('flag_homecontroller', 1)
@@ -107,5 +87,26 @@ class VATSIMSync extends Command {
             VATSIMApi2Helper::syncCID($controller->cid);
         }
         return 0;
+    }
+
+    private function processMemberPage($allItems) {
+        $cids = array_column($allItems, 'id');
+        $users = User::whereIn('id', $cids)->get()->keyBy('id');
+        $dirtyUsers = [];
+
+        foreach ($allItems as $item) {
+            echo "Processing {$item['id']} from VATSIM Org Roster \n";
+            if ($users->has($item['id'])) {
+                $user = $users->get($item['id']);
+                VATSIMApi2Helper::processMemberData($item, $user);
+                if ($user->isDirty()) {
+                    $dirtyUsers[] = $user;
+                }
+            }
+        }
+
+        foreach ($dirtyUsers as $user) {
+            $user->save();
+        }
     }
 }
