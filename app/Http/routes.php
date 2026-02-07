@@ -110,6 +110,8 @@ Route::group([
                 Route::post('profile', 'MyController@getProfile');
                 Route::post('profile/toggleBroadcast', 'MyController@toggleBroadcastEmails');
                 Route::post('profile/toggleNamePrivacy', 'MyController@toggleNamePrivacy');
+                Route::get('select', 'MyController@getSelect');
+                Route::post('select', 'MyController@postSelect');
                 Route::get('transfer', 'MyController@getTransfer');
                 Route::post('transfer/do', 'MyController@doTransfer');
                 Route::get('discord/{mode}', 'MyController@linkDiscord');

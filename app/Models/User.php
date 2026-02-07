@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Classes\ExamHelper;
 use App\Classes\SMFHelper;
 use App\Classes\VATUSAMoodle;
 use Carbon\Carbon;
@@ -425,6 +426,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         } else {
             return false;
         }
+    }
+
+    public function selectionEligible()
+    {
+        if ($this->flag_homecontroller == 0 || $this->facility != "ZAE") {
+            return false;
+        }
+
+        $passedBasic = ExamHelper::academyPassedExam($this->cid, "basic", 0, 6);
+
+        return $passedBasic && $this->rating == Helper::ratingIntFromShort("OBS") && !Transfers::where('cid', $this->cid)->where('to',
+                'NOT LIKE', 'ZAE')->where('to', 'NOT LIKE', 'ZZN')->exists() && $this->rating < Helper::ratingIntFromShort("S1");
     }
 
     public function promotionEligible()

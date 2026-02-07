@@ -306,7 +306,11 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('my/profile') }}"><i class="fas fa-id-badge"></i> Profile</a>
                                 </li>
-                                @if(Auth::user()->transferEligible())
+                                @if(Auth::user()->selectionEligible())
+                                    <li><a href="{{ url('my/select') }}"><i class="fas fa-star"></i> Join
+                                            Facility</a>
+                                    </li>
+                                @elseif(Auth::user()->transferEligible())
                                     <li>
                                         <a href="{{ url('my/transfer') }}">
                                             <i class="fas fa-exchange-alt"></i>
