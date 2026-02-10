@@ -35,19 +35,14 @@ class VATSIMApi2Helper {
     }
     static function updateRating(int $cid, int $rating): bool {
         $path = "/members/{$cid}";
-        $fullURL = VATSIMApi2Helper::_url() . $path;
-        $key = VATSIMApi2Helper::_key();
-        if ($key === null) {
-            return false;
-        }
         $data = [
             "id" => $cid,
             "rating" => $rating,
             "comment" => "VATUSA Rating Change Integration"
         ];
         $json = json_encode($data);
-        $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
-        $response = $client->patch($fullURL, ['body' => $json]);
+        $client = self::_client();
+        $response = $client->patch($path, ['body' => $json]);
         return $response->getStatusCode() == 200;
     }
 
@@ -79,20 +74,14 @@ class VATSIMApi2Helper {
     static function syncCID(int $cid): bool
     {
         $path = "/members/{$cid}";
-        $fullURL = VATSIMApi2Helper::_url() . $path;
-        $key = VATSIMApi2Helper::_key();
-        if ($key === null) {
-            echo "VATSIM API Key not configured. Skipping sync for CID: {$cid}";
-            return false;
-        }
-        $client = new Client(['headers' => ['Authorization' => "Token {$key}"]]);
+        $client = self::_client();
 
         $maxRetries = 3; // Maximum number of retries for 429 errors
         $retryDelaySeconds = 60; // Delay in seconds before retrying
 
         for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
             try {
-                $response = $client->get($fullURL);
+                $response = $client->get($path);
                 // If successful, process data and exit the retry loop
                 $data = json_decode($response->getBody(), true);
                 $user = User::find($cid);
