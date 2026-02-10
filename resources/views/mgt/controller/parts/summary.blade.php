@@ -137,7 +137,7 @@
                 <td>In first facility?</td>
                 @if($checks['is_first'] == 0 || !$checks['homecontroller'])
                     <td><span class="text-success">N/A</span></td>
-                @elseif($checks['initial'] == 1)
+                @elseif($checks['is_first'] == 1)
                     <td><i class="fa fa-check text-success"></i></td>
                 @else
                     <td><i class="fa fa-times text-danger"></i></td>
