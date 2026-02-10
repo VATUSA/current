@@ -327,6 +327,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             $daysSinceFirstSelection = Helper::daysSince($controllerEligibilityCache->first_selection_date);
             $checks['is_first'] = $daysSinceFirstSelection === null || $daysSinceFirstSelection < 30 ? 1 : 0;
+            if ($checks['is_first']) {
+                $completedTransferCount = Transfers::where('cid', $this->cid)
+                    ->where('status', 1)
+                    ->whereNotIn('to', ['ZAE', 'ZZI', 'ZZN'])
+                    ->count();
+                if ($completedTransferCount > 1) {
+                    $checks['is_first'] = 0;
+                }
+            }
 
             $daysSinceLastTransfer = Helper::daysSince($controllerEligibilityCache->last_transfer_date);
             $checks['90days'] = $daysSinceLastTransfer === null || $daysSinceLastTransfer >= 90 ? 1 : 0;
@@ -421,7 +430,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($checks['override']) {
             return true;
         }
-        if (($checks['50hrs'] || !$checks['hasHome']) && $checks['instructor'] && $checks['staff'] && $checks['homecontroller'] && $checks['needbasic'] && $checks['pending'] && (($checks['is_first'] && $checks['initial']) || $checks['90days']) && $checks['promo']) {
+        if (($checks['50hrs'] || !$checks['hasHome']) && $checks['instructor'] && $checks['staff'] && $checks['homecontroller'] && $checks['needbasic'] && $checks['pending'] && ($checks['is_first'] || $checks['90days']) && $checks['promo']) {
             return true;
         } else {
             return false;
