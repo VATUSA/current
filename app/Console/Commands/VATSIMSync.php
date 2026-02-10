@@ -53,9 +53,6 @@ class VATSIMSync extends Command {
                     break;
                 }
                 $this->processMemberPage($data['items']);
-                if (count($data['items']) < 2500) {
-                    break;
-                } // Last page
             } else {
                 break; // Error
             }
