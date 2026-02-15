@@ -145,13 +145,17 @@
             function updateNews () {
                 console.log(forumPosts);
                 console.log(cobaltPosts);
+                let i = 0;
                 var html = '';
                 cobaltPosts.forEach(function(e) {
+                    i++;
                     html = html + '<tr onClick="window.location=\'' + e.link + '\';" style="cursor: pointer">'
                     html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
                     html = html + '<td><p><strong>' + e.title + '</strong><br><small>' + e.date + '</small></p></td></tr>'
                 });
                 forumPosts.forEach(function(e) {
+                    if (i >= 10) return;
+                    i++;
                     html = html + '<tr onClick="window.location=\'' + e.link + '\';" style="cursor: pointer">'
                     html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
                     html = html + '<td><p><strong>' + e.title + '</strong><br><small>' + e.date + '</small></p></td></tr>'
