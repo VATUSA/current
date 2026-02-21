@@ -327,15 +327,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
             $daysSinceFirstSelection = Helper::daysSince($controllerEligibilityCache->first_selection_date);
             $checks['is_first'] = $daysSinceFirstSelection === null || $daysSinceFirstSelection < 30 ? 1 : 0;
-            if ($checks['is_first']) {
-                $completedTransferCount = Transfers::where('cid', $this->cid)
-                    ->where('status', 1)
-                    ->whereNotIn('to', ['ZAE', 'ZZI', 'ZZN'])
-                    ->count();
-                if ($completedTransferCount > 1) {
-                    $checks['is_first'] = 0;
-                }
-            }
+            $completedTransferCount = Transfers::where('cid', $this->cid)
+                ->where('status', 1)
+                ->whereNotIn('to', ['ZAE', 'ZZI', 'ZZN'])
+                ->count();
+            $checks['is_first'] = $completedTransferCount > 1 ? 0:1;
 
             $daysSinceLastTransfer = Helper::daysSince($controllerEligibilityCache->last_transfer_date);
             $checks['90days'] = $daysSinceLastTransfer === null || $daysSinceLastTransfer >= 90 ? 1 : 0;
