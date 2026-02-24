@@ -38,7 +38,6 @@ class AuthLastActivity
                 if (strlen($token) > 0) {
                     Cookie::queue("vatusa-cobalt-token", $token, 60*24);
                 }
-                CobaltAPIHelper::syncRolesForUser($user);
             }
         }
 
