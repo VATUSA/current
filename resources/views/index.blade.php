@@ -159,7 +159,7 @@
             var cobaltPosts = [];
             $(document).ready(function () {
                 $.ajax({
-                    url: '/cobalt/news/10',
+                    url: '/cobalt/news/latest/10',
                     beforeSend: function (xhr) {
                         xhr.withCredentials = true
                     },
