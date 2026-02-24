@@ -24,7 +24,7 @@ class CobaltAPIHelper
     }
 
     public static function getCobaltUserToken($cid): ?string {
-        $path = "/api/token/{$cid}";
+        $path = "/token/{$cid}";
         $client = self::_client();
         try {
             $response = $client->get($path);
@@ -44,7 +44,7 @@ class CobaltAPIHelper
     }
 
     public static function postSyncRoles($cid, $roles): bool {
-        $path = "/api/roles/legacy_sync";
+        $path = "/roles/legacy_sync";
         $client = self::_client();
         $data = [
             'cid' => $cid,
@@ -59,8 +59,20 @@ class CobaltAPIHelper
         return $response->getStatusCode() == 200;
     }
 
+    public static function postSyncRolesBulk($request): bool {
+        $path = "/roles/legacy_sync/bulk";
+        $client = self::_client();
+        $json = json_encode($request);
+        try {
+            $response = $client->post($path, [RequestOptions::BODY => $json]);
+        } catch (Exception\GuzzleException $e) {
+            return false;
+        }
+        return $response->getStatusCode() == 200;
+    }
+
     public static function getNewsPost($id) {
-        $path = "/api/news/{$id}";
+        $path = "/news/post/{$id}";
         $client = self::_client();
         try {
             $response = $client->get($path);
@@ -71,7 +83,7 @@ class CobaltAPIHelper
     }
 
     public static function getNewsPage($page) {
-        $path = "/api/news/page/{$page}";
+        $path = "/news/page/{$page}";
         $client = self::_client();
         try {
             $response = $client->get($path);
