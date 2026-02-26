@@ -351,7 +351,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $target_competency_rating = ($this->rating > 5) ? 5 : (($this->rating == 1) ? 2 : $this->rating);
             $daysSinceCompetency = Helper::daysSince($controllerEligibilityCache->competency_date);
             $checks['needbasic'] =
-                ($controllerEligibilityCache->competency_rating == $target_competency_rating
+                ($controllerEligibilityCache->competency_rating >= $target_competency_rating
                 && $daysSinceCompetency !== null
                 && $daysSinceCompetency < 180) ? 1 : 0;
         }
