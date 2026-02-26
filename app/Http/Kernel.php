@@ -30,6 +30,7 @@ class Kernel extends HttpKernel
         'guest'         => 'App\Http\Middleware\RedirectIfAuthenticated',
         'lastactivity'  => 'App\Http\Middleware\AuthLastActivity',
         'privacy-agree' => 'App\Http\Middleware\PrivacyAgree',
+        'vatusastaff'   => 'App\Http\Middleware\VATUSAStaff',
     ];
 
 }
