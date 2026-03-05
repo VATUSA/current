@@ -88,7 +88,7 @@ class VATSIMSync extends Command {
 
     private function processMemberPage($allItems) {
         $cids = array_column($allItems, 'id');
-        $users = User::whereIn('cid', $cids)->get()->keyBy('id');
+        $users = User::whereIn('cid', $cids)->get()->keyBy('cid');
         $dirtyUsers = [];
 
         foreach ($allItems as $item) {
@@ -99,6 +99,8 @@ class VATSIMSync extends Command {
                 if ($user->isDirty()) {
                     $dirtyUsers[] = $user;
                 }
+            } else {
+                echo "User {$item['id']} not found\n";
             }
         }
 
