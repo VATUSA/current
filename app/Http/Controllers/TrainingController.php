@@ -354,7 +354,7 @@ class TrainingController extends Controller
             }
         }
         foreach ($datasets as $k => $v) {
-            $colors[$k] = "00AA00";
+            $colors[$k] = Factory::create()->hexColor;
             $hoursPerMonthData['datasets'][] = [
                 'label' => $v['label'],
                 'data' => $v['data'],
@@ -380,7 +380,7 @@ class TrainingController extends Controller
                 $timePerInstructorData['labels'][] = $time->instructor->fullname();
                 $timePerInstructorData['datasets'][0]['data'][] = floor($time->total / 3600);
                 $timePerInstructorData['datasets'][0]['backgroundColor'][] =
-                    $colors[$time->instructor->cid] ?? "00AA00";
+                    $colors[$time->instructor->cid] ?? Factory::create()->hexColor;
             }
         }
 
@@ -417,7 +417,7 @@ class TrainingController extends Controller
             }
         }
         foreach ($datasets as $k => $v) {
-            $colors[$k] = "00AA00";
+            $colors[$k] = Factory::create()->hexColor;
             $evalsPerMonthData['datasets'][] = [
                 'label' => $v['label'],
                 'data' => $v['data'],
@@ -440,7 +440,7 @@ class TrainingController extends Controller
             $evalsPerFormData['labels'][] = $eval->form->name;
             $evalsPerFormData['datasets'][0]['data'][] = $eval->total;
             $evalsPerFormData['datasets'][0]['backgroundColor'][] =
-                $colors[$eval->form_id] ?? "00AA00";
+                $colors[$eval->form_id] ?? Factory::create()->hexColor;
         }
 
         //Table Data
@@ -505,7 +505,7 @@ class TrainingController extends Controller
                 }
             }
             foreach ($datasets as $k => $v) {
-                $colors[$k] = "00AA00";
+                $colors[$k] = Factory::create()->hexColor;
                 $evalsPerMonthDataIns['datasets'][] = [
                     'label' => $v['label'],
                     'data' => $v['data'],
@@ -527,7 +527,7 @@ class TrainingController extends Controller
                 $evalsPerFormDataIns['labels'][] = $eval->instructor->fullname();
                 $evalsPerFormDataIns['datasets'][0]['data'][] = $eval->total;
                 $evalsPerFormDataIns['datasets'][0]['backgroundColor'][] =
-                    $colors[$eval->instructor->cid] ?? "00AA00";
+                    $colors[$eval->instructor->cid] ?? Factory::create()->hexColor;
             }
         }
 
@@ -576,7 +576,7 @@ class TrainingController extends Controller
             }
         }
         foreach ($datasets as $k => $v) {
-            $colors[$k] = "00AA00";
+            $colors[$k] = Factory::create()->hexColor;
             $recordsPerMonthData['datasets'][] = [
                 'label' => $v['label'],
                 'data' => $v['data'],
@@ -599,7 +599,7 @@ class TrainingController extends Controller
             $recordsPerTypeData['labels'][] = $record->position;
             $recordsPerTypeData['datasets'][0]['data'][] = $record->total;
             $recordsPerTypeData['datasets'][0]['backgroundColor'][] =
-                $colors[$record->position] ?? "00AA00";
+                $colors[$record->position] ?? Factory::create()->hexColor;
         }
 
         //Table Data
