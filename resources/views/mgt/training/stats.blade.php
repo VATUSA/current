@@ -506,5 +506,6 @@
         })
         renderCharts()
       })
+      //# sourceURL=training-stats-inline.js
     </script>
 @endpush
