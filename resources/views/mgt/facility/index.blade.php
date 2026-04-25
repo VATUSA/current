@@ -200,7 +200,7 @@
                     }
                         html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
                     @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
-                        html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ', \'' + resp.data[i].fname + ' ' + resp.data[i].lname + '\')"><i class="text-danger fa fa-times"></i></a>'
+                        html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ', \'' + resp.data[i].fname.replace(/[\W]/g,'_') + ' ' + resp.data[i].lname.replace(/[\W]/g,'_') + '\')"><i class="text-danger fa fa-times"></i></a>'
                     @endif
                         html += '</td></tr>'
                 })
