@@ -111,6 +111,8 @@ class MgtController extends Controller
                     ? $user->trainingRecords()->where('facility_id', $trainingfac)->get() : [];
             $canAddTR = AuthHelper::authACL()->canCreateTrainingRecords($trainingfac)
                 && $user->cid !== Auth::user()->cid;
+            $canViewTraining = AuthHelper::authACL()->canViewTrainingRecords($trainingfac)
+                || AuthHelper::authACL()->canViewTrainingRecords($user->facility);
 
             Log::info("MgtController: Starting Moodle interaction for CID: $cid.");
             $moodle = new VATUSAMoodle();
@@ -157,7 +159,7 @@ class MgtController extends Controller
 
             return view('mgt.controller.index',
                 compact('user', 'checks', 'eligible', 'trainingRecords', 'trainingFacListArray', 'trainingfac',
-                    'trainingfacname', 'canAddTR', 'examAttempts', 'moodleUid', 'assignedRoles'));
+                    'trainingfacname', 'canAddTR', 'canViewTraining', 'examAttempts', 'moodleUid', 'assignedRoles'));
         } else {
             if ($user = User::where('discord_id', $cid)->first()) {
                 return redirect()->route('mgt.controller.index', ['cid' => $user->cid]);
