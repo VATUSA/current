@@ -61,7 +61,7 @@ jobs:
         uses: imranismail/setup-kustomize@v2
       - name: Update manifests
         run: |
-          cd $GITHUB_WORKSPACE/gitops/current
+          cd $GITHUB_WORKSPACE/gitops/current/overlays/prod
           kustomize edit set image vatusa/www=vatusa/www:${{ github.sha }}
       - name: Commit and push changes
         run: |
