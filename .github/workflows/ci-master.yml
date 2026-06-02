@@ -1,77 +1,17 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI to Docker Hub
-
-# Controls when the action will run. Triggers the workflow on push or pull request events
+name: CI to Staging
 on:
   push:
-    branches: [master, dev]
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+    branches: [main]
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      - name: Install Docker Compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose --version
-
-      - name: Build Docker Image
-        run: docker-compose build --no-cache
-      
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1 
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      
-      - name: Push to Docker Hub (Master)
-        if: contains(github.ref, 'master')
-        run: |
-          docker tag vatusa/www vatusa/www:${{ github.sha }}
-          docker push vatusa/www:${{ github.sha }}
-          
-      - name: Push to Docker Hub (Dev)
-        if: contains(github.ref, 'dev')
-        run: |
-          docker tag vatusa/www vatusa/www:dev-${{ github.sha }}
-          docker push vatusa/www:dev-${{ github.sha }}
-      
-  deploy:
-    name: Deploy to ArgoCD
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
-        with:
-          repository: 'VATUSA/gitops'
-          path: gitops
-          token: ${{ secrets.G_TOKEN }}
-      - name: Setup Kustomize
-        uses: imranismail/setup-kustomize@v2
-      - name: Update manifests
-        run: |
-          cd $GITHUB_WORKSPACE/gitops/current/overlays/prod
-          kustomize edit set image vatusa/www=vatusa/www:${{ github.sha }}
-      - name: Commit and push changes
-        run: |
-          cd $GITHUB_WORKSPACE/gitops
-          git config --global user.email "vatusa6@vatusa.net"
-          git config --global user.name "VATUSA6"
-          git add .
-          git commit -m "Update WWW image tag to ${{ github.sha }}"
-      - name: Push to gitops repo
-        run: |
-          cd $GITHUB_WORKSPACE/gitops
-          git push origin main
-
+  common-build:
+    uses: vatusa/gitops/.github/workflows/common-build.yml@main
+    with:
+      image-name: 'www'
+    secrets: inherit
+  common-dev-ci:
+    uses: vatusa/gitops/.github/workflows/common-dev-ci.yml@main
+    needs: common-build
+    with:
+      image-name: 'www'
+      kustomization-folder: 'current'
+    secrets: inherit

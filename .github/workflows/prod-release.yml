@@ -1,0 +1,15 @@
+name: Production Release
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'Commit SHA to checkout (optional)'
+        required: false
+        default: ''
+jobs:
+  common-release:
+    uses: vatusa/gitops/.github/workflows/common-release.yml@main
+    with:
+      image-name: 'www'
+      kustomization-folder: 'current'
+    secrets: inherit
