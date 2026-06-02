@@ -1,7 +1,7 @@
 name: CI to Staging
 on:
   push:
-    branches: [main]
+    branches: [master]
 jobs:
   common-build:
     uses: vatusa/gitops/.github/workflows/common-build.yml@main
