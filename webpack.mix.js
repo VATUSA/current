@@ -17,6 +17,7 @@ mix.js('resources/assets/js/privacy.js', 'public/js')
   .sass('resources/assets/sass/vatusa.scss', 'public/css')
 
 if (mix.inProduction()) {
-  mix.version();
   mix.setPublicPath("/legacy");
+  mix.setResourceRoot("/legacy");
+  mix.version();
 }
