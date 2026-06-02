@@ -18,4 +18,5 @@ mix.js('resources/assets/js/privacy.js', 'public/js')
 
 if (mix.inProduction()) {
   mix.version();
+  mix.setPublicPath("/legacy");
 }
