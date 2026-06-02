@@ -1,4 +1,4 @@
-FROM vatusa/php-nginx
+FROM vatusa/php-nginx AS app
 
 COPY ./build.sh /entrypoint.d/50-build.sh
 
