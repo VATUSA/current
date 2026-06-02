@@ -11,7 +11,7 @@
     <link href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
-    <link href="{{ mix('css/vatusa.css') }}" rel="stylesheet">
+    <link href="/legacy/{{ mix('css/vatusa.css') }}" rel="stylesheet">
     @stack('styles')
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
