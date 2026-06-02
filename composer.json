@@ -23,7 +23,7 @@
 		"phpunit/phpunit": "^9.0",
 		"filp/whoops": "~2.0",
 		"mockery/mockery": "0.9.*",
-		"symfony/dom-crawler": "~3.1",
+		"symfony/dom-crawler": ">=v5.4.52",
 		"symfony/css-selector": "~3.1",
 		"laravel/tinker": "^2.0"
 	},
