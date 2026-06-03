@@ -7,20 +7,20 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>VATUSA - @yield('title')</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-formhelpers.min.css" rel="stylesheet">
+    <link href="/legacy/css/bootstrap-formhelpers.min.css" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.9.0/css/all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
     <link href="/legacy/{{ mix('css/vatusa.css') }}" rel="stylesheet">
     @stack('styles')
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="32x32" href="/legacy/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/legacy/favicon-16x16.png">
+    <link rel="manifest" href="/legacy/site.webmanifest">
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="/js/jquery.autocomplete.js"></script>
+    <script src="/legacy/js/jquery.autocomplete.js"></script>
 
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -56,7 +56,7 @@
         <div class="layer">
             <div class="container">
                 <a href="/">
-                    <img src="/img/logo-alt.png" class="logo" alt="VATUSA Home"/>
+                    <img src="/legacy/img/logo-alt.png" class="logo" alt="VATUSA Home"/>
                 </a>
                 @if(Auth::check())
                     <div class="pull-right hidden-xs">
@@ -521,9 +521,9 @@
         crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-<script src="/js/bootbox.min.js"></script>
-<script src="/js/vatusa.js"></script>
-<script src="/js/bootstrap-formhelpers.js"></script>
+<script src="/legacy/js/bootbox.min.js"></script>
+<script src="/legacy/js/vatusa.js"></script>
+<script src="/legacy/js/bootstrap-formhelpers.js"></script>
 
 @yield('scripts')
 <!-- Global site tag (gtag.js) - Google Analytics -->
