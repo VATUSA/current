@@ -230,17 +230,17 @@
                         </ul>
                     </li>
                     @if((Auth::check() && !Auth::user()->facility()->active && Auth::user()->facility != "ZHQ") || !Auth::check())
-                        <li class="dropdown"><a href="/info/join">Join Us</a></li>
+                        <li class="dropdown"><a href="{{ url('/info/join') }}">Join Us</a></li>
                     @endif
                     @if(!Auth::check())
-                        <li><a href="/tmu/notices" target="_blank">N.T.O.S. - TMU Notices</a></li>
+                        <li><a href="{{ url('tmu/notices') }}" target="_blank">N.T.O.S. - TMU Notices</a></li>
                     @else
                         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                                 aria-expanded="false">
                                 TMU Maps
                                 <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="/tmu/notices" target="_blank">N.T.O.S. - TMU Notices</a></li>
+                                <li><a href="{{ url('tmu/notices') }}" target="_blank">N.T.O.S. - TMU Notices</a></li>
                                 <li class="divider"></li>
                                 @foreach(\App\Models\tmu_facilities::where('parent',null)->orderBy('id', 'asc')->get() as $f)
                                     @if(\App\Models\tmu_facilities::where('parent', $f->id)->count() >= 1)
@@ -248,16 +248,16 @@
                                             <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown"
                                                role="button" aria-expanded="false">{{$f->id}} - {{$f->name}}</a>
                                             <ul class="dropdown-menu">
-                                                <li><a href="/tmu/map/{{$f->id}}" target="_blank">{{$f->id}}
+                                                <li><a href="{{ url('tmu/map/'.$f->id) }}" target="_blank">{{$f->id}}
                                                         - {{$f->name}}</a></li>
                                                 @foreach(\App\Models\tmu_facilities::where('parent', $f->id)->orderBy('id', 'asc')->get() as $sf)
-                                                    <li><a href="/tmu/map/{{$sf->id}}" target="_blank">{{$sf->id}}
+                                                    <li><a href="{{ url('tmu/map/'.$f->id) }}" target="_blank">{{$sf->id}}
                                                             - {{$sf->name}}</a></li>
                                                 @endforeach
                                             </ul>
                                         </li>
                                     @else
-                                        <li><a href="/tmu/map/{{$f->id}}" target="_blank">{{$f->id}} - {{$f->name}}</a>
+                                        <li><a href="{{ url('tmu/map/'.$f->id) }}" target="_blank">{{$f->id}} - {{$f->name}}</a>
                                         </li>
                                     @endif
                                 @endforeach
