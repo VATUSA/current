@@ -230,7 +230,7 @@
                         </ul>
                     </li>
                     @if((Auth::check() && !Auth::user()->facility()->active && Auth::user()->facility != "ZHQ") || !Auth::check())
-                        <li class="dropdown"><a href="{{ url('/info/join') }}">Join Us</a></li>
+                        <li class="dropdown"><a href="{{ url('info/join') }}">Join Us</a></li>
                     @endif
                     @if(!Auth::check())
                         <li><a href="{{ url('tmu/notices') }}" target="_blank">N.T.O.S. - TMU Notices</a></li>
