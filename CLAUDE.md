@@ -7,7 +7,7 @@ repository. For how this repo relates to the other VATUSA projects, see the work
 ## Project Overview
 
 The main **VATUSA.net website** — a Laravel 12 / PHP application. It runs in parallel with
-`current_api` (api.vatusa.net) and integrates with the newer cobalt API via `app/Cobalt`.
+`vatusa/api` (api.vatusa.net).
 
 ## Build & Development Commands
 
