@@ -6,8 +6,10 @@ use App\Classes\Helper;
 use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
 use App\Classes\VATUSAMoodle;
+use App\Cobalt\CobaltSession;
 use App\Models\User;
 use Auth;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller {
     /**
@@ -24,7 +26,12 @@ class AuthController extends Controller {
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function getLogin() {
+    public function getLogin(Request $request) {
+        if ($request->hasCookie("vatusa-cobalt-token")) {
+            $token = $request->cookie("vatusa-cobalt-token");
+            $session = CobaltSession::fetchFromToken($token);
+            Auth::loginUsingId($session->user->cid, true);
+        }
         if (config('app.env', 'prod') == "dev" && !\Auth::check()) {
             /** In Development Environment */
             Auth::loginUsingId(config('app.dev_cid_login', 0), true);

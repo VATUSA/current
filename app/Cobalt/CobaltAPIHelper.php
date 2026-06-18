@@ -35,6 +35,18 @@ class CobaltAPIHelper
         return $data['token'] ?? null;
     }
 
+    public static function getUserSessionFromToken($token) {
+        $path = "/tokenSession/{$token}";
+        $client = self::_client();
+        try {
+            $response = $client->get($path);
+        } catch (Exception\GuzzleException $e) {
+            return null;
+        }
+        $data = json_decode($response->getBody(), true);
+        return $data;
+    }
+
     public static function syncRolesForUser(User $user) {
         $roles = [];
         foreach ($user->roles as $role) {
