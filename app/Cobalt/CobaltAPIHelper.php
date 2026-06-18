@@ -36,10 +36,14 @@ class CobaltAPIHelper
     }
 
     public static function getUserSessionFromToken($token) {
-        $path = "/tokenSession/{$token}";
+        $path = "/tokenSession";
         $client = self::_client();
+        $data = [
+            "token" => $token,
+        ];
+        $json = json_encode($data);
         try {
-            $response = $client->get($path);
+            $response = $client->post($path, [RequestOptions::BODY => $json]);
         } catch (Exception\GuzzleException $e) {
             return null;
         }
