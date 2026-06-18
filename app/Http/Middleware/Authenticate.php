@@ -1,5 +1,6 @@
 <?php namespace App\Http\Middleware;
 
+use App\Cobalt\CobaltSession;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
@@ -34,6 +35,14 @@ class Authenticate {
 	{
 		if ($this->auth->guest())
 		{
+            if ($request->hasCookie("vatusa-cobalt-token")) {
+                $token = $request->cookie("vatusa-cobalt-token");
+                $session = CobaltSession::fetchFromToken($token);
+                if ($session !== null) {
+                    \Auth::loginUsingId($session->user->cid, true);
+                    return $next($request);
+                }
+            }
 			if ($request->ajax())
 			{
 				return response('Unauthorized.', 401);
