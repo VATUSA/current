@@ -7,7 +7,7 @@ repository. For how this repo relates to the other VATUSA projects, see the work
 ## Project Overview
 
 The main **VATUSA.net website** — a Laravel 12 / PHP application. It runs in parallel with
-`vatusa/api` (api.vatusa.net).
+`api` (api.vatusa.net).
 
 ## Build & Development Commands
 
