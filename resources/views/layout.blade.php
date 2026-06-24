@@ -90,7 +90,7 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="https://academy.vatusa.net"><i class="fas fa-graduation-cap"></i> Academy</a></li>
-                    <li><a href="{{ url("/help/kb") }}"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="/support/faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                             aria-expanded="false">
                             Facilities
@@ -120,12 +120,6 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="/news/page/1">
-                                    <i class="fas fa-newspaper"></i>
-                                    News
-                                </a>
-                            </li>
-                            <li>
                                 <a href="https://donorbox.org/donate-to-vatusa">
                                     <i class="fas fa-heart"></i>
                                     Donate
@@ -142,13 +136,6 @@
                                 <a href="{{ url('info/policies') }}">
                                     <i class="fas fa-clipboard"></i>
                                     Policies and Downloads
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="https://forums.vatusa.net/?action=calendar">
-                                    <i class="fas fa-calendar"></i>
-                                    Events Calendar
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -190,9 +177,6 @@
                                     Airlines</a></li>
                             <li><a href="http://stats.vatsim.net/" target="_blank"><i class="fas fa-chart-line"></i>
                                     VATSIM Stats/Tracking</a></li>
-                            <li class="divider"></li>
-                            <li><a href="https://www.vatusa.net/forums/?action=calendar"><i class="fas fa-calendar"></i>
-                                    Events Calendar</a></li>
                             <li class="divider"></li>
                             <li class="dropdown-header">
                                 <h5 style="font-weight: bold; margin-top: 0; margin-bottom: 5px;">Other Resources</h5>
@@ -270,7 +254,7 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="https://status.vatusa.net">System Status</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{ url("/help/kb") }}"><i class="fas fa-question-circle"></i>
+                            <li><a href="{{ url("/support/faq") }}"><i class="fas fa-question-circle"></i>
                                     Knowledgebase/FAQ</a></li>
                             <li><a href="{{ url("/help/ticket/new") }}"><i class="fas fa-life-ring"></i> Open New
                                     Ticket</a></li>
@@ -406,10 +390,6 @@
                                     @endif
                                     @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTechConfig())
                                         <li><a href="{{ url("mgt/mail/welcome") }}">Facility Welcome Message</a></li>
-                                    @endif
-
-                                    @if(\App\Helpers\AuthHelper::authACL()->canPostNews())
-                                        <li><a href="{{ url("mgt/news") }}">News Posts</a></li>
                                     @endif
 
                                     <!-- Division -->
