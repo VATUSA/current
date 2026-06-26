@@ -2,56 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\Helper;
-use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
-use App\Classes\VATUSAMoodle;
-use App\Cobalt\CobaltSession;
-use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+
     public function __construct() {
         $this->middleware('guest');
     }
 
-    /**
-     * Show the application welcome screen to the user.
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function getLogin(Request $request) {
-        if ($request->hasCookie("vatusa-cobalt-token")) {
-            $token = $request->cookie("vatusa-cobalt-token");
-            $session = CobaltSession::fetchFromToken($token);
-            Auth::loginUsingId($session->user->cid, true);
-        }
+        // Dev auto-login when no cobalt token is present
         if (config('app.env', 'prod') == "dev" && !\Auth::check()) {
-            /** In Development Environment */
             Auth::loginUsingId(config('app.dev_cid_login', 0), true);
-            /*$moodle = new VATUSAMoodle(true);
-            $response = $moodle->request("auth_userkey_request_login_url",
-                ['user' => ['idnumber' => \Illuminate\Support\Facades\Auth::user()->cid]]);
-            $url = $response["loginurl"];
-
-            return redirect($url . "&wantsurl=" . urlencode("https://www.vatusa.devel"));*/
         }
         if (!Auth::check()) {
-            //If agreed on privacy policy, redirect to profile (opt in setting)
-            //Otherwise, normal redirect to home
             $return = request()->has('agreed') ? "agreed" : config('app.login_env');
-
+            if (config('cobalt.use_cobalt_login')) {
+                return redirect(rtrim(config('cobalt.login_url'), '/') . '/?' . $return);
+            }
             return redirect()->guest(config('app.loginUrl') . "/?" . $return);
-        } else {
-            SMFHelper::setPermissions(Auth::user()->cid);
         }
-
+        SMFHelper::setPermissions(Auth::user()->cid);
         return redirect()->intended('/');
     }
 
