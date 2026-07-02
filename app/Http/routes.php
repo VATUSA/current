@@ -26,8 +26,16 @@ Route::group([
     Route::get('/login', 'AuthController@getLogin');
     Route::get('/logout', function () {
         \Auth::logout();
-
-        return redirect("/");
+        if (config('cobalt.use_cobalt_login')) {
+            // Cobalt logout clears the JWT cookie at the source and redirects to POST_LOGIN_URL
+            return redirect(rtrim(config('cobalt.login_url'), '/') . '/logout');
+        }
+        // Clear the cobalt cookie locally so the bridge doesn't silently re-log the user in
+        return redirect('/')->withCookie(\Cookie::forget(
+            config('cobalt.cookie_name', 'vatusa-cobalt-token'),
+            '/',
+            config('cobalt.cookie_domain', '')
+        ));
     });
     Route::get('/news/page/{page?}', 'NewsController@getIndex');
     Route::get('/news/post/{postId}', 'NewsController@getPost');
