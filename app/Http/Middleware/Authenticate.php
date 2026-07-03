@@ -21,7 +21,8 @@ class Authenticate {
 				return response('Unauthorized.', 401);
 			}
 			if (config('cobalt.use_cobalt_login')) {
-				return redirect(config('cobalt.login_url'));
+				$callback = rtrim(config('app.url'), '/') . '/auth/callback';
+				return redirect(rtrim(config('cobalt.login_url'), '/') . '?redirect=' . urlencode($callback));
 			}
 			return redirect()->guest('login');
 		}
