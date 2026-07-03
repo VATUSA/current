@@ -41,14 +41,6 @@ class CobaltSession
         $cid = (int) ($json['user']['cid'] ?? 0);
         return $cid > 0 ? $cid : null;
     }
-
-    public static function fetchFromToken($token): ?CobaltSession {
-        $json = CobaltAPIHelper::getUserSessionFromToken($token);
-        if ($json === null) {
-            return null;
-        }
-        return new CobaltSession($json);
-    }
 }
 
 class GlobalPermission {
