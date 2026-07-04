@@ -1,27 +1,17 @@
 @extends('layout')
 @section('title', 'Welcome')
 @section('content')
-    @if(!empty($banners) && !empty($ids))
-        <div class="c-wrapper">
-            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner" role="listbox">
-                    @for($i = 0 ; $i < count($banners) ; $i++)
-                        <div class="item{{($i==0)? " active":""}}">
-                            <a href="https://forums.vatusa.net/index.php?topic={{$ids[$i]}}.0"><img
-                                        src="{{$banners[$i]}}"
-                                        alt="Event Banner"></a>
-                            <div class="carousel-caption"></div>
-                        </div>
-                    @endfor
-                </div>
-            </div>
-        </div>
-    @endif
     <div class="container" id="home-container">
         <br>
         <div class="row">
-            <div class="col-md-12 alert alert-info link-underline" style="margin-bottom: 0">
-                <p>
+            <div class="col-md-12 link-underline" style="margin-bottom: 16px; padding: 24px 28px; font-size: 1.15em; border: 3px solid #B22234; border-radius: 6px; background: linear-gradient(135deg, #f8f9ff 0%, #eef2ff 100%); box-shadow: 0 2px 8px rgba(0,0,0,0.10);">
+                <div style="margin-bottom: 16px; padding: 14px 18px; background: #B22234; color: #fff; border-radius: 4px; font-size: 1.12em; font-weight: 600;">
+                    <i class="fa fa-info-circle"></i>
+                    You are viewing the <strong>legacy VATUSA site</strong>. The site is being migrated to a new platform &mdash; visit
+                    <a href="https://www.vatusa.net/" style="color: #fff; text-decoration: underline; font-weight: 700;">www.vatusa.net</a>
+                    for the latest content.
+                </div>
+                <p style="margin-bottom: 0;">
                     VATUSA is a division of the <a href="http://www.vatsim.net/">VATSIM</a> Americas region comprising
                     of almost all airspace operated by the real
                     world Federal Aviation Administration. The airspace comprises of 21 Air Route Traffic Control
@@ -106,93 +96,5 @@
                 </div>
             </div>
         @endif
-        <div class="row" id="bulletins">
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            Recent News
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <table id="newsbody">
-                            <tr>
-                                <td><i class="fa fa-cog fa-spin"></i> Loading...</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            Upcoming Events
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <table id="eventbody">
-                            <tr>
-                                <td><i class="fa fa-cog fa-spin"></i> Loading...</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-    @push('scripts')
-        <script src="{{ asset("js/moment.js") }}" type="text/javascript"></script>
-        <script type="text/javascript">
-            function updateNews() {
-                let i = 0;
-                var html = '';
-                cobaltPosts.forEach(function (e) {
-                    i++;
-                    html = html + '<tr onClick="window.location=\'' + e.link + '\';" style="cursor: pointer">'
-                    html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-file-alt fa-2x"></i></td>'
-                    html = html + '<td><p><strong>' + e.title + '</strong><br><small>' + e.date + '</small></p></td></tr>'
-                });
-                $('#newsbody').html(html);
-            }
-
-            var cobaltPosts = [];
-            $(document).ready(function () {
-                $.ajax({
-                    url: '/cobalt/news/latest/10',
-                    beforeSend: function (xhr) {
-                        xhr.withCredentials = true
-                    },
-                    type: 'GET'
-                }).success(function (resp) {
-                    $.each(resp, function (i) {
-                        let post = {
-                            link: '/news/post/' + resp[i].id,
-                            title: resp[i].title,
-                            date: resp[i].post_date,
-                        };
-                        cobaltPosts.push(post);
-                    })
-                    updateNews();
-                });
-
-                $.ajax({
-                    url: 'https://api.vatusa.net/v2/public/events/10',
-                    beforeSend: function (xhr) {
-                        xhr.withCredentials = true
-                    },
-                    type: 'GET',
-                }).success(function (resp) {
-                    var html = ''
-                    $.each(resp.data, function (i) {
-                        if (resp.data[i].title === undefined) return
-                        html = html + '<tr onClick="window.location=\'https://forums.vatusa.net/index.php?topic=' + resp.data[i].id_topic + '\';" style="cursor: pointer">'
-                        html = html + '<td style="padding-right: 8px; padding-top: 6px" valign="top"><i class="fa fa-plane fa-2x"></i></td>'
-                        html = html + '<td><p><strong>' + resp.data[i].title + '</strong><br><small>' + moment(resp.data[i].start_date).format('MM/DD/YYYY') + '</small></p></td></tr>'
-                    })
-                    $('#eventbody').html(html)
-                });
-            });
-        </script>
-    @endpush
 @stop
