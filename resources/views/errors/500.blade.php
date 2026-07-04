@@ -7,7 +7,7 @@
         <div class="row">
             <div class="alert alert-warning">
                 <div class="row">
-                    <div class="col-md-2"><img src="/img/hal.png" style="width: 100%"></div>
+                    <div class="col-md-2"><img src="/legacy/img/hal.png" style="width: 100%"></div>
                     <div class="col-md-10">I'm sorry, Dave. I'm afraid I can't do that.<br>
                     @if(app()->bound('sentry') && !empty(Sentry::getLastEventID()))
                         <!-- Sentry JS SDK 2.1.+ required -->

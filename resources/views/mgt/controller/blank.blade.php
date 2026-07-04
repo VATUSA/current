@@ -18,7 +18,7 @@
             </div>
         </div>
     </div>
-    <script src="/js/jquery.autocomplete.js"></script>
+    <script src="/legacy/js/jquery.autocomplete.js"></script>
     <script>
         function viewXfer(id) {
             $.post( "{{url('mgt/ajax/transfer/reason')}}", { id: id }, function( data ) {
@@ -39,7 +39,7 @@
                 bootbox.alert("CID must be numbers only");
                 return;
             }
-            window.location = "/mgt/controller/" + cid;
+            window.location = "/legacy/mgt/controller/" + cid;
         });
 
         $('#cidsearch').devbridgeAutocomplete({

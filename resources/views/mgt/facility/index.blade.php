@@ -154,7 +154,7 @@
     <script>
         $(document).ready(function () {
             $('#facmgt').change(function () {
-                window.location = '/mgt/facility/' + $('#facmgt').val()
+                window.location = '/legacy/mgt/facility/' + $('#facmgt').val()
             })
 
             @if(\App\Helpers\AuthHelper::authACL()->canPromoteForFacility($fac))
@@ -196,9 +196,9 @@
                     else html += '<td><span class="text-muted">N/A</span></td>'
                     html += '<td class="text-right">'
                     if (resp.data[i].promotion_eligible == true && ((resp.data[i].rating == 1 && advance == 2) || advance == 1)) {
-                        html += '<a href="/mgt/controller/' + resp.data[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
+                        html += '<a href="/legacy/mgt/controller/' + resp.data[i].cid + '/promote"><i class="text-yellow fa fa-star"></i></a> &nbsp; '
                     }
-                        html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
+                        html += '<a href="/legacy/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
                     @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
                         html += ' &nbsp; <a href="#" onClick="deleteController(' + resp.data[i].cid + ', \'' + resp.data[i].fname.replace(/[\W]/g,'_') + ' ' + resp.data[i].lname.replace(/[\W]/g,'_') + '\')"><i class="text-danger fa fa-times"></i></a>'
                     @endif
@@ -233,7 +233,7 @@
                     var date = new Date(resp.data[i].facility_join.replace(/\s/, 'T'))
                     html += '<td>' + (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + '</td>'
                     html += '<td class="text-right">'
-                    html += '<a href="/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
+                    html += '<a href="/legacy/mgt/controller/' + resp.data[i].cid + '"><i class="fa fa-search"></i></a>'
                     @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
                         html += ' &nbsp; <a href="#" onClick="deleteVisitor(' + resp.data[i].cid + ', \'' + resp.data[i].fname.replace(/'/g, "\\'") + ' ' + resp.data[i].lname.replace(/'/g, "\\'") + '\')"><i class="text-danger fa fa-times"></i></a>'
                     @endif
@@ -476,5 +476,5 @@
         })
         @endif
     </script>
-    <script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="/legacy/js/jquery.tablesorter.min.js"></script>
 @stop

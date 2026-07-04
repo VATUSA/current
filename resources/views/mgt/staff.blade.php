@@ -199,7 +199,7 @@
         bootbox.confirm('Vacate the ' + roletext + ' position?', function (result) {
           if (result === true) {
             $.ajax({
-              url : '/mgt/staff/' + role,
+              url : '/legacy/mgt/staff/' + role,
               type: 'DELETE'
             }).success(function () {
               location.reload()
@@ -223,7 +223,7 @@
         var role = $('#roleHidden').val()
 
         $.ajax({
-          url : '/mgt/staff/' + role,
+          url : '/legacy/mgt/staff/' + role,
           type: 'PUT',
           data: {
             cid: cid,

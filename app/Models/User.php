@@ -103,7 +103,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($this->rating >= Helper::ratingIntFromShort("I1")) {
             SMFHelper::createPost(7262, 82,
                 "User Addition: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") to " . $this->facility,
-                "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was added to " . $this->facility . " and holds a higher rating.\n\nPlease check for demotion requirements.\n\n[url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
+                "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was added to " . $this->facility . " and holds a higher rating.\n\nPlease check for demotion requirements.\n\n[url=https://www.vatusa.net/legacy/mgt/controller/" . $this->cid . "]Member Management[/url]");
         }
 
         $fc = 0;
@@ -127,7 +127,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($fc) {
             SMFHelper::createPost(7262, 82,
                 "Staff discrepancy on transfer: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating),
-                "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was added to facility " . $this->facility . " but holds a staff position at " . $oldfac->id . ".\n\nPlease check for accuracy.\n\n[url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url] [url=https://www.vatusa.net/mgt/facility/" . $oldfac->id . "]Facility Management for Old Facility[/url] [url=https://www.vatusa.net/mgt/facility/" . $this->facility . "]Facility Management for New Facility[/url]");
+                "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was added to facility " . $this->facility . " but holds a staff position at " . $oldfac->id . ".\n\nPlease check for accuracy.\n\n[url=https://www.vatusa.net/legacy/mgt/controller/" . $this->cid . "]Member Management[/url] [url=https://www.vatusa.net/legacy/mgt/facility/" . $oldfac->id . "]Facility Management for Old Facility[/url] [url=https://www.vatusa.net/legacy/mgt/facility/" . $this->facility . "]Facility Management for New Facility[/url]");
         }
 
         if ($facility->active) {
@@ -251,7 +251,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($this->rating >= Helper::ratingIntFromShort("I1")) {
             SMFHelper::createPost(7262, 82,
                 "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility,
-                "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");
+                "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/legacy/mgt/controller/" . $this->cid . "]Member Management[/url]");
         }
         // if ($this->rating >= Helper::ratingIntFromShort("I1"))
         // SMFHelper::createPost(7262, 82, "User Removal: " . $this->fullname() . " (" . Helper::ratingShortFromInt($this->rating) . ") from " . $facility, "User " . $this->fullname() . " (" . $this->cid . "/" . Helper::ratingShortFromInt($this->rating) . ") was removed from $facility and holds a higher rating.  Please check for demotion requirements.  [url=https://www.vatusa.net/mgt/controller/" . $this->cid . "]Member Management[/url]");

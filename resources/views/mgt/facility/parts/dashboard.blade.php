@@ -14,13 +14,13 @@
     <hr>
     <h4>
         Facility Staff Point of Contact
-        <a href="/mgt/roles/{{$fac}}">
+        <a href="/legacy/mgt/roles/{{$fac}}">
             <button type="submit" class="btn btn-info">
                 <i class="fa fa-wrench"></i> View All Facility Roles
             </button>
         </a>
     </h4>
-    <form action="/mgt/facility/{{$fac}}/staffPOC" method="POST">
+    <form action="/legacy/mgt/facility/{{$fac}}/staffPOC" method="POST">
         @endif
         <div id="staff-table">
             <table class="table table-hover">

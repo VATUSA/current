@@ -5,7 +5,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    <a href="/mgt/checklists">Checklists</a> <i class="fa fa-angle-double-right"></i> {{$cl->name}} Checklist Editor
+                    <a href="/legacy/mgt/checklists">Checklists</a> <i class="fa fa-angle-double-right"></i> {{$cl->name}} Checklist Editor
                 </h3>
             </div>
             <div class="panel-body">
@@ -30,7 +30,7 @@
                         async: false, // Prevent quick sorts from processing out of order.
                         data: data,
                         type: 'POST',
-                        url: '/mgt/checklists/{{$cl->id}}/order'
+                        url: '/legacy/mgt/checklists/{{$cl->id}}/order'
                     });
                 }
             });
@@ -41,7 +41,7 @@
             bootbox.confirm("Confirm deletion of checklist item '" + $('#name_' + id).html() + "'?", function (result) {
                 if (result) {
                     $.ajax({
-                        url: '/mgt/checklists/{{$cl->id}}/' + id,
+                        url: '/legacy/mgt/checklists/{{$cl->id}}/' + id,
                         type: 'DELETE',
                         success: function() {
                             $('#cl_' + id).remove();
@@ -59,7 +59,7 @@
                     if (result === null) return;
                     waitingDialog.show("Creating...");
                     $.ajax({
-                        url: '/mgt/checklists/' + id,
+                        url: '/legacy/mgt/checklists/' + id,
                         type: 'PUT',
                         data: { name: result },
                         success:function(data) {
@@ -80,7 +80,7 @@
 
                     waitingDialog.show("Saving...");
                     $.ajax({
-                        url: '/mgt/checklists/{{$cl->id}}/' + id,
+                        url: '/legacy/mgt/checklists/{{$cl->id}}/' + id,
                         data: {name: result},
                         type: 'POST',
                         success: function (data) {

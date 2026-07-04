@@ -9,10 +9,10 @@
             )
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <a href="/help/ticket/myassigned" class="btn btn-primary">My Assigned Tickets</a>
-                    <a href="/help/ticket/open" class="btn btn-success">Open Tickets</a>
-                    <a href="/help/ticket/closed" class="btn btn-info">Closed Tickets</a>
-                    <a href="/help/ticket/search" class="btn btn-warning">Search Tickets</a>
+                    <a href="/legacy/help/ticket/myassigned" class="btn btn-primary">My Assigned Tickets</a>
+                    <a href="/legacy/help/ticket/open" class="btn btn-success">Open Tickets</a>
+                    <a href="/legacy/help/ticket/closed" class="btn btn-info">Closed Tickets</a>
+                    <a href="/legacy/help/ticket/search" class="btn btn-warning">Search Tickets</a>
                 </div>
             </div>
 
@@ -23,7 +23,7 @@
                 <h3 class="panel-title">Search Tickets</h3>
             </div>
             <div class="panel-body">
-                <form action="/help/ticket/search" method="post" class="form-horizontal">
+                <form action="/legacy/help/ticket/search" method="post" class="form-horizontal">
                     <input type="hidden" name="_token" value="{{csrf_token()}}">
                     <div class="form-group">
                         <label for="searchCID" class="col-sm-2 control-label">Submitting CID</label>

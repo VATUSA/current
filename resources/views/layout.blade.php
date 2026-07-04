@@ -13,7 +13,7 @@
           rel="stylesheet">
     <link href="/legacy/{{ mix('css/vatusa.css') }}" rel="stylesheet">
     @stack('styles')
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/legacy/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/legacy/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/legacy/favicon-16x16.png">
     <link rel="manifest" href="/legacy/site.webmanifest">
@@ -55,7 +55,7 @@
     <div class="head">
         <div class="layer">
             <div class="container">
-                <a href="/">
+                <a href="/legacy/">
                     <img src="/legacy/img/logo-alt.png" class="logo" alt="VATUSA Home"/>
                 </a>
                 @if(Auth::check())
@@ -254,7 +254,7 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="https://status.vatusa.net">System Status</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{ url("/support/faq") }}"><i class="fas fa-question-circle"></i>
+                            <li><a href="/support/faq"><i class="fas fa-question-circle"></i>
                                     Knowledgebase/FAQ</a></li>
                             <li><a href="{{ url("/help/ticket/new") }}"><i class="fas fa-life-ring"></i> Open New
                                     Ticket</a></li>
@@ -491,7 +491,7 @@
             Network (VATSIM) and may not be used for real-world navigation or aviation purposes and doing so could be a
             violation of federal law.</p>
         <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i
-                        class="fab fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i
+                        class="fab fa-github"></i> Open Source on GitHub</a> | <a href="/legacy/info/privacy"><i
                         class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>

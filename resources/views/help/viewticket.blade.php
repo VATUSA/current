@@ -10,10 +10,10 @@
             )
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <a href="/help/ticket/myassigned" class="btn btn-primary">My Assigned Tickets</a>
-                    <a href="/help/ticket/open" class="btn btn-success">Open Tickets</a>
-                    <a href="/help/ticket/closed" class="btn btn-info">Closed Tickets</a>
-                    <a href="/help/ticket/search" class="btn btn-warning">Search Tickets</a>
+                    <a href="/legacy/help/ticket/myassigned" class="btn btn-primary">My Assigned Tickets</a>
+                    <a href="/legacy/help/ticket/open" class="btn btn-success">Open Tickets</a>
+                    <a href="/legacy/help/ticket/closed" class="btn btn-info">Closed Tickets</a>
+                    <a href="/legacy/help/ticket/search" class="btn btn-warning">Search Tickets</a>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
                                 <label class="col-sm-2 control-label">Status:</label>
                                 <div class="col-sm-10">
                                     <p class="form-control-static"><a
-                                            href="/help/ticket/{{$ticket->id}}/status">{{$ticket->status}}</a></p>
+                                            href="/legacy/help/ticket/{{$ticket->id}}/status">{{$ticket->status}}</a></p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -120,7 +120,7 @@
                             <div class="panel-body">
                                 <div class="col-lg-2">
                                     @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
-                                        <a href="/mgt/controller/{{$ticket->cid}}" target="_blank">
+                                        <a href="/legacy/mgt/controller/{{$ticket->cid}}" target="_blank">
                                             @endif
                                             {{$ticket->submitter->fullname()}}
                                             @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets())
@@ -142,7 +142,7 @@
                                 <div class="panel-body">
                                     <div class="col-lg-2">
                                         @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets($ticket->facility))
-                                            <a href="/mgt/controller/{{$r->cid}}">
+                                            <a href="/legacy/mgt/controller/{{$r->cid}}">
                                                 @endif
                                                 {{$r->submitter->fullname()}}
                                                 @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityTickets())
@@ -223,7 +223,7 @@
           $('#tAssignTo').prop('disabled', 'disabled')
           $.ajax({
             method: 'GET',
-            url   : '/ajax/help/staffc/' + $('#tFacility').val()
+            url   : '/legacy/ajax/help/staffc/' + $('#tFacility').val()
           }).done(function (r) {
             $('#tAssignTo').replaceOptions($.parseJSON(r))
             $('#tAssignTo').prop('disabled', false)
@@ -247,7 +247,7 @@
           // Post Ticket Data
           $.ajax({
             method: 'POST',
-            url   : '/help/ticket/ajax/{{$ticket->id}}',
+            url   : '/legacy/help/ticket/ajax/{{$ticket->id}}',
             data  : {facility: $('#tFacility').val(), assign: $('#tAssignTo').val()}
           }).done(function () {
             location.reload(true)
@@ -264,7 +264,7 @@
           // Post Ticket Data
           $.ajax({
             method: 'POST',
-            url   : '/help/ticket/ajax/{{$ticket->id}}',
+            url   : '/legacy/help/ticket/ajax/{{$ticket->id}}',
             data  : {note: $('#notes').val()}
           }).done(function (r) {
             waitingDialog.hide()

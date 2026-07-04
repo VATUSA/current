@@ -15,7 +15,7 @@
                             Select Facility/Sector
                         </label>
                         <select class="form-control" id="sectorselect" name="tmu_facility_id" autocomplete="off"
-                                onchange="window.location = '/tmu/notices/'+this.value">
+                                onchange="window.location = '/legacy/tmu/notices/'+this.value">
                             <option @if(!$sector) selected @endif value="">-- All Sectors --</option>
                             @foreach($facilitiesArr as $fac => $sect)
                                 <optgroup label="{{ \App\Classes\Helper::facShtLng($fac) }}">

@@ -20,7 +20,7 @@
                             </tr>
                             @foreach ($roles as $role)
                                 <tr>
-                                    <td><a href="/mgt/controller/{{ $role->cid }}">{{ $role->cid }}</a></td>
+                                    <td><a href="/legacy/mgt/controller/{{ $role->cid }}">{{ $role->cid }}</a></td>
                                     <td>{{ $role->user()->first()->fullname() }}</td>
                                     <td>{{ $role->facility }}</td>
                                     <td>{{ $role->role }}</td>

@@ -46,7 +46,7 @@
                 bootbox.alert("CID must be numbers only");
                 return;
             }
-            window.location = "/mgt/controller/" + cid;
+            window.location = "/legacy/mgt/controller/" + cid;
         });
     </script>
 

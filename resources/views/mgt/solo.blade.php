@@ -35,7 +35,7 @@
                             </td>
                         </tr>
                     @endforeach
-                    <form action="/mgt/solo" id="add-solo-form">
+                    <form action="/legacy/mgt/solo" id="add-solo-form">
                         <input type="hidden" name="_token" value="{{csrf_token()}}">
                         <tr>
                             <td colspan="2"><input type="text" name="cid" id="cidsearch" placeholder="CID or Last Name"

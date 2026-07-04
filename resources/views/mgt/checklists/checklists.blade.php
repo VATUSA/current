@@ -14,7 +14,7 @@
                         <li id="cl_{{$b->id}}">
                             <i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteList({{$b->id}})"></i>&nbsp;&nbsp;
                             <i class="fas fa-pencil-alt text-info" onClick="renameList({{$b->id}})"></i>
-                            <a href="/mgt/checklists/{{$b->id}}"><span id="name_{{$b->id}}">{{$b->name}}</span></a></li>
+                            <a href="/legacy/mgt/checklists/{{$b->id}}"><span id="name_{{$b->id}}">{{$b->name}}</span></a></li>
                     @endforeach
                 </ul>
                 <button class="btn btn-success" onClick="newList()">New Checklist</button>
@@ -31,7 +31,7 @@
                         async: false, // Prevent quick sorts from processing out of order.
                         data: data,
                         type: 'POST',
-                        url: '/mgt/checklists/order'
+                        url: '/legacy/mgt/checklists/order'
                     }).done(function() { waitingDialog.hide(); });
                 }
             });
@@ -42,7 +42,7 @@
             bootbox.confirm("Confirm deletion of checklist?", function (result) {
                 if (result) {
                     $.ajax({
-                        url: '/mgt/checklists/' + id,
+                        url: '/legacy/mgt/checklists/' + id,
                         type: 'DELETE',
                         success: function() {
                             $('#cl_' + id).remove();
@@ -54,10 +54,10 @@
 
         function newList() {
             $.ajax({
-                url: '/mgt/checklists',
+                url: '/legacy/mgt/checklists',
                 type: 'PUT',
                 success: function(data) {
-                    $('#cbtblocksortable').append('<li id="cl_' + data + '"><i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteList(' + data + ')"></i>&nbsp;&nbsp;<i class="fas fa-pencil-alt text-info" onClick="renameList(' + data + ')"></i> <a href="/mgt/checklists/' + data + '"><span id="name_' + data + '">New Training Checklist</span></a></li>');
+                    $('#cbtblocksortable').append('<li id="cl_' + data + '"><i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteList(' + data + ')"></i>&nbsp;&nbsp;<i class="fas fa-pencil-alt text-info" onClick="renameList(' + data + ')"></i> <a href="/legacy/mgt/checklists/' + data + '"><span id="name_' + data + '">New Training Checklist</span></a></li>');
                 }
             });
         }
@@ -70,7 +70,7 @@
                     if (result === null) return;
                     waitingDialog.show("Saving...");
                     $.ajax({
-                        url: '/mgt/checklists/' + id,
+                        url: '/legacy/mgt/checklists/' + id,
                         data: {name: result},
                         type: 'POST',
                         success: function (data) {

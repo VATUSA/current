@@ -57,7 +57,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#fac').change(function () {
-                window.location = "/mgt/tmu/" + $('#fac').val();
+                window.location = "/legacy/mgt/tmu/" + $('#fac').val();
             });
         });
     </script>

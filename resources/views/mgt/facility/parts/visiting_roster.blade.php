@@ -9,7 +9,7 @@
 @endif
 <br>
 <div id="vrosterloading">
-    <center><img src="/img/gears.gif"><br><br>Loading visiting roster...</center>
+    <center><img src="/legacy/img/gears.gif"><br><br>Loading visiting roster...</center>
 </div>
 <table class="table table-hover table-condensed tablesorter" id="vrostertable"
        style="display: none;">

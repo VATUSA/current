@@ -17,7 +17,7 @@
                     <td>{{ $role->role }} | {{ $role->title?->title }}</td>
                     <td>
                         @if(\App\Helpers\RoleHelperV2::canAssignRole($user->cid, $role->role, $role->facility))
-                            <form action="/mgt/controller/{{$user->cid}}/role/revoke" method="POST">
+                            <form action="/legacy/mgt/controller/{{$user->cid}}/role/revoke" method="POST">
                                 <input type="hidden" name="facility" value="{{$role->facility}}"/>
                                 <input type="hidden" name="role" value="{{$role->role}}"/>
                                 <button class="btn btn-danger" type="submit">
@@ -39,7 +39,7 @@
         @else
             @if($isVATUSAStaff)
                 <h4>Global Roles</h4>
-                <form action="/mgt/controller/{{$user->cid}}/role/assign" method="POST">
+                <form action="/legacy/mgt/controller/{{$user->cid}}/role/assign" method="POST">
                     <input type="hidden" name="facility" value="ZHQ"/>
                     <label for="grRole">Role</label>
                     <select id="grRole" name="role">
@@ -54,7 +54,7 @@
                 </form>
             @endif
             <h4>Facility Staff Roles</h4>
-            <form action="/mgt/controller/{{$user->cid}}/role/assign" method="POST">
+            <form action="/legacy/mgt/controller/{{$user->cid}}/role/assign" method="POST">
                 <label for="frFacility">Facility</label>
                 <select id="frFacility" name="facility">
                     <option>---</option>

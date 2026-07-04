@@ -30,7 +30,7 @@
             </ul>
         </div>
     </div>
-    <script src="/js/ckeditor/ckeditor.js"></script>
+    <script src="/legacy/js/ckeditor/ckeditor.js"></script>
     <script type="text/javascript">
             CKEDITOR.replace('welcome');
     </script>

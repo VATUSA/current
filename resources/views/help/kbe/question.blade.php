@@ -5,7 +5,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    <a href="/help/kbe">Knowledgebase Editor</a> <i class="fa fa-angle-double-right"></i> {{$category->name}}
+                    <a href="/legacy/help/kbe">Knowledgebase Editor</a> <i class="fa fa-angle-double-right"></i> {{$category->name}}
                 </h3>
             </div>
             <div class="panel-body">
@@ -13,11 +13,11 @@
                     @foreach($category->questions as $c)
                         <li id="kbe_{{$c->id}}" name="{{$c->id}}">
                             <i class="fas fa-arrows-alt-v arrows"></i> <i class="fas fa-trash-alt text-danger" onClick="deleteQuestion({{$c->id}})"></i>&nbsp;&nbsp;
-                            <a href="/help/kbe/{{$category->id}}/{{$c->id}}"><i class="fas fa-pencil-alt text-info"></i></a>
+                            <a href="/legacy/help/kbe/{{$category->id}}/{{$c->id}}"><i class="fas fa-pencil-alt text-info"></i></a>
                             <span id="name_{{$c->id}}">{{$c->question}}</span></li>
                     @endforeach
                 </ul>
-                <button class="btn btn-success" onClick="window.location='/help/kbe/{{$category->id}}/0';">New Question</button>
+                <button class="btn btn-success" onClick="window.location='/legacy/help/kbe/{{$category->id}}/0';">New Question</button>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
                         async: false, // Prevent quick sorts from processing out of order.
                         data: data,
                         type: 'POST',
-                        url: '/help/kbe/ajax/question/order/' + {{$category->id}},
+                        url: '/legacy/help/kbe/ajax/question/order/' + {{$category->id}},
                     }).done(function() {
                         waitingDialog.hide();
                     });
@@ -46,7 +46,7 @@
             bootbox.confirm("Confirm deletion of question '" + $('#name_' + id).html() + "'?", function (result) {
                 if (result) {
                     $.ajax({
-                        url: '/help/kbe/ajax/question/' + id,
+                        url: '/legacy/help/kbe/ajax/question/' + id,
                         type: 'DELETE',
                         success: function() {
                             $('#kbe_' + id).remove();
@@ -73,7 +73,7 @@
                             var q = $('#newQuestionQuestion').val();
                             var a = $('#newQuestionAnswer').val();
                             $.ajax({
-                                url: '/help/kbe/ajax/question/' + categoryID,
+                                url: '/legacy/help/kbe/ajax/question/' + categoryID,
                                 type: 'PUT',
                                 data: { question: q, answer: a },
                                 success:function(data) {
@@ -99,7 +99,7 @@
         function editQuestion(id) {
             waitingDialog.show("Loading", {dialogSize: "sm", progressType: "ogblue"});
             $.ajax({
-                url: '/help/kbe/ajax/question/' + id,
+                url: '/legacy/help/kbe/ajax/question/' + id,
                 type: 'GET',
                 success: function (data) {
                     waitingDialog.hide();
@@ -121,7 +121,7 @@
                                     var a = $('#newQuestionAnswer').val();
                                     waitingDialog.show("Saving...");
                                     $.ajax({
-                                        url: '/help/kbe/ajax/question/' + id,
+                                        url: '/legacy/help/kbe/ajax/question/' + id,
                                         type: 'POST',
                                         data: {
                                             question: q,

@@ -22,7 +22,7 @@
             <td>{{$user->urating->short}}</td>
             @if(\App\Helpers\AuthHelper::authACL()->canManageFacilityRoster($fac))
                 <td>
-                    <a href="/mgt/controller/{{$t->cid}}" target="_blank">
+                    <a href="/legacy/mgt/controller/{{$t->cid}}" target="_blank">
                         <i class="fa fa-search"></i>
                     </a>
                     &nbsp;

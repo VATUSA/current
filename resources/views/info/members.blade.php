@@ -168,7 +168,7 @@
 
           jQuery.ajax({
             type: 'POST',
-            url : '/info/ajax/members',
+            url : '/legacy/info/ajax/members',
             data: {fac: $('#facility').val()},
 
             success: function (obj) {

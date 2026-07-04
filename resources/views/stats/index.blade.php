@@ -162,15 +162,15 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="exports">
                             <p>Exports of the statistics information in CSV format.</p>
-                            <a href="/mgt/stats/export/overview">Overview</a><br>
-                            <a href="/mgt/stats/export/details">Detailed</a>
+                            <a href="/legacy/mgt/stats/export/overview">Overview</a><br>
+                            <a href="/legacy/mgt/stats/export/details">Detailed</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script type="text/javascript" src="/js/jquery.canvasjs.js"></script>
+    <script type="text/javascript" src="/legacy/js/jquery.canvasjs.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
         const updateExams = () => {
@@ -227,7 +227,7 @@
           if ($('#detailfacilityselect').val() == '0') return
           $('#detailprocessing').show()
           $.ajax({
-            url     : '/mgt/stats/details/' + $('#detailfacilityselect').val(),
+            url     : '/legacy/mgt/stats/details/' + $('#detailfacilityselect').val(),
             type    : 'GET',
             dataType: 'JSON',
           }).success(function (data) {

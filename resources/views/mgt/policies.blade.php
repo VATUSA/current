@@ -33,7 +33,7 @@
                             <label for="slug" class="col-sm-3 control-label">Policy URL</label>
                             <div class="col-sm-9">
                                 <div class="input-group">
-                                    <div class="input-group-addon">vatusa.net/docs/</div>
+                                    <div class="input-group-addon">vatusa.net/legacy/info/policies/</div>
                                     <input type="text" class="form-control" name="slug" id="new-policy-slug"
                                            placeholder="new-document-name" style="width:81%" required>
                                 </div>
@@ -394,7 +394,7 @@
 
           btn.attr('disabled', true).html('<i class=\'fas fa-spin fa-spinner\'></i>')
           $.ajax({
-            'url'   : '/mgt/policies/updateCategory/' + id,
+            'url'   : '/legacy/mgt/policies/updateCategory/' + id,
             'method': 'PUT',
             'data'  : {'name': value}
           })
@@ -427,7 +427,7 @@
           btn.attr('disabled', true).html('<i class=\'fas fa-spin fa-spinner\'></i>')
 
           $.ajax({
-            'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + id,
+            'url'   : '/legacy/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + id,
             'method': type === 'category' ? 'PUT' : 'POST',
             'data'  : {order: order - 1, clear_modified: true}
           })
@@ -437,7 +437,7 @@
             })
             .done(function (result) {
               $.ajax({
-                'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + idAbove,
+                'url'   : '/legacy/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + idAbove,
                 'method': type === 'category' ? 'PUT' : 'POST',
                 'data'  : {order: order, clear_modified: true}
               })
@@ -494,7 +494,7 @@
           btn.attr('disabled', true).html('<i class=\'fas fa-spin fa-spinner\'></i>')
 
           $.ajax({
-            'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + id,
+            'url'   : '/legacy/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + id,
             'method': type === 'category' ? 'PUT' : 'POST',
             'data'  : {order: order + 1, clear_modified: true}
           })
@@ -503,7 +503,7 @@
             })
             .done(function (result) {
               $.ajax({
-                'url'   : '/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + idBelow,
+                'url'   : '/legacy/mgt/policies/update' + (type === 'category' ? 'Category' : 'Policy') + '/' + idBelow,
                 'method': type === 'category' ? 'PUT' : 'POST',
                 'data'  : {order: order, clear_modified: true}
               })
@@ -573,7 +573,7 @@
               catId   = btn.data('cat-id'),
               catName = btn.data('cat-name')
           btn.prop('disabled', true).html('<i class="fas fa-spin fa-spinner"></i>')
-          $.get('/mgt/policies/getInfo/' + id, response => {
+          $.get('/legacy/mgt/policies/getInfo/' + id, response => {
             if (response.hasOwnProperty('id')) {
               $('#new-policy-form')[0].reset()
               $('#new-policy-category').text(catName)
@@ -638,7 +638,7 @@
             .then((willDelete) => {
               if (willDelete) {
                 $.ajax({
-                  url   : '/mgt/policies/' + $(this).data('id'),
+                  url   : '/legacy/mgt/policies/' + $(this).data('id'),
                   method: 'DELETE'
                 })
                   .done(resp => {
@@ -659,7 +659,7 @@
               isVisible = btn.hasClass('btn-success')
           btn.prop('disabled', true).html('<i class=\'fas fa-spin fa-spinner\'></i>')
           $.ajax({
-            url   : '/mgt/policies/updatePolicy/' + btn.data('id'),
+            url   : '/legacy/mgt/policies/updatePolicy/' + btn.data('id'),
             method: 'POST',
             data  : {visible: !isVisible, clear_modified: true}
           }).done(response => {
@@ -741,7 +741,7 @@
           }
 
           $.ajax({
-            url        : '/mgt/policies/store',
+            url        : '/legacy/mgt/policies/store',
             method     : 'POST',
             data       : formData,
             processData: false,
@@ -775,7 +775,7 @@
           }
 
           $.ajax({
-            url        : '/mgt/policies/updatePolicy/' + id,
+            url        : '/legacy/mgt/policies/updatePolicy/' + id,
             method     : 'POST',
             data       : formData,
             processData: false,

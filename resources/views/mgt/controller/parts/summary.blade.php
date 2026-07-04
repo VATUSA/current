@@ -8,7 +8,7 @@
                                 style="font-size:80%"></i></a>
                 </li>
             @else
-                <li>[Email Private] <a href="/mgt/mail/{{$user->cid}}"><i
+                <li>[Email Private] <a href="/legacy/mgt/mail/{{$user->cid}}"><i
                                 class="fa fa-envelope text-primary"></i></a></li>
             @endif
             <li>
@@ -87,7 +87,7 @@
                     $('#ratingchangebtn').click(function () {
                         $('#ratingchangespan').html('Saving...')
                         $.ajax({
-                            url: '/mgt/controller/{{$user->cid}}/rating',
+                            url: '/legacy/mgt/controller/{{$user->cid}}/rating',
                             type: 'POST',
                             data: {rating: $('#ratingchange').val()}
                         }).success(function () {

@@ -4,7 +4,7 @@
 @section('scripts')
     <script>
         $('#editbutton').click(function() {
-            location.href = '/mgt/news/edit/{{ $post['id'] }}'
+            location.href = '/legacy/mgt/news/edit/{{ $post['id'] }}'
         });
         $('#deletebutton').click(function() {
             $('#postspan').html('Saving...');

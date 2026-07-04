@@ -114,7 +114,7 @@ jQuery(document).ready(function ($) {
       let content = `
     VATUSA'S Privacy Policy has been updated to reflect GDPR laws.
     By continuing to log in, and by using this service, you agree that you have read the 
-    <a href="https://vatusa.net/info/privacy" target="_blank">Privacy Policy</a> 
+    <a href="https://vatusa.net/legacy/info/privacy" target="_blank">Privacy Policy</a>
     and understand the methods and usage of data collection contained therein.
     <br><br>
     <div class="checkbox">

@@ -6,7 +6,7 @@
             <div class="col-lg-12"><h3>VATUSA Support Knowledgebase</h3></div>
         </div>
         <div class="row">
-            <div class="col-lg-12 text-right">Cannot find an answer? <a href="/help/ticket/new">Submit a support
+            <div class="col-lg-12 text-right">Cannot find an answer? <a href="/legacy/help/ticket/new">Submit a support
                     ticket</a></div>
         </div>
         @foreach(\App\Models\KnowledgebaseCategories::get() as $cat)
@@ -31,7 +31,7 @@
             </div>
         @endforeach
         <div class="row">
-            <div class="col-lg-12 text-right">Cannot find an answer? <a href="/help/ticket/new">Submit a support
+            <div class="col-lg-12 text-right">Cannot find an answer? <a href="/legacy/help/ticket/new">Submit a support
                     ticket</a></div>
         </div>
     </div>

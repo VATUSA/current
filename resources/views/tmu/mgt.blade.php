@@ -98,7 +98,7 @@
                                                             the
                                                             polygon.</b></p>
                                                     <form id="boundaryForm-{{$facility->id}}" method="post"
-                                                          action="/mgt/tmu/{{$facility->id}}/coords">
+                                                          action="/legacy/mgt/tmu/{{$facility->id}}/coords">
                                                     <textarea class="form-control" name="coords" rows="10"
                                                               id="coordbox_{{$facility->id}}">{{$facility->coords}}</textarea><br>
                                                     </form>
@@ -458,14 +458,14 @@
         })
 
         $('#fac').change(function () {
-          window.location = '/mgt/tmu/' + $('#fac').val()
+          window.location = '/legacy/mgt/tmu/' + $('#fac').val()
         })
 
         $('.btnCoords').click(function () {
           $('#coords_' + $(this).data('facility')).toggle()
         })
         $('.btnColors').click(function () {
-          window.location = '/mgt/tmu/' + $(this).data('facility') + '/colors'
+          window.location = '/legacy/mgt/tmu/' + $(this).data('facility') + '/colors'
         })
         $('.btnSave').click(function () {
           try {
@@ -477,7 +477,7 @@
           }
           waitingDialog.show('Saving...')
           /*$.ajax({
-              url: '/mgt/tmu/' + $(this).data("facility") + '/coords',
+              url: '/legacy/mgt/tmu/' + $(this).data("facility") + '/coords',
               method: "post",
               data: { coords: $('#coordbox_' + fac).val(), token: "" }
           }).always(function() {

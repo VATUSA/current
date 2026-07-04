@@ -9,10 +9,10 @@
             || \App\Helpers\AuthHelper::authACL()->isWebTeam())
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <a href="/help/ticket/myassigned" class="btn btn-primary">My Assigned Tickets</a>
-                    <a href="/help/ticket/open" class="btn btn-success">Open Tickets</a>
-                    <a href="/help/ticket/closed" class="btn btn-info">Closed Tickets</a>
-                    <a href="/help/ticket/search" class="btn btn-warning">Search Tickets</a>
+                    <a href="/legacy/help/ticket/myassigned" class="btn btn-primary">My Assigned Tickets</a>
+                    <a href="/legacy/help/ticket/open" class="btn btn-success">Open Tickets</a>
+                    <a href="/legacy/help/ticket/closed" class="btn btn-info">Closed Tickets</a>
+                    <a href="/legacy/help/ticket/search" class="btn btn-warning">Search Tickets</a>
                 </div>
             </div>
 
@@ -42,7 +42,7 @@
                             <tr><td colspan="{{(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff()?"8":"7")}}" class="text-center"><i>No {{$status}} to display</i></td></tr>
                         @else
                             @foreach($tickets as $ticket)
-                                <tr class="clickable-row ticket-{{strtolower($ticket->status)}}" data-href="/help/ticket/{{$ticket->id}}">
+                                <tr class="clickable-row ticket-{{strtolower($ticket->status)}}" data-href="/legacy/help/ticket/{{$ticket->id}}">
                                     <td>{{$ticket->id}}</td>
                                     @if(\App\Helpers\AuthHelper::authACL()->isVATUSAStaff())
                                     <td>{{$ticket->facility}}</td>

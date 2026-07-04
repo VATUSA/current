@@ -17,14 +17,14 @@
             </div>
             <div class="panel-body">
               <form class='form-horizontal' method="post">
-                <p>In each box below, list applicable airport IDs (ICAO) with comma delimiters (ie: KMSP,KSTP,KFCM).  If a color is not desired, leave it blank.  Do not add spaces between airports.  To set a default color, enter "default" (without quotes) into the textbox next to the desired color.  Unless set, the default color will be black <img src="/img/tmu/planes/black.png">.  *When in dark mode, black is replaced with white.</p>
+                <p>In each box below, list applicable airport IDs (ICAO) with comma delimiters (ie: KMSP,KSTP,KFCM).  If a color is not desired, leave it blank.  Do not add spaces between airports.  To set a default color, enter "default" (without quotes) into the textbox next to the desired color.  Unless set, the default color will be black <img src="/legacy/img/tmu/planes/black.png">.  *When in dark mode, black is replaced with white.</p>
                 <?php $appcolors = ['black','brown','blue','gray','green','lime','cyan','orange','red','purple','yellow','violet']; ?>
                 <?php foreach ($appcolors as $ac) { ?>
                 <div class='form-group'>
                   <label for='<?=$ac?>' class='col-sm-2 control-label'>
-                    <?=ucfirst($ac)?> <img src="/img/tmu/planes/<?=$ac?>.png">
+                    <?=ucfirst($ac)?> <img src="/legacy/img/tmu/planes/<?=$ac?>.png">
                     @if($ac == "black")
-                    <br>or white* <img src="/img/tmu/planes/white.png">
+                    <br>or white* <img src="/legacy/img/tmu/planes/white.png">
                     @endif
                   </label>
                   <div class='col-sm-10'>
@@ -44,7 +44,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('#fac').change(function() {
-                window.location = "/mgt/tmu/" + $('#fac').val() + '/colors';
+                window.location = "/legacy/mgt/tmu/" + $('#fac').val() + '/colors';
             });
         });
     </script>

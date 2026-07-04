@@ -58,9 +58,9 @@ for ($i = 1 ; $i <= 360 ; $i++) {
 
     .airstats {
       @if($dark)
-      background-image: url('/img/tmu/providerdark.png');
+      background-image: url('/legacy/img/tmu/providerdark.png');
       @else
-      background-image: url('/img/tmu/provider.png');
+      background-image: url('/legacy/img/tmu/provider.png');
       @endif
       width: 330px;
       height: 65px;
@@ -169,10 +169,10 @@ for ($i = 1 ; $i <= 360 ; $i++) {
 
         @if($dark)
         container.style.backgroundColor = '#666666';
-        container.style.backgroundImage = "url(/img/tmu/toggledark.png)"
+        container.style.backgroundImage = "url(/legacy/img/tmu/toggledark.png)"
         @else
         container.style.backgroundColor = 'white';
-        container.style.backgroundImage = "url(/img/tmu/toggle.png)"
+        container.style.backgroundImage = "url(/legacy/img/tmu/toggle.png)"
         @endif
         container.style.backgroundSize = "30px 30px";
         container.style.width = '30px';
@@ -220,7 +220,7 @@ for ($i = 1 ; $i <= 360 ; $i++) {
     function createPlane(lat, lon, hdg, cs, actype, dep, arr) {
       var color = getColor(arr)
       var myIcon = L.divIcon({
-        html: '<img src="/img/tmu/planes/' + color + '.png" class="rotate-' + hdg + '">'
+        html: '<img src="/legacy/img/tmu/planes/' + color + '.png" class="rotate-' + hdg + '">'
       })
       lat = parseFloat(lat)
       lon = parseFloat(lon)
@@ -243,9 +243,9 @@ for ($i = 1 ; $i <= 360 ; $i++) {
     //$('.airstats').click(function() { window.location = "https://www.airstats.org"; });
     $('.toggledarklight').click(function() {
       @if ($dark)
-      window.location="/tmu/map/{{$fac}}"
+      window.location="/legacy/tmu/map/{{$fac}}"
       @else
-      window.location="/tmu/map/{{$fac}}/dark"
+      window.location="/legacy/tmu/map/{{$fac}}/dark"
       @endif
     })
   </script>

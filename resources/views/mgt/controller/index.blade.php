@@ -200,7 +200,7 @@
 
       $('#waiverToggle').click(function () {
         $.ajax({
-          url : '/mgt/controller/{{$user->cid}}/transferwaiver',
+          url : '/legacy/mgt/controller/{{$user->cid}}/transferwaiver',
           type: 'GET'
         }).success(function (data) {
           if (data == '1') {
@@ -219,7 +219,7 @@
           bootbox.alert('CID must be numbers only')
           return
         }
-        window.location = '/mgt/controller/' + cid
+        window.location = '/legacy/mgt/controller/' + cid
       })
       $('#cidsearch').keyup(function (e) {
         if (e.keyCode == 13) {

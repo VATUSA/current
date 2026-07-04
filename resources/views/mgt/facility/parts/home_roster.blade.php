@@ -1,5 +1,5 @@
 <div id="hrosterloading">
-    <center><img src="/img/gears.gif"><br><br>Loading home roster...</center>
+    <center><img src="/legacy/img/gears.gif"><br><br>Loading home roster...</center>
 </div>
 <table class="table table-hover table-condensed tablesorter" id="hrostertable"
        style="display: none;">

@@ -14,7 +14,7 @@
                         <table class="table table-striped">
                             @foreach ($roles as $ace)
                                 <tr>
-                                    <td width="10%"><a href="/mgt/controller/{{ $ace->cid }}">{{$ace->cid}}</a></td>
+                                    <td width="10%"><a href="/legacy/mgt/controller/{{ $ace->cid }}">{{$ace->cid}}</a></td>
                                     <td width="80%">{{$ace->user()->first()->fullname()}}</td>
                                 </tr>
                             @endforeach

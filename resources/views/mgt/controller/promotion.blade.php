@@ -71,7 +71,7 @@
                                         @case(0)
                                             <span class="label label-danger" style="font-size:90%;" rel="tooltip"
                                                   title="There must be a training record present in the CTRS that is marked Rating Exam Pass under the specified position."
-                                                  onclick="window.open('/mgt/controller/{{ $user->cid }}#training', 'blank')"><span
+                                                  onclick="window.open('/legacy/mgt/controller/{{ $user->cid }}#training', 'blank')"><span
                                                         class="glyphicon glyphicon-remove"></span> Does Not Exist</span>
                                             @break
                                         @default
@@ -173,7 +173,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             /*$('[name=examiner]').autocomplete({
-              source   : '/ajax/cid',
+              source   : '/legacy/ajax/cid',
               minLength: 2,
               select   : function (event, ui) {
                 $('[name=examiner]').val(ui.item.value)
@@ -235,7 +235,7 @@
                 }
                 Cookies.set('eval-pos', $('#position').val())
                 Cookies.set('eval-date', $('#exam-date').val())
-                window.location = '{{ $dateOfExam ? "/mgt/facility/training/eval/$evalId/view" : 'eval'}}'
+                window.location = '{{ $dateOfExam ? "/legacy/mgt/facility/training/eval/$evalId/view" : 'eval'}}'
             })
 
             $('#submit-promotion').click(function (e) {

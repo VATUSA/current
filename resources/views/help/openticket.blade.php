@@ -9,7 +9,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="alert alert-info">Most common questions have already been answered in our FAQ. Have you
-                        looked at our <a href="/help/kb">Knowledgebase</a> for an answer already? You're more likely to
+                        looked at our <a href="/legacy/help/kb">Knowledgebase</a> for an answer already? You're more likely to
                         get your answer much more quickly by consulting the FAQ.
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                 <button type="submit" class="btn btn-primary col-sm-offset-2" id="openticket" data-loading-text="Submitting..."><i
                         class="fa fa-envelope-o"></i> Open Ticket
                 </button>
-                ... or check the <a href="/help/kb">Knowledgebase</a>
+                ... or check the <a href="/legacy/help/kb">Knowledgebase</a>
             </form>
         </div>
     </div>
@@ -76,7 +76,7 @@
               $('#tAssign').prop('disabled', 'disabled')
               $.ajax({
                 method: 'GET',
-                url   : '/ajax/help/staff/' + $('#tFacility').val()
+                url   : '/legacy/ajax/help/staff/' + $('#tFacility').val()
               }).done(function (r) {
                 $('#tAssign').replaceOptions($.parseJSON(r))
                 $('#tAssign').prop('disabled', false)

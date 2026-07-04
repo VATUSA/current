@@ -199,7 +199,7 @@
                                 <td>{!! ($checks['homecontroller'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>You have completed the Basic ATC/S1 courses or appropriate RCE. <a href="https://www.vatusa.net/help/kb#q18" target="_blank">Not sure which?</a></td>
+                                <td>You have completed the Basic ATC/S1 courses or appropriate RCE. <a href="https://www.vatusa.net/legacy/help/kb#q18" target="_blank">Not sure which?</a></td>
                                 <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
                             </tr>
                             <tr>
@@ -271,7 +271,7 @@
                                 <td>{!! ($checks['hasHome'])?'<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' !!}</td>
                             </tr>
                             <tr>
-                                <td>If applicable, you have completed the appropriate RCE. <a href="https://www.vatusa.net/help/kb#q12" target="_blank">Not sure what this means?</a></td>
+                                <td>If applicable, you have completed the appropriate RCE. <a href="https://www.vatusa.net/legacy/help/kb#q12" target="_blank">Not sure what this means?</a></td>
                                 <td>{!! ($checks['needbasic'])?'<span class="text-success">Yes</span>':'<span class="text-danger">No<br><a href="https://academy.vatusa.net">Academy ⇾</a></span>' !!}</td>
                             </tr>
                             <tr>
@@ -333,7 +333,7 @@
             .then((willDelete) => {
                 btn.button('reset')
                 if (willDelete) {
-                  return $.get('/my/discord/unlink', result => {
+                  return $.get('/legacy/my/discord/unlink', result => {
                     if (result) swal('Success!', 'Your discord has been successfully unlinked.', 'success').then(() => {window.location.reload()})
                     else swal('Error!', 'Unable to unlink discord. Please try again later.', 'error')
                   }).fail(() => {

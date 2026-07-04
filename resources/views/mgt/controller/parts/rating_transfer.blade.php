@@ -59,7 +59,7 @@
                         <span id="waiverToggle">
                             <i id="waivertogglei" class="fa {{(($user->flag_xferOverride==1) ? "fa-toggle-on text-success" : "fa-toggle-off text-danger")}}"></i>
                         </span>
-                        <a href="/mgt/transfer?cid={{$user->cid}}">Submit TR</a>
+                        <a href="/legacy/mgt/transfer?cid={{$user->cid}}">Submit TR</a>
                     </td>
                 </tr>
             @endif
