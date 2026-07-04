@@ -33,12 +33,12 @@ class AuthLastActivity
 
                 return redirect("/")->with('error', 'You are not authorized to access the live development website.');
             }
-            if (!$request->hasCookie("vatusa-cobalt-token")) {
+            /*if (!$request->hasCookie("vatusa-cobalt-token")) {
                 $token = CobaltAPIHelper::getCobaltUserToken($user->cid);
                 if (strlen($token) > 0) {
                     Cookie::queue("vatusa-cobalt-token", $token, 60*24);
                 }
-            }
+            }*/
         }
 
         return $next($request);

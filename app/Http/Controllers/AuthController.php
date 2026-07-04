@@ -2,49 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\Helper;
-use App\Classes\RoleHelper;
 use App\Classes\SMFHelper;
-use App\Classes\VATUSAMoodle;
-use App\Models\User;
+use App\Cobalt\CobaltSession;
 use Auth;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+
     public function __construct() {
-        $this->middleware('guest');
+        $this->middleware('guest', ['except' => 'callback']);
+    }
+
+    public function getLogin(Request $request) {
+        // Dev auto-login when no cobalt token is present
+        if (config('app.env', 'prod') == "dev" && !\Auth::check()) {
+            Auth::loginUsingId(config('app.dev_cid_login', 0), true);
+        }
+        if (!Auth::check()) {
+            if (config('cobalt.use_cobalt_login')) {
+                $callback = rtrim(config('app.url'), '/') . '/auth/callback';
+                return redirect(rtrim(config('cobalt.login_url'), '/') . '?redirect=' . urlencode($callback));
+            }
+            $return = request()->has('agreed') ? "agreed" : config('app.login_env');
+            return redirect()->guest(config('app.loginUrl') . "/?" . $return);
+        }
+        SMFHelper::setPermissions(Auth::user()->cid);
+        return redirect()->intended('/');
     }
 
     /**
-     * Show the application welcome screen to the user.
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * Entry point cobalt redirects back to after a successful login. Reads
+     * the cobalt JWT cookie once, converts it into an independent Laravel
+     * session, and never touches the cobalt cookie again after this.
      */
-    public function getLogin() {
-        if (config('app.env', 'prod') == "dev" && !\Auth::check()) {
-            /** In Development Environment */
-            Auth::loginUsingId(config('app.dev_cid_login', 0), true);
-            /*$moodle = new VATUSAMoodle(true);
-            $response = $moodle->request("auth_userkey_request_login_url",
-                ['user' => ['idnumber' => \Illuminate\Support\Facades\Auth::user()->cid]]);
-            $url = $response["loginurl"];
-
-            return redirect($url . "&wantsurl=" . urlencode("https://www.vatusa.devel"));*/
+    public function callback(Request $request) {
+        $token = $request->cookie(config('cobalt.cookie_name', 'vatusa-cobalt-token'));
+        if ($token) {
+            $cid = CobaltSession::getCidFromToken($token);
+            if ($cid !== null) {
+                Auth::loginUsingId($cid, true);
+                SMFHelper::setPermissions($cid);
+            }
         }
-        if (!Auth::check()) {
-            //If agreed on privacy policy, redirect to profile (opt in setting)
-            //Otherwise, normal redirect to home
-            $return = request()->has('agreed') ? "agreed" : config('app.login_env');
-
-            return redirect()->guest(config('app.loginUrl') . "/?" . $return);
-        } else {
-            SMFHelper::setPermissions(Auth::user()->cid);
-        }
-
         return redirect()->intended('/');
     }
 

@@ -24,10 +24,10 @@ Route::group([
     'middleware' => ['csrf', 'lastactivity']
 ], function () {
     Route::get('/login', 'AuthController@getLogin');
+    Route::get('/auth/callback', 'AuthController@callback');
     Route::get('/logout', function () {
         \Auth::logout();
-
-        return redirect("/");
+        return redirect('/');
     });
     Route::get('/news/page/{page?}', 'NewsController@getIndex');
     Route::get('/news/post/{postId}', 'NewsController@getPost');
