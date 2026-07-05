@@ -114,12 +114,6 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="https://forums.vatusa.net">
-                                    <i class="fas fa-comment"></i>
-                                    Forums
-                                </a>
-                            </li>
-                            <li>
                                 <a href="https://donorbox.org/donate-to-vatusa">
                                     <i class="fas fa-heart"></i>
                                     Donate
