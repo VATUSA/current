@@ -1,0 +1,12 @@
+# This workflow allows manually building a specified branch so that it can be
+# deployed to an environment. ./ci-master.yml will be used far more often.
+
+name: CI Manual Build
+on:
+  workflow_dispatch:
+jobs:
+  common-build:
+    uses: vatusa/gitops/.github/workflows/common-build.yml@main
+    with:
+      image-name: 'www'
+    secrets: inherit
