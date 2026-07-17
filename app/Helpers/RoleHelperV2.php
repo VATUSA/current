@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\RoleTitle;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RoleHelperV2
 {
@@ -68,17 +69,22 @@ class RoleHelperV2
 
     public static function assignRole(int $cid, string $role, string $facility)
     {
-        $r = new Role();
-        $r->cid = $cid;
-        $r->facility = $facility;
-        $r->role = $role;
-        $r->save();
-
+        $actor = Auth::user();
         $roleStr = $facility == "ZHQ" ? "VATUSA " . $role : $facility . " " . $role;
-        $log = new Actions();
-        $log->to = $cid;
-        $log->log = $roleStr . " role assigned by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-        $log->save();
+
+        DB::transaction(function () use ($cid, $role, $facility, $roleStr, $actor) {
+            $r = new Role();
+            $r->cid = $cid;
+            $r->facility = $facility;
+            $r->role = $role;
+            $r->save();
+
+            $log = new Actions();
+            $log->to = $cid;
+            $log->log = $roleStr . " role assigned by " . $actor->fullname() . " (" . $actor->cid . ").";
+            $log->save();
+        });
+
         DiscordHelper::assignRoles($cid);
         $user = User::find($cid);
         CobaltAPIHelper::syncRolesForUser($user);
@@ -86,47 +92,57 @@ class RoleHelperV2
 
     public static function revokeRole(int $cid, string $role, string $facility)
     {
-        $currentRole = Role::where("facility", $facility)->where("cid", $cid)->where("role", $role)->first();
-        $currentRole->delete();
-
+        $actor = Auth::user();
         $roleStr = $facility == "ZHQ" ? "VATUSA " . $role : $facility . " " . $role;
-        $log = new Actions();
-        $log->to = $cid;
-        $log->log = $roleStr . " role revoked by " . Auth::user()->fullname() . " (" . Auth::user()->cid . ").";
-        $log->save();
+
+        DB::transaction(function () use ($cid, $role, $facility, $roleStr, $actor) {
+            $currentRole = Role::where("facility", $facility)->where("cid", $cid)->where("role", $role)->first();
+            $currentRole->delete();
+
+            $log = new Actions();
+            $log->to = $cid;
+            $log->log = $roleStr . " role revoked by " . $actor->fullname() . " (" . $actor->cid . ").";
+            $log->save();
+
+            // Also remove from point of contact, if set
+            $fac = Facility::where('id', $facility)->first();
+            $pocChanged = true;
+            switch ($role) {
+                case 'ATM':
+                    if ($cid == $fac->atm)
+                        $fac->atm = 0;
+                    break;
+                case 'DATM':
+                    if ($cid == $fac->datm)
+                        $fac->datm = 0;
+                    break;
+                case 'TA':
+                    if ($cid == $fac->ta)
+                        $fac->ta = 0;
+                    break;
+                case 'EC':
+                    if ($cid == $fac->ec)
+                        $fac->ec = 0;
+                    break;
+                case 'FE':
+                    if ($cid == $fac->fe)
+                        $fac->fe = 0;
+                    break;
+                case 'WM':
+                    if ($cid == $fac->wm)
+                        $fac->wm = 0;
+                    break;
+                default:
+                    $pocChanged = false;
+            }
+            if ($pocChanged) {
+                $fac->save();
+            }
+        });
+
         DiscordHelper::assignRoles($cid);
         $user = User::find($cid);
         CobaltAPIHelper::syncRolesForUser($user);
-
-        // Also remove from point of contact, if set
-        $fac = Facility::where('id', $facility)->first();
-        switch ($role) {
-            case 'ATM':
-                if ($cid == $fac->atm)
-                    $fac->atm = 0;
-                break;
-            case 'DATM':
-                if ($cid == $fac->datm)
-                    $fac->datm = 0;
-                break;
-            case 'TA':
-                if ($cid == $fac->ta)
-                    $fac->ta = 0;
-                break;
-            case 'EC':
-                if ($cid == $fac->ec)
-                    $fac->ec = 0;
-                break;
-            case 'FE':
-                if ($cid == $fac->fe)
-                    $fac->fe = 0;
-                break;
-            case 'WM':
-                if ($cid == $fac->wm)
-                    $fac->wm = 0;
-                break;
-        }
-        $fac->save();
     }
 
     // Assigns a role if not assigned, revokes that role if it is assigned
