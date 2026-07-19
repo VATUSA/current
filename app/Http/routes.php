@@ -49,7 +49,6 @@ Route::group([
          *  AJAX  *
          * * * * * */
         Route::group(['prefix' => 'ajax'], function () {
-            Route::get('/cid', 'AJAXController@getCID');
             Route::get('/events', 'AJAXController@getEvents');
             Route::get('/news', 'AJAXController@getNews');
             Route::get('/help/staffc/{facility}', 'AJAXController@getHelpStaffc');
@@ -64,6 +63,8 @@ Route::group([
         });
         Route::get('/help/kb', 'HelpdeskController@getKBIndex');
         Route::group(['middleware' => 'auth'], function () {
+            Route::get('ajax/cid', 'AJAXController@getCID');
+
             Route::group(['prefix' => 'help'], function () {
                 Route::group(['prefix' => 'kbe'], function () {
                     Route::get('/', 'HelpdeskController@getKBE');
