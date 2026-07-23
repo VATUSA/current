@@ -182,7 +182,7 @@ $(function () {
       method: 'GET',
     }).done(resp => {
       $.ajax({
-        url: '/mgt/controller/ajax/canModifyRecord/' + id
+        url: '/legacy/mgt/controller/ajax/canModifyRecord/' + id
       }).done(cm => {
         if (cm) {
           $('#v-modify-group').css('display', 'inline-block')
@@ -245,7 +245,7 @@ $(function () {
             $('#training-ots-exam-pass').show()
             if (result.ots_eval_id && $('#canAdd').length) $('#training-ots-exam-pass')
               .attr('title', 'View OTS Evaluation').css('cursor', 'pointer').click(function () {
-                document.location = '/mgt/facility/training/eval/' + result.ots_eval_id + '/view'
+                document.location = '/legacy/mgt/facility/training/eval/' + result.ots_eval_id + '/view'
               })
             else $('#training-ots-exam-pass')
               .attr('title', '').off('click').css('cursor', 'default')
@@ -254,7 +254,7 @@ $(function () {
             $('#training-ots-exam-fail').show()
             if (result.ots_eval_id && $('#canAdd').length) $('#training-ots-exam-fail')
               .attr('title', 'View OTS Evaluation').css('cursor', 'pointer').click(function () {
-                document.location = '/mgt/facility/training/eval/' + result.ots_eval_id + '/view'
+                document.location = '/legacy/mgt/facility/training/eval/' + result.ots_eval_id + '/view'
               })
             else $('#training-ots-exam-fail')
               .attr('title', '').off('click').css('cursor', 'default')
@@ -493,7 +493,7 @@ $(function () {
             }
           }).then(action => {
             if (action === 'toEval') {
-              window.location.href = '/mgt/controller/' + $('#cid').val() + '/promote'
+              window.location.href = '/legacy/mgt/controller/' + $('#cid').val() + '/promote'
             } else return location.reload()
           })
         } else swal('Success!', 'The training record has been successfully edited. ', 'success')
@@ -543,7 +543,7 @@ $(function () {
             }
           }).then(action => {
             if (action === 'toEval')
-              window.location.href = '/mgt/controller/' + $('#cid').val() + '/promote'
+              window.location.href = '/legacy/mgt/controller/' + $('#cid').val() + '/promote'
             else return location.reload()
           })
         } else swal('Success!', 'The training record has been successfully created. ', 'success').then(() => location.reload())
