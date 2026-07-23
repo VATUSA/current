@@ -60,11 +60,14 @@ return [
         ],
         'email'  => [
             'driver'    => env('DB_EMAIL_CONNECTION', 'mysql'),
-            'host'      => env('DB_HOST', '127.0.0.1'),
-            'port'      => env('DB_PORT', 3306),
+            // Use the dedicated DB_EMAIL_* credentials (falling back to the main
+            // DB_* vars) — same split as the `moodle` connection, so a rotated or
+            // separately-granted email DB user doesn't ride the main app creds.
+            'host'      => env('DB_EMAIL_HOST', env('DB_HOST', '127.0.0.1')),
+            'port'      => env('DB_EMAIL_PORT', env('DB_PORT', 3306)),
             'database'  => env('DB_EMAIL_DATABASE', 'email'),
-            'username'  => env('DB_USERNAME', ''),
-            'password'  => env('DB_PASSWORD', ''),
+            'username'  => env('DB_EMAIL_USERNAME', env('DB_USERNAME', '')),
+            'password'  => env('DB_EMAIL_PASSWORD', env('DB_PASSWORD', '')),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
@@ -84,11 +87,15 @@ return [
         ],
         'moodle' => [
             'driver'   => env('DB_MOODLE_CONNECTION', 'mysql'),
-            'host'     => env('DB_HOST', '127.0.0.1'),
-            'port'     => env('DB_PORT', 3306),
+            // The moodle DB lives on its own credential (user 'moodle'); the main
+            // app user (now 'vatusa-old') has no grant on the `moodle` database, so
+            // this connection must use the dedicated DB_MOODLE_* vars. Fall back to
+            // the main DB_* vars for envs that don't define separate moodle creds.
+            'host'     => env('DB_MOODLE_HOST', env('DB_HOST', '127.0.0.1')),
+            'port'     => env('DB_MOODLE_PORT', env('DB_PORT', 3306)),
             'database' => env('DB_MOODLE_DATABASE', 'forum'),
-            'username' => env('DB_USERNAME', 'forum'),
-            'password' => env('DB_PASSWORD', ''),
+            'username' => env('DB_MOODLE_USERNAME', env('DB_USERNAME', 'forum')),
+            'password' => env('DB_MOODLE_PASSWORD', env('DB_PASSWORD', '')),
             'prefix'   => 'mdl_',
             'strict'   => false
         ],
