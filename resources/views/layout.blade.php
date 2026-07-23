@@ -306,7 +306,7 @@
                                 @endif
                                 <li role="separator" class="divider"></li>
                                 <li>
-                                    <a href="{{ (config('app.env', 'prod') == "dev") ? url("logout") : str_replace('api', 'login', \App\Classes\Helper::apiUrl()) . "/?logout" }}"><i
+                                    <a href="{{ url("logout") }}"><i
                                                 class="fas fa-sign-out-alt"></i> Logout</a>
                                 </li>
                             </ul>

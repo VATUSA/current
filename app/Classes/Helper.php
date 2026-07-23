@@ -25,7 +25,13 @@ class Helper
         if (config('app.env') == "dev") {
             return config('app.api_url');
         }
-        return str_replace('www.vatusa', 'api.vatusa', config('app.url'));
+        // Derive the API origin from APP_URL's host only. APP_URL may carry a
+        // path (e.g. https://www.vatusa.net/legacy once current is served under
+        // /legacy); munging the whole string would leak that path into the API
+        // host (https://api.vatusa.net/legacy), breaking every $.apiUrl()+/v2 call.
+        $parts = parse_url(config('app.url'));
+        $scheme = $parts['scheme'] ?? 'https';
+        return $scheme . '://' . str_replace('www.vatusa', 'api.vatusa', $parts['host']);
     }
 
     public static function mainUrl()
