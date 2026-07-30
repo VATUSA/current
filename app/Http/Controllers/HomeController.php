@@ -19,24 +19,13 @@ class HomeController
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index() {
-        // Banner
+        // Banners were sourced from the forums (smf_calendar/smf_messages via the
+        // 'forum' DB connection), but the forums application has been retired and
+        // $banners/$ids were never referenced by the view - just a dead query run
+        // on every homepage load (including every readiness/liveness probe hit)
+        // against a DB connection nothing else maintains.
         $banners = [];
         $ids = [];
-
-        if (config('app.env', 'dev') == "prod") {
-            $results = \DB::connection('forum')
-                ->select("SELECT * , DATE_FORMAT(sc.`start_date` ,  \"%c/%e/%Y\") AS `eventdate` FROM smf_calendar AS sc LEFT JOIN smf_messages ON smf_messages.id_topic = sc.id_topic WHERE sc.`start_date` > DATE_SUB(NOW(), INTERVAL 1 DAY) GROUP BY sc.id_topic ORDER BY sc.`start_date` ASC LIMIT 5");
-        } else {
-            $results = [];
-        }
-
-
-        foreach ($results as $result) {
-            if (preg_match('/\[img\]([^\[]+)\[\/img\]/i', $result->body, $matches)) {
-                $banners[] = $matches[1];
-                $ids[] = $result->id_topic;
-            }
-        }
 
         //TMU Notices
         $notices = TMUNotice::where(function ($q) {
