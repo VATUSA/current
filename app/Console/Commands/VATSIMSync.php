@@ -6,6 +6,7 @@ use App\Classes\VATSIMApi2Helper;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class VATSIMSync extends Command {
 
@@ -104,8 +105,16 @@ class VATSIMSync extends Command {
             }
         }
 
-        foreach ($dirtyUsers as $user) {
-            $user->save();
+        // Batch in bounded chunks rather than one transaction: a single dirty
+        // page can run to hundreds/thousands of rows, and holding all of those
+        // row locks until one final commit risks blocking concurrent web
+        // requests hitting the same users table.
+        foreach (array_chunk($dirtyUsers, 200) as $chunk) {
+            DB::transaction(function () use ($chunk) {
+                foreach ($chunk as $user) {
+                    $user->save();
+                }
+            });
         }
     }
 }
