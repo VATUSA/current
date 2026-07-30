@@ -51,6 +51,9 @@ class VATUSAMoodle extends MoodleRest
     public const CONTEXT_MODULE = 70;
     public const CONTEXT_BLOCK = 80;
 
+    /** @var array Memoized quiz grade/sumgrades rows, keyed by quiz id */
+    private $quizMetaCache = [];
+
     /**
      * VATUSAMoodle constructor.
      *
@@ -629,7 +632,31 @@ class VATUSAMoodle extends MoodleRest
     }
 
     /**
+     * Get quiz grade/sumgrades, memoized per quiz id for the lifetime of this instance.
+     *
+     * @param int $quizId The Quiz ID
+     *
+     * @return object|null
+     */
+    public
+    function getQuizMeta(
+        int $quizId
+    ) {
+        if (!array_key_exists($quizId, $this->quizMetaCache)) {
+            $this->quizMetaCache[$quizId] = DB::connection('moodle')->table('quiz')
+                ->where('id', $quizId)
+                ->first(['grade', 'sumgrades']);
+        }
+
+        return $this->quizMetaCache[$quizId];
+    }
+
+    /**
      * Get quiz attempts
+     *
+     * Grades are computed from the Moodle database (quiz.grade/sumgrades and
+     * quiz_attempts.sumgrades) rather than via the mod_quiz_get_attempt_review web service,
+     * which returns the entire rendered attempt review (~2 MB) to read a single number.
      *
      * @param int      $quizid The Quiz ID
      * @param int|null $cid    The user's CID
@@ -652,14 +679,20 @@ class VATUSAMoodle extends MoodleRest
             $attempts = $this->request("mod_quiz_get_user_attempts",
                     ["quizid" => $quizid, "userid" => $userid])['attempts'] ?? [];
 
-            for ($i = 0; $i < count($attempts); $i++) {
-                $review = $this->request("mod_quiz_get_attempt_review",
-                        ["attemptid" => $attempts[$i]['id']]) ?? [];
-                if (!empty($review)) {
-                    $attempts[$i]['grade'] = round(floatval($review['grade']));
-                } else {
+            $quiz = $this->getQuizMeta($quizid);
+            if (!$quiz || !$quiz->sumgrades) {
+                return [];
+            }
+
+            $sumgrades = DB::connection('moodle')->table('quiz_attempts')
+                ->whereIn('id', array_column($attempts, 'id'))
+                ->pluck('sumgrades', 'id');
+
+            foreach ($attempts as $i => $attempt) {
+                if (!isset($sumgrades[$attempt['id']])) {
                     return [];
                 }
+                $attempts[$i]['grade'] = round($sumgrades[$attempt['id']] / $quiz->sumgrades * $quiz->grade);
             }
 
             return $attempts;
