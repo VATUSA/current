@@ -49,8 +49,6 @@ Route::group([
          *  AJAX  *
          * * * * * */
         Route::group(['prefix' => 'ajax'], function () {
-            Route::get('/events', 'AJAXController@getEvents');
-            Route::get('/news', 'AJAXController@getNews');
             Route::get('/help/staffc/{facility}', 'AJAXController@getHelpStaffc');
             Route::get('/help/staff/{facility}', 'AJAXController@getHelpStaff');
         });

@@ -2,7 +2,6 @@
 
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
-use App\Classes\SMFHelper;
 use App\Helpers\AuthHelper;
 use App\Models\Role;
 use Auth;

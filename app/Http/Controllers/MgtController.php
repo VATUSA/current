@@ -7,7 +7,6 @@ use App\Models\ChecklistData;
 use App\Models\Checklists;
 use App\Classes\Helper;
 use App\Classes\PromoHelper;
-use App\Classes\SMFHelper;
 use App\Classes\VATUSAMoodle;
 use App\Models\OTSEval;
 use App\Models\OTSEvalForm;
@@ -317,7 +316,6 @@ class MgtController extends Controller
             }
 
             $r->delete();
-            SMFHelper::setPermissions($cid);
         }
     }
 
@@ -401,7 +399,6 @@ class MgtController extends Controller
 
             $u->addToFacility($tr->to);
         }
-        SMFHelper::setPermissions($cid);
     }
 
     public function addLog(Request $request)

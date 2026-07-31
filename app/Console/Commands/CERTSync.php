@@ -3,7 +3,6 @@
 use App\Classes\EmailHelper;
 use App\Classes\Helper;
 use App\Classes\RoleHelper;
-use App\Classes\SMFHelper;
 use App\Helpers\RoleHelperV2;
 use App\Models\Role;
 use Carbon\Carbon;
@@ -94,11 +93,6 @@ class CERTSync extends Command
                     $user->rating = $rating;
                     $user->email = $email;
                     $user->save();
-
-                    if (SMFHelper::isRegistered($cid)) {
-                        SMFHelper::updateData($cid, $user->lname, $user->fname, $email);
-                        SMFHelper::setPermissions($cid);
-                    }
 
                     if ($user->rating <= 0) {
                         //Suspended or Inactive
@@ -247,12 +241,6 @@ class CERTSync extends Command
             RoleHelperV2::revokeRole($role->cid, $role->role, $role->facility);
             $removals .= "Removed role " . $role->role . " for " . $role->facility . "\n";
         }
-
-        /*if ($removals) {
-            SMFHelper::createPost(7262, 82,
-                "CERTSync: Staff deletion report for " . $user->fullname() . " (" . $user->cid . ")", $removals);
-            $this->log[] = $removals;
-        }*/
     }
 
     private function fetchRoster($testing = false): array

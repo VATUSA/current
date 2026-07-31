@@ -1,7 +1,6 @@
 <?php namespace App\Console\Commands;
 
 use App\Classes\EmailHelper;
-use App\Classes\SMFHelper;
 use App\Models\Facility;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -48,14 +47,7 @@ class TattlerStaffVisit extends Command
 
             } else {
                 if ($fac->atm != "0") {
-                    $webactivity = $fac->atm()->lastActivityWebsite();
-                    $forumactivity = $fac->atm()->lastActivityForum();
-                    // We want lowest
-                    if ($webactivity > $forumactivity) {
-                        $activity = $forumactivity;
-                    } else {
-                        $activity = $webactivity;
-                    }
+                    $activity = $fac->atm()->lastActivityWebsite();
 
                     if ($activity >= 30) {
                         EmailHelper::sendEmail(
@@ -75,14 +67,7 @@ class TattlerStaffVisit extends Command
                 }
 
                 if ($fac->datm != "0") {
-                    $webactivity = $fac->datm()->lastActivityWebsite();
-                    $forumactivity = $fac->datm()->lastActivityForum();
-                    // We want lowest
-                    if ($webactivity > $forumactivity) {
-                        $activity = $forumactivity;
-                    } else {
-                        $activity = $webactivity;
-                    }
+                    $activity = $fac->datm()->lastActivityWebsite();
 
                     if ($activity >= 30) {
                         EmailHelper::sendEmail(
@@ -103,14 +88,7 @@ class TattlerStaffVisit extends Command
                 }
 
                 if ($fac->ta != "0") {
-                    $webactivity = $fac->ta()->lastActivityWebsite();
-                    $forumactivity = $fac->ta()->lastActivityForum();
-                    // We want lowest
-                    if ($webactivity > $forumactivity) {
-                        $activity = $forumactivity;
-                    } else {
-                        $activity = $webactivity;
-                    }
+                    $activity = $fac->ta()->lastActivityWebsite();
 
                     if ($activity >= 30) {
                         EmailHelper::sendEmail(
@@ -131,14 +109,7 @@ class TattlerStaffVisit extends Command
                 }
 
                 if ($fac->ec != "0") {
-                    $webactivity = $fac->ec()->lastActivityWebsite();
-                    $forumactivity = $fac->ec()->lastActivityForum();
-                    // We want lowest
-                    if ($webactivity > $forumactivity) {
-                        $activity = $forumactivity;
-                    } else {
-                        $activity = $webactivity;
-                    }
+                    $activity = $fac->ec()->lastActivityWebsite();
 
                     if ($activity >= 30) {
                         EmailHelper::sendEmail(
@@ -159,14 +130,7 @@ class TattlerStaffVisit extends Command
                 }
 
                 if ($fac->fe != "0") {
-                    $webactivity = $fac->fe()->lastActivityWebsite();
-                    $forumactivity = $fac->fe()->lastActivityForum();
-                    // We want lowest
-                    if ($webactivity > $forumactivity) {
-                        $activity = $forumactivity;
-                    } else {
-                        $activity = $webactivity;
-                    }
+                    $activity = $fac->fe()->lastActivityWebsite();
 
                     if ($activity >= 30) {
                         EmailHelper::sendEmail(
@@ -187,14 +151,7 @@ class TattlerStaffVisit extends Command
                 }
 
                 if ($fac->wm != "0") {
-                    $webactivity = $fac->wm()->lastActivityWebsite();
-                    $forumactivity = $fac->wm()->lastActivityForum();
-                    // We want lowest
-                    if ($webactivity > $forumactivity) {
-                        $activity = $forumactivity;
-                    } else {
-                        $activity = $webactivity;
-                    }
+                    $activity = $fac->wm()->lastActivityWebsite();
 
                     if ($activity >= 30) {
                         EmailHelper::sendEmail(
@@ -219,13 +176,7 @@ class TattlerStaffVisit extends Command
         $users = User::where('rating', \App\Classes\Helper::ratingIntFromShort("I1"))->where('facility', 'NOT LIKE',
             'ZZN')->get();
         foreach ($users as $user) {
-            $webactivity = $user->lastActivityWebsite();
-            $forumactivity = $user->lastActivityForum();
-            if ($webactivity > $forumactivity) {
-                $activity = $forumactivity;
-            } else {
-                $activity = $webactivity;
-            }
+            $activity = $user->lastActivityWebsite();
 
             if ($activity >= 30) {
                 EmailHelper::sendEmail(
@@ -250,7 +201,6 @@ class TattlerStaffVisit extends Command
             "vatusa2@vatusa.net",
             //   "vatusa6@vatusa.net",
         ], "Tattler Staff Visit Report", "emails.logsend", ['log' => $report]);
-        SMFHelper::createPost(7262, 82, "Tattler Staff Activity Report " . date('M j, Y'), implode("\n", $report));
 
         return 0;
     }
