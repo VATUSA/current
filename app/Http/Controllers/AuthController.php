@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\SMFHelper;
 use App\Cobalt\CobaltSession;
 use Auth;
 use Illuminate\Http\Request;
@@ -26,7 +25,6 @@ class AuthController extends Controller {
             $return = request()->has('agreed') ? "agreed" : config('app.login_env');
             return redirect()->guest(config('app.loginUrl') . "/?" . $return);
         }
-        SMFHelper::setPermissions(Auth::user()->cid);
         return redirect()->intended('/');
     }
 
@@ -41,7 +39,6 @@ class AuthController extends Controller {
             $cid = CobaltSession::getCidFromToken($token);
             if ($cid !== null) {
                 Auth::loginUsingId($cid, true);
-                SMFHelper::setPermissions($cid);
             }
         }
         return redirect()->intended('/');

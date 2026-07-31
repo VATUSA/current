@@ -15,7 +15,6 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\CERTSync',
         'App\Console\Commands\TattlerStaffVisit',
         'App\Console\Commands\TattlerTransfers',
-        'App\Console\Commands\GroupCheck',
         'App\Console\Commands\UpdateVATSIM',
         'App\Console\Commands\RoleSync',
         'App\Console\Commands\ExpireNotices',

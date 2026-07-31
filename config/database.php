@@ -73,18 +73,6 @@ return [
             'prefix'    => '',
             'strict'    => false
         ],
-        'forum'  => [
-            'driver'    => env('DB_FORUM_CONNECTION', 'mysql'),
-            'host'      => env('DB_HOST', '127.0.0.1'),
-            'port'      => env('DB_PORT', 3306),
-            'database'  => env('DB_FORUM_DATABASE', 'forum'),
-            'username'  => env('DB_USERNAME', 'forum'),
-            'password'  => env('DB_PASSWORD', ''),
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
-            'strict'    => false
-        ],
         'moodle' => [
             'driver'   => env('DB_MOODLE_CONNECTION', 'mysql'),
             // The moodle DB lives on its own credential (user 'moodle'); the main
