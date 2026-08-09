@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Cobalt\CobaltAPIHelper;
 use App\Cobalt\CobaltSession;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -39,9 +41,26 @@ class AuthController extends Controller {
             $cid = CobaltSession::getCidFromToken($token);
             if ($cid !== null) {
                 Auth::loginUsingId($cid, true);
+                $this->syncRatingFromCobalt($cid, $token);
             }
         }
         return redirect()->intended('/');
+    }
+
+    /**
+     * Cobalt is the source of truth for VATSIM network rating, but current's
+     * own `controllers.rating` is only ever provisioned once (INSERT IGNORE)
+     * by cobalt, never updated after that. Pull the live rating from cobalt
+     * on every login so reinstatements/suspensions/promotions take effect
+     * the next time the controller logs in, without waiting on a cron job.
+     */
+    private function syncRatingFromCobalt(int $cid, string $token): void {
+        $json = CobaltAPIHelper::getUserSessionFromToken($token);
+        $rating = $json['user']['network_user']['rating'] ?? null;
+        if ($rating === null) {
+            return;
+        }
+        User::where('cid', $cid)->update(['rating' => $rating]);
     }
 
 }
