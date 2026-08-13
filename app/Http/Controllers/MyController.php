@@ -287,7 +287,7 @@ class MyController
                     return redirect()->to('/my/profile')->with('discordError', true);
                 }
 
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 return redirect()->to('/my/profile')->with('discordError', true);
             }
         }
