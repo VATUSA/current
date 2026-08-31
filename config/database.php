@@ -118,7 +118,7 @@ return [
         'cluster' => false,
 
         'default' => [
-            'scheme' => 'tls',
+            'scheme' => env('REDIS_SCHEME', 'tls'),
             'host'     => env("REDIS_HOST", ''),
             'password' => env('REDIS_PASSWORD', null),
             'port'     => env("REDIS_PORT", ''),
