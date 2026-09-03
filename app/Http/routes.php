@@ -205,17 +205,6 @@ Route::group([
                 Route::delete('action/delete/{log}', 'MgtController@deleteActionLog')->where('id', '[0-9]+');
             });
 
-            // * * * * * * Policies * * * * * *
-            Route::get('policies', 'PolicyController@edit');
-            Route::get('policies/{policy:slug}', 'PolicyController@show');
-            Route::get('policies/getInfo/{policy}', 'PolicyController@getPolicy');
-            Route::post('policies/store', 'PolicyController@store');
-            Route::post('policies/updatePolicy/{policy}', 'PolicyController@update');
-            Route::delete('policies/{policy}', 'PolicyController@destroy');
-            Route::get('policies/newCategory', 'PolicyController@storeCategory');
-            Route::put('policies/updateCategory/{category}', 'PolicyController@updateCategory');
-            Route::get('policies/deleteCategory/{category}', 'PolicyController@destroyCategory');
-
             // * * * * * * Training - Evals * * * * * *
             Route::get('controller/{cid}/eval/{form?}', 'TrainingController@getOTSEval')->where('form',
                 '[0-9]+');

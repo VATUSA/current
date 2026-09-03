@@ -28,7 +28,14 @@ class InfoController
     public function getMembers() {
         $orgchart = Policy::where('ident', 'ORG')->first();
         if ($orgchart) {
-            $orgLink = url("/info/policies/" . $orgchart->slug);
+            // Policy documents are now served from the Spaces CDN rather than
+            // this app's local disk (see PolicyController@show) -- the new
+            // portal has no per-document route to link to instead, so this
+            // builds the same CDN URL the Cobalt migration derives documents
+            // from (current/resources/views/info/policies.blade.php's
+            // convention).
+            $orgLink = "https://vatusa-storage.nyc3.cdn.digitaloceanspaces.com/docs/"
+                . $orgchart->slug . "." . $orgchart->extension;
         } else {
             $orgLink = null;
         }
