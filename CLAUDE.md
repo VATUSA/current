@@ -39,6 +39,22 @@ Standard Laravel layout under `app/`:
 - `Console/`, `Commands/` — artisan commands and scheduled tasks
 - `Events/`, `Handlers/`, `Providers/` — Laravel event/service wiring
 
+## Object storage (DigitalOcean Spaces / Azure Blob)
+
+`Storage::disk('public')` (used only by `PolicyController`, for policy document
+uploads/deletes) is backed by whichever object storage the DO→Azure migration coexistence
+window needs — the same built image is deployed to both DOKS (Spaces) and AKS (Blob) at
+once, so `config/filesystems.php` picks the disk's driver and credentials at request time
+from `STORAGE_PROVIDER` (`spaces`, the default, or `azure_blob`), the same switch used in
+cobalt's `config.StorageProvider()` and mithril's `storage.rs`. `spaces` keeps the existing
+`s3` driver against `DO_SPACES_*` env vars unchanged; `azure_blob` uses the
+`azure-storage-blob` driver (from `azure-oss/storage-blob-laravel`) against
+`AZURE_STORAGE_ACCOUNT`/`AZURE_STORAGE_KEY`/`AZURE_STORAGE_CONTAINER` with Shared Key auth
+(`credential => 'shared_key'`) — the `azure-oss/*` packages were chosen over
+`league/flysystem-azure-blob-storage` because the latter (and its `microsoft/azure-storage-blob`
+dependency) is abandoned upstream; `composer audit` flags no advisories against `azure-oss/*`.
+See `gitops`' `docs/migration-steps.md` §3 for the coexistence-window rationale.
+
 ## Authentication (Cobalt login flow)
 
 `current` does not implement its own OAuth client. `cobalt` (cobalt.vatusa.net /
