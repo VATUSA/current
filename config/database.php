@@ -57,6 +57,18 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
+            // TLS is opt-in: set DB_SSL_CA to a CA bundle path and PDO encrypts the
+            // connection and verifies the server certificate against it. Azure Database
+            // for MySQL requires this (require_secure_transport=ON) and presents a chain
+            // to DigiCert Global Root G2, which is already in the image's
+            // /etc/ssl/certs/ca-certificates.crt, with the server hostname in the SANs.
+            //
+            // Unset leaves `options` empty, which is exactly today's behaviour — the
+            // DigitalOcean deployments, production included, must keep connecting over
+            // the private VPC endpoint without TLS.
+            'options'   => array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('DB_SSL_CA'),
+            ]),
         ],
         'email'  => [
             'driver'    => env('DB_EMAIL_CONNECTION', 'mysql'),
@@ -71,7 +83,12 @@ return [
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
-            'strict'    => false
+            'strict'    => false,
+            // Inherits DB_SSL_CA: the email schema lives on the same server as the main
+            // one and moves with it. DB_EMAIL_SSL_CA overrides if that stops being true.
+            'options'   => array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('DB_EMAIL_SSL_CA', env('DB_SSL_CA')),
+            ]),
         ],
         'moodle' => [
             'driver'   => env('DB_MOODLE_CONNECTION', 'mysql'),
@@ -85,7 +102,15 @@ return [
             'username' => env('DB_MOODLE_USERNAME', env('DB_USERNAME', 'forum')),
             'password' => env('DB_MOODLE_PASSWORD', env('DB_PASSWORD', '')),
             'prefix'   => 'mdl_',
-            'strict'   => false
+            'strict'   => false,
+            // Deliberately does NOT inherit DB_SSL_CA. The moodle schema stays on the
+            // DigitalOcean managed cluster after the other schemas move to Azure, and
+            // DigitalOcean presents a certificate from its own CA that is not in the
+            // system roots — inheriting would break this connection the moment Azure TLS
+            // is switched on. Set DB_MOODLE_SSL_CA explicitly if it ever needs TLS.
+            'options'  => array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('DB_MOODLE_SSL_CA'),
+            ]),
         ],
     ],
 
