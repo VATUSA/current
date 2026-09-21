@@ -1,0 +1,31 @@
+name: Build Branch Image
+
+# Build and push vatusa/www:<sha> and :branch-<name> from any branch except the default one, for
+# testing unmerged work. Never moves :latest, never deploys, and prod releases are gated separately.
+#   gh workflow run build-branch.yml --ref my-branch [-f platforms=linux/amd64]
+# The branch must contain this file; merge the default branch into older branches first.
+# Use ci-master.yml (automatic on push) for the default branch.
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Target platforms'
+        required: false
+        default: 'linux/amd64,linux/arm64'
+
+# A newer dispatch on the same branch supersedes an older one.
+concurrency:
+  group: build-branch-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: github.ref_name != github.event.repository.default_branch
+    uses: vatusa/gitops/.github/workflows/common-build.yml@main
+    with:
+      image-name: 'www'
+      platforms: ${{ inputs.platforms }}
+    secrets: inherit
