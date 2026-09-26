@@ -48,15 +48,36 @@ return [
             'root'   => storage_path().'/app',
         ],
 
-		'public' => [
-			'driver' => 's3',
-			'key'    => env('DO_SPACES_KEY', ''),
-			'secret' => env('DO_SPACES_SECRET', ''),
-            'endpoint' => 'https://nyc3.digitaloceanspaces.com',
-			'region' => env('DO_SPACES_REGION', 'nyc3'),
-			'bucket' => env('DO_SPACES_BUCKET', 'vatusa-storage'),
-            'visibility' => 'public',
-		],
+        // STORAGE_PROVIDER ("spaces", the default, or "azure_blob") is read
+        // at request time rather than baked into a single driver choice
+        // because the same built image is deployed to both DOKS (Spaces)
+        // and AKS (Blob) at once during the DO->Azure migration coexistence
+        // window — see gitops' docs/migration-steps.md §3, and cobalt's
+        // config.StorageProvider() / mithril's storage.rs for the same
+        // switch in the other two backends.
+        'public' => array_merge(
+            [
+                'driver' => env('STORAGE_PROVIDER', 'spaces') === 'azure_blob' ? 'azure-storage-blob' : 's3',
+                'visibility' => 'public',
+            ],
+            env('STORAGE_PROVIDER', 'spaces') === 'azure_blob'
+                ? [
+                    // Shared Key auth, matching cobalt/mithril's
+                    // AZURE_STORAGE_ACCOUNT/AZURE_STORAGE_KEY vars.
+                    'credential' => 'shared_key',
+                    'account_name' => env('AZURE_STORAGE_ACCOUNT', ''),
+                    'account_key' => env('AZURE_STORAGE_KEY', ''),
+                    'container' => env('AZURE_STORAGE_CONTAINER', 'vatusa-storage'),
+                    'is_public_container' => true,
+                ]
+                : [
+                    'key'    => env('DO_SPACES_KEY', ''),
+                    'secret' => env('DO_SPACES_SECRET', ''),
+                    'endpoint' => 'https://nyc3.digitaloceanspaces.com',
+                    'region' => env('DO_SPACES_REGION', 'nyc3'),
+                    'bucket' => env('DO_SPACES_BUCKET', 'vatusa-storage'),
+                ]
+        ),
 
 		'rackspace' => [
 			'driver'    => 'rackspace',
