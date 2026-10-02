@@ -133,7 +133,7 @@ Route::group([
             });
             Route::post('ajax/members', 'InfoController@ajaxFacilityInfo');
             Route::get('privacy', function () {
-                return view('info.privacy');
+                return redirect()->away('/info/privacy');
             });
         });
 

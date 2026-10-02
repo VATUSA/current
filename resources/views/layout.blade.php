@@ -485,7 +485,7 @@
             Network (VATSIM) and may not be used for real-world navigation or aviation purposes and doing so could be a
             violation of federal law.</p>
         <p>{!! \App\Classes\Helper::version() !!} - <a href="http://github.com/vatusa/current"><i
-                        class="fab fa-github"></i> Open Source on GitHub</a> | <a href="/legacy/info/privacy"><i
+                        class="fab fa-github"></i> Open Source on GitHub</a> | <a href="/info/privacy"><i
                         class="fa fa-lock"></i> Privacy Policy</a></p>
     </div>
 </footer>
@@ -500,18 +500,5 @@
 <script src="/legacy/js/bootstrap-formhelpers.js"></script>
 
 @yield('scripts')
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-112506058-1"></script>
-<script>
-    window.dataLayer = window.dataLayer || []
-
-    function gtag() {
-        dataLayer.push(arguments)
-    }
-
-    gtag('js', new Date())
-
-    gtag('config', 'UA-112506058-1')
-</script>
 </body>
 </html>
