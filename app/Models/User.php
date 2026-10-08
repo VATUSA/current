@@ -1,6 +1,7 @@
 <?php namespace App\Models;
 
 use App\Classes\ExamHelper;
+use App\Classes\VATSIMApi2Helper;
 use App\Classes\VATUSAMoodle;
 use Carbon\Carbon;
 use App\Classes\EmailHelper;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
@@ -89,6 +91,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(Role::class, 'cid', 'cid');
     }
 
+    /**
+     * Push the home facility to VATSIM as the member's subdivision. Failures are logged and
+     * never block the local facility change. ZAE is a real VATSIM subdivision; ZZN/ZZI are
+     * VATUSA-internal and clear the subdivision.
+     */
+    public function syncVatsimSubdivision(string $facility): void
+    {
+        $subdivision = in_array($facility, ["ZZN", "ZZI"]) ? null : $facility;
+        try {
+            if (!VATSIMApi2Helper::updateSubdivision($this->cid, $subdivision)) {
+                Log::warning("VATSIM subdivision update to " . ($subdivision ?? "null") . " failed for {$this->cid}");
+            }
+        } catch (\Throwable $e) {
+            Log::warning("VATSIM subdivision update to " . ($subdivision ?? "null") . " errored for {$this->cid}: " . $e->getMessage());
+        }
+    }
+
     public function addToFacility($facility)
     {
         $oldfac = $this->facility;
@@ -98,6 +117,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $this->facility = $facility->id;
         $this->facility_join = \DB::raw("NOW()");
         $this->save();
+        $this->syncVatsimSubdivision($facility->id);
 
         $fc = 0;
 
@@ -222,6 +242,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $this->facility_join = \DB::raw("NOW()");
         $this->facility = $newfac;
         $this->save();
+        $this->syncVatsimSubdivision($newfac);
 
         Cache::forget("roster-$facility-home");
         Cache::forget("roster-$facility-both");
