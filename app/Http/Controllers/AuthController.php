@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Cobalt\CobaltAPIHelper;
 use App\Cobalt\CobaltSession;
+use App\Helpers\CookieHelper;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller {
 
@@ -36,15 +38,41 @@ class AuthController extends Controller {
      * session, and never touches the cobalt cookie again after this.
      */
     public function callback(Request $request) {
-        $token = $request->cookie(config('cobalt.cookie_name', 'vatusa-cobalt-token'));
-        if ($token) {
+        $cookieName = config('cobalt.cookie_name', 'vatusa-cobalt-token');
+        // A browser can hold stale copies of the cobalt cookie under other
+        // domains/paths; PHP's $request->cookie() returns only the first one
+        // sent, which may be the stale one. Try every value until one decodes.
+        $tokens = CookieHelper::allValues($request, $cookieName);
+        $cid = null;
+        $validToken = null;
+        foreach ($tokens as $token) {
             $cid = CobaltSession::getCidFromToken($token);
             if ($cid !== null) {
-                Auth::loginUsingId($cid, true);
-                $this->syncRatingFromCobalt($cid, $token);
+                $validToken = $token;
+                break;
             }
         }
-        return redirect()->intended('/');
+
+        if ($cid === null) {
+            Log::warning('Cobalt login callback failed', [
+                'token_count' => count($tokens),
+                'reason'      => count($tokens) ? 'no token decoded' : 'no token cookie',
+            ]);
+            return redirect('/')->with('error', 'Login failed, please try again.');
+        }
+
+        Auth::loginUsingId($cid, true);
+        $this->syncRatingFromCobalt($cid, $validToken);
+        $response = redirect()->intended('/');
+
+        if (count($tokens) > 1) {
+            // Cobalt's real cookie is Domain=.vatusa.net; Path=/ (browsers treat
+            // Domain=vatusa.net identically) - never expire that one.
+            $stale = array_filter(CookieHelper::allVariants(), fn($v) => !($v[1] === '/' && in_array($v[0], ['.vatusa.net', 'vatusa.net'], true)));
+            CookieHelper::expireVariants($response, $cookieName, $stale);
+        }
+
+        return $response;
     }
 
     /**
