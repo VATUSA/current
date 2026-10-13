@@ -37,6 +37,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         "prefname_date"
     ];
 
+    /**
+     * Logins go through cobalt, so controllers.password is NULL. Laravel's
+     * remember-me check passes this to hash_equals(), which throws a
+     * TypeError on null and 500s every page for anyone holding a remember
+     * cookie without a live session.
+     */
+    public function getAuthPassword()
+    {
+        return $this->password ?? '';
+    }
+
     public function getDates()
     {
         return ["created_at", "updated_at", "lastactivity"];
