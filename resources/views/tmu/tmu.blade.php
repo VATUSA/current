@@ -32,6 +32,10 @@ for ($i = 1 ; $i <= 360 ; $i++) {
     echo ".rotate-$i{transform: rotate(" . $i . "deg) !important; }";
 }
 ?>
+    .basemap-dark {
+      filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
+    }
+
     .leaflet-div-icon {
       background: none;
       border: none;
@@ -91,15 +95,13 @@ for ($i = 1 ; $i <= 360 ; $i++) {
       "weight": 2.5,
       "opacity": 1
     };
-    @if($dark == true)
-    var geomap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-    @else
-    var geomap = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-    @endif
-	     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-	      subdomains: 'abcd',
-	       maxZoom: 19
-       }).addTo(mymap);
+    var geomap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      @if($dark == true)
+      className: 'basemap-dark',
+      @endif
+      maxZoom: 19
+    }).addTo(mymap);
 
     var nexrad = L.tileLayer('https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png?ts={ts}', {
       tileSize: 256,
