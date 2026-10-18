@@ -61,7 +61,14 @@ class AuthController extends Controller {
             return redirect('/')->with('error', 'Login failed, please try again.');
         }
 
-        Auth::loginUsingId($cid, true);
+        if (!Auth::loginUsingId($cid, true)) {
+            // Cobalt authenticated them, but there's no `controllers` row to log in as.
+            Log::warning('Cobalt login callback failed', [
+                'cid'    => $cid,
+                'reason' => 'no controllers row',
+            ]);
+            return redirect('/')->with('error', 'Your account could not be loaded. Please contact VATUSA Technical Support.');
+        }
         $this->syncRatingFromCobalt($cid, $validToken);
         $response = redirect()->intended('/');
 
