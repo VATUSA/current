@@ -7,6 +7,7 @@ use App\Helpers\DiscordHelper;
 use App\Models\Actions;
 use App\Models\Facility;
 use App\Models\Transfers;
+use App\Models\TransfersBlocked;
 use App\Models\User;
 use Auth;
 use Carbon\Carbon;
@@ -148,7 +149,7 @@ class MyController
     public function getTransfer() {
         $user = User::where('cid', Auth::user()->cid)->first();
         if ($user->transferEligible()) {
-            return view('my.transfer');
+            return view('my.transfer', ['blocked' => TransfersBlocked::isBlocked($user->cid)]);
         }
 
         return redirect('/my/profile')->with('error', 'You are not currently eligible to transfer.');
@@ -159,6 +160,10 @@ class MyController
 
         if (!$user->transferEligible()) {
             return redirect('/my/profile')->with('error', 'You are not currently eligible to transfer.');
+        }
+
+        if (TransfersBlocked::isBlocked($user->cid)) {
+            return redirect('/my/transfer')->with('error', 'Blocked from transferring to a facility');
         }
 
         if ($_POST['facility'] == "0") {

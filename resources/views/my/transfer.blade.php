@@ -23,6 +23,11 @@
                 </h3>
             </div>
             <div class="panel-body">
+                @if($blocked)
+                    <div class="alert alert-danger">
+                        <strong><i class="fas fa-ban"></i> Blocked from transferring to a facility</strong>
+                    </div>
+                @endif
                 <form class="form-horizontal" action="{{url("/my/transfer/do")}}" method="POST">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="form-group">
@@ -40,7 +45,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">New Facility</label>
                         <div class="col-sm-10">
-                            <select class="form-control" name="facility" onchange="checkAlerts(this);">
+                            <select class="form-control" name="facility" @if($blocked) disabled @endif onchange="checkAlerts(this);">
                                 <option value="0">Select a Facility</option>
                                 @foreach(\App\Models\Facility::where('active', 1)->orderby('name', 'ASC')->get() as $f)
                                 <option value="{{$f->id}}">{{$f->name}}</option>
@@ -49,12 +54,12 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10"><textarea class="form-control" rows="5" name="reason" placeholder="Why would you like to transfer?"></textarea>
+                        <div class="col-sm-offset-2 col-sm-10"><textarea class="form-control" rows="5" name="reason" @if($blocked) disabled @endif placeholder="Why would you like to transfer?"></textarea>
                             </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <input type="submit" class="btn btn-success" value="Submit" />
+                            <input type="submit" class="btn btn-success" value="Submit" @if($blocked) disabled @endif />
                         </div>
                     </div>
                 </form>
