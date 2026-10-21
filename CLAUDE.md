@@ -83,7 +83,9 @@ redirect allowlist) is documented in `cobalt`'s own `CLAUDE.md` / commit history
 
 ## Deployment
 
-`build.sh` runs in the container: sets up `storage/`, runs `php artisan optimize`, and on
+The image builds on the official `php:*-fpm-alpine` image (not the `vatusa/php-nginx`
+chain from `vatusa/dockerfile`); nginx, supervisor and PHP-FPM config live in
+`resources/docker`, which is copied over `/`. `build.sh` runs in the container: sets up `storage/`, runs `php artisan optimize`, and on
 `prod`/`livedev`/`staging` runs migrations. `deploy.sh` builds assets, builds the
 `vatusa/www` Docker image, and pushes to Docker Hub. Cluster deployment is managed in the
 `gitops` repo.
