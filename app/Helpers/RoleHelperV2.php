@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class RoleHelperV2
 {
-    public static $globalRoles = ["ACE", "CBT", "USWT", "SMT", "DICE", "DCC", "US0"];
+    public static $globalRoles = ["ACE", "CBT", "USWT", "MT", "DICE", "DCC", "US0"];
     public static $facilityRolesUSA = ["ATM", "DATM", "TA", "INS"];
 
     public static $facilityRolesATM = ["EC", "FE", "WM", "EMAIL"];
